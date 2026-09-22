@@ -1,0 +1,5 @@
+Session 1 | 2026-05-10 | Alice: I enjoy yakiniku and seafood. [S1T1]
+Session 1 | 2026-05-10 | Assistant: I'll remember that. [S1T2]
+Session 6 | 2026-05-14 | Alice: I am vegetarian now, so skip the yakiniku place. [S6T5]
+Session 6 | 2026-05-14 | Assistant: Noted, I will choose a vegetarian-friendly restaurant. [S6T6]
+Session 6 | 2026-05-14 | Alice: My flight to Tokyo lands May 21, around noon. [S6T7]

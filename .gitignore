@@ -1,0 +1,34 @@
+# macOS / editor metadata
+.DS_Store
+**/.DS_Store
+.idea/
+.vscode/
+
+# Python caches and build outputs
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Local environments and secrets
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Regenerable local work and default harness outputs
+/tmp/
+/memories/
+/runs/
+/local-runs/
