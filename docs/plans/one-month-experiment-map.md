@@ -95,12 +95,12 @@ Filesystem 论文使用 `gpt-5.4-mini`。本地 NUS SoC 网关目前请求别名
 - 分块、路径、权限、API 请求与工具循环的单元测试；
 - 固定的官方 LoCoMo10 原文件、`conv-50` canonical records 和 source map；
 - S1 平铺原始 session builder、30 个正式 session 文件、独立 manifest 和无损完整性测试；
-- S2 Foldering Agent、本项目重建 prompt、`view/grep/rename` 限权和同名整文件移动保护（尚未正式运行）。
+- S2 Foldering Agent、冻结 prompt/task/tool schema、`view/grep/rename` 限权、同名整文件移动保护，以及 staging、完整性 gate、失败隔离、路径映射、trace/manifest 和 COMMITTED 发布 runner（正式 S1 preflight 已通过，尚未调用 API）。
 
 当前仓库还没有：
 
 - 正式 dev/test/stability split manifests；
-- S2 staging、完整性 gate、原子发布 runner 和正式 store；
+- 正式 S2 store（安全 runner 已完成，等待一次正式 API build 和离线 verify）；
 - evidence-only R1；
 - BM25、RRF、时间过滤、邻居扩展和多轮 notes；
 - 统一 Answerer 和 E7 fusion；
@@ -946,7 +946,7 @@ E6→E7 同样计算。另记录：
 | D2 | 下载/pin LoCoMo；实现 loader 和 source map | raw SHA、counts report、processed JSONL |
 | D3 | 固定 10 dev、60 test、12 stability IDs | split manifests + SHA |
 | D4（已完成） | 实现/测试 S1 builder | 30 文件 + 无损反解析测试 |
-| D5 | 实现 S2 folder-only builder | S1/S2 hash equality report |
+| D5（runner 已完成） | 正式运行一次 S2 folder-only builder 并离线复验 | S1/S2 hash equality report + layout hash + trace/manifest |
 | D6 | 用 Alice/小样本完成 S3 builder 最后工程检查；冻结 builder prompt | builder tests 与 prompt hash |
 | D7 | 正式构建一次 conv-50 S3；生成三份 store manifests | 冻结 stores、构建 trace、结构统计 |
 

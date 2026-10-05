@@ -198,8 +198,33 @@ Harness 会在需要时创建 `travel-planning/`，再移动完整文件。允�
 
 其中，“LLM 设计 taxonomy、完整文件 move-only、zero-byte edits、Foldering 工具为 `view/grep/rename`”来自论文公开协议；“同 basename、全部文件必须归类、kebab-case、gold 隔离、prompt-injection 防护和程序化复查”是本项目为使变量更纯、运行更安全、结果可验收而加入的操作化约束。报告中必须保持这一区分。
 
-当前没有 `stores/s2-foldered/`，也没有调用学校 API。`run_foldering()` 仍要求调用方提供可丢弃的 S1 副本，因此下一步必须先实现 staging 安全层和发布 gate，不能把正式 `stores/s1-flat/` 直接挂载为可写目录。
+### S2 安全执行层已经实现
+
+已新增 `fs_memory_lab/s2.py` 和正式 CLI 状态机，将 `run_foldering()` 包在不可绕过的 staging、验收和发布协议里：
+
+```text
+PRECHECK → LOCKED → STAGED → AGENT_RUNNING → AGENT_SUCCEEDED
+→ GATE_RUNNING → GATE_PASSED → PUBLISHING → PUBLISHED
+```
+
+- 正式运行前重新计算 S1 manifest SHA、30个文件的 basename、完整/正文 SHA、总字节和 content hash，不只相信 manifest 声明；
+- `paper-constrained-local-v1` Prompt 以固定 SHA fail-closed，文本若变化但没有显式升级版本/hash，模型调用前即停止；
+- 使用独占 lock 和同文件系统唯一 staging，Foldering Agent 的 `MemoryFS` 根目录只指向 staging，从不指向正式 S1；
+- 每个 provider response 和工具结果即时追加到本地 JSONL；API 异常、completion cap 或超轮时仍保留 partial trace；
+- 全局 Gate 独立于模型工具限制，检查恰好30个普通 `.md`、同 basename、逐字节和正文 hash 相同、无根目录文件、无 symlink/额外文件、folder slug 合法，并清理和记录二次移动遗留的空目录；
+- 同时保留与 S1 相同的内容身份 hash，以及对目录路径敏感的 `layout_sha256`；
+- 生成稳定的 `S1 path → S2 path`、更新后的 source index、完整 trace、S2 manifest；requested alias 和每轮 API 返回的 served model/指纹分别记录；
+- 发布时 manifest 是元数据承诺，`s2-foldered.COMMITTED` 最后写入作为下游唯一有效标志；中途发布异常会回滚正式文件并把 staging 隔离到 `local-runs/`；
+- 不提供 `--force` 或静默覆盖。任一正式目标已存在都会在 API 前拒绝。
+
+真实模型的目录树不能宣称确定性：当前 adapter 没有把 Python `RANDOM_SEED=42` 发送给 API。Manifest 会明确记录 `seed_sent_to_provider: false`；我们只保证同一输入和同一确定性 FakeProvider 脚本得到同一内容/layout hash。
+
+专门的 S2 测试覆盖成功发布、正式30文件集成、输入篡改、分类不完整、provider 中途异常、completion 截断、round limit、畸形 tool calls、内容变化、改名、额外/重复文件、symlink、空目录、Prompt/task/tool-schema freeze、写路径与 S1 隔离、并发锁、密钥错误脱敏、发布阶段回滚和 artifact cross-link 验证。当前全套离线测试为47项，全部通过。
+
+正式 `conv-50` 离线 preflight 已通过：30个文件、114,456 bytes，S1 manifest SHA 为 `5c5900c333c8f85463f038448560cb4357f1161d6ed43e9fbc86809ba7916d3c`，content SHA 为 `5a58a8cca8616b91f3c231671271f6dbbedc669330b91e410980223ad2488ad8`，Prompt SHA 为 `0cec4a3d80877ee303458d3dd596e3d981e14f0782fa248d3df6ba990ebda778`。当前仍没有 `stores/s2-foldered/`，也尚未调用学校 API。
 
 ## 下一步
 
-为已实现的 Foldering Agent 增加正式 S2 staging runner：从 S1 复制、冻结 before hash、运行一次 API episode、验证 30 个文件/同 basename/逐文件 hash/无根目录 `.md`、输出 `S1_path -> S2_path` 和 trace，再原子发布。prompt 需要先由研究者审阅确认；确认后冻结全文与 SHA，不能按下游问答结果调 prompt。此时不应先运行 S3 管理 LLM，也不应为六个条件分别切一次原始数据。实现 ReFind-style R2 前还需将 exchange 派生规则、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则写成测试。
+先提交并冻结已经通过离线测试的 runner，使正式 manifest 能记录一个干净的 Git commit；随后在同一终端用学校 API 执行一次 `check-api`，再运行且只运行一次 `build-s2`。发布成功后必须立即离线执行 `verify-s2`，人工查看目录树、trace、served model 和 usage，再把正式 S2 产物及本节结果提交 GitHub。不能根据下游问答分数反复重跑并挑选最好 taxonomy。
+
+S2 完成后再实现 ReFind-style R2；仍需先将 exchange 派生规则、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则写成测试。此时不应先运行 S3 管理 LLM，也不应为六个条件分别切一次原始数据。

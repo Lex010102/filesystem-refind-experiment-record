@@ -59,3 +59,13 @@ FOLDERING_TASK = (
     "Organize the complete existing raw-session store into a topic-folder taxonomy "
     "under the fixed Foldered sessions protocol."
 )
+
+# Formal S2 builds refuse to run if the reviewed prompt changes without an
+# explicit version/hash update.  This is the hash of FOLDERING_PROMPT itself
+# (without the newline added by the print-only CLI command).
+FROZEN_FOLDERING_PROMPT_SHA256 = (
+    "0cec4a3d80877ee303458d3dd596e3d981e14f0782fa248d3df6ba990ebda778"
+)
+FROZEN_FOLDERING_TASK_SHA256 = (
+    "028aa1518ba376fca262c81719581e5ae532f7f23cb69b0bf9984df3d5c1404e"
+)

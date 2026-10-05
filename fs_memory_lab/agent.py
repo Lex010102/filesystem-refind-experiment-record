@@ -10,7 +10,7 @@ import urllib.error
 import urllib.request
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Protocol
+from typing import Any, Callable, Protocol
 from urllib.parse import urlparse
 
 from .filesystem import MemoryFS, ToolError
@@ -126,13 +126,41 @@ class EpisodeResult:
     input_sha256: str
 
 
+class AgentRunError(RuntimeError):
+    """An episode failure carrying the safe partial trace accumulated so far."""
+
+    def __init__(self, message: str, *, role: str, configuration: dict,
+                 prompt_sha256: str, input_sha256: str, rounds: int,
+                 tool_calls: int, usage: list[dict], trace: list[dict], stage: str):
+        super().__init__(message)
+        self.partial = {
+            "status": "failed",
+            "error": {"message": message, "stage": stage, "type": type(self).__name__},
+            "rounds": rounds,
+            "tool_calls": tool_calls,
+            "usage": list(usage),
+            "trace": list(trace),
+            "role": role,
+            "configuration": configuration,
+            "prompt_sha256": prompt_sha256,
+            "input_sha256": input_sha256,
+        }
+
+
 class AgentRunner:
-    def __init__(self, memory: MemoryFS, provider: ChatProvider, *, max_rounds: int | None = None):
+    def __init__(self, memory: MemoryFS, provider: ChatProvider, *, max_rounds: int | None = None,
+                 event_sink: Callable[[dict], None] | None = None):
         if max_rounds is not None and max_rounds < 1:
             raise ValueError("max_rounds must be positive")
         self.memory = memory
         self.provider = provider
         self.max_rounds = max_rounds
+        self.event_sink = event_sink
+
+    def _emit(self, trace: list[dict], event: dict) -> None:
+        trace.append(event)
+        if self.event_sink is not None:
+            self.event_sink(event)
 
     def _compact(self, messages: list[dict], round_starts: list[int], config: RoleConfig,
                  usage: list[dict], trace: list[dict], round_number: int) -> tuple[list[dict], list[int]]:
@@ -149,10 +177,10 @@ class AgentRunner:
         if not isinstance(summary, str) or not summary.strip():
             raise RuntimeError("Context compaction did not return a summary")
         usage.append({"compaction": True, **result.get("usage", {})})
-        trace.append({"round": round_number, "compaction": True,
-                      "dropped_messages": keep_start - 2,
-                      "kept_rounds": CONTEXT_COMPACTION_KEEP_ROUNDS,
-                      "usage": result.get("usage", {})})
+        self._emit(trace, {"round": round_number, "compaction": True,
+                           "dropped_messages": keep_start - 2,
+                           "kept_rounds": CONTEXT_COMPACTION_KEEP_ROUNDS,
+                           "usage": result.get("usage", {})})
         new_messages = messages[:2] + [{"role": "user", "content": "Running summary of earlier turns:\n" + summary}] + messages[keep_start:]
         new_starts = [start - keep_start + 3 for start in round_starts[-CONTEXT_COMPACTION_KEEP_ROUNDS:]]
         return new_messages, new_starts
@@ -187,27 +215,94 @@ class AgentRunner:
         total_calls = 0
         round_starts: list[int] = []
         limit = self.max_rounds or config.max_rounds
+
+        prompt_sha256 = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
+        input_sha256 = hashlib.sha256(input_text.encode("utf-8")).hexdigest()
+
+        def failure(message: str, stage: str, rounds: int) -> AgentRunError:
+            return AgentRunError(
+                message,
+                role=role,
+                configuration=asdict(config),
+                prompt_sha256=prompt_sha256,
+                input_sha256=input_sha256,
+                rounds=rounds,
+                tool_calls=total_calls,
+                usage=usage,
+                trace=trace,
+                stage=stage,
+            )
+
         for round_number in range(1, limit + 1):
             round_starts.append(len(messages))
-            result = self.provider.complete(messages, tools, config)
-            if result.get("finish_reason") == "length":
-                raise RuntimeError("Model hit the completion cap; refusing a truncated episode")
-            message = result["message"]
-            usage.append(result.get("usage", {}))
+            try:
+                result = self.provider.complete(messages, tools, config)
+            except Exception as exc:
+                raise failure(str(exc), "provider", round_number) from exc
+            if not isinstance(result, dict):
+                raise failure(
+                    "Provider response must be a JSON object",
+                    "provider-response",
+                    round_number,
+                )
+            try:
+                message = result["message"]
+                if not isinstance(message, dict):
+                    raise TypeError("message is not an object")
+            except (KeyError, TypeError) as exc:
+                raise failure(
+                    "Provider response is missing a valid message object",
+                    "provider-response",
+                    round_number,
+                ) from exc
+            round_usage = result.get("usage", {})
+            if not isinstance(round_usage, dict):
+                raise failure(
+                    "Provider usage must be a JSON object",
+                    "provider-response",
+                    round_number,
+                )
+            usage.append(round_usage)
             calls = message.get("tool_calls") or []
-            trace.append({"round": round_number, "assistant_content": message.get("content"),
-                          "tool_calls": [{"id": call.get("id"), "name": call.get("function", {}).get("name")}
-                                         for call in calls], "usage": result.get("usage", {}),
-                          "response_id": result.get("response_id"),
-                          "served_model": result.get("served_model"),
-                          "system_fingerprint": result.get("system_fingerprint")})
+            if not isinstance(calls, list) or any(not isinstance(call, dict) for call in calls):
+                raise failure(
+                    "Provider tool_calls must be a list of objects",
+                    "provider-response",
+                    round_number,
+                )
+            if any(not isinstance(call.get("function"), dict) for call in calls):
+                raise failure(
+                    "Every provider tool call must contain a function object",
+                    "provider-response",
+                    round_number,
+                )
+            self._emit(trace, {"round": round_number,
+                               "assistant_content": message.get("content"),
+                               "tool_calls": [
+                                   {"id": call.get("id"),
+                                    "name": call.get("function", {}).get("name")}
+                                   for call in calls
+                               ],
+                               "usage": result.get("usage", {}),
+                               "response_id": result.get("response_id"),
+                               "served_model": result.get("served_model"),
+                               "system_fingerprint": result.get("system_fingerprint")})
+            if result.get("finish_reason") == "length":
+                raise failure(
+                    "Model hit the completion cap; refusing a truncated episode",
+                    "completion-cap",
+                    round_number,
+                )
             if not calls:
                 content = message.get("content")
                 if not isinstance(content, str) or not content.strip():
-                    raise RuntimeError("Model finished without an answer or tool calls")
+                    raise failure(
+                        "Model finished without an answer or tool calls",
+                        "empty-response",
+                        round_number,
+                    )
                 return EpisodeResult(content, round_number, total_calls, usage, trace, role,
-                                     asdict(config), hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
-                                     hashlib.sha256(input_text.encode("utf-8")).hexdigest())
+                                     asdict(config), prompt_sha256, input_sha256)
             messages.append({"role": "assistant", "content": message.get("content"), "tool_calls": calls})
             for call in calls:
                 function = call.get("function") or {}
@@ -223,14 +318,30 @@ class AgentRunner:
                 except (json.JSONDecodeError, ToolError) as exc:
                     observation = f"TOOL ERROR: {exc}"
                     ok = False
+                except Exception as exc:
+                    total_calls += 1
+                    self._emit(trace, {"round": round_number, "tool": name,
+                                       "arguments": args, "ok": False,
+                                       "observation": f"TOOL FAILURE: {exc}"})
+                    raise failure(str(exc), "tool-execution", round_number) from exc
                 total_calls += 1
-                trace.append({"round": round_number, "tool": name, "arguments": args,
-                              "ok": ok, "observation": observation})
+                self._emit(trace, {"round": round_number, "tool": name,
+                                   "arguments": args, "ok": ok,
+                                   "observation": observation})
                 messages.append({"role": "tool", "tool_call_id": call.get("id"), "content": observation})
             if (result.get("usage", {}).get("prompt_tokens", 0) > CONTEXT_COMPACTION_TRIGGER
                     and len(round_starts) > CONTEXT_COMPACTION_KEEP_ROUNDS):
-                messages, round_starts = self._compact(messages, round_starts, config, usage, trace, round_number)
-        raise RuntimeError(f"Agent exceeded {limit} model rounds; inspect trace before retrying")
+                try:
+                    messages, round_starts = self._compact(
+                        messages, round_starts, config, usage, trace, round_number
+                    )
+                except Exception as exc:
+                    raise failure(str(exc), "context-compaction", round_number) from exc
+        raise failure(
+            f"Agent exceeded {limit} model rounds; inspect trace before retrying",
+            "round-limit",
+            limit,
+        )
 
     def run_foldering(self) -> EpisodeResult:
         """Run the fixed S2 foldering task; the caller must mount a disposable S1 copy."""

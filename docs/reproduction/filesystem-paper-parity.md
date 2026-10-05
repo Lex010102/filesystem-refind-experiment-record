@@ -9,6 +9,7 @@
 | S2 Foldered sessions 建库行为 | Section 3，PDF 第 7 页 | `fs_memory_lab/foldering_prompt.py` 的 `FOLDERING_PROMPT` | 论文规定 LLM 设计 taxonomy、整文件 move-only、zero-byte edits，但没有公开建库 prompt 全文；本地文本是明确标注的重建版 |
 | S2 建库工具 | Appendix C.4，Table 12，PDF 第 49–50 页 | `FOLDERING_PROFILE=(view, grep, rename)`；`MemoryFS.foldering_rename` 再强制同 basename、目标 topic folder 和字节不变 | 工具集合对齐；本地 guard 比论文通用 `rename` 更严格，以隔离“只有父目录变化”这一变量 |
 | S2 建库配置 | Appendix C.1，Table 11，PDF 第 47–48 页 | `FOLDERING`：`gpt-5.4-mini`、high、60 rounds、32,768 completion cap | 模型/effort/通用 build rounds 对齐；论文未单列 foldering completion cap，32,768 是本地重建选择 |
+| S2 安全执行与验收 | 论文只规定 move-only、zero-byte edits；未公开发布 runner | `fs_memory_lab/s2.py`：冻结输入/prompt、staging、失败隔离、全局 hash gate、路径映射、trace/manifest 和 COMMITTED 标记 | 本项目为了保护正式 S1 和保证可审计性增加的工程协议，不是论文作者代码 |
 | Center 层级检索 system prompt | Appendix A.3，Prompt 5，PDF 第 31–33 页 | 同文件 `SEARCH_PROMPT` | 按公开文本转录；byte-exact 未证实 |
 | 工具说明和参数 | Appendix C.4，Table 12，PDF 第 49–50 页 | `fs_memory_lab/paper_tools.py`，7 个管理工具、4 个检索工具 | 描述/参数/required 标志按表转录；完整 JSON 包装、工具顺序未在论文给出 |
 | 管理/检索模型 | Appendix C.1，Table 11，PDF 第 47–48 页 | `fs_memory_lab/paper_config.py`：均 `gpt-5.4-mini`、high | 默认对齐；`FSMEM_MODEL` 覆盖会失配 |

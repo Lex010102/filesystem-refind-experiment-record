@@ -51,7 +51,7 @@ python3 -m unittest tests.test_stores -v
 python3 -m unittest discover -s tests -v
 ```
 
-## S2 当前边界
+## S2：Foldered verbatim sessions
 
 独立 Foldering Agent 和本项目重建的 system prompt 已实现于 `fs_memory_lab/foldering_prompt.py`。模型只能看到 `view`、`grep` 和受限 `rename`；工具层强制每次操作只能改变一个 `.md` 文件的父目录，不能改变 basename 或字节。
 
@@ -61,4 +61,20 @@ python3 -m unittest discover -s tests -v
 python3 -m fs_memory_lab.cli foldering-prompt
 ```
 
-目前尚未调用 API，也尚未生成 `stores/s2-foldered/`。正式运行前仍需实现安全执行层：从不可变 S1 复制到 staging，运行 Foldering Agent，验证 30 个 basename 和逐文件 SHA-256 全部不变后，再原子发布 S2。绝不能把本目录中的正式 S1 直接挂载为可写运行目录。
+安全执行层已实现于 `fs_memory_lab/s2.py`。它会先核对冻结的 S1 manifest 和30个正式文件，再建立独立 staging；模型只操作 staging。成功 episode 必须通过文件数、basename 集、逐文件完整/正文 hash、根目录残留、目录 slug、空目录和路径敏感 layout hash 等全量 gate，随后才发布 store、path map、trace、manifest，并最后写入 `s2-foldered.COMMITTED`。API、模型或 gate 失败只会产生位于 `local-runs/` 的隔离诊断，不会生成可被下游接受的正式 S2。
+
+当前正式 S1 的离线 preflight 已通过，但尚未调用 API，也尚未生成 `stores/s2-foldered/`。在仓库根目录依次执行：
+
+```bash
+# 完全离线；应先看到 status=ready
+python3 -m fs_memory_lab.cli s2-preflight
+
+# 需要已在当前终端安全设置 API 环境变量；正式运行只接受干净的已提交 Git 状态
+python3 -m fs_memory_lab.cli check-api
+python3 -m fs_memory_lab.cli build-s2
+
+# 完全离线地重新计算所有正式产物 hash 和目录完整性
+python3 -m fs_memory_lab.cli verify-s2
+```
+
+`build-s2` 不提供覆盖模式。只要正式 store、manifest、path map、trace 或 COMMITTED 标记中任意一个已经存在，它就会在调用模型前停止。真实模型的 taxonomy 不保证多次相同；manifest 会分别记录 requested model alias、API 返回的 served model、Prompt/code hash、轮数、工具调用和 token usage。当前 adapter 没有向提供商发送 seed，因此不能把本地 Python seed 42 宣称为真实 LLM 采样可重复性保证。

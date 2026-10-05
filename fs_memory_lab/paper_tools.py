@@ -79,3 +79,10 @@ FOLDERING_TOOL_DEFINITIONS = {
         ["old_path", "new_path"],
     ),
 }
+
+# Canonical JSON hash of the ordered definitions actually sent to the model.
+# Formal S2 builds fail closed if descriptions, parameters, order, or required
+# fields change without an explicit protocol review and hash update.
+FROZEN_FOLDERING_TOOL_SCHEMA_SHA256 = (
+    "fd583e0da703fcda72665a89a9a5c0d7b3946916ab000436e534d6ecd5d8c7d4"
+)

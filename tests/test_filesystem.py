@@ -278,6 +278,23 @@ class FilesystemTest(unittest.TestCase):
         self.assertEqual(output.getvalue(), FOLDERING_PROMPT + "\n")
         self.assertFalse((self.base / "must-not-exist").exists())
 
+    def test_s2_preflight_and_verify_cli_routes_are_offline(self):
+        for command, target in (
+            ("s2-preflight", "fs_memory_lab.cli.preflight_s2_build"),
+            ("verify-s2", "fs_memory_lab.cli.verify_published_s2"),
+        ):
+            with self.subTest(command=command), patch(
+                "sys.argv", ["fs-memory-lab", "--project", str(self.base), command]
+            ), patch(
+                "fs_memory_lab.cli.CompatibleChatProvider.from_environment"
+            ) as provider, patch(target, return_value={"status": "ok"}) as operation, redirect_stdout(
+                io.StringIO()
+            ) as output:
+                main()
+            provider.assert_not_called()
+            operation.assert_called_once()
+            self.assertIn('"status": "ok"', output.getvalue())
+
     def test_completion_cap_is_not_accepted_as_an_answer(self):
         class LimitedProvider(FakeProvider):
             def complete(self, messages, tools, config):

@@ -15,12 +15,17 @@ from pathlib import Path
 
 from .agent import AgentRunner, CompatibleChatProvider, save_trace
 from .filesystem import MemoryFS
-from .foldering_prompt import FOLDERING_PROMPT, FOLDERING_PROMPT_VERSION
+from .foldering_prompt import (FOLDERING_PROMPT, FOLDERING_PROMPT_VERSION,
+                               FROZEN_FOLDERING_PROMPT_SHA256,
+                               FROZEN_FOLDERING_TASK_SHA256)
 from .paper_config import (CHUNK_MAX_CHARS, CHUNK_MAX_TURNS, CONTEXT_COMPACTION_KEEP_ROUNDS,
                            CONTEXT_COMPACTION_TRIGGER, FOLDERING, MANAGEMENT, RANDOM_SEED, SEARCH,
                            SEARCH_CONCURRENCY)
 from .paper_prompts import MANAGEMENT_PROMPT, SEARCH_PROMPT
-from .paper_tools import FOLDERING_PROFILE, MANAGEMENT_PROFILE, SEARCH_PROFILE, TOOL_DEFINITIONS
+from .paper_tools import (FOLDERING_PROFILE, FROZEN_FOLDERING_TOOL_SCHEMA_SHA256,
+                          MANAGEMENT_PROFILE, SEARCH_PROFILE, TOOL_DEFINITIONS)
+from .s2 import (build_s2_store, git_state, preflight_s2_build,
+                 verify_published_s2)
 
 
 def chunk_lines(text: str, max_turns: int = CHUNK_MAX_TURNS, max_chars: int = CHUNK_MAX_CHARS) -> list[str]:
@@ -61,6 +66,20 @@ def _memory(project: Path) -> MemoryFS:
     return MemoryFS(project / "memories", project / "runs" / "trash")
 
 
+def _s2_paths(project: Path) -> dict[str, Path]:
+    experiment = project / "experiments" / "locomo-conv50-v1"
+    return {
+        "s1_store": experiment / "stores" / "s1-flat",
+        "s1_manifest": experiment / "manifests" / "s1-flat.json",
+        "s2_store": experiment / "stores" / "s2-foldered",
+        "s2_manifest": experiment / "manifests" / "s2-foldered.json",
+        "path_map": experiment / "manifests" / "s2-foldered-path-map.json",
+        "trace": experiment / "traces" / "s2-foldering.json",
+        "commit_marker": experiment / "manifests" / "s2-foldered.COMMITTED",
+        "work_root": project / "local-runs" / "s2-foldering",
+    }
+
+
 def _demo() -> None:
     with tempfile.TemporaryDirectory(prefix="fsmem-demo-") as temporary:
         memory = MemoryFS(Path(temporary) / "memories", Path(temporary) / "trash")
@@ -80,6 +99,9 @@ def main() -> None:
     sub.add_parser("demo", help="Run deterministic file-tool demo without API")
     sub.add_parser("config", help="Show effective paper-aligned defaults without API")
     sub.add_parser("foldering-prompt", help="Print the project-defined S2 prompt without API")
+    sub.add_parser("s2-preflight", help="Validate frozen S1 and S2 targets without API")
+    sub.add_parser("build-s2", help="Safely build and atomically publish formal S2 with API")
+    sub.add_parser("verify-s2", help="Recompute and verify the published S2 without API")
     sub.add_parser("check-api", help="Make one read-only function-call request without writing memory")
     ingest = sub.add_parser("ingest", help="Send each dialogue chunk to the management agent")
     ingest.add_argument("--input", type=Path, required=True, help="UTF-8 file with one dialogue turn per line")
@@ -121,6 +143,9 @@ def main() -> None:
             "foldering_prompt": {
                 "version": FOLDERING_PROMPT_VERSION,
                 "provenance": "project-defined reconstruction; author build prompt not published",
+                "frozen_prompt_sha256": FROZEN_FOLDERING_PROMPT_SHA256,
+                "frozen_task_sha256": FROZEN_FOLDERING_TASK_SHA256,
+                "frozen_tool_schema_sha256": FROZEN_FOLDERING_TOOL_SCHEMA_SHA256,
             },
             "api": {"default_base_url": "https://api.openai.com/v1",
                     "default_style": "paper",
@@ -131,8 +156,35 @@ def main() -> None:
         return
 
     project = args.project.resolve()
+    s2_paths = _s2_paths(project)
+    if args.command == "s2-preflight":
+        report = preflight_s2_build(
+            s2_paths["s1_store"],
+            s2_paths["s1_manifest"],
+            s2_paths["s2_store"],
+            s2_paths["s2_manifest"],
+            s2_paths["path_map"],
+            s2_paths["trace"],
+            s2_paths["commit_marker"],
+        )
+        print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
+        return
+    if args.command == "verify-s2":
+        report = verify_published_s2(
+            s2_paths["s1_store"],
+            s2_paths["s1_manifest"],
+            s2_paths["s2_store"],
+            s2_paths["s2_manifest"],
+            s2_paths["path_map"],
+            s2_paths["trace"],
+            s2_paths["commit_marker"],
+        )
+        print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
+        return
     # API configuration is checked before touching persistent directories.
-    provider = CompatibleChatProvider.from_environment() if args.command in {"ingest", "ask", "check-api"} else None
+    provider = CompatibleChatProvider.from_environment() if args.command in {
+        "ingest", "ask", "check-api", "build-s2"
+    } else None
     if args.command == "check-api":
         result = provider.complete(
             [{"role": "system", "content": "This is a function-calling test. Call the available view tool; do not answer in prose."},
@@ -144,6 +196,23 @@ def main() -> None:
             raise RuntimeError("API responded, but the model did not call view; this harness needs function calling")
         print(f"API function calling OK: requested_model={provider.model or SEARCH.model}, "
               f"served_model={result.get('served_model') or 'not reported'}")
+        return
+    if args.command == "build-s2":
+        code = git_state(project)
+        report = build_s2_store(
+            s2_paths["s1_store"],
+            s2_paths["s1_manifest"],
+            s2_paths["s2_store"],
+            s2_paths["s2_manifest"],
+            s2_paths["path_map"],
+            s2_paths["trace"],
+            s2_paths["commit_marker"],
+            s2_paths["work_root"],
+            provider,
+            code_revision=code["commit"],
+            code_dirty=code["dirty"],
+        )
+        print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
         return
     memory = _memory(project)
     if args.command == "show":

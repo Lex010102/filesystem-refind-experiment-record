@@ -11,8 +11,8 @@ GitHub：<https://github.com/Lex010102/filesystem-refind-experiment-record>
 - 已用 NUS SoC API 完成 Alice 合成案例的两批独立增量写入；
 - 已固定官方 `locomo10.json`，并为 `conv-50` 生成统一 canonical records、source map 和版本 manifest；
 - 已将全部 568 条 canonical records 确定性地构建为 30 个 S1 平铺原始 session 文件，并加入无损、完整性、确定性和防篡改测试；
-- 已实现独立 S2 Foldering Agent、本项目重建 prompt，以及仅允许 `view`、`grep`、同名整文件移动的工具硬限制；尚未调用 API 或生成正式 S2 store；
-- 尚未完成 S2 staging/验收/发布 runner、ReFind-style R2、统一 Answerer、批量评测与七条件实验；
+- 已实现独立 S2 Foldering Agent、冻结 prompt、同名整文件移动硬限制，以及 staging、全量 hash gate、失败隔离、trace/manifest/path-map 和 COMMITTED 标记组成的安全发布 runner；正式 S1 的离线 preflight 已通过，尚未调用 API 或生成正式 S2 store；
+- 尚未完成 ReFind-style R2、统一 Answerer、批量评测与七条件实验；
 - 当前最准确的说法是：**正式数据底座、S1 store 和 S3+R1 底层原型已跑通，完整 benchmark 平台仍在建设中。**
 
 完整的一个月工作路线见 [实验地图](docs/plans/one-month-experiment-map.md)。历史进度见 [研究进度日志](docs/progress/2026-09-16-research-log.md)，最新数据与 S1/S2 准备状态见 [LoCoMo 数据准备记录](docs/progress/2026-10-05-locomo-data-preparation.md)。
@@ -76,6 +76,7 @@ conversation chunk
 python3 -m fs_memory_lab.cli demo
 python3 -m fs_memory_lab.cli config
 python3 -m fs_memory_lab.cli foldering-prompt
+python3 -m fs_memory_lab.cli s2-preflight
 python3 -m fs_memory_lab.locomo prepare
 python3 -m fs_memory_lab.stores build-s1
 python3 -m unittest discover -s tests -v

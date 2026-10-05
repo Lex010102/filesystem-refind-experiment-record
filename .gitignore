@@ -32,3 +32,9 @@ venv/
 /memories/
 /runs/
 /local-runs/
+
+# Crash remnants from the guarded S2 publisher (normal runs remove these)
+experiments/**/stores/.s2-foldered.staging-*/
+experiments/**/stores/.s2-foldered.lock
+experiments/**/manifests/.*.publish-*
+experiments/**/traces/.*.publish-*
