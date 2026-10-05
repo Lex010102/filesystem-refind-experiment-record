@@ -95,12 +95,11 @@ Filesystem 论文使用 `gpt-5.4-mini`。本地 NUS SoC 网关目前请求别名
 - 分块、路径、权限、API 请求与工具循环的单元测试；
 - 固定的官方 LoCoMo10 原文件、`conv-50` canonical records 和 source map；
 - S1 平铺原始 session builder、30 个正式 session 文件、独立 manifest 和无损完整性测试；
-- S2 Foldering Agent、冻结 prompt/task/tool schema、`view/grep/rename` 限权、同名整文件移动保护，以及 staging、完整性 gate、失败隔离、路径映射、trace/manifest 和 COMMITTED 发布 runner（正式 S1 preflight 已通过，尚未调用 API）。
+- S2 Foldering Agent、冻结 prompt/task/tool schema、`view/grep/rename` 限权、同名整文件移动保护，以及 staging、完整性 gate、失败隔离、路径映射、trace/manifest 和 COMMITTED 发布 runner；正式 S2 已由一次 NUS API episode 建成并通过离线 verifier，30 个 session 被归入 4 个主题目录且内容 hash 与 S1 相同。
 
 当前仓库还没有：
 
 - 正式 dev/test/stability split manifests；
-- 正式 S2 store（安全 runner 已完成，等待一次正式 API build 和离线 verify）；
 - evidence-only R1；
 - BM25、RRF、时间过滤、邻居扩展和多轮 notes；
 - 统一 Answerer 和 E7 fusion；
@@ -1118,7 +1117,7 @@ python3 -m fs_memory_lab.benchmark report --run experiments/locomo-conv50-v1
 - [ ] loader counts 与 source map 全通过；
 - [ ] dev/test/stability IDs 预先冻结；
 - [x] S1 无损及 manifest/完整性测试通过；
-- [ ] S2 body/byte hash 与 S1 相同；
+- [x] S2 body/byte hash 与 S1 相同；
 - [ ] S3 仅正式构建一次并冻结；
 - [ ] R1/R2 都输出统一 EvidenceBundle；
 - [ ] E2/E4 第一轮 BM25 不变量通过；

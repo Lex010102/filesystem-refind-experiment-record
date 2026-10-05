@@ -1,0 +1,221 @@
+{
+  "artifact_id": "locomo/conv-50/s2-foldered/v1/path-map",
+  "entries": [
+    {
+      "basename": "session-01.md",
+      "bytes": 3032,
+      "s1_path": "session-01.md",
+      "s2_path": "travel-and-outdoors/session-01.md",
+      "sha256": "50e02abdcc569982450520317a26d3e146863d03b7130c795ba11e231388e548"
+    },
+    {
+      "basename": "session-02.md",
+      "bytes": 3538,
+      "s1_path": "session-02.md",
+      "s2_path": "music-and-performance/session-02.md",
+      "sha256": "85a3d9bee8c99bbd203edd2ecd76f8f89fe0a82c692230e4d53f4cdde7d912f6"
+    },
+    {
+      "basename": "session-03.md",
+      "bytes": 3628,
+      "s1_path": "session-03.md",
+      "s2_path": "music-and-performance/session-03.md",
+      "sha256": "b7b2a546c076818c5cf134e851879bc42692d1e71753366cbd2d38068073592f"
+    },
+    {
+      "basename": "session-04.md",
+      "bytes": 4853,
+      "s1_path": "session-04.md",
+      "s2_path": "cars-and-auto-work/session-04.md",
+      "sha256": "516855d6a632f4e3b24e00411686a6e1614f00f39683f9ef31807da461310515"
+    },
+    {
+      "basename": "session-05.md",
+      "bytes": 3466,
+      "s1_path": "session-05.md",
+      "s2_path": "cars-and-auto-work/session-05.md",
+      "sha256": "d011d85c2bb7d366a1ef07e5d84e93e82f1f492a6de699bd9b129ae172f6619a"
+    },
+    {
+      "basename": "session-06.md",
+      "bytes": 3205,
+      "s1_path": "session-06.md",
+      "s2_path": "music-and-performance/session-06.md",
+      "sha256": "788ad6c153c11a564dbdb3f9f65247fd33a6760043c6e8a311142602796c5f98"
+    },
+    {
+      "basename": "session-07.md",
+      "bytes": 4052,
+      "s1_path": "session-07.md",
+      "s2_path": "music-and-performance/session-07.md",
+      "sha256": "6463358354f58f0bc4a470e88b53850c81f211d796817e111b4d0612337e6459"
+    },
+    {
+      "basename": "session-08.md",
+      "bytes": 3299,
+      "s1_path": "session-08.md",
+      "s2_path": "travel-and-outdoors/session-08.md",
+      "sha256": "fffa5c86243a08cba5e2eaf8bdfca07ffb9eca3178582c8403978c0f0e43a3fb"
+    },
+    {
+      "basename": "session-09.md",
+      "bytes": 3761,
+      "s1_path": "session-09.md",
+      "s2_path": "cars-and-auto-work/session-09.md",
+      "sha256": "eba88aeeb3808a8004562615d2d37a4d97dfa0408e2c218be6babb238a46e75f"
+    },
+    {
+      "basename": "session-10.md",
+      "bytes": 3701,
+      "s1_path": "session-10.md",
+      "s2_path": "travel-and-outdoors/session-10.md",
+      "sha256": "cfa11f5ec473ef91e8c989408f066befc06b9ad60bf48e795aa39c3e13e9b6ff"
+    },
+    {
+      "basename": "session-11.md",
+      "bytes": 3605,
+      "s1_path": "session-11.md",
+      "s2_path": "music-and-performance/session-11.md",
+      "sha256": "808cc8494eb564e174ce2cf1897ddaf11a070b0b030201f003c9a5fa6266bd89"
+    },
+    {
+      "basename": "session-12.md",
+      "bytes": 3525,
+      "s1_path": "session-12.md",
+      "s2_path": "cars-and-auto-work/session-12.md",
+      "sha256": "b01ae1a41f646b69a49f13695c2801ecd0a92cf2212ff8da7caaece974030002"
+    },
+    {
+      "basename": "session-13.md",
+      "bytes": 3617,
+      "s1_path": "session-13.md",
+      "s2_path": "cars-and-auto-work/session-13.md",
+      "sha256": "ecc6577093ed89f38bd9a032c63a673485fcaf1a161b4b70a3e0767ead49ff8b"
+    },
+    {
+      "basename": "session-14.md",
+      "bytes": 3141,
+      "s1_path": "session-14.md",
+      "s2_path": "cars-and-auto-work/session-14.md",
+      "sha256": "04acd928c9e0b2a2f14f721429a90a4edde07ae3b2c8ce743884830c83ce3ed4"
+    },
+    {
+      "basename": "session-15.md",
+      "bytes": 2922,
+      "s1_path": "session-15.md",
+      "s2_path": "music-and-performance/session-15.md",
+      "sha256": "cb40fc1a017e5c00199b34464dfee2979a779c4c9161870e752f4533c746d895"
+    },
+    {
+      "basename": "session-16.md",
+      "bytes": 4270,
+      "s1_path": "session-16.md",
+      "s2_path": "music-and-performance/session-16.md",
+      "sha256": "f7301ef642250af773df7d88f2aa0a37b27f02fcd1e6a73ce630b25b4f026cc6"
+    },
+    {
+      "basename": "session-17.md",
+      "bytes": 1945,
+      "s1_path": "session-17.md",
+      "s2_path": "cars-and-auto-work/session-17.md",
+      "sha256": "b65cc1a624d02ea0c77aed941c626edb43c9df0bdd1c66f9ea5e30560aae0f91"
+    },
+    {
+      "basename": "session-18.md",
+      "bytes": 3137,
+      "s1_path": "session-18.md",
+      "s2_path": "music-and-performance/session-18.md",
+      "sha256": "00eac53edeb7abd4ca7f9208d9a8a1ef967914e95daf25d303280e0c975540fa"
+    },
+    {
+      "basename": "session-19.md",
+      "bytes": 2873,
+      "s1_path": "session-19.md",
+      "s2_path": "music-and-performance/session-19.md",
+      "sha256": "ec9781b66ae1d7186a3c60f85035790678e35edd1b330a3a4c6e63f152e8886c"
+    },
+    {
+      "basename": "session-20.md",
+      "bytes": 3213,
+      "s1_path": "session-20.md",
+      "s2_path": "music-and-performance/session-20.md",
+      "sha256": "78ed58923e9693185bee59fff6b13a859a337b189dae01c7aab07d53413fdab1"
+    },
+    {
+      "basename": "session-21.md",
+      "bytes": 3969,
+      "s1_path": "session-21.md",
+      "s2_path": "cars-and-auto-work/session-21.md",
+      "sha256": "cdef977b0f5bbc6a84626ae227f578e1d2b23281376ad1340b3641902ecbccf5"
+    },
+    {
+      "basename": "session-22.md",
+      "bytes": 3010,
+      "s1_path": "session-22.md",
+      "s2_path": "cars-and-auto-work/session-22.md",
+      "sha256": "77590f3943c9b00f40b610eed8fe42c55c6b3409228a62c5da5f393bf17629ce"
+    },
+    {
+      "basename": "session-23.md",
+      "bytes": 4366,
+      "s1_path": "session-23.md",
+      "s2_path": "music-and-performance/session-23.md",
+      "sha256": "d216aa57266c0ffbfa5bdc501046982925c488a02df0ee647b068cca9e59a386"
+    },
+    {
+      "basename": "session-24.md",
+      "bytes": 5063,
+      "s1_path": "session-24.md",
+      "s2_path": "music-and-performance/session-24.md",
+      "sha256": "26f24bff1d08d05b830994005aa9b815b62f53a338f8bce287a655f1bb300e28"
+    },
+    {
+      "basename": "session-25.md",
+      "bytes": 6521,
+      "s1_path": "session-25.md",
+      "s2_path": "music-and-performance/session-25.md",
+      "sha256": "c0ce61707a6a04a42038a389ba6063d5d07074e82a063db9b3163b39b66de109"
+    },
+    {
+      "basename": "session-26.md",
+      "bytes": 3383,
+      "s1_path": "session-26.md",
+      "s2_path": "cars-and-auto-work/session-26.md",
+      "sha256": "310e4d5a5d8b38bc070ae037c1a777bdd8421e614c4b4830ec064e6095b4e062"
+    },
+    {
+      "basename": "session-27.md",
+      "bytes": 2675,
+      "s1_path": "session-27.md",
+      "s2_path": "photography/session-27.md",
+      "sha256": "386ea9a1c11a5ff55f39fef5eac540b81c603fe0274717399bc947fc306bd5ac"
+    },
+    {
+      "basename": "session-28.md",
+      "bytes": 7915,
+      "s1_path": "session-28.md",
+      "s2_path": "cars-and-auto-work/session-28.md",
+      "sha256": "38773c9103ef2f83d7e1e408c155596697209377b8e8a3a6b62fc60fd2e61957"
+    },
+    {
+      "basename": "session-29.md",
+      "bytes": 3867,
+      "s1_path": "session-29.md",
+      "s2_path": "music-and-performance/session-29.md",
+      "sha256": "83f82b45a8f57071fb49ad402bdfa38ccc91ef49095e992dc02a6afbea27683f"
+    },
+    {
+      "basename": "session-30.md",
+      "bytes": 4904,
+      "s1_path": "session-30.md",
+      "s2_path": "photography/session-30.md",
+      "sha256": "438f233c5114acec2abb22a36bc409da14b65d14f8832b8cb2b2832e6fbbf9d0"
+    }
+  ],
+  "schema_version": 1,
+  "source_artifact_id": "locomo/conv-50/s1-flat/v1",
+  "source_content_sha256": "5a58a8cca8616b91f3c231671271f6dbbedc669330b91e410980223ad2488ad8",
+  "target_artifact_id": "locomo/conv-50/s2-foldered/v1",
+  "target_content_sha256": "5a58a8cca8616b91f3c231671271f6dbbedc669330b91e410980223ad2488ad8",
+  "target_layout_sha256": "13060ab52750d7b9ca0ab5b667a6aac69fb38021190bbff7ebd7336150508d6a"
+}

@@ -26,8 +26,8 @@
 ## 为什么还不能说“完全复现”
 
 1. 论文没有发布原始 prompt 常量、完整函数工具 JSON 包装、上下文摘要器 prompt、固定 user turn 的精确措辞。公开排版文本只能支持高保真转录。
-2. 本项目已固定 LoCoMo10、`conv-50` canonical records 和 S1 store，但尚未完成正式 S2/S3、统一检索/回答/评测 runner、八题并发和 judge，因此尚不能复现论文表格分数。
-3. NUS API 已用于 Alice 端到端管理试跑，但本轮 Foldering Agent 只完成离线接线和 FakeProvider 测试，尚未对正式 S1 调用 API。
+2. 本项目已固定 LoCoMo10、`conv-50` canonical records，并完成正式 S1 与 S2 stores；但尚未完成正式 S3、统一检索/回答/评测 runner、八题并发和 judge，因此仍不能复现论文表格分数。
+3. 正式 S2 已用一次 NUS API episode 构建：requested alias 为 `coding`、served model 为 `qwen3.8:27b`，12 次模型调用完成 32 次 `view` 与 30 次 `rename`，随后通过离线完整性验证。该运行不是论文所用 backbone。
 4. NUS 当前实际 served model 不是论文的 `gpt-5.4-mini`；即便兼容函数调用，模型和提供商缓存/采样行为仍与论文不同。
 
 先运行 `python3 -m fs_memory_lab.cli config` 核对默认值；再给终端设置 `FSMEM_API_KEY`，用演示输入做一次低成本接入验证。不要把密钥贴到聊天或代码里。

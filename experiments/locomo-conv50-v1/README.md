@@ -63,18 +63,33 @@ python3 -m fs_memory_lab.cli foldering-prompt
 
 安全执行层已实现于 `fs_memory_lab/s2.py`。它会先核对冻结的 S1 manifest 和30个正式文件，再建立独立 staging；模型只操作 staging。成功 episode 必须通过文件数、basename 集、逐文件完整/正文 hash、根目录残留、目录 slug、空目录和路径敏感 layout hash 等全量 gate，随后才发布 store、path map、trace、manifest，并最后写入 `s2-foldered.COMMITTED`。API、模型或 gate 失败只会产生位于 `local-runs/` 的隔离诊断，不会生成可被下游接受的正式 S2。
 
-当前正式 S1 的离线 preflight 已通过，但尚未调用 API，也尚未生成 `stores/s2-foldered/`。在仓库根目录依次执行：
+正式 S2 已于 run `20261005T155659458241Z-9391e1f0` 一次构建成功，并由独立离线 verifier 重新计算全部正式产物。实际请求模型别名为 `coding`，NUS SoC 返回 `qwen3.8:27b`；因此这是论文方法在本地 backbone 上的复现，不能表述为论文同模型复现。
+
+| 结果 | 正式值 |
+| --- | --- |
+| 文件与目录 | 30 个 session、4 个一级主题目录、根目录 0 个 `.md` |
+| 主题目录 | `cars-and-auto-work` 11；`music-and-performance` 14；`photography` 2；`travel-and-outdoors` 3 |
+| 内容 hash | `5a58a8cca8616b91f3c231671271f6dbbedc669330b91e410980223ad2488ad8`，与 S1 完全相同 |
+| 布局 hash | `13060ab52750d7b9ca0ab5b667a6aac69fb38021190bbff7ebd7336150508d6a` |
+| 模型调用 | 12 rounds；32 次 `view`；30 次 `rename`；合计 62 次工具调用 |
+| Token | prompt 380,653；completion 15,096；total 395,749 |
+| 运行代码 | Git commit `b05732e0886ea56d6813021e7e3c01b24c7d10a7` |
+
+正式产物分别位于：
+
+```text
+stores/s2-foldered/                       # 供 E3/E4 共用的只读 store
+manifests/s2-foldered.json               # 输入、配置、成本与完整性承诺
+manifests/s2-foldered-path-map.json      # S1 path -> S2 path
+traces/s2-foldering.json                 # 12 轮完整 agent trace
+manifests/s2-foldered.COMMITTED          # 最后发布的有效性标记
+```
+
+当前 checkout 已经存在正式产物，不应再次运行 `build-s2`。在仓库根目录随时可以完全离线复核：
 
 ```bash
-# 完全离线；应先看到 status=ready
-python3 -m fs_memory_lab.cli s2-preflight
-
-# 需要已在当前终端安全设置 API 环境变量；正式运行只接受干净的已提交 Git 状态
-python3 -m fs_memory_lab.cli check-api
-python3 -m fs_memory_lab.cli build-s2
-
-# 完全离线地重新计算所有正式产物 hash 和目录完整性
+# 完全离线地重新计算 store、manifest、path map、trace 和 marker 的交叉一致性
 python3 -m fs_memory_lab.cli verify-s2
 ```
 
-`build-s2` 不提供覆盖模式。只要正式 store、manifest、path map、trace 或 COMMITTED 标记中任意一个已经存在，它就会在调用模型前停止。真实模型的 taxonomy 不保证多次相同；manifest 会分别记录 requested model alias、API 返回的 served model、Prompt/code hash、轮数、工具调用和 token usage。当前 adapter 没有向提供商发送 seed，因此不能把本地 Python seed 42 宣称为真实 LLM 采样可重复性保证。
+`build-s2` 不提供覆盖模式。只要正式 store、manifest、path map、trace 或 COMMITTED 标记中任意一个已经存在，它就会在调用模型前停止。真实模型的 taxonomy 不保证多次相同；manifest 分别记录 requested model alias、API 返回的 served model、Prompt/code hash、轮数、工具调用和 token usage。当前 adapter 没有向提供商发送 seed，因此不能把本地 Python seed 42 宣称为真实 LLM 采样可重复性保证，也不能为了挑选更好看的 taxonomy 删除后重跑。

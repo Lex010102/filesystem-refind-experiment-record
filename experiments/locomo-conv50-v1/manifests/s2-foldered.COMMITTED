@@ -1,0 +1,11 @@
+{
+  "artifact_id": "locomo/conv-50/s2-foldered/v1",
+  "committed_at": "2026-10-05T16:01:34.809789Z",
+  "content_sha256": "5a58a8cca8616b91f3c231671271f6dbbedc669330b91e410980223ad2488ad8",
+  "layout_sha256": "13060ab52750d7b9ca0ab5b667a6aac69fb38021190bbff7ebd7336150508d6a",
+  "manifest_sha256": "4858e430f3c197d4f718ea5839596597c3dbbd885e3d1fc654e982a90dc707ac",
+  "path_map_sha256": "d98e2d8d00bd6081e35ac5a430cbf4679428a3c7bd21f155947444fc2f377a9f",
+  "run_id": "20261005T155659458241Z-9391e1f0",
+  "schema_version": 1,
+  "trace_sha256": "86cddbad5f2e406d672f1867e92b87c581ebfdf21181fa16a30924f82b55f965"
+}

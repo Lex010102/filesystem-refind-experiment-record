@@ -102,7 +102,7 @@ ReFind 原文对 `turn` 使用了不同定义：一个 user utterance 和对应 
 
 `conv-50` 的 568 个 source turns 中有 125 个带 `blip_caption`。158 道非对抗题中，70 道的 gold evidence 至少涉及一个图片 turn；若删除全部图片 turn，46 道题会失去所有 gold evidence。因此不得删除图片 turn。Filesystem 论文没有披露媒体字段如何渲染；上述做法是本项目基于 LoCoMo 原论文 text-only QA 设置制定并公开的统一 protocol，不能冒充 Filesystem 作者原配置。
 
-ReFind 论文没有在 LoCoMo 上实验，其报告范围是 text-only chat history，也没有 URL、caption 或视觉模型的处理规则。因此，将 `blip_caption` 纳入 LoCoMo 上的 ReFind-style 检索同样属于本项目的适配协议。当前已经实现共享 renderer 和正式 S1 builder；S2、正式 S3 benchmark builder 与 R2 尚未实现。S1 中 caption 已作为文字写入，URL 仍未被写入或访问。
+ReFind 论文没有在 LoCoMo 上实验，其报告范围是 text-only chat history，也没有 URL、caption 或视觉模型的处理规则。因此，将 `blip_caption` 纳入 LoCoMo 上的 ReFind-style 检索同样属于本项目的适配协议。当前已经实现共享 renderer、正式 S1 builder 和正式 S2 store；正式 S3 benchmark builder 与 R2 尚未实现。S1/S2 中 caption 已作为文字写入，URL 仍未被写入或访问。
 
 ## Adversarial 问题的处理
 
@@ -139,7 +139,7 @@ Filesystem 论文只明确说明排除 adversarial category，没有进一步公
 
 这一步复现了 Filesystem 论文“一次 session 一个原文文件、平铺、零模型成本”的 S1 语义。论文未公开逐字节 Markdown 模板，因此 frontmatter、caption 和双来源标签的具体排版属于本项目已公开的确定性 protocol，而不是作者代码的原样复制。
 
-## S2 Foldering Agent 已实现，但尚未正式建库
+## S2 Foldering Agent 与正式建库已完成
 
 已新增独立 `foldering` 角色和 `fs_memory_lab/foldering_prompt.py`。论文没有公开 Foldered sessions 的建库 prompt 全文，因此该 prompt 明确标为 `paper-constrained-local-v1`：它复用论文的 taxonomy 原则，并把 Section 3 的 move-only、zero-byte-edits 要求操作化，禁止使用题目、答案、类别、gold evidence 或论文结果反推目录。
 
@@ -160,7 +160,7 @@ Foldering Agent 与 S3 Management Agent 完全分开：
 3. 每个文件夹的具体名称；
 4. 每个完整 session 唯一归入哪个文件夹。
 
-例如，`travel-planning/`、`family-and-relationships/` 只能是说明机制的假设例子，并不是当前数据的预定标签，也不是论文给出的固定 taxonomy。实际 S2 在 API 尚未运行前没有任何已知目录名。Agent 不得读取 QA、gold answer、category、gold evidence，也不得为了模仿论文报告结果而追求固定目录数量。因此目录名称应当是对 30 个 session 内容的无监督归纳结果，而不是从评测题目反推得到。
+例如，`travel-planning/`、`family-and-relationships/` 只能是说明机制的假设例子，并不是预定标签，也不是论文给出的固定 taxonomy。正式运行前没有任何已知目录名；最终出现的 4 个目录由 Agent 从 30 个 session 无监督归纳得到。Agent 没有读取 QA、gold answer、category、gold evidence，也没有为了模仿论文报告结果而追求固定目录数量。
 
 职责划分如下：
 
@@ -221,10 +221,37 @@ PRECHECK → LOCKED → STAGED → AGENT_RUNNING → AGENT_SUCCEEDED
 
 专门的 S2 测试覆盖成功发布、正式30文件集成、输入篡改、分类不完整、provider 中途异常、completion 截断、round limit、畸形 tool calls、内容变化、改名、额外/重复文件、symlink、空目录、Prompt/task/tool-schema freeze、写路径与 S1 隔离、并发锁、密钥错误脱敏、发布阶段回滚和 artifact cross-link 验证。当前全套离线测试为47项，全部通过。
 
-正式 `conv-50` 离线 preflight 已通过：30个文件、114,456 bytes，S1 manifest SHA 为 `5c5900c333c8f85463f038448560cb4357f1161d6ed43e9fbc86809ba7916d3c`，content SHA 为 `5a58a8cca8616b91f3c231671271f6dbbedc669330b91e410980223ad2488ad8`，Prompt SHA 为 `0cec4a3d80877ee303458d3dd596e3d981e14f0782fa248d3df6ba990ebda778`。当前仍没有 `stores/s2-foldered/`，也尚未调用学校 API。
+正式 `conv-50` 离线 preflight 先确认了 30 个文件、114,456 bytes，S1 manifest SHA 为 `5c5900c333c8f85463f038448560cb4357f1161d6ed43e9fbc86809ba7916d3c`，content SHA 为 `5a58a8cca8616b91f3c231671271f6dbbedc669330b91e410980223ad2488ad8`，Prompt SHA 为 `0cec4a3d80877ee303458d3dd596e3d981e14f0782fa248d3df6ba990ebda778`。随后 `check-api` 确认 requested alias `coding` 的 function calling 正常，NUS 实际 served model 为 `qwen3.8:27b`。
+
+### 正式 S2 一次运行结果
+
+正式构建只执行一次，没有根据目录外观或未来问答结果重跑择优：
+
+| 字段 | 结果 |
+| --- | --- |
+| Run ID | `20261005T155659458241Z-9391e1f0` |
+| 本地时间 | 2026-10-05 23:56:59 至 2026-10-06 00:01:34（约 4 分 35 秒） |
+| 代码版本 | `b05732e0886ea56d6813021e7e3c01b24c7d10a7` |
+| 模型 | requested `coding`；served `qwen3.8:27b`；fingerprint `vllm-0.26.0-b73e56ef` |
+| 模型/工具调用 | 12 次 LLM call；32 次 `view`；30 次 `rename`；总工具调用 62 |
+| Token usage | prompt 380,653；completion 15,096；total 395,749 |
+| 输入/输出 | 30 个 session；114,456 bytes；4 个一级主题目录；根目录 0 个 `.md` |
+| 内容 hash | `5a58a8cca8616b91f3c231671271f6dbbedc669330b91e410980223ad2488ad8`，与 S1 完全一致 |
+| 布局 hash | `13060ab52750d7b9ca0ab5b667a6aac69fb38021190bbff7ebd7336150508d6a` |
+
+实际 taxonomy 和唯一归属如下：
+
+| 目录 | 数量 | Sessions |
+| --- | ---: | --- |
+| `cars-and-auto-work/` | 11 | 04, 05, 09, 12, 13, 14, 17, 21, 22, 26, 28 |
+| `music-and-performance/` | 14 | 02, 03, 06, 07, 11, 15, 16, 18, 19, 20, 23, 24, 25, 29 |
+| `photography/` | 2 | 27, 30 |
+| `travel-and-outdoors/` | 3 | 01, 08, 10 |
+
+程序化 gate 和随后独立执行的 `verify-s2` 均通过：30 个 basename 恰好各出现一次，每个文件与 S1 逐字节相同，没有根目录残留、symlink、非 Markdown 文件或空目录；S1 在 episode 后也再次通过校验。正式产物位于 `experiments/locomo-conv50-v1/` 下的 `stores/s2-foldered/`、`manifests/s2-foldered.json`、`manifests/s2-foldered-path-map.json`、`traces/s2-foldering.json` 和最后发布的 `manifests/s2-foldered.COMMITTED`。
+
+这次运行需要正确解读：它证明本地 S2 pipeline 和“LLM 自定 taxonomy、整文件零字节移动”已经真实跑通；它不证明这 4 个目录是唯一或最优 taxonomy，也不等于使用论文 `gpt-5.4-mini` 的分数复现。Adapter 没有把 seed 发送给服务端，所以不能声称重新运行会得到相同目录。
 
 ## 下一步
 
-先提交并冻结已经通过离线测试的 runner，使正式 manifest 能记录一个干净的 Git commit；随后在同一终端用学校 API 执行一次 `check-api`，再运行且只运行一次 `build-s2`。发布成功后必须立即离线执行 `verify-s2`，人工查看目录树、trace、served model 和 usage，再把正式 S2 产物及本节结果提交 GitHub。不能根据下游问答分数反复重跑并挑选最好 taxonomy。
-
-S2 完成后再实现 ReFind-style R2；仍需先将 exchange 派生规则、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则写成测试。此时不应先运行 S3 管理 LLM，也不应为六个条件分别切一次原始数据。
+冻结并提交本次正式 S2 产物后，实现 ReFind-style R2；仍需先将 exchange 派生规则、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则写成测试。随后再实现 evidence-only R1，使 E1–E4 能共享统一 EvidenceBundle 与 Answerer。此时不应先运行 S3 管理 LLM，也不应为六个条件分别切一次原始数据。
