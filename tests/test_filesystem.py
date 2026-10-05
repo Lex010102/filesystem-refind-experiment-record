@@ -241,6 +241,20 @@ class FilesystemTest(unittest.TestCase):
         self.assertNotIn("max_completion_tokens", payload)
         self.assertEqual(result["message"]["tool_calls"][0]["function"]["name"], "view")
 
+    def test_compatible_api_adapter_caps_response_bytes(self):
+        provider = CompatibleChatProvider(
+            "https://api.example.test/v1",
+            "coding",
+            "test-key",
+            api_style="portable",
+            max_response_bytes=10,
+        )
+        response = MagicMock()
+        response.__enter__.return_value.read.return_value = b"x" * 11
+        with patch("urllib.request.urlopen", return_value=response):
+            with self.assertRaisesRegex(RuntimeError, "response exceeded 10 bytes"):
+                provider.complete([{"role": "user", "content": "hello"}], [], SEARCH)
+
     def test_http_error_reports_parameter_but_redacts_key(self):
         secret = "test-api-key-not-a-real-secret"
         provider = CompatibleChatProvider("https://api.example.test/v1", "coding", secret,
@@ -323,10 +337,12 @@ class FilesystemTest(unittest.TestCase):
             S3_USER_INSTRUCTION + "\n\n" + payload,
         )
 
-    def test_s2_preflight_and_verify_cli_routes_are_offline(self):
+    def test_s2_and_s3_preflight_and_verify_cli_routes_are_offline(self):
         for command, target in (
             ("s2-preflight", "fs_memory_lab.cli.preflight_s2_build"),
             ("verify-s2", "fs_memory_lab.cli.verify_published_s2"),
+            ("s3-preflight", "fs_memory_lab.cli.preflight_s3_build"),
+            ("verify-s3", "fs_memory_lab.cli.verify_published_s3"),
         ):
             with self.subTest(command=command), patch(
                 "sys.argv", ["fs-memory-lab", "--project", str(self.base), command]
@@ -372,6 +388,8 @@ class FilesystemTest(unittest.TestCase):
         class CompactProvider(FakeProvider):
             def complete(self, messages, tools, config):
                 result = super().complete(messages, tools, config)
+                if not tools:
+                    result["finish_reason"] = "stop"
                 if len(self.tool_names) == 4:
                     result["usage"]["prompt_tokens"] = 97001
                 return result
@@ -384,6 +402,26 @@ class FilesystemTest(unittest.TestCase):
         self.assertTrue(any(item.get("compaction") for item in result.usage))
         self.assertIn("Running summary", provider.last_messages[2]["content"])
         self.assertEqual(result.rounds, 5)
+
+    def test_compaction_rejects_a_truncated_summary(self):
+        calls = [{"role": "assistant", "content": None, "tool_calls": [
+            {"id": f"call_{i}", "type": "function", "function": {
+                "name": "view", "arguments": '{"path":"/memories"}'}}]} for i in range(4)]
+
+        class TruncatedCompactProvider(FakeProvider):
+            def complete(self, messages, tools, config):
+                result = super().complete(messages, tools, config)
+                if not tools:
+                    result["finish_reason"] = "length"
+                if len(self.tool_names) == 4:
+                    result["usage"]["prompt_tokens"] = 97001
+                return result
+
+        provider = TruncatedCompactProvider(calls + [
+            {"role": "assistant", "content": "Incomplete running summary."},
+        ])
+        with self.assertRaisesRegex(RuntimeError, "did not finish cleanly"):
+            AgentRunner(self.fs, provider).run("search", "What is stored?")
 
 
 if __name__ == "__main__":

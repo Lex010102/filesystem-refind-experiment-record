@@ -102,7 +102,7 @@ ReFind 原文对 `turn` 使用了不同定义：一个 user utterance 和对应 
 
 `conv-50` 的 568 个 source turns 中有 125 个带 `blip_caption`。158 道非对抗题中，70 道的 gold evidence 至少涉及一个图片 turn；若删除全部图片 turn，46 道题会失去所有 gold evidence。因此不得删除图片 turn。Filesystem 论文没有披露媒体字段如何渲染；上述做法是本项目基于 LoCoMo 原论文 text-only QA 设置制定并公开的统一 protocol，不能冒充 Filesystem 作者原配置。
 
-ReFind 论文没有在 LoCoMo 上实验，其报告范围是 text-only chat history，也没有 URL、caption 或视觉模型的处理规则。因此，将 `blip_caption` 纳入 LoCoMo 上的 ReFind-style 检索同样属于本项目的适配协议。当前已经实现共享 renderer、正式 S1 builder 和正式 S2 store；正式 S3 benchmark builder 与 R2 尚未实现。S1/S2 中 caption 已作为文字写入，URL 仍未被写入或访问。
+ReFind 论文没有在 LoCoMo 上实验，其报告范围是 text-only chat history，也没有 URL、caption 或视觉模型的处理规则。因此，将 `blip_caption` 纳入 LoCoMo 上的 ReFind-style 检索同样属于本项目的适配协议。当前已经实现共享 renderer、正式 S1 builder、正式 S2 store 与 S3 safe runner；正式 S3 store 与 R2 尚未构建或实现。S1/S2 中 caption 已作为文字写入，URL 仍未被写入或访问。
 
 ## Adversarial 问题的处理
 
@@ -219,7 +219,7 @@ PRECHECK → LOCKED → STAGED → AGENT_RUNNING → AGENT_SUCCEEDED
 
 真实模型的目录树不能宣称确定性：当前 adapter 没有把 Python `RANDOM_SEED=42` 发送给 API。Manifest 会明确记录 `seed_sent_to_provider: false`；我们只保证同一输入和同一确定性 FakeProvider 脚本得到同一内容/layout hash。
 
-专门的 S2 测试覆盖成功发布、正式30文件集成、输入篡改、分类不完整、provider 中途异常、completion 截断、round limit、畸形 tool calls、内容变化、改名、额外/重复文件、symlink、空目录、Prompt/task/tool-schema freeze、写路径与 S1 隔离、并发锁、密钥错误脱敏、发布阶段回滚和 artifact cross-link 验证。当前全套离线测试为47项，全部通过。
+专门的 S2 测试覆盖成功发布、正式30文件集成、输入篡改、分类不完整、provider 中途异常、completion 截断、round limit、畸形 tool calls、内容变化、改名、额外/重复文件、symlink、空目录、Prompt/task/tool-schema freeze、写路径与 S1 隔离、并发锁、密钥错误脱敏、发布阶段回滚和 artifact cross-link 验证；S2 专门测试及当前全套离线测试均通过。
 
 正式 `conv-50` 离线 preflight 先确认了 30 个文件、114,456 bytes，S1 manifest SHA 为 `5c5900c333c8f85463f038448560cb4357f1161d6ed43e9fbc86809ba7916d3c`，content SHA 为 `5a58a8cca8616b91f3c231671271f6dbbedc669330b91e410980223ad2488ad8`，Prompt SHA 为 `0cec4a3d80877ee303458d3dd596e3d981e14f0782fa248d3df6ba990ebda778`。随后 `check-api` 确认 requested alias `coding` 的 function calling 正常，NUS 实际 served model 为 `qwen3.8:27b`。
 
@@ -271,7 +271,7 @@ S3 不应从“立刻把 568 条对话发给学校 API”开始。固定顺序�
 7. **先做 smoke test，再做一次正式 build。** Smoke 只验证 API function calling、工具权限、日期/locator 可见性和失败恢复，输出隔离在 `local-runs/`；正式 85-chunk 建库只启动一次，不按最终树是否“好看”重跑择优。
 8. **离线验收并冻结。** 检查 frontmatter、路径、locator 可追踪性、root 边界、完整 trace、每 chunk 成本、最终 dirs/files/sections/KB/cross-references，并写 COMMITTED 标记；之后 E5/E6 必须共用同一个只读 S3 snapshot。
 
-本次只执行了第 1–3 步。还没有创建正式 S3 memory store，没有调用学校 API，也没有用未来 QA 检查或优化 chunks。
+本小节记录 chunk 冻结当时的阶段：当时只执行了第 1–3 步。后续第 4–6 步的完成情况见文末追加记录；截至目前仍没有创建正式 S3 memory store，没有调用学校 API，也没有用未来 QA 检查或优化 chunks。
 
 ### 论文规则核对与 session 边界修正
 
@@ -333,7 +333,7 @@ python3 -m fs_memory_lab.s3_chunks
 python3 -m unittest tests.test_s3_chunks -v
 ```
 
-下一步不是重新切片，也不是立刻跑正式 85 块；应先完成上面第 4 步：逐字核对并冻结 S3 Builder Prompt、LoCoMo locator extension 和固定 user wrapper，再实现只接受本 manifest 的安全 runner。
+这段结论是 chunk 冻结时的阶段性下一步；后文记录 prompt、工具/runtime contract 与 safe runner 已依序完成。
 
 ## 2026-10-06：S3 Management Prompt 原文提取与冻结
 
@@ -349,4 +349,58 @@ python3 -m unittest tests.test_s3_chunks -v
 
 论文只说 benchmark-specific Prompt 2 appended after Prompt 1，并没有独立序列化两块之间的连接字节；因此一个换行的合并边界仍明确标为本地冻结选择。论文也没有公开每个 chunk 的精确 user message。本项目把它单独冻结在 `fs_memory_lab/s3_protocol.py`：`Integrate this conversation chunk into the existing memory filesystem.` + 两个换行 + 原样 `chunk_payload`。该 wrapper 版本为 `project-defined-s3-user-wrapper-v1`，不能写成作者原 prompt。
 
-机器可读 contract 位于 `experiments/locomo-conv50-v1/manifests/s3-management-prompt.json`。本步骤成本仍为 0 LLM calls / 0 tokens / 0 tool calls，也没有创建正式 S3 memory。下一步进入路线第 5–6 步：冻结七工具 schema 与运行配置，并实现只能消费既定 85-chunk manifest 的安全 runner；完成离线测试后才做隔离 smoke test。
+机器可读 contract 位于 `experiments/locomo-conv50-v1/manifests/s3-management-prompt.json`。本步骤成本仍为 0 LLM calls / 0 tokens / 0 tool calls，也没有创建正式 S3 memory。随后已继续完成路线第 5–6 步，详见下一节。
+
+## 2026-10-06：冻结 S3 七工具/runtime contract，并实现 safe runner
+
+路线第 5–6 步已经完成，但真实 API 阶段尚未开始。本次没有读取 API key、没有向 NUS 发请求、没有做 smoke test，也没有生成正式 `stores/s3-curated/`。
+
+### 冻结了什么
+
+Management Agent 的有序七工具 profile 固定为 `view/create/str_replace/insert/delete/rename/grep`。论文 Table 12 提供工具描述、参数与 required 标志，但没有发布完整 function wrapper 或 JSON 序列化；所以 wrapper 继续明确标记为本地重建，而不是作者原代码。
+
+机器可读 runtime contract 位于 `experiments/locomo-conv50-v1/manifests/s3-management-runtime.json`，同时锁住输入、prompt、工具、模型适配、上下文压缩、episode 顺序、安全上限和发布规则：
+
+| 对象 | 固定 SHA-256 |
+| --- | --- |
+| S3 stream manifest 文件 | `6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5` |
+| S3 prompt contract 文件 | `2b16c9041829666e3825d2d349c689b6cc1ce4b9de6e367f35a123c485918a20` |
+| S3 runtime contract 文件 | `ae480c40162e5262f74ef3fb5cb64314ad2507a744d59122c019039e8bb3017f` |
+| Runtime config canonical JSON | `da352bbdcbc12fa68169ac5ea8307fa5238f506b7040473f5272d7729ad18be2` |
+| 有序七工具 profile | `e4541dedafbd645e6e11f8847c95283b8738c668915b006f06dd0dea57c0945e` |
+| 有序七工具 schema canonical JSON | `3f4b2edc2045348743961231bc174c973e9c8a5147225bb9caece1fc7a254b56` |
+| 实际 wire-order 紧凑 JSON | `f365069d4e826f8489273b85496ebdf3a61b93bbd7678baef531cec273f3c282` |
+
+这里特意没有混写“论文目标配置”和“本地真实执行配置”：
+
+- 论文目标角色配置仍是 `gpt-5.4-mini`、high reasoning、32,768 completion-token cap、每个 build episode 最多 60 rounds；
+- 本地拟执行配置冻结为 NUS SoC `https://soclaas-api.comp.nus.edu.sg/v1/chat/completions`、`api_style=portable`、requested alias `coding`、预期 served model `qwen3.8:27b`、300 秒 timeout 和 20 MB response cap；
+- portable adapter 不发送 `reasoning_effort`、`max_completion_tokens`、temperature 或 seed。Python seed 42 仍不会使真实模型采样确定；若返回的 served model 缺失或不是固定值，runner 会失败而不是悄悄接受另一 backbone；
+- 96k token 触发、保留最近 3 轮的 compaction 形状来自论文，但具体摘要 prompt、旧消息序列化和 8,192-token 单轮摘要 cap 是作者未公开时采用的本地近似，也已经随 runtime contract 固定。
+
+### Safe runner 的执行边界
+
+新增 `fs_memory_lab/s3_runner.py` 以及三个 CLI：
+
+```bash
+python3 -m fs_memory_lab.cli s3-preflight  # 完全离线
+python3 -m fs_memory_lab.cli build-s3      # 以后才运行的正式真实 API 构建
+python3 -m fs_memory_lab.cli verify-s3     # 正式发布后完全离线复核
+```
+
+正式 `build-s3` 只允许 clean、40 位 Git commit 和 `CompatibleChatProvider`；测试运行必须显式使用隔离的 test artifact ID 与 `test-*` revision，不能产生正式 artifact。执行时从空 staging store 出发，85 chunks 按全局序号串行处理，每块都创建新的 Agent 聊天上下文，只有 filesystem 状态跨块保留。发送前重验 chunk hash，每块前复制 checkpoint，逐事件落盘并 `fsync` trace；工具执行后检查文件/目录/深度/字节/参数/调用次数上限，episode 后检查 frontmatter、合法且不超前的 locator、cross-reference、文件 hash chain 与列表/表格事实候选的内联 locator。
+
+正式目标只会在 85 个 episodes 全部通过全局 gate 后发布：先 store 和 trace，再 manifest，最后写 `s3-curated.COMMITTED`。任何模型、API、tool、gate 或 publication 异常都会回滚已发布部分，把 staging、trace、checkpoints 和脱敏 failure record 隔离在 `local-runs/s3-management/`，不留下可被下游当成成功快照的正式结果。正式运行期间还会在首尾核对 Git commit，防止代码中途变化。
+
+### 离线验收结果与不能声称的内容
+
+deterministic fake provider 已把完整 85-episode 流从空 store 跑到发布与独立 `verify-s3`，并覆盖 freeze drift、输入篡改、provider/profile/served-model 漂移、未来 locator、缺 citation 的列表事实、资源上限、并发锁、失败 checkpoint/quarantine、发布回滚和 artifact 交叉校验；当前全套离线测试通过。
+
+这只能证明安全 runner 和验证协议在受控响应下能完整执行，不能写成“学校 API 已跑通 S3”或“正式 S3 memory 已完成”。当前 verifier 也有两个需要在报告中公开的边界：
+
+1. 它验证每轮 trace、工具事件、前后文件 inventory、store hash chain 与最终 artifact 的内部一致性，但不重新执行整段 tool trace，因此不是每个 tool call 与文件变化之间的独立因果 replay 证明。
+2. 它能机械拒绝没有 locator 的列表/表格事实候选，并验证所有出现的 locator 合法且当时已经可见；但自由自然语言段落是否把每个可验证事实都完整引用，无法只靠正则完全判断，正式结果仍需抽样人工审计。
+
+### 当前下一步
+
+先在 `local-runs/` 做一次低成本、可丢弃的 NUS 真实 API smoke test，只检查当前路由、函数调用、locator 写入、受限文件操作和失败恢复。Smoke 通过后，冻结 clean commit，再执行唯一一次正式 `build-s3`；发布完成后立即运行 `verify-s3` 并记录成本与最终 hashes。在此之前，`stores/s3-curated/`、`manifests/s3-curated.json`、`traces/s3-management/` 和 `manifests/s3-curated.COMMITTED` 都应保持不存在。

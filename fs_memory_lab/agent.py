@@ -22,6 +22,16 @@ from .paper_tools import (FOLDERING_PROFILE, FOLDERING_TOOL_DEFINITIONS,
                           MANAGEMENT_PROFILE, SEARCH_PROFILE, TOOL_DEFINITIONS)
 
 
+COMPACTION_SYSTEM_PROMPT = (
+    "Summarize the older memory-agent interaction for continuation. Preserve all facts, "
+    "source locators, tool outcomes, unresolved work, and relevant file paths. Do not add "
+    "new facts. Return only the running summary."
+)
+COMPACTION_USER_PREFIX = "Running summary of earlier turns:\n"
+COMPACTION_SUMMARY_MAX_COMPLETION_TOKENS = 8192
+COMPACTION_SUMMARY_MAX_ROUNDS = 1
+
+
 class ChatProvider(Protocol):
     def complete(self, messages: list[dict], tools: list[dict], config: RoleConfig) -> dict: ...
 
@@ -30,7 +40,7 @@ class CompatibleChatProvider:
     """Non-streaming /chat/completions adapter; no vendor SDK or key file required."""
 
     def __init__(self, base_url: str, model: str | None, api_key: str, timeout: int = 300,
-                 api_style: str = "paper"):
+                 api_style: str = "paper", max_response_bytes: int = 20_000_000):
         if not base_url or not api_key:
             raise ValueError("Base URL and API key are required")
         parsed = urlparse(base_url)
@@ -38,11 +48,14 @@ class CompatibleChatProvider:
             raise ValueError("Use HTTPS for remote API endpoints")
         if api_style not in {"paper", "portable"}:
             raise ValueError("FSMEM_API_STYLE must be paper or portable")
+        if max_response_bytes < 1:
+            raise ValueError("max_response_bytes must be positive")
         self.endpoint = base_url.rstrip("/") + "/chat/completions"
         self.model = model
         self.api_key = api_key
         self.timeout = timeout
         self.api_style = api_style
+        self.max_response_bytes = max_response_bytes
 
     @classmethod
     def from_environment(cls) -> "CompatibleChatProvider":
@@ -98,7 +111,12 @@ class CompatibleChatProvider:
         )
         try:
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
-                data = json.loads(response.read().decode("utf-8"))
+                raw = response.read(self.max_response_bytes + 1)
+                if len(raw) > self.max_response_bytes:
+                    raise RuntimeError(
+                        f"API response exceeded {self.max_response_bytes} bytes"
+                    )
+                data = json.loads(raw.decode("utf-8"))
         except urllib.error.HTTPError as exc:
             raise RuntimeError(self._safe_http_error(exc)) from exc
         except urllib.error.URLError as exc:
@@ -149,13 +167,23 @@ class AgentRunError(RuntimeError):
 
 class AgentRunner:
     def __init__(self, memory: MemoryFS, provider: ChatProvider, *, max_rounds: int | None = None,
-                 event_sink: Callable[[dict], None] | None = None):
+                 event_sink: Callable[[dict], None] | None = None,
+                 tool_hook: Callable[[str, str, dict], None] | None = None,
+                 max_tool_calls_per_response: int | None = None,
+                 max_tool_calls_per_episode: int | None = None):
         if max_rounds is not None and max_rounds < 1:
             raise ValueError("max_rounds must be positive")
+        if max_tool_calls_per_response is not None and max_tool_calls_per_response < 1:
+            raise ValueError("max_tool_calls_per_response must be positive")
+        if max_tool_calls_per_episode is not None and max_tool_calls_per_episode < 1:
+            raise ValueError("max_tool_calls_per_episode must be positive")
         self.memory = memory
         self.provider = provider
         self.max_rounds = max_rounds
         self.event_sink = event_sink
+        self.tool_hook = tool_hook
+        self.max_tool_calls_per_response = max_tool_calls_per_response
+        self.max_tool_calls_per_episode = max_tool_calls_per_episode
 
     def _emit(self, trace: list[dict], event: dict) -> None:
         trace.append(event)
@@ -167,12 +195,21 @@ class AgentRunner:
         """Paper-shaped summary+3-round compaction; exact summarizer is unpublished."""
         keep_start = round_starts[-CONTEXT_COMPACTION_KEEP_ROUNDS]
         old_text = json.dumps(messages[2:keep_start], ensure_ascii=False)
-        summary_config = RoleConfig(config.model, config.reasoning_effort, 8192, 1)
+        summary_config = RoleConfig(
+            config.model,
+            config.reasoning_effort,
+            COMPACTION_SUMMARY_MAX_COMPLETION_TOKENS,
+            COMPACTION_SUMMARY_MAX_ROUNDS,
+        )
         request = [
-            {"role": "system", "content": "Summarize the older memory-agent interaction for continuation. Preserve all facts, source locators, tool outcomes, unresolved work, and relevant file paths. Do not add new facts. Return only the running summary."},
+            {"role": "system", "content": COMPACTION_SYSTEM_PROMPT},
             {"role": "user", "content": old_text},
         ]
         result = self.provider.complete(request, [], summary_config)
+        if result.get("finish_reason") != "stop":
+            raise RuntimeError(
+                "Context compaction did not finish cleanly; expected finish_reason='stop'"
+            )
         summary = result["message"].get("content")
         if not isinstance(summary, str) or not summary.strip():
             raise RuntimeError("Context compaction did not return a summary")
@@ -180,8 +217,18 @@ class AgentRunner:
         self._emit(trace, {"round": round_number, "compaction": True,
                            "dropped_messages": keep_start - 2,
                            "kept_rounds": CONTEXT_COMPACTION_KEEP_ROUNDS,
-                           "usage": result.get("usage", {})})
-        new_messages = messages[:2] + [{"role": "user", "content": "Running summary of earlier turns:\n" + summary}] + messages[keep_start:]
+                           "usage": result.get("usage", {}),
+                           "finish_reason": result.get("finish_reason"),
+                           "response_id": result.get("response_id"),
+                           "served_model": result.get("served_model"),
+                           "system_fingerprint": result.get("system_fingerprint"),
+                           "summary": summary,
+                           "summary_sha256": hashlib.sha256(summary.encode("utf-8")).hexdigest(),
+                           "input_sha256": hashlib.sha256(old_text.encode("utf-8")).hexdigest()})
+        new_messages = messages[:2] + [{
+            "role": "user",
+            "content": COMPACTION_USER_PREFIX + summary,
+        }] + messages[keep_start:]
         new_starts = [start - keep_start + 3 for start in round_starts[-CONTEXT_COMPACTION_KEEP_ROUNDS:]]
         return new_messages, new_starts
 
@@ -276,6 +323,24 @@ class AgentRunner:
                     "provider-response",
                     round_number,
                 )
+            if (
+                self.max_tool_calls_per_response is not None
+                and len(calls) > self.max_tool_calls_per_response
+            ):
+                raise failure(
+                    "Provider returned too many tool calls in one response",
+                    "tool-call-limit",
+                    round_number,
+                )
+            if (
+                self.max_tool_calls_per_episode is not None
+                and total_calls + len(calls) > self.max_tool_calls_per_episode
+            ):
+                raise failure(
+                    "Episode exceeded the total tool-call safety limit",
+                    "tool-call-limit",
+                    round_number,
+                )
             self._emit(trace, {"round": round_number,
                                "assistant_content": message.get("content"),
                                "tool_calls": [
@@ -284,6 +349,7 @@ class AgentRunner:
                                    for call in calls
                                ],
                                "usage": result.get("usage", {}),
+                               "finish_reason": result.get("finish_reason"),
                                "response_id": result.get("response_id"),
                                "served_model": result.get("served_model"),
                                "system_fingerprint": result.get("system_fingerprint")})
@@ -310,10 +376,16 @@ class AgentRunner:
                 args: dict | None = None
                 try:
                     arguments = function.get("arguments", "{}")
+                    if self.tool_hook is not None:
+                        self.tool_hook("raw", name, {"arguments": arguments})
                     args = json.loads(arguments) if isinstance(arguments, str) else arguments
                     if not isinstance(args, dict):
                         raise ToolError("Tool arguments must be a JSON object")
+                    if self.tool_hook is not None:
+                        self.tool_hook("before", name, args)
                     observation = self.memory.call(role, name, args)
+                    if self.tool_hook is not None:
+                        self.tool_hook("after", name, args)
                     ok = True
                 except (json.JSONDecodeError, ToolError) as exc:
                     observation = f"TOOL ERROR: {exc}"

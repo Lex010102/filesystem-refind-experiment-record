@@ -1,0 +1,144 @@
+{
+  "condition": "S3 Agent-curated filesystem",
+  "input_stream": {
+    "artifact_id": "locomo/conv-50/s3-management-stream/v1",
+    "chunks": 85,
+    "manifest_filename": "s3-management-stream.json",
+    "manifest_sha256": "6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5",
+    "source_turns": 568,
+    "stream_sha256": "f599b8d35f55ac08b68595f728aaa7a20f30e14a529c7dcb0f1631857b6594ec"
+  },
+  "prompt": {
+    "attribution_sha256": "a8e35d244e6774c61ab26a0a3f4b7e1f762bab634e0ad516b969d306d572cf0b",
+    "attribution_version": "filesystem-paper-arxiv-v1-appendix-a1-prompt-2",
+    "builder_sha256": "6f122e1e4f222a6004a6dd8839c3d14225c7cfc1e9679dd1f44b224fc2f5a4a3",
+    "builder_version": "filesystem-paper-arxiv-v1-appendix-a1-prompt-1",
+    "combined_sha256": "2ceb39921adb3c5eb4da98964b4925b8886f8540f3663b8f64d1539137d6be26",
+    "combined_version": "filesystem-paper-arxiv-v1-appendix-a1-prompt-1-plus-2",
+    "prompt_contract_filename": "s3-management-prompt.json",
+    "prompt_contract_sha256": "2b16c9041829666e3825d2d349c689b6cc1ce4b9de6e367f35a123c485918a20",
+    "user_instruction_sha256": "67745e7c580625d5d2d84427ef92bef8c69d876ddb101a1746e4d108bb2ec3a3",
+    "user_template_sha256": "5c9e2854a7fc320202679d6cc7f28ee16024744be8ebdf5dadd66cfe6ffe217d",
+    "user_wrapper_version": "project-defined-s3-user-wrapper-v1"
+  },
+  "runner": {
+    "module": "fs_memory_lab.s3_runner",
+    "version": "s3-safe-runner-v1"
+  },
+  "runtime_config": {
+    "context_compaction": {
+      "older_messages_serialization": "json.dumps(messages[2:keep_start], ensure_ascii=False)",
+      "prompt_token_trigger": 96000,
+      "provenance": "local approximation; author prompt not published",
+      "recent_rounds": 3,
+      "required_finish_reason": "stop",
+      "summary_role_config": {
+        "max_completion_tokens": 8192,
+        "max_rounds": 1,
+        "model": "same active role model/provider override",
+        "reasoning_effort": "same active role reasoning effort"
+      },
+      "system_prompt": "Summarize the older memory-agent interaction for continuation. Preserve all facts, source locators, tool outcomes, unresolved work, and relevant file paths. Do not add new facts. Return only the running summary.",
+      "system_prompt_sha256": "66a6864cfb21a7947ea32da2b12d3dd8555296205de06e0264b3f06c006ff836",
+      "trace_records": [
+        "exact_summary",
+        "summary_sha256",
+        "input_sha256",
+        "served_model",
+        "finish_reason",
+        "response_id",
+        "system_fingerprint"
+      ],
+      "user_prefix": "Running summary of earlier turns:\n",
+      "user_prefix_sha256": "618d4fe745eb258e9600c6ea2abf16b7ad7fec1d3a35f2bea0fafdc764bcc77c"
+    },
+    "effective_local_execution": {
+      "automatic_retries": 0,
+      "expected_served_model": "qwen3.8:27b",
+      "local_max_rounds_per_episode": 60,
+      "provider_profile": {
+        "api_style": "portable",
+        "endpoint": "https://soclaas-api.comp.nus.edu.sg/v1/chat/completions",
+        "max_response_bytes": 20000000,
+        "request_timeout_seconds": 300,
+        "requested_model": "coding"
+      },
+      "request_fields": {
+        "max_completion_tokens": "omitted by portable adapter",
+        "reasoning_effort": "omitted by portable adapter",
+        "seed": "omitted",
+        "stream": false,
+        "temperature": "omitted",
+        "tool_choice": "auto when tools are present",
+        "tools": "ordered frozen seven-tool schema"
+      }
+    },
+    "episode_policy": {
+      "chunk_count": 85,
+      "chunk_order": "ascending global_chunk_index",
+      "one_fresh_agent_context_per_chunk": true,
+      "persistent_filesystem_across_chunks": true
+    },
+    "paper_target_role_config": {
+      "max_completion_tokens": 32768,
+      "max_rounds": 60,
+      "model": "gpt-5.4-mini",
+      "reasoning_effort": "high"
+    },
+    "random_seed": {
+      "configured": 42,
+      "sent_to_provider": false
+    },
+    "resource_limits": {
+      "max_directories": 1024,
+      "max_directory_depth": 8,
+      "max_file_bytes": 1000000,
+      "max_files": 512,
+      "max_paths": 1536,
+      "max_tool_arguments_bytes": 2000000,
+      "max_tool_calls_per_episode": 256,
+      "max_tool_calls_per_response": 32,
+      "max_total_bytes": 20000000,
+      "max_trace_bytes": 100000000,
+      "max_work_bytes": 300000000
+    },
+    "role": "management"
+  },
+  "runtime_config_sha256": "da352bbdcbc12fa68169ac5ea8307fa5238f506b7040473f5272d7729ad18be2",
+  "safety_policy": {
+    "checkpoint_before_every_chunk": true,
+    "commit_marker_published_last": true,
+    "failure_outputs_quarantined": true,
+    "filesystem_persists_between_chunks": true,
+    "formal_outputs_published_only_after_global_gate": true,
+    "formal_store_starts_empty": true,
+    "gold_inputs_exposed_to_agent_messages_or_tools": false,
+    "image_urls_fetched": false,
+    "incremental_events_fsynced": true,
+    "one_new_agent_context_per_chunk": true,
+    "overwrite_existing_formal_artifacts": false,
+    "per_episode_file_hash_inventories_recorded": true,
+    "publication_fsyncs_files_and_parent_directories": true,
+    "resource_limits_enforced_after_every_tool_call": true,
+    "uncited_list_or_table_fact_candidates_rejected": true
+  },
+  "schema_version": "s3-management-runtime-contract-v1",
+  "status": "frozen-runner-ready-formal-build-not-started",
+  "tools": {
+    "ordered_schema_sha256": "3f4b2edc2045348743961231bc174c973e9c8a5147225bb9caece1fc7a254b56",
+    "profile": [
+      "view",
+      "create",
+      "str_replace",
+      "insert",
+      "delete",
+      "rename",
+      "grep"
+    ],
+    "profile_sha256": "e4541dedafbd645e6e11f8847c95283b8738c668915b006f06dd0dea57c0945e",
+    "provenance": "paper Table 12 descriptions/parameters/required; complete function wrapper is the local reconstruction in fs_memory_lab.paper_tools",
+    "schema_serialization": "canonical JSON: UTF-8, sorted keys, compact separators",
+    "wire_order_compact_sha256": "f365069d4e826f8489273b85496ebdf3a61b93bbd7678baef531cec273f3c282",
+    "wire_serialization": "JSON list in profile order: UTF-8, insertion-order keys, compact separators"
+  }
+}

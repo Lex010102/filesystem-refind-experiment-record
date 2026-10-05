@@ -96,7 +96,7 @@ python3 -m fs_memory_lab.cli verify-s2
 
 ## S3：固定的 Management Agent 输入流
 
-正式 S3 store 还没有调用模型构建；目前先完成了第一阶段：把同一份 `conv-50.jsonl` 确定性地序列化为以后逐块交给 Management Agent 的固定输入。
+正式 S3 store 还没有调用真实模型构建。它将消费的输入已经从同一份 `conv-50.jsonl` 确定性地序列化并冻结，供后续逐块交给 Management Agent。
 
 ```text
 experiments/locomo-conv50-v1/
@@ -146,7 +146,7 @@ python3 -m unittest tests.test_s3_chunks -v
 
 已有 stream 与 manifest 完全一致时命令返回 `verified-existing`；任何 chunk/manifest 被改动、丢失、多出文件、变成 symlink 或只剩半套产物时都会停止，且不会静默覆盖。Manifest 为每个 locator 保存 chunk、顺序及字符/UTF-8 byte offsets，因此测试能从 85 个文件逐字节取回 568 个 renderer blocks，证明没有漏、重、乱序或把内嵌换行误当成新 turn。
 
-输入流完成后的下一阶段依次是：冻结 S3 Management Prompt 与固定 user wrapper，建立只能消费上述 manifest/hash 的安全 runner，做一次低成本 smoke test，然后从空 store 串行运行 85 个独立 build episodes。下面记录 prompt 冻结结果；runner、smoke test 和正式 store 尚未完成。每个正式 episode 只延续 filesystem 状态，不延续前一个 episode 的聊天上下文；正式建库只运行一次，成功后冻结供 E5/E6 共用。
+输入流之后的 prompt、七工具 schema、运行配置和 safe runner 现均已冻结或实现。每个正式 episode 只延续 filesystem 状态，不延续前一个 episode 的聊天上下文；正式建库只运行一次，成功后冻结供 E5/E6 共用。目前仍未调用真实 API 做 smoke test，也没有创建正式 S3 store。
 
 ### S3 Management Prompt 已冻结
 
@@ -166,4 +166,56 @@ Prompt 1 与 Prompt 2 的文字来自论文；二者之间采用一个换行的�
 python3 -m fs_memory_lab.cli management-prompt
 ```
 
-这一步没有调用 API，也没有创建 S3 store。下一步是实现只接受已冻结 85-chunk stream、上述 prompt/wrapper hash 和七工具 profile 的安全 S3 runner；之后再做隔离 smoke test，而不是直接启动正式 85-chunk build。
+这一步没有调用 API，也没有创建 S3 store。
+
+### 七工具 schema 与运行配置已冻结
+
+Management Agent 的工具顺序固定为：
+
+```text
+view, create, str_replace, insert, delete, rename, grep
+```
+
+论文 Table 12 给出了工具说明、参数和 required 标志；完整 Chat Completions function wrapper、JSON key 顺序与序列化方式没有公开，因此完整 wrapper 是本项目在 `fs_memory_lab/paper_tools.py` 中的重建。为避免之后无意漂移，机器可读 runtime contract 已保存为 `manifests/s3-management-runtime.json`：
+
+| 冻结对象 | SHA-256 |
+| --- | --- |
+| 85-chunk stream manifest | `6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5` |
+| Management prompt contract | `2b16c9041829666e3825d2d349c689b6cc1ce4b9de6e367f35a123c485918a20` |
+| Runtime contract 文件 | `ae480c40162e5262f74ef3fb5cb64314ad2507a744d59122c019039e8bb3017f` |
+| Runtime config canonical JSON | `da352bbdcbc12fa68169ac5ea8307fa5238f506b7040473f5272d7729ad18be2` |
+| 七工具有序 profile | `e4541dedafbd645e6e11f8847c95283b8738c668915b006f06dd0dea57c0945e` |
+| 七工具有序 schema（canonical JSON） | `3f4b2edc2045348743961231bc174c973e9c8a5147225bb9caece1fc7a254b56` |
+| 七工具实际 wire-order 紧凑 JSON | `f365069d4e826f8489273b85496ebdf3a61b93bbd7678baef531cec273f3c282` |
+
+必须区分两套配置：
+
+| 层次 | 冻结内容 | 正确解释 |
+| --- | --- | --- |
+| 论文目标配置 | `gpt-5.4-mini`、`reasoning_effort=high`、32,768 completion tokens、每 episode 最多 60 rounds | 用于说明要对齐的论文角色参数。 |
+| 本地 NUS 实际执行配置 | endpoint `https://soclaas-api.comp.nus.edu.sg/v1/chat/completions`、`api_style=portable`、requested alias `coding`、预期 served model `qwen3.8:27b`、300 秒 timeout、20 MB response cap | `portable` adapter 不发送 `reasoning_effort`、`max_completion_tokens`、temperature 或 seed；因此不能称作论文同模型运行。每次返回仍必须报告预期 served model，否则整次构建失败。 |
+
+上下文超过 96,000 prompt tokens 时的“摘要旧轮、保留最近 3 轮”也纳入 runtime contract；但作者没有公开摘要器 prompt，本项目使用的摘要 prompt、序列化和单轮 8,192-token cap 均明确标为本地近似。
+
+### S3 safe runner 已实现，正式建库尚未启动
+
+`fs_memory_lab/s3_runner.py` 和三个 CLI 命令已实现：
+
+```bash
+# 纯离线；核对输入、contracts、hashes、路径隔离和正式目标为空
+python3 -m fs_memory_lab.cli s3-preflight
+
+# 之后才运行；真实 API、85 个串行 episodes、正式发布
+python3 -m fs_memory_lab.cli build-s3
+
+# 仅在 build-s3 成功发布后运行；不调用 API
+python3 -m fs_memory_lab.cli verify-s3
+```
+
+正式 `build-s3` 只接受 clean worktree 的 40 位 Git commit、受审的 `CompatibleChatProvider` 和上述精确 NUS portable profile；测试专用 artifact ID 与 `test-*` revision 被隔离，不能冒充正式产物。Runner 从空 staging store 开始，按全局 chunk index 串行运行 85 个全新 Agent contexts，episode 之间只共享文件系统。每块发送前重验输入 hash，每块前保存 checkpoint，逐事件 `fsync` trace，并在每次工具调用后执行路径/体积上限；每个 episode 后核对 Markdown/frontmatter、只引用已见 locator、cross-reference、文件 hash chain 和最低限度的行内来源标注。任何 API、模型、工具、gate 或发布错误都只保留在 `local-runs/s3-management/` 的 quarantine/诊断中，不会留下可被下游接受的正式 artifact。全部 85 块通过全局 gate 后才发布 store、85 个 episode traces、trace index、manifest，并最后发布 `s3-curated.COMMITTED`。
+
+离线测试已用 deterministic fake provider 完整走通 85 episodes，并覆盖输入或 contract 篡改、provider/profile/served-model 漂移、未来 locator、超限资源、并发锁、失败恢复、发布回滚与正式 artifact 交叉复核；全套测试通过。这个结果只证明 runner 的工程协议可执行，**没有调用 NUS API、没有完成 smoke，也没有构建正式 `stores/s3-curated/`**。
+
+当前自动验收仍有两个明确边界：第一，trace verifier 验证请求、事件、文件 hash 与前后状态链的一致性，但不会重新 replay 每个工具调用来作“该调用因果上产生该文件差异”的形式证明；第二，程序可强制列表和表格中的事实候选带 locator，却不能完美判断所有自由自然语言段落是否逐条完整引用。后续仍需抽样人工审计，不能把结构 gate 写成语义完备性证明。
+
+下一步仍应先做**隔离的低成本真实 API smoke test**，确认 NUS 当前路由、函数调用、locator 写入和失败恢复；通过后再在 clean commit 上启动唯一一次正式 `build-s3`，而不是现在直接把离线 fake-provider 结果当成 S3 store。

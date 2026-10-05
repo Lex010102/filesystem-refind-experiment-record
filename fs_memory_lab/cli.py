@@ -33,6 +33,17 @@ from .paper_tools import (FOLDERING_PROFILE, FROZEN_FOLDERING_TOOL_SCHEMA_SHA256
 from .s3_protocol import (FROZEN_S3_USER_INSTRUCTION_SHA256,
                           FROZEN_S3_USER_TEMPLATE_SHA256,
                           S3_USER_WRAPPER_VERSION, render_s3_user_message)
+from .s3_runner import (build_s3_store, preflight_s3_build,
+                        verify_published_s3)
+from .s3_runtime import (EXPECTED_S3_PROMPT_CONTRACT_SHA256,
+                         EXPECTED_S3_RUNTIME_CONTRACT_SHA256,
+                         EXPECTED_S3_SERVED_MODEL,
+                         EXPECTED_S3_STREAM_MANIFEST_SHA256,
+                         FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256,
+                         FROZEN_MANAGEMENT_TOOL_PROFILE_SHA256,
+                         FROZEN_MANAGEMENT_TOOL_SCHEMA_SHA256,
+                         FROZEN_MANAGEMENT_TOOL_WIRE_SHA256,
+                         LOCAL_S3_PROVIDER_PROFILE, S3_RESOURCE_LIMITS)
 from .s2 import (build_s2_store, git_state, preflight_s2_build,
                  verify_published_s2)
 
@@ -89,6 +100,21 @@ def _s2_paths(project: Path) -> dict[str, Path]:
     }
 
 
+def _s3_paths(project: Path) -> dict[str, Path]:
+    experiment = project / "experiments" / "locomo-conv50-v1"
+    return {
+        "stream_dir": experiment / "streams" / "s3-management-v1",
+        "stream_manifest": experiment / "manifests" / "s3-management-stream.json",
+        "prompt_contract": experiment / "manifests" / "s3-management-prompt.json",
+        "runtime_contract": experiment / "manifests" / "s3-management-runtime.json",
+        "s3_store": experiment / "stores" / "s3-curated",
+        "s3_manifest": experiment / "manifests" / "s3-curated.json",
+        "trace_dir": experiment / "traces" / "s3-management",
+        "commit_marker": experiment / "manifests" / "s3-curated.COMMITTED",
+        "work_root": project / "local-runs" / "s3-management",
+    }
+
+
 def _demo() -> None:
     with tempfile.TemporaryDirectory(prefix="fsmem-demo-") as temporary:
         memory = MemoryFS(Path(temporary) / "memories", Path(temporary) / "trash")
@@ -112,6 +138,9 @@ def main() -> None:
     sub.add_parser("s2-preflight", help="Validate frozen S1 and S2 targets without API")
     sub.add_parser("build-s2", help="Safely build and atomically publish formal S2 with API")
     sub.add_parser("verify-s2", help="Recompute and verify the published S2 without API")
+    sub.add_parser("s3-preflight", help="Validate frozen S3 inputs/contracts/targets without API")
+    sub.add_parser("build-s3", help="Safely build all 85 S3 episodes and publish after verification")
+    sub.add_parser("verify-s3", help="Recompute and verify the published S3 without API")
     sub.add_parser("check-api", help="Make one read-only function-call request without writing memory")
     ingest = sub.add_parser("ingest", help="Send each dialogue chunk to the management agent")
     ingest.add_argument("--input", type=Path, required=True, help="UTF-8 file with one dialogue turn per line")
@@ -173,6 +202,19 @@ def main() -> None:
                 "frozen_task_sha256": FROZEN_FOLDERING_TASK_SHA256,
                 "frozen_tool_schema_sha256": FROZEN_FOLDERING_TOOL_SCHEMA_SHA256,
             },
+            "s3_runtime": {
+                "status": "runner-ready; formal 85-chunk build not started",
+                "stream_manifest_sha256": EXPECTED_S3_STREAM_MANIFEST_SHA256,
+                "prompt_contract_sha256": EXPECTED_S3_PROMPT_CONTRACT_SHA256,
+                "runtime_contract_sha256": EXPECTED_S3_RUNTIME_CONTRACT_SHA256,
+                "runtime_config_sha256": FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256,
+                "tool_profile_sha256": FROZEN_MANAGEMENT_TOOL_PROFILE_SHA256,
+                "tool_schema_sha256": FROZEN_MANAGEMENT_TOOL_SCHEMA_SHA256,
+                "tool_wire_sha256": FROZEN_MANAGEMENT_TOOL_WIRE_SHA256,
+                "local_provider_profile": LOCAL_S3_PROVIDER_PROFILE,
+                "expected_served_model": EXPECTED_S3_SERVED_MODEL,
+                "resource_limits": S3_RESOURCE_LIMITS,
+            },
             "api": {"default_base_url": "https://api.openai.com/v1",
                     "default_style": "paper",
                     "environment_overrides": ["FSMEM_API_BASE_URL", "FSMEM_MODEL", "FSMEM_API_KEY",
@@ -183,6 +225,7 @@ def main() -> None:
 
     project = args.project.resolve()
     s2_paths = _s2_paths(project)
+    s3_paths = _s3_paths(project)
     if args.command == "s2-preflight":
         report = preflight_s2_build(
             s2_paths["s1_store"],
@@ -207,9 +250,36 @@ def main() -> None:
         )
         print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
         return
+    if args.command == "s3-preflight":
+        report = preflight_s3_build(
+            s3_paths["stream_dir"],
+            s3_paths["stream_manifest"],
+            s3_paths["prompt_contract"],
+            s3_paths["runtime_contract"],
+            s3_paths["s3_store"],
+            s3_paths["s3_manifest"],
+            s3_paths["trace_dir"],
+            s3_paths["commit_marker"],
+            s3_paths["work_root"],
+        )
+        print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
+        return
+    if args.command == "verify-s3":
+        report = verify_published_s3(
+            s3_paths["stream_dir"],
+            s3_paths["stream_manifest"],
+            s3_paths["prompt_contract"],
+            s3_paths["runtime_contract"],
+            s3_paths["s3_store"],
+            s3_paths["s3_manifest"],
+            s3_paths["trace_dir"],
+            s3_paths["commit_marker"],
+        )
+        print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
+        return
     # API configuration is checked before touching persistent directories.
     provider = CompatibleChatProvider.from_environment() if args.command in {
-        "ingest", "ask", "check-api", "build-s2"
+        "ingest", "ask", "check-api", "build-s2", "build-s3"
     } else None
     if args.command == "check-api":
         result = provider.complete(
@@ -237,6 +307,25 @@ def main() -> None:
             provider,
             code_revision=code["commit"],
             code_dirty=code["dirty"],
+        )
+        print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
+        return
+    if args.command == "build-s3":
+        code = git_state(project)
+        report = build_s3_store(
+            s3_paths["stream_dir"],
+            s3_paths["stream_manifest"],
+            s3_paths["prompt_contract"],
+            s3_paths["runtime_contract"],
+            s3_paths["s3_store"],
+            s3_paths["s3_manifest"],
+            s3_paths["trace_dir"],
+            s3_paths["commit_marker"],
+            s3_paths["work_root"],
+            provider,
+            code_revision=code["commit"],
+            code_dirty=code["dirty"],
+            repo_root=project,
         )
         print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
         return

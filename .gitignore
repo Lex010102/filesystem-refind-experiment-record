@@ -33,8 +33,11 @@ venv/
 /runs/
 /local-runs/
 
-# Crash remnants from the guarded S2 publisher (normal runs remove these)
+# Crash remnants from guarded S2/S3 publishers (normal runs remove these)
 experiments/**/stores/.s2-foldered.staging-*/
 experiments/**/stores/.s2-foldered.lock
+experiments/**/stores/.s3-curated.staging-*/
+experiments/**/stores/.s3-curated.lock
 experiments/**/manifests/.*.publish-*
 experiments/**/traces/.*.publish-*
+experiments/**/traces/.s3-management.staging-*/

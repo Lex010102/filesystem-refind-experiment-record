@@ -14,8 +14,10 @@ GitHub：<https://github.com/Lex010102/filesystem-refind-experiment-record>
 - 已用一次正式 NUS SoC API episode 构建并离线验证 S2 Foldered verbatim store：30 个 session 在零字节修改下被归入 4 个模型自定主题目录，完整 trace、manifest、path map 和 COMMITTED 标记均已固定；
 - 已把同一批 568 条 records 确定性地固定为 85 个 S3 管理输入 chunks：按自然 session 重置、每块最多 8 个 source turns、chunk payload（含 session header 与分隔符）不超过 3,000 个 Unicode code points，并提供逐 turn 字符/字节反查索引和防篡改测试；
 - 已从论文官方 arXiv v1 TeX 逐字节提取并冻结 S3 Builder Prompt 1 与 LoCoMo Prompt 2；作者未公开的 per-chunk user wrapper 被单独标为本地协议；
+- 已冻结 S3 Management Agent 的七工具顺序/schema、上下文压缩协议、论文目标参数与 NUS 本地实际请求配置，并实现 `s3-preflight`、`build-s3`、`verify-s3` 安全执行链；
+- S3 safe runner 已用隔离的 deterministic fake provider 完整走通 85 个连续 build episodes，覆盖恢复点、增量 trace、逐块 gate、失败隔离、发布回滚和离线复核；这不是一次真实 API 运行；
 - 尚未完成 ReFind-style R2、统一 Answerer、批量评测与七条件实验；
-- 当前最准确的说法是：**正式数据底座、S1/S2 stores、S3 输入流与 S3 管理 prompt contract 已固定，S3 安全 runner、正式 LLM 建库和完整 benchmark 平台仍在建设中。**
+- 当前最准确的说法是：**正式数据底座、S1/S2 stores、S3 输入流、prompt/tool/runtime contracts 与安全 runner 已固定；尚未做 S3 真实 API smoke test，也尚未构建正式 S3 store，完整 benchmark 平台仍在建设中。**
 
 完整的一个月工作路线见 [实验地图](docs/plans/one-month-experiment-map.md)。历史进度见 [研究进度日志](docs/progress/2026-09-16-research-log.md)，最新数据与 S1/S2 准备状态见 [LoCoMo 数据准备记录](docs/progress/2026-10-05-locomo-data-preparation.md)。
 
@@ -80,6 +82,7 @@ python3 -m fs_memory_lab.cli config
 python3 -m fs_memory_lab.cli foldering-prompt
 python3 -m fs_memory_lab.cli management-prompt
 python3 -m fs_memory_lab.cli verify-s2
+python3 -m fs_memory_lab.cli s3-preflight
 python3 -m fs_memory_lab.locomo prepare
 python3 -m fs_memory_lab.stores build-s1
 python3 -m fs_memory_lab.s3_chunks
@@ -87,6 +90,8 @@ python3 -m unittest discover -s tests -v
 ```
 
 `demo` 使用临时目录，不调用 API。
+
+`s3-preflight` 也完全离线：它核对固定的 85-chunk stream、prompt/runtime contracts、七工具 hashes 和正式输出目标是否为空。`build-s3` 是之后的正式真实 API 命令；它只接受 clean、40 位 Git commit 上的受审 `CompatibleChatProvider` 与冻结的 NUS profile。成功发布后才运行 `verify-s3`。目前尚未执行 smoke 或正式 `build-s3`。
 
 LoCoMo 的官方来源、许可、固定 commit、schema 和校验值见 [数据说明](data/README.md)。S1/S2 stores 与 S3 管理输入流的格式、位置、生成命令和完整性保证见 [实验产物说明](experiments/locomo-conv50-v1/README.md)。
 
