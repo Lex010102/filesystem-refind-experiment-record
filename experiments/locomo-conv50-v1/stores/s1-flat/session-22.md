@@ -1,0 +1,55 @@
+---
+name: session-22
+description: Session 22 on 2023-10-08 between Calvin and Dave.
+---
+
+# Session 22
+
+Date: 3:13 pm on 8 October, 2023
+Speakers: Calvin, Dave
+Conversation: conv-50
+
+Dave: Hey Calvin! What’s up? Last Friday I went to the car show. I saw some awesome cars and got to mess with car mods! There were so many cool machines around, it was so much fun! Take a look at this beautiful car!
+[Image caption: a photography of two men looking at a car engine]
+[S22T1] (dia_id: D22:1)
+
+Calvin: Hey Dave, that sounds awesome! I'm into the rush of awesome cars. Can't wait to check out your garage.
+[Image caption: a photo of a red sports car parked in a showroom]
+[S22T2] (dia_id: D22:2)
+
+Dave: Thanks! Yeah, this one looks great! I restored and modified it myself and added a custom exhaust and some performance upgrades. It's got a sweet sound and I'm really proud of how it turned out.
+[S22T3] (dia_id: D22:3)
+
+Calvin: Wow, Dave! You really turned it into a masterpiece. Impressive!
+[Image caption: a photo of a car driving down a street with a traffic light]
+[S22T4] (dia_id: D22:4)
+
+Dave: Thanks Calvin! I've spent a lot of time and effort on it. It's not just a hobby, it's a passion. It's like therapy, a way to get away from everyday stress. When I was little I'd spend hours in my dad's garage, tinkering with engines - it was like my own sanctuary. Now I'm lucky enough to do this as a job, to take something broken and make it into something awesome.
+[S22T5] (dia_id: D22:5)
+
+Calvin: Wow, Dave, that's amazing. Bringing broken things back to life is so satisfying. Working on cars can be a real escape from reality, and I understand that feeling. Doing what you love for a living, that's the ultimate goal, right? Keep going with it, it's really inspiring.
+[S22T6] (dia_id: D22:6)
+
+Dave: Thanks, Calvin. It's been my goal since I was a kid and it's awesome to be able to do something I love. Restoring things like this can be tough but the feeling of accomplishment it gives is great. Absolutely, I'm loving it.
+[S22T7] (dia_id: D22:7)
+
+Calvin: Go for it, Dave! Chasing your dreams is what life's about. It's awesome to see how far you've come. Keep working hard and living your best life.
+[S22T8] (dia_id: D22:8)
+
+Dave: Thanks, Calvin! Means a lot. I'm going to keep chasing my dreams and working hard. Conversations like this remind me why I love what I do.
+[S22T9] (dia_id: D22:9)
+
+Calvin: Glad I can remind you, Dave. Keep up the good work and stay focused. You got this!
+[S22T10] (dia_id: D22:10)
+
+Dave: Thanks, Calvin! Your support really means a lot. I'll stay focused and keep going. Appreciate the encouragement!
+[S22T11] (dia_id: D22:11)
+
+Calvin: Yeah Dave! I'll always be here to support you and give you that boost. You're doing great!
+[S22T12] (dia_id: D22:12)
+
+Dave: Thanks so much, Calvin. Your support means everything to me. I'll keep pushing and reaching for them.
+[S22T13] (dia_id: D22:13)
+
+Calvin: No worries, Dave. Keep going for it. You got this!
+[S22T14] (dia_id: D22:14)

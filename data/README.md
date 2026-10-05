@@ -70,6 +70,8 @@ python3 -m unittest discover -s tests -v
 
 转换器会先强制核对官方原文件 SHA-256；不匹配就停止，且不写输出。重复运行会得到字节完全相同的 canonical records、source map 和 manifest。
 
+下游的 S1 平铺原始 session 已从这份固定记录生成在 `../experiments/locomo-conv50-v1/stores/s1-flat/`；其独立 manifest、生成方法和自动完整性测试见 `../experiments/locomo-conv50-v1/README.md`。
+
 ## 使用边界
 
 LoCoMo 数据按 CC BY-NC 4.0 提供。本仓库保存许可全文并注明来源；数据和衍生实验材料只能在许可允许的范围内使用，尤其注意非商业限制。

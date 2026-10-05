@@ -8,6 +8,7 @@ dependencies = []
 [project.scripts]
 fs-memory = "fs_memory_lab.cli:main"
 fs-locomo = "fs_memory_lab.locomo:main"
+fs-stores = "fs_memory_lab.stores:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

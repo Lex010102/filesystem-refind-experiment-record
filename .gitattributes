@@ -3,4 +3,6 @@
 *.toml text eol=lf
 *.txt text eol=lf
 *.json text eol=lf
+*.jsonl text eol=lf
+experiments/locomo-conv50-v1/stores/s1-flat/*.md whitespace=-blank-at-eol,-blank-at-eof
 *.pdf binary

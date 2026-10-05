@@ -88,7 +88,7 @@ ReFind 原文对 `turn` 使用了不同定义：一个 user utterance 和对应 
 ```text
 {speaker}: {text}
 [Image caption: {blip_caption}]
-{source_locator}
+{source_locator} (dia_id: {dia_id})
 ```
 
 没有 caption 时省略 caption 行。该表示必须在 S1、S2、S3 及基于原始聊天的 R2 条件中保持一致：
@@ -102,7 +102,7 @@ ReFind 原文对 `turn` 使用了不同定义：一个 user utterance 和对应 
 
 `conv-50` 的 568 个 source turns 中有 125 个带 `blip_caption`。158 道非对抗题中，70 道的 gold evidence 至少涉及一个图片 turn；若删除全部图片 turn，46 道题会失去所有 gold evidence。因此不得删除图片 turn。Filesystem 论文没有披露媒体字段如何渲染；上述做法是本项目基于 LoCoMo 原论文 text-only QA 设置制定并公开的统一 protocol，不能冒充 Filesystem 作者原配置。
 
-ReFind 论文没有在 LoCoMo 上实验，其报告范围是 text-only chat history，也没有 URL、caption 或视觉模型的处理规则。因此，将 `blip_caption` 纳入 LoCoMo 上的 ReFind-style 检索同样属于本项目的适配协议。当前代码只完成了 canonical data layer，尚未实现共享 renderer 和正式 S1/S2/S3/R2 builders；在 renderer 落地前，URL 和 caption 都还没有实际参与模型调用。
+ReFind 论文没有在 LoCoMo 上实验，其报告范围是 text-only chat history，也没有 URL、caption 或视觉模型的处理规则。因此，将 `blip_caption` 纳入 LoCoMo 上的 ReFind-style 检索同样属于本项目的适配协议。当前已经实现共享 renderer 和正式 S1 builder；S2、正式 S3 benchmark builder 与 R2 尚未实现。S1 中 caption 已作为文字写入，URL 仍未被写入或访问。
 
 ## Adversarial 问题的处理
 
@@ -124,6 +124,21 @@ Filesystem 论文只明确说明排除 adversarial category，没有进一步公
 
 这样既能与 Filesystem 原结果直接比较，也不会把一种不同性质的安全/拒答任务混入主要检索结论。
 
+## S1 平铺原始 session 已完成
+
+从固定的 `data/processed/conv-50.jsonl` 构建了 `experiments/locomo-conv50-v1/stores/s1-flat/`：
+
+- 30 个自然 session 对应 `session-01.md` 至 `session-30.md`，store 内没有子目录或 manifest；
+- 全部 568 个 source turns 按原顺序出现，保留原 speaker、text、前后换行、locator 和 `dia_id`；
+- 125 条 `blip_caption` 被写成统一的 `[Image caption: ...]` 行；图片 URL、query 和 `re-download` 不进入 store；
+- 构建不调用模型，LLM、token 和 tool 成本均为 0；
+- 独立校验清单位于 `experiments/locomo-conv50-v1/manifests/s1-flat.json`，包含输入、逐文件完整/正文和整体 store hash，以及 568 条 locator 的文件行号索引；
+- store SHA-256 固定为 `5a58a8cca8616b91f3c231671271f6dbbedc669330b91e410980223ad2488ad8`。
+
+新增的 `tests/test_stores.py` 会逐条反查全部记录，并检查原始换行、caption、顺序、唯一来源 ID、跨目录确定性、同目录幂等性、输入文件不变、防篡改与 gold 字段隔离。生成器遇到已存在但不同的 store 会拒绝覆盖。
+
+这一步复现了 Filesystem 论文“一次 session 一个原文文件、平铺、零模型成本”的 S1 语义。论文未公开逐字节 Markdown 模板，因此 frontmatter、caption 和双来源标签的具体排版属于本项目已公开的确定性 protocol，而不是作者代码的原样复制。
+
 ## 下一步
 
-先把上述图片渲染规则实现为唯一共享 renderer，并添加测试，随后实现 S1 builder：严格以 LoCoMo 自然 session 为写入单位，保留 canonical locator；之后再从相同 records 实现 S2。此时不应先运行管理 LLM，也不应为六个条件分别切一次原始数据。实现 ReFind-style R2 前还需将 exchange 派生规则、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则写成测试。
+以已经通过 hash 验证的 S1 为不可变母版实现 S2：只允许把 30 个完整文件移动进主题目录，文件名和文件字节都不能改变，并输出 `S1_path -> S2_path` 映射。此时不应先运行 S3 管理 LLM，也不应为六个条件分别切一次原始数据。实现 ReFind-style R2 前还需将 exchange 派生规则、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则写成测试。
