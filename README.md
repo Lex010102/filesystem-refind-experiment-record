@@ -9,8 +9,9 @@ GitHub：<https://github.com/Lex010102/filesystem-refind-experiment-record>
 - 已实现 Filesystem 论文中 Center / Agent-curated 的本地原型；
 - 已通过文件工具、路径权限、函数调用和上下文压缩等离线测试；
 - 已用 NUS SoC API 完成 Alice 合成案例的两批独立增量写入；
-- 尚未完成正式 LoCoMo loader、S1/S2 builder、ReFind-style R2、统一 Answerer、批量评测与七条件实验；
-- 当前最准确的说法是：**S3+R1 底层原型已跑通，正式 benchmark 平台仍在建设中。**
+- 已固定官方 `locomo10.json`，并为 `conv-50` 生成统一 canonical records、source map 和版本 manifest；
+- 尚未完成 S1/S2 builder、ReFind-style R2、统一 Answerer、批量评测与七条件实验；
+- 当前最准确的说法是：**S3+R1 底层原型与正式数据底座已跑通，完整 benchmark 平台仍在建设中。**
 
 完整的一个月工作路线见 [实验地图](docs/plans/one-month-experiment-map.md)。历史进度见 [研究进度日志](docs/progress/2026-09-16-research-log.md)。
 
@@ -34,6 +35,7 @@ GitHub：<https://github.com/Lex010102/filesystem-refind-experiment-record>
 ├── tests/                         # 离线单元测试
 ├── examples/alice/                # Alice 两批合成输入
 ├── artifacts/alice-pilot/         # 已完成试跑的记忆、trace 与说明
+├── data/                           # 固定的 LoCoMo 原文件、canonical records 与 manifests
 ├── docs/
 │   ├── plans/                     # 实验方案
 │   ├── progress/                  # 按日期保存的研究进度
@@ -70,10 +72,13 @@ conversation chunk
 ```bash
 python3 -m fs_memory_lab.cli demo
 python3 -m fs_memory_lab.cli config
+python3 -m fs_memory_lab.locomo prepare
 python3 -m unittest discover -s tests -v
 ```
 
 `demo` 使用临时目录，不调用 API。
+
+LoCoMo 的官方来源、许可、固定 commit、schema 和校验值见 [数据说明](data/README.md)。
 
 ## 连接 API
 

@@ -10,6 +10,11 @@
 
 - [2026-09-16 研究进度](progress/2026-09-16-research-log.md)：本地 harness、Alice 两批增量写入、ReFind 学习和组合思路。
 - [2026-09-22 仓库整理与 GitHub 备份](progress/2026-09-22-repository-setup.md)：本次目录重组、保留内容与安全规则。
+- [2026-10-05 LoCoMo 数据固定](progress/2026-10-05-locomo-data-preparation.md)：官方文件版本、canonical records、source map、校验值与异常处理。
+
+## Data
+
+- [LoCoMo 数据说明](../data/README.md)：官方来源、许可、统一 turn schema、生成命令和 source map 用法。
 
 ## Paper notes
 

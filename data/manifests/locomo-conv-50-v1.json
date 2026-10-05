@@ -1,0 +1,252 @@
+{
+  "canonical_record_field_order": [
+    "schema_version",
+    "conversation_id",
+    "session_id",
+    "session_index",
+    "session_date",
+    "session_datetime",
+    "session_datetime_raw",
+    "turn_index",
+    "global_turn_index",
+    "locator",
+    "dia_id",
+    "speaker",
+    "text",
+    "media",
+    "source_sha256",
+    "raw_turn_sha256"
+  ],
+  "canonical_record_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "properties": {
+      "conversation_id": {
+        "type": "string"
+      },
+      "dia_id": {
+        "pattern": "^D[1-9][0-9]*:[1-9][0-9]*$",
+        "type": "string"
+      },
+      "global_turn_index": {
+        "minimum": 1,
+        "type": "integer"
+      },
+      "locator": {
+        "pattern": "^\\[S[1-9][0-9]*T[1-9][0-9]*\\]$",
+        "type": "string"
+      },
+      "media": {
+        "additionalProperties": false,
+        "properties": {
+          "blip_caption": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "img_url": {
+            "oneOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "query": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "re-download": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "img_url",
+          "blip_caption",
+          "query",
+          "re-download"
+        ],
+        "type": "object"
+      },
+      "raw_turn_sha256": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "schema_version": {
+        "const": 1,
+        "type": "integer"
+      },
+      "session_date": {
+        "format": "date",
+        "type": "string"
+      },
+      "session_datetime": {
+        "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$",
+        "type": "string"
+      },
+      "session_datetime_raw": {
+        "type": "string"
+      },
+      "session_id": {
+        "pattern": "^session_[1-9][0-9]*$",
+        "type": "string"
+      },
+      "session_index": {
+        "minimum": 1,
+        "type": "integer"
+      },
+      "source_sha256": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "speaker": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "text": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "turn_index": {
+        "minimum": 1,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "schema_version",
+      "conversation_id",
+      "session_id",
+      "session_index",
+      "session_date",
+      "session_datetime",
+      "session_datetime_raw",
+      "turn_index",
+      "global_turn_index",
+      "locator",
+      "dia_id",
+      "speaker",
+      "text",
+      "media",
+      "source_sha256",
+      "raw_turn_sha256"
+    ],
+    "title": "LoCoMo canonical turn record v1",
+    "type": "object"
+  },
+  "counts": {
+    "conversation_sessions": 30,
+    "conversation_turns": 568,
+    "dataset_conversations": 10,
+    "duplicate_evidence_questions": 1,
+    "empty_evidence_questions": 2,
+    "evidence_alias_count": 1,
+    "evidence_reference_count": 269,
+    "qa_adversarial": 46,
+    "qa_by_category": {
+      "1": 32,
+      "2": 32,
+      "3": 7,
+      "4": 87,
+      "5": 46
+    },
+    "qa_category_names": {
+      "1": "multi-hop",
+      "2": "temporal",
+      "3": "open-domain",
+      "4": "single-hop",
+      "5": "adversarial"
+    },
+    "qa_non_adversarial": 158,
+    "qa_total": 204,
+    "turns_with_media_fields": {
+      "blip_caption": 125,
+      "img_url": 99,
+      "query": 83,
+      "re-download": 39
+    },
+    "unresolved_evidence_count": 0
+  },
+  "generator": {
+    "module": "fs_memory_lab.locomo",
+    "version": "locomo-canonical-v1"
+  },
+  "normalization": {
+    "datetime_policy": "preserve raw string and add timezone-naive ISO datetime/date",
+    "derived_locator_count": 568,
+    "dia_id_aliases": {
+      "D30:05": {
+        "canonical_dia_id": "D30:5",
+        "locator": "[S30T5]",
+        "qa_indices": [
+          69
+        ],
+        "qa_numbers": [
+          70
+        ],
+        "reason": "zero-padded numeric component in official QA evidence"
+      }
+    },
+    "raw_dataset_modified": false,
+    "turn_text_modified": false
+  },
+  "outputs": {
+    "canonical_records": {
+      "artifact_id": "locomo/conv-50/canonical-turns/v1",
+      "bytes": 419086,
+      "filename": "conv-50.jsonl",
+      "format": "JSON Lines; one immutable conversation turn per line",
+      "records": 568,
+      "sha256": "130a5a1e1b75083358ef27a98dd215a4e75c819ace6f2ee9b560ba394e0f0394"
+    },
+    "source_map": {
+      "artifact_id": "locomo/conv-50/source-map/v1",
+      "bytes": 293166,
+      "filename": "source_map.json",
+      "sha256": "6e99115961bae06a48bfb7e82dbdcc18dc32ccf6c5ce57e3c266dfc7a5d4d574"
+    }
+  },
+  "schema_version": 1,
+  "selection": {
+    "conversation_id": "conv-50",
+    "raw_sample_index": 9,
+    "speakers": [
+      "Calvin",
+      "Dave"
+    ]
+  },
+  "source": {
+    "bytes": 2805274,
+    "data_file_commit": "cbfbc1dba6bc53d00625212a0f22d55ffee7c1fc",
+    "immutable_download_url": "https://raw.githubusercontent.com/snap-research/locomo/cbfbc1dba6bc53d00625212a0f22d55ffee7c1fc/data/locomo10.json",
+    "license": {
+      "bytes": 19347,
+      "local_filename": "LICENSE.locomo.txt",
+      "name": "CC BY-NC 4.0",
+      "sha256": "41003d4a74749c0220e33dd415042164b5a1093ed401f36277234f772d22d3d0",
+      "source_commit": "a9f0a462c37e3c2e5285aec393e0598e03fc9e4d",
+      "source_url": "https://github.com/snap-research/locomo/blob/a9f0a462c37e3c2e5285aec393e0598e03fc9e4d/LICENSE.txt"
+    },
+    "local_filename": "locomo10.json",
+    "path": "data/locomo10.json",
+    "repository": "https://github.com/snap-research/locomo",
+    "sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4"
+  },
+  "verification": {
+    "all_qa_evidence_resolves_after_aliases": true,
+    "dia_ids_unique_and_position_matched": true,
+    "locators_unique": true,
+    "qa_content_excluded_from_canonical_records": true,
+    "session_indices_contiguous": true
+  }
+}
