@@ -1,0 +1,27 @@
+Session 20 · 2023-09-22
+
+Dave: Hey Calvin, good to catch up again! Had a tough time with my car project. Worked on the engine of the vintage Mustang, thought I'd fixed it, but when I started it up, heard a weird noise. So disappointing after putting so much work in. Take a look at the engine!
+[Image caption: a photography of a car engine with a small engine]
+[S20T1] (dia_id: D20:1)
+
+Calvin: Hey Dave, sorry to hear about the car trouble. That must be disappointing after putting so much work into it. Yeah, fixing cars can be tricky. But hey, check out this pic! It's a sign of my hard work and dedication. Looking at it reminds me how far I've come.
+[Image caption: a photography of a red sports car parked in a parking lot]
+[S20T2] (dia_id: D20:2)
+
+Dave: Wow, thanks Calvin! I love the way the sunlight hits this. It's definitely a great symbol of all your hard work. I bet you feel really proud when you look at it. Any special memories with it?
+[S20T3] (dia_id: D20:3)
+
+Calvin: Yeah, Dave, I had an amazing drive one summer day. The wind blowing through my hair and the rush of freedom - it was unforgettable. I've pondered the intricacies of life, taking a moment to truly appreciate the path I've chosen and the decisions that have shaped my journey. Also, my trip to Japan was incredible - the culture, the people, everything was so cool. I'm already longing to go back, it was an experience that made all the hard work worth it.
+[S20T4] (dia_id: D20:4)
+
+Dave: Wow, Calvin, that's awesome! That feeling of freedom in the summer is the best. A moment of reflection not only makes the journey interesting but also productive! Hey, any songs from your childhood that bring back memories?
+[S20T5] (dia_id: D20:5)
+
+Calvin: Yeah, there's this one song that always makes me smile. It played during a road trip with my dad and we had so much fun singing along to it.
+[S20T6] (dia_id: D20:6)
+
+Dave: Sounds awesome, Calvin! Road trips with family are always a treat. What's the name of the song?
+[S20T7] (dia_id: D20:7)
+
+Calvin: We used to rock a song by Tupac and Dr. Dre called "California Love". Ah, those were the days!
+[S20T8] (dia_id: D20:8)

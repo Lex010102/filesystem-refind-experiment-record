@@ -1,0 +1,28 @@
+Session 16 · 2023-08-31
+
+Dave: Hey Calvin! Long time no chat! How was the end of your tour? I bet it was amazing!
+[Image caption: a photo of a crowd of people at a concert with their hands in the air]
+[S16T1] (dia_id: D16:1)
+
+Calvin: Hey Dave! The tour was amazing! I was so pumped from all the energy from the audience. This pic totally captures how I felt. Such an amazing time!
+[Image caption: a photo of a crowd of people watching a concert with a large screen]
+[S16T2] (dia_id: D16:2)
+
+Dave: Wow, that looks amazing! How was it performing on that big stage?
+[S16T3] (dia_id: D16:3)
+
+Calvin: Performing on such a big stage was a dream come true! The energy was incredible and I felt on top of the world. It was seriously surreal.
+[S16T4] (dia_id: D16:4)
+
+Dave: Wow, that must have been an incredible experience! Congrats on achieving such an awesome moment!
+[S16T5] (dia_id: D16:5)
+
+Calvin: Cool! Last weekend I started shooting a video for my new album - can't wait for you to check it out! Look how great it was!
+[Image caption: a photo of a camera and a video camera on a beach]
+[S16T6] (dia_id: D16:6)
+
+Dave: Wow, Calvin! Can't wait to see it. Will it be shot on location?
+[S16T7] (dia_id: D16:7)
+
+Calvin: We're doing the shoot in Miami and picked an awesome beach. It's going to have some epic visuals!
+[S16T8] (dia_id: D16:8)

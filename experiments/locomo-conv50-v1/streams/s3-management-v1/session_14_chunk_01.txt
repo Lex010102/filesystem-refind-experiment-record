@@ -1,0 +1,26 @@
+Session 14 · 2023-08-14
+
+Dave: Hey Cal, how's it going? Something cool happened since last we talked - I got to go to a car workshop in San Francisco! So cool to dive into the world of car restoration and see all the different techniques. People were really passionate and dedicated - truly inspiring!
+[S14T1] (dia_id: D14:1)
+
+Calvin: Hey Dave! That's awesome! Car workshops sound totally cool and inspiring. Glad you found something that really gets you going.
+[S14T2] (dia_id: D14:2)
+
+Dave: It's always great to learn and grow. So, what have you been up to lately?
+[S14T3] (dia_id: D14:3)
+
+Calvin: As you know, I had an amazing experience touring with a well-known artist. The feeling of performing and connecting with the audience was unreal. We ended with a show in Japan and then I had the opportunity to explore my new place - it's like a dream come true!
+[S14T4] (dia_id: D14:4)
+
+Dave: Wow, Calvin! I bet playing for an eager audience was an incredible experience. Exploring Japan must have been amazing! How did Tokyo react to your music? Did you have any special moments there?
+[S14T5] (dia_id: D14:5)
+
+Calvin: Thanks, Dave! That show in Tokyo was awesome! Everyone was so into it when I played one of my songs and sang along. It was a magical moment.
+[S14T6] (dia_id: D14:6)
+
+Dave: Wow, Calvin, sounds amazing! Got any pictures from that show? Would love to see the atmosphere.
+[S14T7] (dia_id: D14:7)
+
+Calvin: Yeah, here's a pic I took. It was so awesome - I loved how the crowd was into it. These moments are why I love my job.
+[Image caption: a photography of a crowd of people at a concert with their hands up]
+[S14T8] (dia_id: D14:8)

@@ -1,0 +1,20 @@
+Session 8 · 2023-06-09
+
+Calvin: Nah, haven't been to the mountains but I'm keen to go. Looking for a way to escape it all and de-stress. I want to go on a hike to a place similar to this. What's new and exciting happening for you, Dave?
+[Image caption: a photo of a plane flying over a mountain range with snow on the top]
+[S8T9] (dia_id: D8:9)
+
+Dave: I booked a trip to a mountainous region for next month! Finally gonna be able to see those majestic peaks! Gonna be an amazing experience!
+[S8T10] (dia_id: D8:10)
+
+Calvin: Cool, Dave! Have a great time. I'm sure it's going to be an amazing experience. Take lots of pics and show me when you get back.
+[S8T11] (dia_id: D8:11)
+
+Dave: Yep, Calvin! Gonna take lots of pics. Can't wait to show you when I get back!
+[S8T12] (dia_id: D8:12)
+
+Calvin: Have fun exploring the mountains, Dave! Safe travels and see you soon. Take care!
+[S8T13] (dia_id: D8:13)
+
+Dave: Thanks, Calvin! Take care, see you soon!
+[S8T14] (dia_id: D8:14)

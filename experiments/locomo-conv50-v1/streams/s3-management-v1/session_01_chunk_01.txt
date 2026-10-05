@@ -1,0 +1,26 @@
+Session 1 · 2023-03-23
+
+Calvin: Hey Dave! Nice to meet you! How's it going since we talked?
+[S1T1] (dia_id: D1:1)
+
+Dave: Hey Calvin! Nice to meet you too! Things have been going well since we last talked. I attended this awesome event recently. It was like a car lover's paradise! They had so many classic cars on show, I was in awe. I even had the opportunity to speak with some of the owners and hear their fascinating stories. It was super inspiring. What about you? Anything exciting happening in your life lately?
+[S1T2] (dia_id: D1:2)
+
+Calvin: That event sounds great! Something really exciting happened to me - I just had a big life change! Here's my new mansion - pretty cool huh?
+[Image caption: a photo of a building with a sign on the front of it]
+[S1T3] (dia_id: D1:3)
+
+Dave: Wow! Congrats on the big change! What inspired you to start this journey?
+[S1T4] (dia_id: D1:4)
+
+Calvin: I'm so excited to learn about Japanese culture and get a chance to expand.
+[S1T5] (dia_id: D1:5)
+
+Dave: Wow, Calvin, learning about new cultures is awesome! Have you ever been to Japan?
+[S1T6] (dia_id: D1:6)
+
+Calvin: Never been there before. Fascinated by the traditions and can't wait to get a taste of the culture.
+[S1T7] (dia_id: D1:7)
+
+Dave: Wow, Japan sounds amazing. Can't wait to hear all about it! When are you leaving?
+[S1T8] (dia_id: D1:8)

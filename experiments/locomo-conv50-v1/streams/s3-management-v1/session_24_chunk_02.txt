@@ -1,0 +1,28 @@
+Session 24 · 2023-10-19
+
+Calvin: Wow, the crowd energy is amazing! It always gets me so pumped and it's awesome. Look at that photo, that was awesome!
+[Image caption: a photography of a crowd of people at a concert with their hands in the air]
+[S24T9] (dia_id: D24:9)
+
+Dave: Wow, Calvin, that's an awesome pic! Everyone looks so pumped. Where was that taken?
+[S24T10] (dia_id: D24:10)
+
+Calvin: Thanks, Dave! That pic was taken in Tokyo during a concert. Man, the energy was nuts - felt like the whole city came out!
+[S24T11] (dia_id: D24:11)
+
+Dave: Wow, Calvin, Tokyo looks incredible! Here's a pic I found online, and it's making me dream about visiting someday. The energy there seems unbeatable! Have you ever visited streets like that?
+[Image caption: a photo of a busy street with people walking and shopping]
+[S24T12] (dia_id: D24:12)
+
+Calvin: Yes, Dave! That was an incredible experience to visit similar streets like you shared in your photo. Is there anything else that interests you in Tokyo?
+[S24T13] (dia_id: D24:13)
+
+Dave: Of course, Calvin! Tokyo is amazing! I want to know everything about it - the people, the culture, the food, take a walk at the vibrant city life! In the photo below, the city is so alive and colorful that's impressive! It will be an unforgettable experience!
+[Image caption: a photo of a crowded street at night with people walking and walking]
+[S24T14] (dia_id: D24:14)
+
+Calvin: That photo's a great pic! The lights, the people - so lively! Can't wait to hear your emotions when you see that in person!
+[S24T15] (dia_id: D24:15)
+
+Dave: It's really amazing. Hope I'll get to see it in person soon!
+[S24T16] (dia_id: D24:16)

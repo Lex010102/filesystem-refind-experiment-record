@@ -1,0 +1,25 @@
+Session 18 · 2023-09-13
+
+Calvin: Hey Dave! Sorry it took me so long to get back to you. Crazy times since we talked! My album finally dropped on the 11th and it was a wild feeling. Everyone's been loving it and it's motivated me to keep going.
+[S18T1] (dia_id: D18:1)
+
+Dave: Hey Calvin! Congrats on your album release - that's awesome! Has it been overwhelming or inspiring?
+[S18T2] (dia_id: D18:2)
+
+Calvin: Thanks, Dave! It's been a lot. Seeing everyone get behind it has been awesome. It's kinda overwhelming to think so many appreciate it. It's also cool that it's connecting with people. It really motivates me to make even better music.
+[S18T3] (dia_id: D18:3)
+
+Dave: That's awesome, Calvin! It's such a great feeling when your work gets noticed and makes a positive difference. It must be really motivating for you to keep chasing your dreams.
+[S18T4] (dia_id: D18:4)
+
+Calvin: Yeah, moments like this remind me why I got into music - making a difference and sharing my own story. It's exciting to get positive feedback and it gives me strength to keep going and reach more people. My journey's just getting started!
+[S18T5] (dia_id: D18:5)
+
+Dave: Wow, Calvin! You've come a long way since we started talking music. What's next for you? Anything exciting coming up?
+[S18T6] (dia_id: D18:6)
+
+Calvin: Thanks Dave! Lots of cool stuff happening. Next up, a tour - so excited! After that, I'm off to explore and grow my brand. Can't wait to see what the future has in store!
+[S18T7] (dia_id: D18:7)
+
+Dave: Wow, Calvin! Congrats on the upcoming tour! Can't wait to see you perform. Do you have any cities or venues in mind?
+[S18T8] (dia_id: D18:8)

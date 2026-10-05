@@ -1,0 +1,30 @@
+Session 30 · 2023-11-17
+
+Dave: Hey Calvin, long time no talk! A lot has happened. I've taken up photography and it's been great - been taking pics of the scenery around here which is really cool.
+[S30T1] (dia_id: D30:1)
+
+Calvin: Hey Dave, it's great to hear from you! Can't wait to see your pics. I went to a fancy gala in Boston yesterday and met some interesting people. Check out this pic of me and the crew!
+[Image caption: a photography of a group of men sitting on a rock next to a river]
+[S30T2] (dia_id: D30:2)
+
+Dave: Calvin, that event looks amazing! You all look awesome. Who did you have the most interesting chat with?
+[Image caption: a photo of a boat is floating in the water at sunset]
+[S30T3] (dia_id: D30:3)
+
+Calvin: Thanks, Dave! Had an awesome time. I had a really interesting chat with this cool artist and we clicked over music and art. We talked about our favorite artists, art, and how the power of music connects us all. It was such an inspiring conversation - I feel like I'm on a creative high. We have a photo together, take a look!
+[Image caption: a photography of two men sitting on a bench in the snow]
+[S30T4] (dia_id: D30:4)
+
+Dave: That's amazing, Calvin! Music really does bring people together and foster creativity. Glad to hear you had such an inspiring conversation! Take a look at my new vintage camera that I bought this month, which takes awesome photos!
+[Image caption: a photo of a camera sitting on a table next to a plant]
+[S30T5] (dia_id: D30:5)
+
+Calvin: Hey Dave, music really brings people together, huh? Do you use this camera for photos? They always turn out so good!
+[S30T6] (dia_id: D30:6)
+
+Dave: Yes, Calvin, this camera is very good, it helps me capture those special moments really clearly.
+[S30T7] (dia_id: D30:7)
+
+Calvin: Having a good camera is key for capturing those special moments. What do you like to take photos of?
+[Image caption: a photo of a sunset with a wave crashing on rocks]
+[S30T8] (dia_id: D30:8)

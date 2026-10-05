@@ -1,0 +1,30 @@
+Session 10 · 2023-07-07
+
+Dave: Hey Calvin, how's the car doing after the crash? You were stoked to get back on the road, right?
+[S10T1] (dia_id: D10:1)
+
+Calvin: Hey Dave! Thanks for checking in. It's all good now, the car's fixed and going strong. Nothing better than cruising around - it's the best! Look at how my car looks right now. How've you been? Anything new?
+[Image caption: a photography of a red sports car parked on the side of the road]
+[S10T2] (dia_id: D10:2)
+
+Dave: Glad to hear your car's fixed and going strong! I've been good too. Just been hanging out with friends at parks lately. I arranged with friends for regular walks together in the park.
+[S10T3] (dia_id: D10:3)
+
+Calvin: 
+That sounds like a great plan! Regular walks with friends can be a wonderful way to spend time together and stay active. Fresh air and buddies can do wonders. Do you have a favorite spot for hanging out?
+[S10T4] (dia_id: D10:4)
+
+Dave: Yeah, today we are going to that spot. Look at that lovely photo.
+[Image caption: a photo of a city skyline with a river and boats in the water]
+[S10T5] (dia_id: D10:5)
+
+Calvin: Wow, what a view! That sunset over the river is gorgeous. It must be so tranquil there. Reminds me of living in my Japanese mansion with the epic cityscape. It's like a dream come true! Look at this photo I took from my backyard of the mansion. It's so beautiful!
+[Image caption: a photo of a boat is docked in a canal at sunset]
+[S10T6] (dia_id: D10:6)
+
+Dave: Yeah, the peace by the river is really nice. But living in a Japanese mansion surrounded by that city skyline must be stunning. The views must be amazing!
+[S10T7] (dia_id: D10:7)
+
+Calvin: Ah, it really is beautiful. Whenever I look out the windows and see the city lights, it's so awe-inspiring. Luxury and beauty on a whole new level. Look at the front part of the mansion.
+[Image caption: a photo of a large house with a lot of windows and lights]
+[S10T8] (dia_id: D10:8)

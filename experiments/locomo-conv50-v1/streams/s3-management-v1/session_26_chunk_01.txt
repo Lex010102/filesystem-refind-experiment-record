@@ -1,0 +1,27 @@
+Session 26 · 2023-10-25
+
+Calvin: Hey Dave! Long time no talk! I had a great time yesterday, and visited some sights in Boston with a high school friend. It was really fun and eye-opening.
+[S26T1] (dia_id: D26:1)
+
+Dave: Hey Calvin! Good to hear from you! Sounds like you had a blast in Boston - so much to do there! One of my favorites there is great for chilling and admiring nature. BTW, something cool I wanted to tell you about - I recently attended a conference in Detroit - it was so cool, I learned a lot.
+[S26T2] (dia_id: D26:2)
+
+Calvin: I had a wonderful experience during my time in Boston. It had awesome architecture and a really cool history. I followed your advice and went there, it was so peaceful. Good to hear that you've learned a lot of new things at the conference in Detroit!
+[S26T3] (dia_id: D26:3)
+
+Dave: Glad you enjoyed Boston! It's got some great architecture and history. Working on this takes me out of my head and calms me down. Here's a pic of my latest car project.
+[Image caption: a photography of a group of people washing a car in a garage]
+[S26T4] (dia_id: D26:4)
+
+Calvin: Dave, that car looks awesome! What got you into engineering cars? I'm totally into cars too and love making new and powerful models.
+[S26T5] (dia_id: D26:5)
+
+Dave: Thanks, Calvin! It's always been my thing. My dad took me to my first car show when I was 10, and I was wow-ed! I was hooked and wanted to learn more. Now I'm an automotive engineer and it's crazy to think that something so powerful and cool can be made from small parts.
+[S26T6] (dia_id: D26:6)
+
+Calvin: That's awesome, Dave! So happy you followed your dreams and became an engineer. Seeing you work on cars is inspiring - it makes me want to keep pushing my music. Check this out - a pic of me performing with someone I admire! So amazing!
+[Image caption: a photo of a dj in a nightclub with a dj table]
+[S26T7] (dia_id: D26:7)
+
+Dave: Wow, Calvin! That's amazing! You looked super comfortable on stage. Bet it was an incredible experience to perform with someone you admire. How did it feel being up there?
+[S26T8] (dia_id: D26:8)

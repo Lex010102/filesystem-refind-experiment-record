@@ -1,0 +1,27 @@
+Session 2 · 2023-03-26
+
+Calvin: Wow, sounds like a blast! Which one was your favorite?
+[S2T9] (dia_id: D2:9)
+
+Dave: Wow, there were so many great bands! If I had to pick a favorite, it would definitely be Aerosmith. Their performance was incredible. I'll show you a pic I took when they were playing.
+[Image caption: a photo of a concert with a large eagle on the stage]
+[S2T10] (dia_id: D2:10)
+
+Calvin: Cool! Lovin' Aerosmith.
+[S2T11] (dia_id: D2:11)
+
+Dave: I finally saw them live and it was such an amazing experience! He was jamming out to one of their hits. Check out this epic picture of them!
+[Image caption: a photo of two people on stage with guitars and a microphone]
+[S2T12] (dia_id: D2:12)
+
+Calvin: Cool, Dave! Seeing your favorite singers live must have been wild! Did you get a chance to hang out with them after the show?
+[S2T13] (dia_id: D2:13)
+
+Dave: Nah, didn't get to hang with them after the show, but seeing them live was cool enough. It's always a dream to see your favorites performing!
+[S2T14] (dia_id: D2:14)
+
+Calvin: Yeah, it's always a dream to see your favorites doing their thing! So glad you got to experience that.
+[S2T15] (dia_id: D2:15)
+
+Dave: Thanks, Calvin! Yeah, it was an incredible experience. So, anything new happening in your life?
+[S2T16] (dia_id: D2:16)

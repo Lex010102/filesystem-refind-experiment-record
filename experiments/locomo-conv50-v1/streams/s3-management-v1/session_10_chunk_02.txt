@@ -1,0 +1,25 @@
+Session 10 · 2023-07-07
+
+Dave: That mansion looks great! I bet the view from inside is stunning. Must be amazing living there. Anything else you're looking forward to doing in Japan?
+[S10T9] (dia_id: D10:9)
+
+Calvin: Thanks Dave! Japan is indeed amazing. Can't wait to try the food and check out the culture. Have you ever been there?
+[S10T10] (dia_id: D10:10)
+
+Dave: Nope, never been to Japan but I'm so keen to go one day. I've heard it's full of vibes, good eats and awesome tech. Plus, being able to experience the culture would be amazing - I'm hooked on their music!
+[S10T11] (dia_id: D10:11)
+
+Calvin: Japan definitely has it all - vibes, food, tech, and an amazing culture. It's like stepping into another world. I've been working on some cool music collaborations with Japanese artists, and I'm really excited to hear how it turns out!
+[S10T12] (dia_id: D10:12)
+
+Dave: Cool, Cal! Working with them is a great chance - can't wait for the tunes!
+[S10T13] (dia_id: D10:13)
+
+Calvin: Thanks! I'll share some clips when everything's ready. Collaborating with various artists is always exciting, it's a chance to create something unique.
+[S10T14] (dia_id: D10:14)
+
+Dave: Way to go, Cal! Collaborating with different artists to create something special sounds amazing. Can't wait to see/hear the end product!
+[S10T15] (dia_id: D10:15)
+
+Calvin: Thanks, Dave! Appreciate all the help. It's gonna be awesome - can't wait to show you. Great catching up, gotta get back to work now. Take care!
+[S10T16] (dia_id: D10:16)

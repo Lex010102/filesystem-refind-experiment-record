@@ -1,0 +1,27 @@
+Session 6 · 2023-05-16
+
+Calvin: Way to go, Dave! Congrats on opening your own car shop! Your excitement is contagious. Keep up the great work!
+[S6T9] (dia_id: D6:9)
+
+Dave: Thanks, Calvin! Your support is greatly appreciated. It's been quite a journey so far, and I'm excited to see what the future holds. How about you? Anything exciting happening in the world of music for you?
+[S6T10] (dia_id: D6:10)
+
+Calvin: Thanks Dave! Super excited for my upcoming performance in Tokyo this month. It's gonna be great to show my music to a whole new crowd and hopefully expand my following!
+[S6T11] (dia_id: D6:11)
+
+Dave: Cool, Cal! Doing a show in Tokyo, wow! I'm sure the audience is gonna love it. Wishing you all the luck! Let me know how it goes.
+[S6T12] (dia_id: D6:12)
+
+Calvin: Sure thing, Dave! I'll keep you posted on how it goes. Thanks for the good luck! Look what a wonderful night! 
+
+[Image caption: a photo of a city at night with a lot of lights]
+[S6T13] (dia_id: D6:13)
+
+Dave: That looks great! Where did you snap that pic?
+[S6T14] (dia_id: D6:14)
+
+Calvin: I took that pic in Tokyo last night. The skyline was stunning!
+[S6T15] (dia_id: D6:15)
+
+Dave: Wow, great shot! The night skyline really pops with those city lights. I gotta take a trip there soon!
+[S6T16] (dia_id: D6:16)

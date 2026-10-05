@@ -1,0 +1,27 @@
+Session 9 · 2023-06-21
+
+Calvin: Feeling way more confident and excited to show off my car! Trusting their expertise.
+[S9T9] (dia_id: D9:9)
+
+Dave: Great, Cal! It's awesome when you trust the people fixing it. Sounds like they're doing a great job. It'll be back to normal soon!
+[S9T10] (dia_id: D9:10)
+
+Calvin: Thanks, Dave! Excited to drive again. Appreciate your help! Look what a wonderful view from living room!
+[Image caption: a photo of a view of a small town with a mountain in the background]
+[S9T11] (dia_id: D9:11)
+
+Dave: Wow, what an amazing view! Where is it? I haven't seen anything like that before!
+[S9T12] (dia_id: D9:12)
+
+Calvin: Thanks, Dave! It's from a small town in Japan. The view of the mountains is unbelievably stunning!
+[S9T13] (dia_id: D9:13)
+
+Dave: Wow! Did you get to that place yet?
+[S9T14] (dia_id: D9:14)
+
+Calvin: Nope, not yet! I haven't been there before, but it's on my to-do list for after my tour with Frank Ocean ends. Can't wait to see them in person! Look at that snowy peak.
+[Image caption: a photo of a person on skis on a snowy mountain]
+[S9T15] (dia_id: D9:15)
+
+Dave: Looks awesome! Have you ever tried skiing before? It looks like loads of fun!
+[S9T16] (dia_id: D9:16)

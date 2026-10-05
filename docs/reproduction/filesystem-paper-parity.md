@@ -15,7 +15,7 @@
 | 管理/检索模型 | Appendix C.1，Table 11，PDF 第 47–48 页 | `fs_memory_lab/paper_config.py`：均 `gpt-5.4-mini`、high | 默认对齐；`FSMEM_MODEL` 覆盖会失配 |
 | 输出上限 | 同表 | build 32,768；search 8,192；发送为 Chat Completions `max_completion_tokens` | 默认对齐 |
 | 工具轮次上限 | 同表 | build 60；Center search 40 | 默认对齐；CLI 可显式覆盖作调试 |
-| 数据流分块 | 同表和 C.1 Stream units | 每块最多 8 行/3,000 字符，每块一个管理 episode | 规则对齐；“一行=一轮”仅适合准备好的输入文件 |
+| 数据流分块 | 同表和 C.1 Stream units；Prompt 8；Figure 5 | `fs_memory_lab/s3_chunks.py` 直接按 canonical source-turn records 切分；自然 session 内最多 8 turns，最终模型可见 payload 最多 3,000 Unicode code points，每块一个管理 episode | 双上限和每块一个 episode 为论文明文；session 硬边界由论文 chunk 命名及 85-step LoCoMo trajectory 推定；header、分隔符、字符度量和超长拒绝策略为本地冻结协议，作者未公开 byte-exact chunker |
 | 随机种子 | 同表 | 每次 CLI 调用设置 Python seed 42 | 只对本地随机流程生效；论文没有说要覆盖 API 采样 seed |
 | 查询并发 | 同表 | 常量 8，单题 CLI 不启用 | 批量 benchmark 环节未实现 |
 | 上下文压缩 | 同表及 C.1 Generation and episode parameters | 超过 96k prompt tokens 时，用运行摘要代替旧轮，保留最近 3 轮，记录事件 | 形状对齐；摘要 prompt/表示方式为本地近似，原文未公开 |
@@ -26,7 +26,7 @@
 ## 为什么还不能说“完全复现”
 
 1. 论文没有发布原始 prompt 常量、完整函数工具 JSON 包装、上下文摘要器 prompt、固定 user turn 的精确措辞。公开排版文本只能支持高保真转录。
-2. 本项目已固定 LoCoMo10、`conv-50` canonical records，并完成正式 S1 与 S2 stores；但尚未完成正式 S3、统一检索/回答/评测 runner、八题并发和 judge，因此仍不能复现论文表格分数。
+2. 本项目已固定 LoCoMo10、`conv-50` canonical records、正式 S1/S2 stores 和 85 个确定性 S3 管理输入 chunks；但尚未运行正式 S3 管理构建，也未完成统一检索/回答/评测 runner、八题并发和 judge，因此仍不能复现论文表格分数。
 3. 正式 S2 已用一次 NUS API episode 构建：requested alias 为 `coding`、served model 为 `qwen3.8:27b`，12 次模型调用完成 32 次 `view` 与 30 次 `rename`，随后通过离线完整性验证。该运行不是论文所用 backbone。
 4. NUS 当前实际 served model 不是论文的 `gpt-5.4-mini`；即便兼容函数调用，模型和提供商缓存/采样行为仍与论文不同。
 

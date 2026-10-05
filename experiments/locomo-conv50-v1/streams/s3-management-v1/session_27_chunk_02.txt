@@ -1,0 +1,16 @@
+Session 27 · 2023-10-29
+
+Calvin: Wow, Dave! Sounds like you're having a blast with your photography. Hope it's bringing you lots of joy. By the way, how is your car project going?
+[S27T9] (dia_id: D27:9)
+
+Dave: Hey Calvin, photography has been great for me! The car project is doing well - I just finished restoring it and it looks amazing. Wanna come by and check it out? How's everything with the music? Any updates?
+[S27T10] (dia_id: D27:10)
+
+Calvin: That's awesome, Dave! Your car project sounds amazing. I've had some great collaborations recently and my album is almost finished. I'll send you some previews soon. Let me know when you're free for a catch-up.
+[S27T11] (dia_id: D27:11)
+
+Dave: Cool, Calvin! Can't wait to hear it. Let me know when you're free and take it easy!
+[S27T12] (dia_id: D27:12)
+
+Calvin: Cheers! I'll let you know when I'm free. Bye!
+[S27T13] (dia_id: D27:13)

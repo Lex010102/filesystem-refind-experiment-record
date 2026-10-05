@@ -1,0 +1,25 @@
+Session 30 · 2023-11-17
+
+Dave: Cool, Calvin! Found an even better spot, with a bench under a tree with pink flowers - so peaceful. A perfect spot to relax and take in the beauty.
+[S30T17] (dia_id: D30:17)
+
+Calvin: That sounds great, Dave! Can't wait to see it.
+[S30T18] (dia_id: D30:18)
+
+Dave: Check it out, Calvin. It's really calming, I think you'll like it. We will definitely go there! Is there anything else you'd like to share?
+[S30T19] (dia_id: D30:19)
+
+Calvin: Thank you for asking, Dave! Yes, I have a few more great news! I've accepted an invitation to perform at an upcoming show in Boston! It's going to be an unforgettable musical experience. Can't wait to fill you in on all the details. Catch up with you soon!
+[S30T20] (dia_id: D30:20)
+
+Dave: Wow, Calvin! That's amazing news! Congratulations on both the gala attendance and the upcoming performance. I can't wait to hear all about it and maybe even catch one of your shows in Boston. Let me know when you're free to catch up. Cheers to your musical journey!
+[S30T21] (dia_id: D30:21)
+
+Calvin: Thanks, Dave! I'll catch you when I'm in Boston. Cheers!
+[S30T22] (dia_id: D30:22)
+
+Dave: Looking forward to seeing you. Stay safe, talk to you soon!
+[S30T23] (dia_id: D30:23)
+
+Calvin: Thanks! You too. Talk to you later!
+[S30T24] (dia_id: D30:24)

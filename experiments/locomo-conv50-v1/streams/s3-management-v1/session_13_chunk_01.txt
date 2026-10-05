@@ -1,0 +1,28 @@
+Session 13 · 2023-08-11
+
+Dave: Hey Calvin, been ages! Guess what? I got picked for a car mod workshop. Gonna get better at it and learn something new! Look at the cars I'm working with right now. 
+[Image caption: a photography of a man standing in front of a car on a lift]
+[S13T1] (dia_id: D13:1)
+
+Calvin: Wow Dave, that's awesome! Congrats on being picked for the car mod workshop. It's a great opportunity to take your skills up a notch. Are there any mods or projects you're excited to work on?
+[S13T2] (dia_id: D13:2)
+
+Dave: Thanks, Calvin! This is a dream come true for me, as I've always wanted to learn auto engineering and work on building a custom car.
+[S13T3] (dia_id: D13:3)
+
+Calvin: That's awesome, Dave! Pursuing your passion for auto engineering and making a custom car is a great experience. I'm excited to see what you create. Keep it up and have fun every step of the way. What do you think is the most thrilling part of it?
+[S13T4] (dia_id: D13:4)
+
+Dave: Thanks, Calvin! I've found the picture with really thrilling part of the workshop, take a look. Seeing the potential come to life is always satisfying.
+[Image caption: a photo of a car is being worked on by a mechanic]
+[S13T5] (dia_id: D13:5)
+
+Calvin: Wow, that sounds like a fulfilling hobby! What kind of transformations have you done so far? How's it going with the current project?
+[S13T6] (dia_id: D13:6)
+
+Dave: I've been working on this car, doing engine swaps and suspension modifications. Now I'm learning about body modifications. Giving this classic muscle car a modern twist is a challenge but so fun!
+[Image caption: a photo of a silver corvette parked in front of a building]
+[S13T7] (dia_id: D13:7)
+
+Calvin: Wow, Dave, that looks cool! The silver finish gives it a modern twist. Great job!
+[S13T8] (dia_id: D13:8)

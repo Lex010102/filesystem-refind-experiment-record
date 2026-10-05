@@ -1,0 +1,26 @@
+Session 18 · 2023-09-13
+
+Calvin: Yay! Dave! We're hitting some awesome spots - it's gonna be epic!
+[S18T9] (dia_id: D18:9)
+
+Dave: That sounds awesome, Calvin! Live music is the best. I'm sure you're gonna have a blast on tour and make some awesome memories. If you ever want to check out my garage and see some cool cars, I'd love to show you around. Keep rockin'!
+[S18T10] (dia_id: D18:10)
+
+Calvin: Thanks, Dave! I'll definitely take you up on that offer. It would be fun to check out your garage and maybe even get some ideas for future projects. I'll let you know when I'm in Boston. Keep pursuing your passions and keep those cars rolling. You rock!
+[S18T11] (dia_id: D18:11)
+
+Dave: Thanks, Calvin! Appreciate the kind words and support. Can't wait for your visit! Take care and keep creating amazing music! Check out pic of my garage, it looks stunning!
+[Image caption: a photo of a car in a garage with a coca cola sign]
+[S18T12] (dia_id: D18:12)
+
+Calvin: Thanks! I can't wait for your visit either. Take care and keep enjoying your hobbies!
+[S18T13] (dia_id: D18:13)
+
+Dave: Sure thing! Thanks again for your help. Bye! Have a great day.
+[S18T14] (dia_id: D18:14)
+
+Calvin: No problem! Always good chatting with you. Have an awesome day!
+[S18T15] (dia_id: D18:15)
+
+Dave: Thanks, Calvin! Catch you later. Have a great day!
+[S18T16] (dia_id: D18:16)

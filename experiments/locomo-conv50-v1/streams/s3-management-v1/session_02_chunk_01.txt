@@ -1,0 +1,27 @@
+Session 2 · 2023-03-26
+
+Calvin: Hey Dave, been a few days, so I wanted to let you in on some cool news.  I just got a new car and it's amazing! Finally owning a luxury car was a dream come true and I'm so stoked.
+[S2T1] (dia_id: D2:1)
+
+Dave: Woohoo, Calvin! Congrats on the new car! How's it driving?
+[S2T2] (dia_id: D2:2)
+
+Calvin: Nice car! It's an amazing ride - super smooth and real powerful. Like a rockstar behind the wheel! Thanks, man!
+[S2T3] (dia_id: D2:3)
+
+Dave: Wow, Calvin! Owning something like this must feel amazing. Is this your first one? Show me a pic! What's it called?
+[S2T4] (dia_id: D2:4)
+
+Calvin: Woohoo! I finally got myself this beauty. Here's a pic from yesterday when I took it for a ride. Can't believe I'm actually driving it. Definitely what I deserve after all this hard work. Every time I step in, it's like an adrenaline rush!
+[Image caption: a photo of a red sports car parked on the side of the road]
+[S2T5] (dia_id: D2:5)
+
+Dave: Calvin, that car looks awesome! You must feel amazing every time you get inside! You deserved it - congrats buddy!
+[S2T6] (dia_id: D2:6)
+
+Calvin: Woah, I'm on cloud nine! Hard work pays off. What's up with you, Dave?
+[S2T7] (dia_id: D2:7)
+
+Dave: Thanks, Calvin! Doing good. Last weekend, I went to a music festival in Boston - it was awesome! So many cool bands playing and the atmosphere was electric. I love music, it reminded me why I love it. Here's a pic, take a look.
+[Image caption: a photo of a large crowd of people at a concert]
+[S2T8] (dia_id: D2:8)

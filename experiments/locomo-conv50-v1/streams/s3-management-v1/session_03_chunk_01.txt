@@ -1,0 +1,25 @@
+Session 3 · 2023-04-20
+
+Calvin: Hey Dave! Long time no see. I just went to an awesome music thingy in Tokyo - so cool!
+[S3T1] (dia_id: D3:1)
+
+Dave: Hey Calvin! Great to hear from you. How was the music thingy in Tokyo? See any cool bands?
+[S3T2] (dia_id: D3:2)
+
+Calvin: Hey Dave! The festival in Tokyo was awesome! Didn't see any bands, but met lots of talented artists and industry people. Totally enriching!
+[S3T3] (dia_id: D3:3)
+
+Dave: Wow, Calvin, sounds great! What did you learn from it?
+[S3T4] (dia_id: D3:4)
+
+Calvin: I learned a lot and got some great advice from professionals in the music industry. It was inspiring!
+[S3T5] (dia_id: D3:5)
+
+Dave: Wow, Calvin! Bet that was inspiring being surrounded by professionals. Did you get any advice from them?
+[S3T6] (dia_id: D3:6)
+
+Calvin: The producer gave me some advice to stay true to myself and sound unique. It got me thinking about where I want my music to go. It's really motivating!
+[S3T7] (dia_id: D3:7)
+
+Dave: Wow, Calvin! It's really motivating to see you staying true to yourself. It got me thinking, where do you see your music taking you?
+[S3T8] (dia_id: D3:8)

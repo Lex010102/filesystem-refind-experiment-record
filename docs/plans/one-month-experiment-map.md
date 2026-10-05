@@ -321,13 +321,13 @@ source_sha256
 
 1. 从空 `/memories` 开始；
 2. 按 session 和 turn 的真实时间顺序生成 canonical stream；
-3. 严格使用 Filesystem 论文主实验 chunk 规则：每块最多 8 个连续 turn，达到 3,000 characters 提前封块；
+3. 每个自然 session 内严格按 Filesystem 论文主实验的双上限切分：每块最多 8 个连续 source turns，固定 chunk payload（含 session header 与分隔符，不含 system prompt/user wrapper）不得超过 3,000 个 Unicode code points；不切断单个 source turn；
 4. 每个 chunk 单独启动一个 management episode；
 5. 使用论文管理 prompt、LoCoMo 来源 locator 扩展与 Center 七个写工具；
 6. 每个 chunk 前保存快照，之后保存完整工具 trace；
 7. 完成后冻结只读快照，E5/E6 共用。
 
-说明：以自然 session 作为 S3 chunk 是一个值得研究的后续变量，但本月不做，因为会把“存储方式”与“输入粒度”同时改变。
+说明：论文 C.1 明确公开了“连续 dialogue turns、最多 8 turns、3,000-character cap、每 chunk 一个 build episode”，但没有用独立句子说明是否允许跨自然 session。刊出的 Prompt 8（作者说明其中的文件命名已修订为与实际 store 对齐）使用 `session_04_chunk_02.md` 这一 session-scoped 示例路径；Figure 5 的 LoCoMo 85 个构建点，以及 `conv-50` 各 session 的 `Σceil(turns/8)=85` 也共同指向作者实际运行在 session 边界重置。因此主实验固定为“不跨 session”；这是依据公开产物作出的复现推定，不冒充作者明文或 byte-exact 代码。全局连续流可留作后续敏感性分析，本月不混入主实验。
 
 验收：
 

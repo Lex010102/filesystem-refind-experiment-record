@@ -1,0 +1,26 @@
+Session 23 · 2023-10-15
+
+Dave: Hey Cal, miss ya! Crazy rollercoaster week. A competing car maintenance shop snagged a deal we were trying to secure for months and it made me feel kinda bummed out. You know, I put in so much effort at work, but it feels like nothing. Am I wasting my time?
+[S23T1] (dia_id: D23:1)
+
+Calvin: Hey Dave, sorry to hear that. It can be discouraging when you feel like your hard work goes unnoticed. But don't give up, keep pushing and believe in yourself. The payoff will be worth it.
+[S23T2] (dia_id: D23:2)
+
+Dave: Calvin, thanks for the encouragement. It can be tough when you feel like your efforts are going unseen. I gotta have faith and patience. I'm sure it's only a matter of time till things work out. How do you stay motivated when faced with setbacks?
+[S23T3] (dia_id: D23:3)
+
+Calvin: When setbacks come my way, I remind myself why I'm passionate about my goals. I rely on helpful people around me and take a break to recharge with my favorite activities. That always helps me get back to feeling motivated.
+[S23T4] (dia_id: D23:4)
+
+Dave: That's a great approach, Cal! Reminding yourself of the passion for the goals and getting help from others is really important. Taking a break and having fun sounds so refreshing. Oh, I just got back from a music festival - it was amazing! The energy, the music, the crowd - sooo good. I felt so alive!
+[S23T5] (dia_id: D23:5)
+
+Calvin: Wow Dave, sounds awesome! Music festivals bring so much joy and the energy of the crowd can be amazing. Got any photos from the festival? I'd love to check them out and join in on the fun.
+[S23T6] (dia_id: D23:6)
+
+Dave: Yep! I got this awesome pic from the event. The main stage was unreal. The headliner was so good and the vibe was unreal!
+[Image caption: a photo of a stage with a crowd of people watching a band]
+[S23T7] (dia_id: D23:7)
+
+Calvin: Wow, that looks awesome! The crowd looks really excited and the stage is incredible. Who was the headliner?
+[S23T8] (dia_id: D23:8)

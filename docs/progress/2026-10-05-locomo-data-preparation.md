@@ -252,6 +252,85 @@ PRECHECK → LOCKED → STAGED → AGENT_RUNNING → AGENT_SUCCEEDED
 
 这次运行需要正确解读：它证明本地 S2 pipeline 和“LLM 自定 taxonomy、整文件零字节移动”已经真实跑通；它不证明这 4 个目录是唯一或最优 taxonomy，也不等于使用论文 `gpt-5.4-mini` 的分数复现。Adapter 没有把 seed 发送给服务端，所以不能声称重新运行会得到相同目录。
 
-## 下一步
+## S2 完成时记录的原下一步（已被 2026-10-06 决策调整）
 
-冻结并提交本次正式 S2 产物后，实现 ReFind-style R2；仍需先将 exchange 派生规则、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则写成测试。随后再实现 evidence-only R1，使 E1–E4 能共享统一 EvidenceBundle 与 Answerer。此时不应先运行 S3 管理 LLM，也不应为六个条件分别切一次原始数据。
+当时的顺序设想是：冻结并提交正式 S2 后先实现 ReFind-style R2，再实现 evidence-only R1；R2 仍需先将 exchange 派生规则、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则写成测试。2026-10-06 决定先推进 S3 输入准备，因此该顺序已调整；“不应未经 prompt/runner 冻结就直接运行 S3 管理 LLM”和“不为六个条件分别切一次原始数据”两项约束继续有效。
+
+## 2026-10-06：S3 路线与确定性 chunk 输入流
+
+### 先冻结的完整 S3 执行顺序
+
+S3 不应从“立刻把 568 条对话发给学校 API”开始。固定顺序如下：
+
+1. **核对并冻结输入协议。** 从同一份 canonical records 出发，先区分论文明确规则、由论文产物推定的规则和本项目必须补齐的 byte-level 规则。
+2. **确定性生成 chunks。** 纯本地切分并保存模型将看到的精确文本，同时生成逐 chunk 和逐 source-turn manifest；不调用 LLM。
+3. **用自动测试锁住输入流。** 证明 568 条 source turns 恰好各出现一次、顺序不变、session 不交叉、双上限成立、caption 保留、内嵌换行未被拆成额外 turn，并验证重复生成一致与篡改拒绝。
+4. **单独核对并冻结 S3 Management Prompt。** 使用论文公开的 Builder Prompt 1 和 LoCoMo source-attribution Prompt 2；把作者未公开的固定 user wrapper 单独标为本地协议并保存 hash。不能把 prompt 与切片同时临时调整。
+5. **冻结运行配置和工具面。** Management Agent 使用 `view/create/str_replace/insert/delete/rename/grep`，每 chunk 一个全新的 tool-loop episode；episode 之间只共享持续演化的 `/memories`。记录 requested/served model、reasoning effort、round/output caps 和 tool schema hashes。
+6. **实现安全 S3 runner。** Runner 只接受本次固定 manifest/hash，按 chunk 全局顺序从空 store 串行执行；每块前保存恢复点，逐轮追加 trace；失败不发布半成品。禁止问题、答案、gold evidence 或未来检索结果进入建库上下文。
+7. **先做 smoke test，再做一次正式 build。** Smoke 只验证 API function calling、工具权限、日期/locator 可见性和失败恢复，输出隔离在 `local-runs/`；正式 85-chunk 建库只启动一次，不按最终树是否“好看”重跑择优。
+8. **离线验收并冻结。** 检查 frontmatter、路径、locator 可追踪性、root 边界、完整 trace、每 chunk 成本、最终 dirs/files/sections/KB/cross-references，并写 COMMITTED 标记；之后 E5/E6 必须共用同一个只读 S3 snapshot。
+
+本次只执行了第 1–3 步。还没有创建正式 S3 memory store，没有调用学校 API，也没有用未来 QA 检查或优化 chunks。
+
+### 论文规则核对与 session 边界修正
+
+论文 Appendix C.1 明确写明：build stream 是 consecutive dialogue turns，每块最多 8 turns，达到 3,000 characters 时提前结束；Management Agent 每个 chunk 运行一个 build episode。Table 11 同样固定 `8 turns per chunk, 3,000-character cap`。这里的 turn 是一位 speaker 的一次 utterance：Figure 1 把三条相邻发言分别标为 `[S6T5]`、`[S6T6]`、`[S6T7]`；一来一回是两个 source turns。
+
+正文没有用一句独立的话写 “never cross session boundaries”，但公开产物提供了强证据：
+
+- 刊出的 Prompt 8（作者说明其中的文件命名已修订为与实际 store 对齐）使用 `session_04_chunk_02.md` 这一 session-scoped 示例结果路径；
+- Figure 5 中 LoCoMo 的 per-chunk trajectory 有 85 个构建点；
+- `conv-50` 三十个 session 分别计算 `ceil(session_turns/8)` 后总数恰好为 85；若无视 session，把 568 条 records 当作一条全局流，只会得到 71 块；
+- 当前统一 renderer 下，任一 8-turn session 内候选都不超过 3,000 characters，因此 85 与 71 的差异不能由字符 cap 解释。
+
+因此主复现改为“自然 session 是硬边界，session 内 greedy 双上限”。这比先前计划中的无边界全局流更符合论文实际产物。报告中要写“依据公开产物推定”，不能写成作者正文逐字规定。论文没有公开可执行的 byte-exact chunker；header、换行、characters 的精确定义、单 turn 超长行为和 user wrapper 都必须由本项目透明补齐。
+
+### 本地固定协议
+
+正式生成器为 `fs_memory_lab/s3_chunks.py`，输入只读 `data/processed/conv-50.jsonl`，并 fail-closed 地核对其固定 SHA-256 `130a5a1e1b75083358ef27a98dd215a4e75c819ace6f2ee9b560ba394e0f0394`。它不读取原始 `locomo10.json`、QA、answer、category、gold evidence 或包含 QA evidence alias 的 `source_map.json`。
+
+每个 chunk 的模型可见文本精确为：
+
+```text
+Session {session_index} · {YYYY-MM-DD}
+
+{speaker}: {original text}
+[Image caption: {official BLIP caption}]   # 仅存在时
+[SxTy] (dia_id: Dx:y)
+
+...下一条 source turn...
+```
+
+Figure 1 的 chunk 示意本身提供 session/date；具体 header 字符串仍是本项目选择。每条 turn 复用 S1/S2 的 `render_source_turn()`，块间使用两个换行，chunk 文件不补终止换行。3,000 characters 指最终文件全文的 Python `len(str)`，即 Unicode code points；header 和所有分隔符都计入。加入下一完整 turn 会使 turns 超过 8 或 characters 超过 3,000 时，先封闭当前块；若单条 turn 连同 header 已超过 3,000，则构建失败，不截断。
+
+S1 session header 还保留了 `session_datetime_raw` 的具体时分，而 S3 header 按 Figure 1 的形状只携带 ISO 日期；因此只能说二者共享逐 turn renderer，不能说完整模型输入逐字节相同。`conv-50` 的 30 个 session 日期彼此唯一，32 道 temporal QA 也没有一道需要区分同一天内的小时/分钟，所以这不会删除本次题集可见的时间答案信息；它仍属于需要在报告中披露的本地序列化选择。
+
+文件保存于 `experiments/locomo-conv50-v1/streams/s3-management-v1/`，命名为 `session_01_chunk_01.txt` 等。它们是管理 Agent 的输入，不是 memory store，所以不放入 `stores/`。独立 manifest 为 `experiments/locomo-conv50-v1/manifests/s3-management-stream.json`，记录输入 hash、规则来源、逐 chunk hash/characters/bytes/turns、每个 locator 的字符与 UTF-8 byte offsets、有序 stream hash、零模型成本和 gold 隔离声明。
+
+### 固定结果与完整性测试
+
+| 项目 | 固定值 |
+| --- | ---: |
+| Sessions | 30 |
+| Source turns | 568 |
+| Chunks | 85 |
+| Turns with caption | 125 |
+| Turns per chunk | 1–8 |
+| Characters per chunk | 121–2,387 |
+| Total characters | 110,949 |
+| Total UTF-8 bytes | 111,056 |
+| Stream SHA-256 | `f599b8d35f55ac08b68595f728aaa7a20f30e14a529c7dcb0f1631857b6594ec` |
+| Manifest SHA-256 | `6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5` |
+| Build cost | 0 LLM calls / 0 tokens / 0 tool calls |
+
+`tests/test_s3_chunks.py` 会利用 manifest offsets 从文件中逐字节恢复全部 568 个 renderer blocks，并对照 canonical 顺序；同时覆盖 exact-3000 接纳、3001 触发换块、Unicode characters 与 UTF-8 bytes 的区别、正文内空行仍只算一个 turn、单条超长拒绝、跨 session 拒绝、跨目录确定性、重复运行 `verified-existing`、chunk/manifest 篡改拒绝及额外字段 fail-closed。正式数据中字符 cap 没有自然触发：58 块由 8-turn 上限封闭，另外 27 块在自然 session 末尾封闭，所以 synthetic boundary test 是必要的。
+
+重新核对命令：
+
+```bash
+python3 -m fs_memory_lab.s3_chunks
+python3 -m unittest tests.test_s3_chunks -v
+```
+
+下一步不是重新切片，也不是立刻跑正式 85 块；应先完成上面第 4 步：逐字核对并冻结 S3 Builder Prompt、LoCoMo locator extension 和固定 user wrapper，再实现只接受本 manifest 的安全 runner。

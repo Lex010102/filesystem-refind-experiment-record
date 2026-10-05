@@ -1,0 +1,27 @@
+Session 12 · 2023-08-03
+
+Calvin: Hey Dave, long time no see! I just took my Ferrari for a service and it was so stressful. I'm kinda attached to it. Can you relate? What kind of hobbies give you a feeling of being restored?
+[S12T1] (dia_id: D12:1)
+
+Dave: Hey Calvin, I understand the stress of getting a car serviced. Fixing cars is like therapy for me. Growing up working on cars with my dad, refurbishing them gives me a sense of fulfillment.
+[S12T2] (dia_id: D12:2)
+
+Calvin: Wow, Dave, that's awesome! Must feel great to have a hobby that makes you proud. Remember any good memories from working on cars with your dad?
+[S12T3] (dia_id: D12:3)
+
+Dave: Yeah, definitely! I have fond memories of working on cars with my dad as a kid. We spent one summer restoring an old car. It was hard work, but seeing the end result and knowing that we did it together was really satisfying.
+[S12T4] (dia_id: D12:4)
+
+Calvin: That's awesome, Dave! Working together on projects like that really brings people closer. Do you have any pictures from that time?
+[S12T5] (dia_id: D12:5)
+
+Dave: Yes, I have one, take a look. It was a wonderful experience.
+[Image caption: a photography of a man and a child pose for a picture]
+[S12T6] (dia_id: D12:6)
+
+Calvin: Aww, that's cool, Dave. Reminiscing is always fun! That pic you shared takes me back to my trip to the Ferrari dealership. I saw a lot of amazing cars, but as for me, my car is the best and  I'm pretty proud of this. Sure, it's just material, but it reminds me of my hard work and dedication. It really inspires me. Take a look at this beauty!
+[Image caption: a photography of a red car is lifted on a lift in a garage]
+[S12T7] (dia_id: D12:7)
+
+Dave: Your car looks great, Calvin! I can tell why you're proud. Having something like that is motivating. It's like a reminder of what you can achieve.
+[S12T8] (dia_id: D12:8)

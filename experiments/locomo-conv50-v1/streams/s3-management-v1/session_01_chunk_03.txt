@@ -1,0 +1,10 @@
+Session 1 · 2023-03-23
+
+Calvin: No, I've never been in that park. Looks like a chill spot. I'll definitely check it out when I'm back. Appreciate the tip!
+[S1T17] (dia_id: D1:17)
+
+Dave: Cool! Enjoy your trip! Let me know if you need any more recommendations. Have fun!
+[S1T18] (dia_id: D1:18)
+
+Calvin: Thanks, Dave! If I need any help, I'll be sure to let you know. Stay safe!
+[S1T19] (dia_id: D1:19)

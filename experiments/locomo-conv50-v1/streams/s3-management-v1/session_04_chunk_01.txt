@@ -1,0 +1,30 @@
+Session 4 · 2023-05-01
+
+Dave: Hey Calvin, long time no see! A lot's been happening since we last talked. Guess what? I finally opened my own car maintenance shop! It's so satisfying to have a spot to work on cars - it's like a dream come true! Take a look at the photo.
+[Image caption: a photo of a car dealership with cars parked in front of it]
+[S4T1] (dia_id: D4:1)
+
+Calvin: Wow Dave! Congrats on opening your own car maintenance shop! It looks like all your hard work and dedication paid off.
+[Image caption: a photo of a man standing under a car in a garage]
+[S4T2] (dia_id: D4:2)
+
+Dave: Thanks, Cal! It's great to see my hard work paying off. Opening this shop was my dream, and I'm really happy to see it getting started. It was a lot of hard work, but it was worth it.
+[S4T3] (dia_id: D4:3)
+
+Calvin: Woo, Dave! Congrats on achieving your dream - you've got guts and ambition - that's awesome! Keep it up!
+[Image caption: a photo of a book with a space theme on it]
+[S4T4] (dia_id: D4:4)
+
+Dave: Thanks! Appreciate the support. My dream was to open a shop and it's a step towards my other dream of working on classic cars. I love their design and engineering.
+[S4T5] (dia_id: D4:5)
+
+Calvin: Wow, Dave! Going for it with classic cars is cool! Fulfilling your dreams is so important.
+[Image caption: a photo of a red car parked in a parking lot]
+[S4T6] (dia_id: D4:6)
+
+Dave: I'm obsessed with classic cars. They have a unique charm. I was so thrilled to restore one last year—nothing like bringing it back to life! Take a look at the engine of the restored car.
+[Image caption: a photo of a car engine with a small air filter]
+[S4T7] (dia_id: D4:7)
+
+Calvin: Wow, Dave! That looks awesome!
+[S4T8] (dia_id: D4:8)

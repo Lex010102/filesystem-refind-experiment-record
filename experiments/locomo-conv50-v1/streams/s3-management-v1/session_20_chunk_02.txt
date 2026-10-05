@@ -1,0 +1,25 @@
+Session 20 · 2023-09-22
+
+Dave: Sounds great, Cal! "California Love" is a classic! Let me know if you wanna jam some music together!
+[S20T9] (dia_id: D20:9)
+
+Calvin: Yeah, let's do it! That would be awesome.
+[S20T10] (dia_id: D20:10)
+
+Dave: I'm stoked, Calvin! We can crank up the music and have an awesome jam session. Can't wait!
+[S20T11] (dia_id: D20:11)
+
+Calvin: Yeah, Dave! Gonna be great! Can't wait to see what we can do.
+[S20T12] (dia_id: D20:12)
+
+Dave: Yeah, let's do it! It'll be awesome. Let's rock it!
+[S20T13] (dia_id: D20:13)
+
+Calvin: Yeah, let's do this! I can't wait!
+[S20T14] (dia_id: D20:14)
+
+Dave: Nice one, Calvin! Let's make some awesome memories and have a great time. See ya soon!
+[S20T15] (dia_id: D20:15)
+
+Calvin: Count me in. Can't wait to create something special. See you soon!
+[S20T16] (dia_id: D20:16)

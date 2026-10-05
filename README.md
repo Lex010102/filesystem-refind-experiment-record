@@ -12,8 +12,9 @@ GitHub：<https://github.com/Lex010102/filesystem-refind-experiment-record>
 - 已固定官方 `locomo10.json`，并为 `conv-50` 生成统一 canonical records、source map 和版本 manifest；
 - 已将全部 568 条 canonical records 确定性地构建为 30 个 S1 平铺原始 session 文件，并加入无损、完整性、确定性和防篡改测试；
 - 已用一次正式 NUS SoC API episode 构建并离线验证 S2 Foldered verbatim store：30 个 session 在零字节修改下被归入 4 个模型自定主题目录，完整 trace、manifest、path map 和 COMMITTED 标记均已固定；
+- 已把同一批 568 条 records 确定性地固定为 85 个 S3 管理输入 chunks：按自然 session 重置、每块最多 8 个 source turns、chunk payload（含 session header 与分隔符）不超过 3,000 个 Unicode code points，并提供逐 turn 字符/字节反查索引和防篡改测试；
 - 尚未完成 ReFind-style R2、统一 Answerer、批量评测与七条件实验；
-- 当前最准确的说法是：**正式数据底座、S1/S2 stores 和 S3+R1 底层原型已跑通，完整 benchmark 平台仍在建设中。**
+- 当前最准确的说法是：**正式数据底座、S1/S2 stores 与 S3 输入流已固定，S3 正式 LLM 建库和完整 benchmark 平台仍在建设中。**
 
 完整的一个月工作路线见 [实验地图](docs/plans/one-month-experiment-map.md)。历史进度见 [研究进度日志](docs/progress/2026-09-16-research-log.md)，最新数据与 S1/S2 准备状态见 [LoCoMo 数据准备记录](docs/progress/2026-10-05-locomo-data-preparation.md)。
 
@@ -79,12 +80,13 @@ python3 -m fs_memory_lab.cli foldering-prompt
 python3 -m fs_memory_lab.cli verify-s2
 python3 -m fs_memory_lab.locomo prepare
 python3 -m fs_memory_lab.stores build-s1
+python3 -m fs_memory_lab.s3_chunks
 python3 -m unittest discover -s tests -v
 ```
 
 `demo` 使用临时目录，不调用 API。
 
-LoCoMo 的官方来源、许可、固定 commit、schema 和校验值见 [数据说明](data/README.md)。S1 的格式、位置、生成命令和完整性保证见 [S1 实验说明](experiments/locomo-conv50-v1/README.md)。
+LoCoMo 的官方来源、许可、固定 commit、schema 和校验值见 [数据说明](data/README.md)。S1/S2 stores 与 S3 管理输入流的格式、位置、生成命令和完整性保证见 [实验产物说明](experiments/locomo-conv50-v1/README.md)。
 
 ## 连接 API
 
