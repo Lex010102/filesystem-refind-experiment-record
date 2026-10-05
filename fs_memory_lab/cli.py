@@ -18,12 +18,21 @@ from .filesystem import MemoryFS
 from .foldering_prompt import (FOLDERING_PROMPT, FOLDERING_PROMPT_VERSION,
                                FROZEN_FOLDERING_PROMPT_SHA256,
                                FROZEN_FOLDERING_TASK_SHA256)
+from .management_prompt import (BUILDER_PROMPT_VERSION,
+                                FROZEN_BUILDER_PROMPT_SHA256,
+                                FROZEN_LOCOMO_ATTRIBUTION_SHA256,
+                                FROZEN_MANAGEMENT_PROMPT_SHA256,
+                                LOCOMO_ATTRIBUTION_VERSION,
+                                MANAGEMENT_PROMPT_VERSION)
 from .paper_config import (CHUNK_MAX_CHARS, CHUNK_MAX_TURNS, CONTEXT_COMPACTION_KEEP_ROUNDS,
                            CONTEXT_COMPACTION_TRIGGER, FOLDERING, MANAGEMENT, RANDOM_SEED, SEARCH,
                            SEARCH_CONCURRENCY)
 from .paper_prompts import MANAGEMENT_PROMPT, SEARCH_PROMPT
 from .paper_tools import (FOLDERING_PROFILE, FROZEN_FOLDERING_TOOL_SCHEMA_SHA256,
                           MANAGEMENT_PROFILE, SEARCH_PROFILE, TOOL_DEFINITIONS)
+from .s3_protocol import (FROZEN_S3_USER_INSTRUCTION_SHA256,
+                          FROZEN_S3_USER_TEMPLATE_SHA256,
+                          S3_USER_WRAPPER_VERSION, render_s3_user_message)
 from .s2 import (build_s2_store, git_state, preflight_s2_build,
                  verify_published_s2)
 
@@ -99,6 +108,7 @@ def main() -> None:
     sub.add_parser("demo", help="Run deterministic file-tool demo without API")
     sub.add_parser("config", help="Show effective paper-aligned defaults without API")
     sub.add_parser("foldering-prompt", help="Print the project-defined S2 prompt without API")
+    sub.add_parser("management-prompt", help="Print the paper-derived frozen S3 management prompt without API")
     sub.add_parser("s2-preflight", help="Validate frozen S1 and S2 targets without API")
     sub.add_parser("build-s2", help="Safely build and atomically publish formal S2 with API")
     sub.add_parser("verify-s2", help="Recompute and verify the published S2 without API")
@@ -121,9 +131,12 @@ def main() -> None:
     if args.command == "foldering-prompt":
         print(FOLDERING_PROMPT)
         return
+    if args.command == "management-prompt":
+        print(MANAGEMENT_PROMPT, end="")
+        return
     if args.command == "config":
         output = {
-            "paper": "Filesystem-Based Memory for LLM Agents; Center plus local S2 reconstruction",
+            "paper": "Filesystem-Based Memory for LLM Agents; Center plus local S2/S3 operationalization",
             "management": asdict(MANAGEMENT), "foldering": asdict(FOLDERING),
             "search": asdict(SEARCH),
             "chunking": {"max_turns": CHUNK_MAX_TURNS, "max_chars": CHUNK_MAX_CHARS},
@@ -139,6 +152,19 @@ def main() -> None:
                 "management": hashlib.sha256(MANAGEMENT_PROMPT.encode("utf-8")).hexdigest(),
                 "foldering": hashlib.sha256(FOLDERING_PROMPT.encode("utf-8")).hexdigest(),
                 "search": hashlib.sha256(SEARCH_PROMPT.encode("utf-8")).hexdigest(),
+            },
+            "management_prompt": {
+                "version": MANAGEMENT_PROMPT_VERSION,
+                "provenance": "paper Appendix A.1 Prompt 1 plus LoCoMo Prompt 2",
+                "builder_version": BUILDER_PROMPT_VERSION,
+                "builder_sha256": FROZEN_BUILDER_PROMPT_SHA256,
+                "attribution_version": LOCOMO_ATTRIBUTION_VERSION,
+                "attribution_sha256": FROZEN_LOCOMO_ATTRIBUTION_SHA256,
+                "combined_sha256": FROZEN_MANAGEMENT_PROMPT_SHA256,
+                "user_wrapper_version": S3_USER_WRAPPER_VERSION,
+                "user_wrapper_provenance": "project-defined; exact paper wrapper not published",
+                "user_instruction_sha256": FROZEN_S3_USER_INSTRUCTION_SHA256,
+                "user_template_sha256": FROZEN_S3_USER_TEMPLATE_SHA256,
             },
             "foldering_prompt": {
                 "version": FOLDERING_PROMPT_VERSION,
@@ -240,7 +266,7 @@ def main() -> None:
         # A pre-chunk copy allows recovery if a model makes a bad write.
         shutil.copytree(memory.root, run_dir / f"before-chunk-{index:03d}", symlinks=True)
         try:
-            result = runner.run("management", f"Integrate this conversation chunk into the existing memory filesystem.\n\n{chunk}")
+            result = runner.run("management", render_s3_user_message(chunk))
         except Exception:
             print(f"Chunk {index} failed. The pre-chunk snapshot is at {run_dir / f'before-chunk-{index:03d}'}")
             raise

@@ -1,4 +1,5 @@
 import io
+import hashlib
 import json
 import tempfile
 import unittest
@@ -12,10 +13,15 @@ from fs_memory_lab.cli import chunk_lines, main, validate_locomo_turns
 from fs_memory_lab.filesystem import MemoryFS, ToolError
 from fs_memory_lab.foldering_prompt import (FOLDERING_PROMPT, FOLDERING_PROMPT_VERSION,
                                             FOLDERING_TASK)
+from fs_memory_lab.management_prompt import (BUILDER_BASE,
+                                             LOCOMO_ATTRIBUTION)
 from fs_memory_lab.paper_config import FOLDERING, MANAGEMENT, SEARCH
 from fs_memory_lab.paper_prompts import MANAGEMENT_PROMPT, SEARCH_PROMPT
 from fs_memory_lab.paper_tools import (FOLDERING_PROFILE, FOLDERING_TOOL_DEFINITIONS,
                                        MANAGEMENT_PROFILE, SEARCH_PROFILE)
+from fs_memory_lab.s3_protocol import (S3_USER_INSTRUCTION,
+                                       S3_USER_TEMPLATE,
+                                       render_s3_user_message)
 
 
 FILE = "---\nname: alice\ndescription: Alice's diet.\n---\n\n# Diet\n- Vegetarian since May 2026 [S6T5]\n## Past\n- Previously liked yakiniku [S1T1]\n"
@@ -277,6 +283,45 @@ class FilesystemTest(unittest.TestCase):
         provider.assert_not_called()
         self.assertEqual(output.getvalue(), FOLDERING_PROMPT + "\n")
         self.assertFalse((self.base / "must-not-exist").exists())
+
+    def test_management_prompt_command_is_offline_and_exact(self):
+        argv = ["fs-memory-lab", "--project", str(self.base / "must-not-exist"),
+                "management-prompt"]
+        with patch("sys.argv", argv), patch(
+            "fs_memory_lab.cli.CompatibleChatProvider.from_environment"
+        ) as provider, redirect_stdout(io.StringIO()) as output:
+            main()
+        provider.assert_not_called()
+        self.assertEqual(output.getvalue(), MANAGEMENT_PROMPT)
+        self.assertFalse((self.base / "must-not-exist").exists())
+
+    def test_management_prompt_and_local_wrapper_are_frozen_exactly(self):
+        self.assertEqual(
+            hashlib.sha256(BUILDER_BASE.encode("utf-8")).hexdigest(),
+            "6f122e1e4f222a6004a6dd8839c3d14225c7cfc1e9679dd1f44b224fc2f5a4a3",
+        )
+        self.assertEqual(
+            hashlib.sha256(LOCOMO_ATTRIBUTION.encode("utf-8")).hexdigest(),
+            "a8e35d244e6774c61ab26a0a3f4b7e1f762bab634e0ad516b969d306d572cf0b",
+        )
+        self.assertEqual(MANAGEMENT_PROMPT, BUILDER_BASE + "\n" + LOCOMO_ATTRIBUTION)
+        self.assertEqual(
+            hashlib.sha256(MANAGEMENT_PROMPT.encode("utf-8")).hexdigest(),
+            "2ceb39921adb3c5eb4da98964b4925b8886f8540f3663b8f64d1539137d6be26",
+        )
+        self.assertEqual(
+            hashlib.sha256(S3_USER_INSTRUCTION.encode("utf-8")).hexdigest(),
+            "67745e7c580625d5d2d84427ef92bef8c69d876ddb101a1746e4d108bb2ec3a3",
+        )
+        self.assertEqual(
+            hashlib.sha256(S3_USER_TEMPLATE.encode("utf-8")).hexdigest(),
+            "5c9e2854a7fc320202679d6cc7f28ee16024744be8ebdf5dadd66cfe6ffe217d",
+        )
+        payload = "Session 1 · 2023-01-01\n\nCalvin: hello [S1T1]"
+        self.assertEqual(
+            render_s3_user_message(payload),
+            S3_USER_INSTRUCTION + "\n\n" + payload,
+        )
 
     def test_s2_preflight_and_verify_cli_routes_are_offline(self):
         for command, target in (

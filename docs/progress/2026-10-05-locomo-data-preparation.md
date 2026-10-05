@@ -334,3 +334,19 @@ python3 -m unittest tests.test_s3_chunks -v
 ```
 
 下一步不是重新切片，也不是立刻跑正式 85 块；应先完成上面第 4 步：逐字核对并冻结 S3 Builder Prompt、LoCoMo locator extension 和固定 user wrapper，再实现只接受本 manifest 的安全 runner。
+
+## 2026-10-06：S3 Management Prompt 原文提取与冻结
+
+路线第 4 步已经完成。准确名称是 **Management Agent / Builder Agent**，不是单纯的 summary agent：它要先 survey 现有 `/memories`，再提炼值得保存的信息，同时可以创建、更新、移动、合并、拆分、重命名和删除文件，解决冲突并维护 frontmatter、时间历史、cross-reference 与 taxonomy。
+
+本次直接读取论文官方 arXiv v1 TeX 源的 Appendix A.1，而不是继续依赖 PDF 视觉转录：
+
+- Prompt 1（Builder system prompt）逐字节提取后为 12,521 characters、12,663 UTF-8 bytes，SHA-256 `6f122e1e4f222a6004a6dd8839c3d14225c7cfc1e9679dd1f44b224fc2f5a4a3`；
+- Prompt 2（LoCoMo source-attribution extension）为 872 characters、874 bytes，SHA-256 `a8e35d244e6774c61ab26a0a3f4b7e1f762bab634e0ad516b969d306d572cf0b`；
+- 运行时以单个换行连接 Prompt 1 和 Prompt 2，合并后为 13,394 characters、13,538 bytes，SHA-256 `2ceb39921adb3c5eb4da98964b4925b8886f8540f3663b8f64d1539137d6be26`。
+
+此前仓库中的手工转录没有缺句或新增管理规则，但省略了部分 Markdown 空行，也调整了示例目录树的对齐空格，因此旧 hash 不能再作为“论文原文”使用。新的 active prompt 位于 `fs_memory_lab/management_prompt.py`，在 import 时 fail-closed 核对三个固定 hash；`python3 -m fs_memory_lab.cli management-prompt` 可以完全离线打印模型将收到的 system prompt。
+
+论文只说 benchmark-specific Prompt 2 appended after Prompt 1，并没有独立序列化两块之间的连接字节；因此一个换行的合并边界仍明确标为本地冻结选择。论文也没有公开每个 chunk 的精确 user message。本项目把它单独冻结在 `fs_memory_lab/s3_protocol.py`：`Integrate this conversation chunk into the existing memory filesystem.` + 两个换行 + 原样 `chunk_payload`。该 wrapper 版本为 `project-defined-s3-user-wrapper-v1`，不能写成作者原 prompt。
+
+机器可读 contract 位于 `experiments/locomo-conv50-v1/manifests/s3-management-prompt.json`。本步骤成本仍为 0 LLM calls / 0 tokens / 0 tool calls，也没有创建正式 S3 memory。下一步进入路线第 5–6 步：冻结七工具 schema 与运行配置，并实现只能消费既定 85-chunk manifest 的安全 runner；完成离线测试后才做隔离 smoke test。

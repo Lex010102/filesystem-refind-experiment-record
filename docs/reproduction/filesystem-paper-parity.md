@@ -4,8 +4,9 @@
 
 | 项目 | 论文出处 | 本地实现 | 状态 |
 | --- | --- | --- | --- |
-| 管理 system prompt | Appendix A.1，Prompt 1，PDF 第 25–27 页 | `fs_memory_lab/paper_prompts.py` 的 `BUILDER_BASE` | 按公开文本转录；排版字符/换行不保证 byte-exact |
-| LoCoMo 来源标注扩展 | Appendix A.1，Prompt 2，PDF 第 27–28 页 | 同文件 `LOCOMO_ATTRIBUTION`，拼在 Prompt 1 后 | LoCoMo 版转录；其他 benchmark 版未公开完整文本 |
+| 管理 system prompt | Appendix A.1，Prompt 1，PDF 第 25–28 页 | `fs_memory_lab/management_prompt.py` 的 `BUILDER_BASE` | 从官方 arXiv v1 TeX 的 Prompt 1 promptbox 逐字节提取并固定 SHA-256 `6f122e…a4a3` |
+| LoCoMo 来源标注扩展 | Appendix A.1，Prompt 2，PDF 第 28 页 | 同文件 `LOCOMO_ATTRIBUTION`，拼在 Prompt 1 后 | 从官方 Prompt 2 promptbox 逐字节提取，SHA-256 `a8e35d…cf0b`；合并 prompt 为 `2ceb39…be26` |
+| S3 per-chunk user wrapper | 论文只说明每个 chunk 一个 build episode，未刊出这一 user message | `fs_memory_lab/s3_protocol.py` | 本项目固定为最小 instruction + 两个换行 + 原样 chunk；明确标注 project-defined，不冒充论文原文 |
 | S2 Foldered sessions 建库行为 | Section 3，PDF 第 7 页 | `fs_memory_lab/foldering_prompt.py` 的 `FOLDERING_PROMPT` | 论文规定 LLM 设计 taxonomy、整文件 move-only、zero-byte edits，但没有公开建库 prompt 全文；本地文本是明确标注的重建版 |
 | S2 建库工具 | Appendix C.4，Table 12，PDF 第 49–50 页 | `FOLDERING_PROFILE=(view, grep, rename)`；`MemoryFS.foldering_rename` 再强制同 basename、目标 topic folder 和字节不变 | 工具集合对齐；本地 guard 比论文通用 `rename` 更严格，以隔离“只有父目录变化”这一变量 |
 | S2 建库配置 | Appendix C.1，Table 11，PDF 第 47–48 页 | `FOLDERING`：`gpt-5.4-mini`、high、60 rounds、32,768 completion cap | 模型/effort/通用 build rounds 对齐；论文未单列 foldering completion cap，32,768 是本地重建选择 |
@@ -25,7 +26,7 @@
 
 ## 为什么还不能说“完全复现”
 
-1. 论文没有发布原始 prompt 常量、完整函数工具 JSON 包装、上下文摘要器 prompt、固定 user turn 的精确措辞。公开排版文本只能支持高保真转录。
+1. Management Prompt 1/2 已可从作者官方 arXiv TeX 的 promptbox 精确提取；但论文仍没有发布 per-chunk user turn 的精确措辞、完整函数工具 JSON 包装和上下文摘要器 prompt。Prompt 1 与 Prompt 2 之间使用一个换行连接，也是本项目单独冻结的组合边界。
 2. 本项目已固定 LoCoMo10、`conv-50` canonical records、正式 S1/S2 stores 和 85 个确定性 S3 管理输入 chunks；但尚未运行正式 S3 管理构建，也未完成统一检索/回答/评测 runner、八题并发和 judge，因此仍不能复现论文表格分数。
 3. 正式 S2 已用一次 NUS API episode 构建：requested alias 为 `coding`、served model 为 `qwen3.8:27b`，12 次模型调用完成 32 次 `view` 与 30 次 `rename`，随后通过离线完整性验证。该运行不是论文所用 backbone。
 4. NUS 当前实际 served model 不是论文的 `gpt-5.4-mini`；即便兼容函数调用，模型和提供商缓存/采样行为仍与论文不同。

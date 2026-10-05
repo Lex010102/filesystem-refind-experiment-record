@@ -1,0 +1,67 @@
+{
+  "schema_version": "s3-management-prompt-contract-v1",
+  "condition": "S3 Agent-curated filesystem",
+  "status": "prompt-frozen-runner-not-built",
+  "paper_source": {
+    "title": "Filesystem-Based Memory for LLM Agents: Organization, Evolution, and Sustainability",
+    "arxiv_id": "2607.26637v1",
+    "appendix": "A.1",
+    "local_pdf": "papers/primary/filesystem-based-memory-for-llm-agents.pdf",
+    "official_tex_url": "https://arxiv.org/e-print/2607.26637v1",
+    "official_tex_archive_bytes": 1095714,
+    "official_tex_archive_sha256": "ef77cd11a986a0dbb40501469474b61e28e91481209530be5c20e9b85b29cb3e",
+    "prompt_source_member": "sections/appendix/appendix_prompts.tex",
+    "extraction_command": "tar -xOf filesystem-memory-2607.26637v1.tar sections/appendix/appendix_prompts.tex"
+  },
+  "system_prompt": {
+    "composition": "Prompt 1 + one newline + LoCoMo Prompt 2",
+    "composition_boundary": "local frozen operationalization; the paper states that Prompt 2 is appended but does not serialize the boundary separately",
+    "builder_prompt_1": {
+      "version": "filesystem-paper-arxiv-v1-appendix-a1-prompt-1",
+      "source_status": "byte-exact text extracted from the official Appendix A.1 promptbox",
+      "characters": 12521,
+      "utf8_bytes": 12663,
+      "sha256": "6f122e1e4f222a6004a6dd8839c3d14225c7cfc1e9679dd1f44b224fc2f5a4a3"
+    },
+    "locomo_prompt_2": {
+      "version": "filesystem-paper-arxiv-v1-appendix-a1-prompt-2",
+      "source_status": "byte-exact text extracted from the official Appendix A.1 promptbox",
+      "characters": 872,
+      "utf8_bytes": 874,
+      "sha256": "a8e35d244e6774c61ab26a0a3f4b7e1f762bab634e0ad516b969d306d572cf0b"
+    },
+    "combined": {
+      "version": "filesystem-paper-arxiv-v1-appendix-a1-prompt-1-plus-2",
+      "characters": 13394,
+      "utf8_bytes": 13538,
+      "sha256": "2ceb39921adb3c5eb4da98964b4925b8886f8540f3663b8f64d1539137d6be26"
+    }
+  },
+  "user_wrapper": {
+    "version": "project-defined-s3-user-wrapper-v1",
+    "provenance": "project-defined because the paper does not publish the exact per-chunk user message",
+    "instruction": "Integrate this conversation chunk into the existing memory filesystem.",
+    "instruction_sha256": "67745e7c580625d5d2d84427ef92bef8c69d876ddb101a1746e4d108bb2ec3a3",
+    "template": "Integrate this conversation chunk into the existing memory filesystem.\n\n{chunk_payload}",
+    "template_sha256": "5c9e2854a7fc320202679d6cc7f28ee16024744be8ebdf5dadd66cfe6ffe217d"
+  },
+  "management_tool_profile": [
+    "view",
+    "create",
+    "str_replace",
+    "insert",
+    "delete",
+    "rename",
+    "grep"
+  ],
+  "runtime_code": {
+    "prompt_module": "fs_memory_lab/management_prompt.py",
+    "wrapper_module": "fs_memory_lab/s3_protocol.py",
+    "offline_print_command": "python3 -m fs_memory_lab.cli management-prompt"
+  },
+  "construction_cost": {
+    "llm_calls": 0,
+    "tokens": 0,
+    "tool_calls": 0
+  }
+}

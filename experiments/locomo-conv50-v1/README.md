@@ -146,4 +146,24 @@ python3 -m unittest tests.test_s3_chunks -v
 
 已有 stream 与 manifest 完全一致时命令返回 `verified-existing`；任何 chunk/manifest 被改动、丢失、多出文件、变成 symlink 或只剩半套产物时都会停止，且不会静默覆盖。Manifest 为每个 locator 保存 chunk、顺序及字符/UTF-8 byte offsets，因此测试能从 85 个文件逐字节取回 568 个 renderer blocks，证明没有漏、重、乱序或把内嵌换行误当成新 turn。
 
-下一阶段才是：冻结 S3 Management Prompt 与固定 user wrapper，建立只能消费上述 manifest/hash 的安全 runner，做一次低成本 smoke test，然后从空 store 串行运行 85 个独立 build episodes。每个 episode 只延续 filesystem 状态，不延续前一个 episode 的聊天上下文；正式建库只运行一次，成功后冻结供 E5/E6 共用。
+输入流完成后的下一阶段依次是：冻结 S3 Management Prompt 与固定 user wrapper，建立只能消费上述 manifest/hash 的安全 runner，做一次低成本 smoke test，然后从空 store 串行运行 85 个独立 build episodes。下面记录 prompt 冻结结果；runner、smoke test 和正式 store 尚未完成。每个正式 episode 只延续 filesystem 状态，不延续前一个 episode 的聊天上下文；正式建库只运行一次，成功后冻结供 E5/E6 共用。
+
+### S3 Management Prompt 已冻结
+
+论文 Appendix A.1 的 Builder Prompt 1 和 LoCoMo source-attribution Prompt 2 已从官方 arXiv v1 TeX 的两个 promptbox 直接提取，不再使用先前压缩过空行的 PDF 手工转录。运行时 system prompt 固定为 `Prompt 1 + "\n" + Prompt 2`：
+
+| 部分 | 字符 | UTF-8 bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| Builder Prompt 1 | 12,521 | 12,663 | `6f122e1e4f222a6004a6dd8839c3d14225c7cfc1e9679dd1f44b224fc2f5a4a3` |
+| LoCoMo Prompt 2 | 872 | 874 | `a8e35d244e6774c61ab26a0a3f4b7e1f762bab634e0ad516b969d306d572cf0b` |
+| 合并后 system prompt | 13,394 | 13,538 | `2ceb39921adb3c5eb4da98964b4925b8886f8540f3663b8f64d1539137d6be26` |
+
+Prompt 1 与 Prompt 2 的文字来自论文；二者之间采用一个换行的合并边界是本地冻结选择，因为论文只说 extension 被 appended，没有另外给出组合序列化。论文也没有公开每个 chunk 的精确 user message，因此本地把最小 wrapper `instruction + "\n\n" + chunk_payload` 独立定义在 `fs_memory_lab/s3_protocol.py`，版本为 `project-defined-s3-user-wrapper-v1`，不能称作论文原文。
+
+完整 contract 位于 `manifests/s3-management-prompt.json`，运行时代码位于 `fs_memory_lab/management_prompt.py`。可以完全离线打印模型将收到的 system prompt：
+
+```bash
+python3 -m fs_memory_lab.cli management-prompt
+```
+
+这一步没有调用 API，也没有创建 S3 store。下一步是实现只接受已冻结 85-chunk stream、上述 prompt/wrapper hash 和七工具 profile 的安全 S3 runner；之后再做隔离 smoke test，而不是直接启动正式 85-chunk build。
