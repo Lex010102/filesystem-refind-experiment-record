@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "non-formal-s3-real-api-smoke-summary",
+  "status": "passed",
+  "started_at_utc": "2026-10-05T18:59:37.697619Z",
+  "code_revision": "9dcf2219e299572a319969fbf27c0e35bdc9d286",
+  "scope": {
+    "formal_build": false,
+    "chunks": 1,
+    "chunk_filename": "session_01_chunk_01.txt",
+    "chunk_sha256": "4fa1be2a828dc3e99cee29bf306bee6918ac8c4973bb0df7cdceffef306927ec",
+    "source_turns": 8,
+    "locators": [
+      "[S1T1]",
+      "[S1T2]",
+      "[S1T3]",
+      "[S1T4]",
+      "[S1T5]",
+      "[S1T6]",
+      "[S1T7]",
+      "[S1T8]"
+    ]
+  },
+  "protocol": {
+    "management_prompt_sha256": "2ceb39921adb3c5eb4da98964b4925b8886f8540f3663b8f64d1539137d6be26",
+    "tool_profile_sha256": "e4541dedafbd645e6e11f8847c95283b8738c668915b006f06dd0dea57c0945e",
+    "tool_schema_sha256": "3f4b2edc2045348743961231bc174c973e9c8a5147225bb9caece1fc7a254b56",
+    "runtime_config_sha256": "da352bbdcbc12fa68169ac5ea8307fa5238f506b7040473f5272d7729ad18be2",
+    "user_wrapper_version": "project-defined-s3-user-wrapper-v1",
+    "provider": {
+      "api_style": "portable",
+      "endpoint": "https://soclaas-api.comp.nus.edu.sg/v1/chat/completions",
+      "requested_model": "coding",
+      "served_model": "qwen3.8:27b"
+    },
+    "smoke_limits": {
+      "max_http_requests": 4,
+      "max_rounds": 4,
+      "max_tool_calls_per_response": 8,
+      "max_tool_calls_per_episode": 12
+    }
+  },
+  "result": {
+    "http_requests": 3,
+    "rounds": 3,
+    "tool_calls": 3,
+    "tool_sequence": [
+      "view",
+      "create",
+      "create"
+    ],
+    "usage_totals": {
+      "prompt_tokens": 15652,
+      "completion_tokens": 1009,
+      "total_tokens": 16661
+    },
+    "files": {
+      "people/calvin.md": "22d08c891dc90f2ae93d190e7cb8afbe0f6c2f979f594e12d638d71c98833c51",
+      "people/dave.md": "e67141f3cfa0156e27dee5d4cef4d7da49c9213272cc0c4809f423b21739c339"
+    },
+    "locator_mentions": 7,
+    "store_sha256": "2a532c744b95325120227d4bafc3d5866bfebe8628b05ea11675407bfad2974e",
+    "store_gate_passed": true,
+    "formal_targets_untouched": true
+  },
+  "security": {
+    "api_key_stored_in_artifact": false,
+    "api_key_environment_present_after_process": false,
+    "secret_pattern_scan_passed": true
+  },
+  "interpretation": "This confirms one real NUS API episode can use the frozen S3 prompt, wrapper, seven-tool interface and store gate. It is not the formal 85-chunk S3 build."
+}

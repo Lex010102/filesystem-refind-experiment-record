@@ -30,7 +30,7 @@
 ## 为什么还不能说“完全复现”
 
 1. Management Prompt 1/2 已可从作者官方 arXiv TeX 的 promptbox 精确提取；但论文仍没有发布 per-chunk user turn 的精确措辞、完整函数工具 JSON 包装和上下文摘要器 prompt。Prompt 1 与 Prompt 2 之间使用一个换行连接，也是本项目单独冻结的组合边界。
-2. 本项目已固定 LoCoMo10、`conv-50` canonical records、正式 S1/S2 stores、85 个确定性 S3 管理输入 chunks、prompt/tool/runtime contracts，并完成 S3 safe runner 的离线 85-episode fake-provider 验证；但尚未做真实 API smoke、尚未运行正式 S3 管理构建，也未完成统一检索/回答/评测 runner、八题并发和 judge，因此仍不能复现论文表格分数。
+2. 本项目已固定 LoCoMo10、`conv-50` canonical records、正式 S1/S2 stores、85 个确定性 S3 管理输入 chunks、prompt/tool/runtime contracts，并完成 S3 safe runner 的离线 85-episode fake-provider 验证及首个冻结 chunk 的 NUS API smoke；但尚未运行正式 S3 管理构建，也未完成统一检索/回答/评测 runner、八题并发和 judge，因此仍不能复现论文表格分数。
 3. 正式 S2 已用一次 NUS API episode 构建：requested alias 为 `coding`、served model 为 `qwen3.8:27b`，12 次模型调用完成 32 次 `view` 与 30 次 `rename`，随后通过离线完整性验证。该运行不是论文所用 backbone。
 4. NUS 当前实际 served model 不是论文的 `gpt-5.4-mini`；即便兼容函数调用，模型和提供商缓存/采样行为仍与论文不同。
 
@@ -41,4 +41,4 @@
 - Store gate 能拒绝伪造/未来 locator，验证 file/section cross-reference，并要求列表或表格中的事实候选带行内 locator；自然语言段落的语义事实边界和 citation completeness 无法由正则完全判定，正式 store 仍需抽样人工审计。
 - “gold 未暴露”的精确含义是 QA、answer、category、gold evidence 没有挂载到 Management Agent 的 messages 或 tools；不是声称这些数据在仓库磁盘上不存在。
 
-当前可先运行 `python3 -m fs_memory_lab.cli config` 和完全离线的 `python3 -m fs_memory_lab.cli s3-preflight`。下一阶段是在 `local-runs/` 做一次低成本真实 API smoke；只有它通过且代码已 clean commit 后才运行唯一一次正式 `build-s3`，随后离线 `verify-s3`。不要把密钥贴到聊天、代码或 trace 里。
+当前可运行 `python3 -m fs_memory_lab.cli config` 和完全离线的 `python3 -m fs_memory_lab.cli s3-preflight`。隔离 NUS API smoke 已于 2026-10-06 通过；下一阶段是在记录本次结果的 clean commit 上运行唯一一次正式 `build-s3`，随后离线 `verify-s3`。不要把密钥贴到聊天、代码或 trace 里。

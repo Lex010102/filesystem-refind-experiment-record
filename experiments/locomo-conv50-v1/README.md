@@ -146,7 +146,7 @@ python3 -m unittest tests.test_s3_chunks -v
 
 已有 stream 与 manifest 完全一致时命令返回 `verified-existing`；任何 chunk/manifest 被改动、丢失、多出文件、变成 symlink 或只剩半套产物时都会停止，且不会静默覆盖。Manifest 为每个 locator 保存 chunk、顺序及字符/UTF-8 byte offsets，因此测试能从 85 个文件逐字节取回 568 个 renderer blocks，证明没有漏、重、乱序或把内嵌换行误当成新 turn。
 
-输入流之后的 prompt、七工具 schema、运行配置和 safe runner 现均已冻结或实现。每个正式 episode 只延续 filesystem 状态，不延续前一个 episode 的聊天上下文；正式建库只运行一次，成功后冻结供 E5/E6 共用。目前仍未调用真实 API 做 smoke test，也没有创建正式 S3 store。
+输入流之后的 prompt、七工具 schema、运行配置和 safe runner 现均已冻结或实现。每个正式 episode 只延续 filesystem 状态，不延续前一个 episode 的聊天上下文；正式建库只运行一次，成功后冻结供 E5/E6 共用。首个冻结 chunk 的真实 API smoke 已通过，但尚未创建正式 S3 store。
 
 ### S3 Management Prompt 已冻结
 
@@ -214,8 +214,8 @@ python3 -m fs_memory_lab.cli verify-s3
 
 正式 `build-s3` 只接受 clean worktree 的 40 位 Git commit、受审的 `CompatibleChatProvider` 和上述精确 NUS portable profile；测试专用 artifact ID 与 `test-*` revision 被隔离，不能冒充正式产物。Runner 从空 staging store 开始，按全局 chunk index 串行运行 85 个全新 Agent contexts，episode 之间只共享文件系统。每块发送前重验输入 hash，每块前保存 checkpoint，逐事件 `fsync` trace，并在每次工具调用后执行路径/体积上限；每个 episode 后核对 Markdown/frontmatter、只引用已见 locator、cross-reference、文件 hash chain 和最低限度的行内来源标注。任何 API、模型、工具、gate 或发布错误都只保留在 `local-runs/s3-management/` 的 quarantine/诊断中，不会留下可被下游接受的正式 artifact。全部 85 块通过全局 gate 后才发布 store、85 个 episode traces、trace index、manifest，并最后发布 `s3-curated.COMMITTED`。
 
-离线测试已用 deterministic fake provider 完整走通 85 episodes，并覆盖输入或 contract 篡改、provider/profile/served-model 漂移、未来 locator、超限资源、并发锁、失败恢复、发布回滚与正式 artifact 交叉复核；全套测试通过。这个结果只证明 runner 的工程协议可执行，**没有调用 NUS API、没有完成 smoke，也没有构建正式 `stores/s3-curated/`**。
+离线测试已用 deterministic fake provider 完整走通 85 episodes，并覆盖输入或 contract 篡改、provider/profile/served-model 漂移、未来 locator、超限资源、并发锁、失败恢复、发布回滚与正式 artifact 交叉复核；全套测试通过。另一次隔离 smoke 已用 NUS API 处理首个冻结 chunk。两者合起来仍**不能写成正式 85-chunk S3 build 已完成**；`stores/s3-curated/` 仍不存在。
 
 当前自动验收仍有两个明确边界：第一，trace verifier 验证请求、事件、文件 hash 与前后状态链的一致性，但不会重新 replay 每个工具调用来作“该调用因果上产生该文件差异”的形式证明；第二，程序可强制列表和表格中的事实候选带 locator，却不能完美判断所有自由自然语言段落是否逐条完整引用。后续仍需抽样人工审计，不能把结构 gate 写成语义完备性证明。
 
-下一步仍应先做**隔离的低成本真实 API smoke test**，确认 NUS 当前路由、函数调用、locator 写入和失败恢复；通过后再在 clean commit 上启动唯一一次正式 `build-s3`，而不是现在直接把离线 fake-provider 结果当成 S3 store。
+2026-10-06 的隔离 smoke 使用 `session_01_chunk_01.txt`，严格限制为最多 4 次 HTTP 请求和 12 次工具调用。实际由 requested alias `coding`、served model `qwen3.8:27b` 完成 3 次请求与 `view/create/create` 3 次工具调用，生成 `people/calvin.md`、`people/dave.md`，保留 7 次 locator mentions，并通过 S3 store gate；总 usage 为 15,652 prompt、1,009 completion、16,661 tokens。输出只在被 Git 忽略的 `local-runs/s3-smoke-20261005T185937697619Z-eac18b90/`，正式四个目标保持不存在。下一步是在新的 clean commit 上启动唯一一次正式 `build-s3`，而不是把 smoke 结果当成正式 store。

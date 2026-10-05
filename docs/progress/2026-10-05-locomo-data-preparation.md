@@ -404,3 +404,21 @@ deterministic fake provider 已把完整 85-episode 流从空 store 跑到发布
 ### 当前下一步
 
 先在 `local-runs/` 做一次低成本、可丢弃的 NUS 真实 API smoke test，只检查当前路由、函数调用、locator 写入、受限文件操作和失败恢复。Smoke 通过后，冻结 clean commit，再执行唯一一次正式 `build-s3`；发布完成后立即运行 `verify-s3` 并记录成本与最终 hashes。在此之前，`stores/s3-curated/`、`manifests/s3-curated.json`、`traces/s3-management/` 和 `manifests/s3-curated.COMMITTED` 都应保持不存在。
+
+## 2026-10-06：S3 真实 API 单 chunk smoke 通过
+
+使用冻结输入的第一个文件 `session_01_chunk_01.txt`（8 source turns，`[S1T1]`–`[S1T8]`，SHA-256 `4fa1be2a828dc3e99cee29bf306bee6918ac8c4973bb0df7cdceffef306927ec`）完成了一次隔离的 NUS 真实 API smoke。该测试直接复用冻结的 Management Prompt、七工具 schema、portable provider profile、user wrapper 和 S3 store gate，但把上限收紧为最多 4 次 HTTP 请求、每次最多 8 个工具调用、全 episode 最多 12 个工具调用。输出仅写入被 Git 忽略的 `local-runs/`，不调用正式 `build_s3_store()`。
+
+实际结果：
+
+- requested alias：`coding`；每次响应报告的 served model 均为 `qwen3.8:27b`；
+- 3 HTTP requests / 3 rounds / 3 tool calls，工具序列为 `view → create → create`；
+- usage 合计：15,652 prompt tokens、1,009 completion tokens、16,661 total tokens；
+- 创建 `people/calvin.md` 与 `people/dave.md`，共 7 次 locator mentions；
+- store gate 通过，tree SHA-256 为 `2a532c744b95325120227d4bafc3d5866bfebe8628b05ea11675407bfad2974e`；
+- 正式四个目标 `stores/s3-curated/`、`manifests/s3-curated.json`、`traces/s3-management/`、`manifests/s3-curated.COMMITTED` 在测试后仍全部不存在；
+- 密钥通过一次性命名管道注入，测试进程结束后未保留在环境、代码或 trace 中。
+
+第一次受限进程尝试在 DNS 阶段被本地网络沙盒拦截，没有到达学校 API；获准联网后没有自动重试，而是重新进行一次明确授权的 smoke。最终通过结果不能写成“正式 S3 已完成”，它只证明当前 NUS 路由、served-model 锁定、七工具函数调用、实际文件写入、locator 和单块 store gate 可以一起工作。
+
+当前下一步更新为：把本次记录提交成 clean Git revision，然后执行唯一一次正式 85-chunk `build-s3`，完成后立即运行离线 `verify-s3` 并冻结成本与 artifact hashes。
