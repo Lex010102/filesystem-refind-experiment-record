@@ -15,11 +15,12 @@ from pathlib import Path
 
 from .agent import AgentRunner, CompatibleChatProvider, save_trace
 from .filesystem import MemoryFS
+from .foldering_prompt import FOLDERING_PROMPT, FOLDERING_PROMPT_VERSION
 from .paper_config import (CHUNK_MAX_CHARS, CHUNK_MAX_TURNS, CONTEXT_COMPACTION_KEEP_ROUNDS,
-                           CONTEXT_COMPACTION_TRIGGER, MANAGEMENT, RANDOM_SEED, SEARCH,
+                           CONTEXT_COMPACTION_TRIGGER, FOLDERING, MANAGEMENT, RANDOM_SEED, SEARCH,
                            SEARCH_CONCURRENCY)
 from .paper_prompts import MANAGEMENT_PROMPT, SEARCH_PROMPT
-from .paper_tools import MANAGEMENT_PROFILE, SEARCH_PROFILE, TOOL_DEFINITIONS
+from .paper_tools import FOLDERING_PROFILE, MANAGEMENT_PROFILE, SEARCH_PROFILE, TOOL_DEFINITIONS
 
 
 def chunk_lines(text: str, max_turns: int = CHUNK_MAX_TURNS, max_chars: int = CHUNK_MAX_CHARS) -> list[str]:
@@ -78,6 +79,7 @@ def main() -> None:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("demo", help="Run deterministic file-tool demo without API")
     sub.add_parser("config", help="Show effective paper-aligned defaults without API")
+    sub.add_parser("foldering-prompt", help="Print the project-defined S2 prompt without API")
     sub.add_parser("check-api", help="Make one read-only function-call request without writing memory")
     ingest = sub.add_parser("ingest", help="Send each dialogue chunk to the management agent")
     ingest.add_argument("--input", type=Path, required=True, help="UTF-8 file with one dialogue turn per line")
@@ -94,20 +96,31 @@ def main() -> None:
     if args.command == "demo":
         _demo()
         return
+    if args.command == "foldering-prompt":
+        print(FOLDERING_PROMPT)
+        return
     if args.command == "config":
         output = {
-            "paper": "Filesystem-Based Memory for LLM Agents, Center / Agent-curated",
-            "management": asdict(MANAGEMENT), "search": asdict(SEARCH),
+            "paper": "Filesystem-Based Memory for LLM Agents; Center plus local S2 reconstruction",
+            "management": asdict(MANAGEMENT), "foldering": asdict(FOLDERING),
+            "search": asdict(SEARCH),
             "chunking": {"max_turns": CHUNK_MAX_TURNS, "max_chars": CHUNK_MAX_CHARS},
             "random_seed": RANDOM_SEED,
             "search_concurrency_paper_batch_only": SEARCH_CONCURRENCY,
             "compaction": {"prompt_token_trigger": CONTEXT_COMPACTION_TRIGGER,
                            "recent_rounds": CONTEXT_COMPACTION_KEEP_ROUNDS,
                            "summarizer": "local approximation; author prompt not published"},
-            "tool_profiles": {"management": MANAGEMENT_PROFILE, "search": SEARCH_PROFILE},
+            "tool_profiles": {"management": MANAGEMENT_PROFILE,
+                              "foldering": FOLDERING_PROFILE,
+                              "search": SEARCH_PROFILE},
             "prompt_sha256": {
                 "management": hashlib.sha256(MANAGEMENT_PROMPT.encode("utf-8")).hexdigest(),
+                "foldering": hashlib.sha256(FOLDERING_PROMPT.encode("utf-8")).hexdigest(),
                 "search": hashlib.sha256(SEARCH_PROMPT.encode("utf-8")).hexdigest(),
+            },
+            "foldering_prompt": {
+                "version": FOLDERING_PROMPT_VERSION,
+                "provenance": "project-defined reconstruction; author build prompt not published",
             },
             "api": {"default_base_url": "https://api.openai.com/v1",
                     "default_style": "paper",

@@ -12,6 +12,10 @@ class RoleConfig:
 
 
 MANAGEMENT = RoleConfig("gpt-5.4-mini", "high", 32768, 60)
+# The paper fixes the foldering model/effort and general build round cap, but does
+# not print a separate Foldered-sessions completion cap.  We use the main build
+# cap locally and record it as a reconstruction choice.
+FOLDERING = RoleConfig("gpt-5.4-mini", "high", 32768, 60)
 SEARCH = RoleConfig("gpt-5.4-mini", "high", 8192, 40)
 RANDOM_SEED = 42
 CHUNK_MAX_TURNS = 8

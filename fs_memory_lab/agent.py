@@ -14,10 +14,12 @@ from typing import Any, Protocol
 from urllib.parse import urlparse
 
 from .filesystem import MemoryFS, ToolError
+from .foldering_prompt import FOLDERING_PROMPT, FOLDERING_TASK
 from .paper_config import (CONTEXT_COMPACTION_KEEP_ROUNDS, CONTEXT_COMPACTION_TRIGGER,
-                           MANAGEMENT, SEARCH, RoleConfig)
+                           FOLDERING, MANAGEMENT, SEARCH, RoleConfig)
 from .paper_prompts import MANAGEMENT_PROMPT, SEARCH_PROMPT
-from .paper_tools import MANAGEMENT_PROFILE, SEARCH_PROFILE, TOOL_DEFINITIONS
+from .paper_tools import (FOLDERING_PROFILE, FOLDERING_TOOL_DEFINITIONS,
+                          MANAGEMENT_PROFILE, SEARCH_PROFILE, TOOL_DEFINITIONS)
 
 
 class ChatProvider(Protocol):
@@ -156,13 +158,29 @@ class AgentRunner:
         return new_messages, new_starts
 
     def run(self, role: str, input_text: str) -> EpisodeResult:
-        if role not in {"management", "search"}:
-            raise ValueError("Role must be management or search")
-        prompt = MANAGEMENT_PROMPT if role == "management" else SEARCH_PROMPT
-        config = MANAGEMENT if role == "management" else SEARCH
-        allowed = MANAGEMENT_PROFILE if role == "management" else SEARCH_PROFILE
-        tools = [TOOL_DEFINITIONS[name] for name in allowed]
-        user_text = input_text if role == "management" else input_text + "\n\nCite every factual claim in bracket notation."
+        if role == "management":
+            prompt = MANAGEMENT_PROMPT
+            config = MANAGEMENT
+            allowed = MANAGEMENT_PROFILE
+            definitions = TOOL_DEFINITIONS
+            user_text = input_text
+        elif role == "foldering":
+            if input_text != FOLDERING_TASK:
+                raise ValueError("Foldering Agent accepts only its fixed, versioned task instruction")
+            prompt = FOLDERING_PROMPT
+            config = FOLDERING
+            allowed = FOLDERING_PROFILE
+            definitions = FOLDERING_TOOL_DEFINITIONS
+            user_text = input_text
+        elif role == "search":
+            prompt = SEARCH_PROMPT
+            config = SEARCH
+            allowed = SEARCH_PROFILE
+            definitions = TOOL_DEFINITIONS
+            user_text = input_text + "\n\nCite every factual claim in bracket notation."
+        else:
+            raise ValueError("Role must be management, foldering, or search")
+        tools = [definitions[name] for name in allowed]
         messages: list[dict] = [{"role": "system", "content": prompt}, {"role": "user", "content": user_text}]
         trace: list[dict] = []
         usage: list[dict] = []
@@ -213,6 +231,10 @@ class AgentRunner:
                     and len(round_starts) > CONTEXT_COMPACTION_KEEP_ROUNDS):
                 messages, round_starts = self._compact(messages, round_starts, config, usage, trace, round_number)
         raise RuntimeError(f"Agent exceeded {limit} model rounds; inspect trace before retrying")
+
+    def run_foldering(self) -> EpisodeResult:
+        """Run the fixed S2 foldering task; the caller must mount a disposable S1 copy."""
+        return self.run("foldering", FOLDERING_TASK)
 
 
 def save_trace(result: EpisodeResult, path: Path) -> None:

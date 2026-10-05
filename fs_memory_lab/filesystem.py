@@ -52,6 +52,7 @@ class MemoryFS:
     """Nine tools: seven management operations and two search-only read tools."""
 
     management_tools = frozenset({"view", "grep", "create", "str_replace", "insert", "delete", "rename"})
+    foldering_tools = frozenset({"view", "grep", "rename"})
     search_tools = frozenset({"view", "grep", "toc", "section_read"})
 
     def __init__(self, root: Path, trash_root: Path | None = None):
@@ -251,6 +252,35 @@ class MemoryFS:
         note = f"; frontmatter name is still {current_name!r} and may need editing" if current_name else ""
         return f"Moved {old_path} to {new_path}{note}"
 
+    def foldering_rename(self, old_path: str, new_path: str) -> str:
+        """Move one immutable session file; only its parent path may change."""
+        source = self._path(old_path, allow_root=False)
+        destination = self._path(new_path, allow_root=False)
+        if not source.is_file():
+            raise ToolError("Foldering rename requires an existing regular session file")
+        self._markdown(source)
+        self._markdown(destination)
+        if destination.exists():
+            raise ToolError("Foldering destination already exists")
+        if source.name != destination.name:
+            raise ToolError("Foldering may change only the parent directory, not the filename")
+        relative = destination.relative_to(self.root)
+        if len(relative.parts) < 2:
+            raise ToolError("Foldering destination must place the session inside a topic folder")
+        folder_parts = relative.parts[:-1]
+        if any(_SLUG.fullmatch(part) is None for part in folder_parts):
+            raise ToolError("Folder names must be lowercase kebab-case slugs")
+
+        payload = source.read_bytes()
+        try:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(source), str(destination))
+        except OSError as exc:
+            raise ToolError(f"Cannot move session file: {exc}") from exc
+        if destination.read_bytes() != payload:
+            raise ToolError("Foldering move changed file bytes")
+        return f"Moved intact {old_path} to {new_path}; basename and bytes preserved"
+
     def _headings(self, path: str) -> tuple[Path, list[tuple[int, int, str]]]:
         target = self._path(path, allow_root=False)
         self._markdown(target)
@@ -301,10 +331,18 @@ class MemoryFS:
         return _numbered("\n".join(lines[start - 1:stop]), start)
 
     def call(self, role: str, name: str, args: dict) -> str:
-        allowed = self.management_tools if role == "management" else self.search_tools if role == "search" else None
+        allowed = (
+            self.management_tools
+            if role == "management"
+            else self.foldering_tools
+            if role == "foldering"
+            else self.search_tools
+            if role == "search"
+            else None
+        )
         if allowed is None or name not in allowed:
             raise ToolError(f"Tool {name!r} is not available to role {role!r}")
-        method = getattr(self, name)
+        method = self.foldering_rename if role == "foldering" and name == "rename" else getattr(self, name)
         try:
             return method(**args)
         except TypeError as exc:

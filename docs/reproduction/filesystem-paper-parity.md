@@ -6,6 +6,9 @@
 | --- | --- | --- | --- |
 | 管理 system prompt | Appendix A.1，Prompt 1，PDF 第 25–27 页 | `fs_memory_lab/paper_prompts.py` 的 `BUILDER_BASE` | 按公开文本转录；排版字符/换行不保证 byte-exact |
 | LoCoMo 来源标注扩展 | Appendix A.1，Prompt 2，PDF 第 27–28 页 | 同文件 `LOCOMO_ATTRIBUTION`，拼在 Prompt 1 后 | LoCoMo 版转录；其他 benchmark 版未公开完整文本 |
+| S2 Foldered sessions 建库行为 | Section 3，PDF 第 7 页 | `fs_memory_lab/foldering_prompt.py` 的 `FOLDERING_PROMPT` | 论文规定 LLM 设计 taxonomy、整文件 move-only、zero-byte edits，但没有公开建库 prompt 全文；本地文本是明确标注的重建版 |
+| S2 建库工具 | Appendix C.4，Table 12，PDF 第 49–50 页 | `FOLDERING_PROFILE=(view, grep, rename)`；`MemoryFS.foldering_rename` 再强制同 basename、目标 topic folder 和字节不变 | 工具集合对齐；本地 guard 比论文通用 `rename` 更严格，以隔离“只有父目录变化”这一变量 |
+| S2 建库配置 | Appendix C.1，Table 11，PDF 第 47–48 页 | `FOLDERING`：`gpt-5.4-mini`、high、60 rounds、32,768 completion cap | 模型/effort/通用 build rounds 对齐；论文未单列 foldering completion cap，32,768 是本地重建选择 |
 | Center 层级检索 system prompt | Appendix A.3，Prompt 5，PDF 第 31–33 页 | 同文件 `SEARCH_PROMPT` | 按公开文本转录；byte-exact 未证实 |
 | 工具说明和参数 | Appendix C.4，Table 12，PDF 第 49–50 页 | `fs_memory_lab/paper_tools.py`，7 个管理工具、4 个检索工具 | 描述/参数/required 标志按表转录；完整 JSON 包装、工具顺序未在论文给出 |
 | 管理/检索模型 | Appendix C.1，Table 11，PDF 第 47–48 页 | `fs_memory_lab/paper_config.py`：均 `gpt-5.4-mini`、high | 默认对齐；`FSMEM_MODEL` 覆盖会失配 |
@@ -22,8 +25,8 @@
 ## 为什么还不能说“完全复现”
 
 1. 论文没有发布原始 prompt 常量、完整函数工具 JSON 包装、上下文摘要器 prompt、固定 user turn 的精确措辞。公开排版文本只能支持高保真转录。
-2. 本项目没有 LoCoMo/REALTALK/PersonaMem 的官方数据 loader、论文测试子集运行器、八题并发和 judge，因此尚不能复现论文表格分数。当前演示文件只是小样本。
-3. 未用你的真实 API 做一次端到端 ingest + ask。无网络测试只能证明请求内容和工具循环按代码预期组成，不能证明真实模型可用、结果质量或费用。
-4. 如果 API 不是 `gpt-5.4-mini` 的 OpenAI 服务，即便兼容函数调用，模型和提供商缓存/采样行为仍与论文不同。
+2. 本项目已固定 LoCoMo10、`conv-50` canonical records 和 S1 store，但尚未完成正式 S2/S3、统一检索/回答/评测 runner、八题并发和 judge，因此尚不能复现论文表格分数。
+3. NUS API 已用于 Alice 端到端管理试跑，但本轮 Foldering Agent 只完成离线接线和 FakeProvider 测试，尚未对正式 S1 调用 API。
+4. NUS 当前实际 served model 不是论文的 `gpt-5.4-mini`；即便兼容函数调用，模型和提供商缓存/采样行为仍与论文不同。
 
 先运行 `python3 -m fs_memory_lab.cli config` 核对默认值；再给终端设置 `FSMEM_API_KEY`，用演示输入做一次低成本接入验证。不要把密钥贴到聊天或代码里。

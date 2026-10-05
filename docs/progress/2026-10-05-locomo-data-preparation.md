@@ -139,6 +139,20 @@ Filesystem 论文只明确说明排除 adversarial category，没有进一步公
 
 这一步复现了 Filesystem 论文“一次 session 一个原文文件、平铺、零模型成本”的 S1 语义。论文未公开逐字节 Markdown 模板，因此 frontmatter、caption 和双来源标签的具体排版属于本项目已公开的确定性 protocol，而不是作者代码的原样复制。
 
+## S2 Foldering Agent 已实现，但尚未正式建库
+
+已新增独立 `foldering` 角色和 `fs_memory_lab/foldering_prompt.py`。论文没有公开 Foldered sessions 的建库 prompt 全文，因此该 prompt 明确标为 `paper-constrained-local-v1`：它复用论文的 taxonomy 原则，并把 Section 3 的 move-only、zero-byte-edits 要求操作化，禁止使用题目、答案、类别、gold evidence 或论文结果反推目录。
+
+Foldering Agent 与 S3 Management Agent 完全分开：
+
+- 模型只会收到 `view`、`grep`、受限 `rename` 三个工具；
+- 工具层拒绝 create、edit、insert、delete、TOC/section read、文件改名、移回根目录、移动目录和非法 folder slug；
+- 成功的 `rename` 只能把普通 `.md` 文件移动到 topic folder，并在移动后逐字节核对；
+- 固定 user task 阻止调用方把 QA/gold 信息追加到 foldering 指令；
+- FakeProvider 测试已经验证工具列表、system prompt、配置、同名移动和字节保持。
+
+当前没有 `stores/s2-foldered/`，也没有调用学校 API。`run_foldering()` 仍要求调用方提供可丢弃的 S1 副本，因此下一步必须先实现 staging 安全层和发布 gate，不能把正式 `stores/s1-flat/` 直接挂载为可写目录。
+
 ## 下一步
 
-以已经通过 hash 验证的 S1 为不可变母版实现 S2：只允许把 30 个完整文件移动进主题目录，文件名和文件字节都不能改变，并输出 `S1_path -> S2_path` 映射。此时不应先运行 S3 管理 LLM，也不应为六个条件分别切一次原始数据。实现 ReFind-style R2 前还需将 exchange 派生规则、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则写成测试。
+为已实现的 Foldering Agent 增加正式 S2 staging runner：从 S1 复制、冻结 before hash、运行一次 API episode、验证 30 个文件/同 basename/逐文件 hash/无根目录 `.md`、输出 `S1_path -> S2_path` 和 trace，再原子发布。prompt 需要先由研究者审阅确认；确认后冻结全文与 SHA，不能按下游问答结果调 prompt。此时不应先运行 S3 管理 LLM，也不应为六个条件分别切一次原始数据。实现 ReFind-style R2 前还需将 exchange 派生规则、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则写成测试。

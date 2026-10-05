@@ -57,4 +57,25 @@ TOOL_DEFINITIONS = {
 }
 
 MANAGEMENT_PROFILE = ("view", "create", "str_replace", "insert", "delete", "rename", "grep")
+FOLDERING_PROFILE = ("view", "grep", "rename")
 SEARCH_PROFILE = ("view", "grep", "toc", "section_read")
+
+FOLDERING_TOOL_DEFINITIONS = {
+    "view": TOOL_DEFINITIONS["view"],
+    "grep": TOOL_DEFINITIONS["grep"],
+    "rename": _tool(
+        "rename",
+        "Move one complete session file into a topic folder without changing its basename or bytes. Parent directories for the new path are created automatically. Directory moves, filename changes, and content changes are rejected.",
+        {
+            "old_path": _field(
+                "string",
+                "Current path of an existing .md session file under /memories.",
+            ),
+            "new_path": _field(
+                "string",
+                "New path under a topic folder in /memories; it must keep exactly the same filename.",
+            ),
+        },
+        ["old_path", "new_path"],
+    ),
+}
