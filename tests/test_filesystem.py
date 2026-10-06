@@ -8,7 +8,9 @@ from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from fs_memory_lab.agent import AgentRunner, CompatibleChatProvider, TOOL_DEFINITIONS
+from fs_memory_lab.agent import (AgentRunError, AgentRunner,
+                                 CompatibleChatProvider, TOOL_DEFINITIONS,
+                                 TransientProviderError)
 from fs_memory_lab.cli import chunk_lines, main, validate_locomo_turns
 from fs_memory_lab.filesystem import MemoryFS, ToolError
 from fs_memory_lab.foldering_prompt import (FOLDERING_PROMPT, FOLDERING_PROMPT_VERSION,
@@ -255,6 +257,14 @@ class FilesystemTest(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "response exceeded 10 bytes"):
                 provider.complete([{"role": "user", "content": "hello"}], [], SEARCH)
 
+    def test_compatible_api_adapter_marks_timeouts_as_transient(self):
+        provider = CompatibleChatProvider(
+            "https://api.example.test/v1", "coding", "test-key", api_style="portable"
+        )
+        with patch("urllib.request.urlopen", side_effect=TimeoutError("read timed out")):
+            with self.assertRaisesRegex(TransientProviderError, "timed out"):
+                provider.complete([{"role": "user", "content": "hello"}], [], SEARCH)
+
     def test_http_error_reports_parameter_but_redacts_key(self):
         secret = "test-api-key-not-a-real-secret"
         provider = CompatibleChatProvider("https://api.example.test/v1", "coding", secret,
@@ -422,6 +432,74 @@ class FilesystemTest(unittest.TestCase):
         ])
         with self.assertRaisesRegex(RuntimeError, "did not finish cleanly"):
             AgentRunner(self.fs, provider).run("search", "What is stored?")
+
+    def test_compaction_retries_transient_timeouts_without_replaying_tools(self):
+        calls = [{"role": "assistant", "content": None, "tool_calls": [
+            {"id": f"call_{i}", "type": "function", "function": {
+                "name": "view", "arguments": '{"path":"/memories"}'}}]} for i in range(4)]
+
+        class RetryCompactProvider(FakeProvider):
+            def __init__(self, responses):
+                super().__init__(responses)
+                self.compaction_attempts = 0
+
+            def complete(self, messages, tools, config):
+                if not tools:
+                    self.compaction_attempts += 1
+                    if self.compaction_attempts < 3:
+                        raise TransientProviderError("API request timed out")
+                result = super().complete(messages, tools, config)
+                if not tools:
+                    result["finish_reason"] = "stop"
+                if len(self.tool_names) == 4:
+                    result["usage"]["prompt_tokens"] = 97001
+                return result
+
+        provider = RetryCompactProvider(calls + [
+            {"role": "assistant", "content": "Earlier survey found no memory."},
+            {"role": "assistant", "content": "No memory found."},
+        ])
+        with patch("fs_memory_lab.agent.time.sleep") as sleep:
+            result = AgentRunner(self.fs, provider).run("search", "What is stored?")
+
+        retry_events = [event for event in result.trace if event.get("compaction_retry")]
+        self.assertEqual(provider.compaction_attempts, 3)
+        self.assertEqual([event["attempt"] for event in retry_events], [1, 2])
+        self.assertEqual([event["delay_seconds"] for event in retry_events], [2, 4])
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [2, 4])
+        self.assertEqual(result.tool_calls, 4)
+        compaction = next(event for event in result.trace if event.get("compaction"))
+        self.assertEqual(compaction["attempts"], 3)
+
+    def test_compaction_stops_after_three_transient_timeouts(self):
+        calls = [{"role": "assistant", "content": None, "tool_calls": [
+            {"id": f"call_{i}", "type": "function", "function": {
+                "name": "view", "arguments": '{"path":"/memories"}'}}]} for i in range(4)]
+
+        class AlwaysTimeoutCompactProvider(FakeProvider):
+            def complete(self, messages, tools, config):
+                if not tools:
+                    raise TransientProviderError("API request timed out")
+                result = super().complete(messages, tools, config)
+                if len(self.tool_names) == 4:
+                    result["usage"]["prompt_tokens"] = 97001
+                return result
+
+        provider = AlwaysTimeoutCompactProvider(calls)
+        with patch("fs_memory_lab.agent.time.sleep") as sleep:
+            with self.assertRaisesRegex(
+                AgentRunError, "timed out after 3 attempts"
+            ) as raised:
+                AgentRunner(self.fs, provider).run("search", "What is stored?")
+
+        retry_events = [
+            event
+            for event in raised.exception.partial["trace"]
+            if event.get("compaction_retry")
+        ]
+        self.assertEqual([event["attempt"] for event in retry_events], [1, 2, 3])
+        self.assertEqual([event["will_retry"] for event in retry_events], [True, True, False])
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [2, 4])
 
 
 if __name__ == "__main__":

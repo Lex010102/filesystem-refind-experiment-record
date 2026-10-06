@@ -462,3 +462,11 @@ Runner 随后升级为 `s3-safe-runner-v3`：
 5. episode/global gate、85 块齐全后才发布及 marker-last 协议均未放宽。
 
 v3 runtime contract SHA-256 为 `f9f02a125edad9fd16a1e2c9117e392b81794101c8a570312b2c04f46579389f`；runtime config、Management Prompt、user wrapper、85-chunk stream 和七工具 schema 均未改变。83 项离线测试通过，其中包含完整的“第 10 块失败→只运行 10–85→最终 85 traces 独立验证”测试。实际失败运行 `20261006T022525914538Z-a1352213` 的前 9 个 episodes 与 `chunk-010-before` checkpoint 也已通过只读续跑预检。
+
+## 2026-10-07：chunk 66 压缩超时与 runner v4
+
+正式运行随后成功推进并保留 chunks 1–65。Chunk 66 在第 20 个管理轮次后达到 96k prompt-token 压缩阈值；此前 32 次文件工具操作均发生在该失败 episode 内，runner 按事务规则回滚到 `chunk-066-before`，没有发布正式 store。失败原因是只读 context-compaction API 请求在 300 秒内未返回（`The read operation timed out`），不是 API key、locator 或文件内容错误。
+
+Runner v4 只对 context-compaction 这类不执行文件工具的只读请求增加有限重试：最多 3 次，失败后分别退避 2 秒和 4 秒；普通管理请求、文件工具及整个 episode 均不自动重试，因此不会重复写文件。每次 retry 与最终成功所用 attempt 会写入 trace。旧 v3 前缀的 runtime config hash 与 v4 新 episodes 的 hash 分别保留，最终验证按 `resume.start_chunk` 校验混合前缀，不能把旧 episode 冒充新协议。
+
+v4 runtime contract SHA-256 为 `bd3f429a532056513c0893b108023ad96a1bf5be4a74c9c419c4fd5293593eb5`，runtime config canonical SHA-256 为 `612fa89e9212ebec6c1cd78d44ad88388c53f5d801bd751fd78a6c3308a37005`。实际运行 `20261006T022525914538Z-a1352213` 已通过只读续跑预检：复用 65 个 completed episodes，从 `chunk-066-before` 恢复，不重跑 chunks 1–65。

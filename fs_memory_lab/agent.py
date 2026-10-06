@@ -6,6 +6,7 @@ import json
 import hashlib
 import os
 import re
+import time
 import urllib.error
 import urllib.request
 from dataclasses import asdict, dataclass
@@ -30,6 +31,12 @@ COMPACTION_SYSTEM_PROMPT = (
 COMPACTION_USER_PREFIX = "Running summary of earlier turns:\n"
 COMPACTION_SUMMARY_MAX_COMPLETION_TOKENS = 8192
 COMPACTION_SUMMARY_MAX_ROUNDS = 1
+COMPACTION_MAX_ATTEMPTS = 3
+COMPACTION_RETRY_BACKOFF_SECONDS = (2, 4)
+
+
+class TransientProviderError(RuntimeError):
+    """A provider failure that is safe to retry for a read-only request."""
 
 
 class ChatProvider(Protocol):
@@ -120,7 +127,11 @@ class CompatibleChatProvider:
         except urllib.error.HTTPError as exc:
             raise RuntimeError(self._safe_http_error(exc)) from exc
         except urllib.error.URLError as exc:
+            if isinstance(exc.reason, TimeoutError):
+                raise TransientProviderError("API request timed out") from exc
             raise RuntimeError(f"Cannot connect to API endpoint: {exc.reason}") from exc
+        except TimeoutError as exc:
+            raise TransientProviderError("API request timed out") from exc
         try:
             choice = data["choices"][0]
             return {"message": choice["message"], "usage": data.get("usage", {}),
@@ -205,7 +216,35 @@ class AgentRunner:
             {"role": "system", "content": COMPACTION_SYSTEM_PROMPT},
             {"role": "user", "content": old_text},
         ]
-        result = self.provider.complete(request, [], summary_config)
+        result: dict | None = None
+        for attempt in range(1, COMPACTION_MAX_ATTEMPTS + 1):
+            try:
+                result = self.provider.complete(request, [], summary_config)
+                break
+            except TransientProviderError:
+                will_retry = attempt < COMPACTION_MAX_ATTEMPTS
+                delay = (
+                    COMPACTION_RETRY_BACKOFF_SECONDS[attempt - 1]
+                    if will_retry
+                    else 0
+                )
+                self._emit(trace, {
+                    "round": round_number,
+                    "compaction_retry": True,
+                    "attempt": attempt,
+                    "max_attempts": COMPACTION_MAX_ATTEMPTS,
+                    "will_retry": will_retry,
+                    "delay_seconds": delay,
+                    "error_type": "TransientProviderError",
+                })
+                if not will_retry:
+                    raise RuntimeError(
+                        "Context compaction API request timed out after "
+                        f"{COMPACTION_MAX_ATTEMPTS} attempts"
+                    )
+                time.sleep(delay)
+        if result is None:  # pragma: no cover - defensive invariant
+            raise RuntimeError("Context compaction produced no provider result")
         if result.get("finish_reason") != "stop":
             raise RuntimeError(
                 "Context compaction did not finish cleanly; expected finish_reason='stop'"
@@ -217,6 +256,7 @@ class AgentRunner:
         self._emit(trace, {"round": round_number, "compaction": True,
                            "dropped_messages": keep_start - 2,
                            "kept_rounds": CONTEXT_COMPACTION_KEEP_ROUNDS,
+                           "attempts": attempt,
                            "usage": result.get("usage", {}),
                            "finish_reason": result.get("finish_reason"),
                            "response_id": result.get("response_id"),

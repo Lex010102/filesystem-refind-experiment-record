@@ -583,6 +583,66 @@ class S3SafeRunnerTest(unittest.TestCase):
         )
         self.assertEqual(self.verify()["status"], "verified")
 
+    def test_resume_accepts_v3_prefix_and_records_v4_for_new_episodes(self):
+        failing = RecordingS3Provider(self.user_messages, fail_episode=3)
+        with self.assertRaises(S3BuildError):
+            self.build(failing)
+        run_dir = next(path for path in self.paths["work"].iterdir() if path.is_dir())
+        old_contract = "f9f02a125edad9fd16a1e2c9117e392b81794101c8a570312b2c04f46579389f"
+        old_runtime_config = "434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183"
+        state_path = run_dir / "run-state.json"
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        state["runtime_contract_sha256"] = old_contract
+        state_path.write_text(
+            json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        for index in (1, 2):
+            episode_path = run_dir / "quarantine" / "trace" / f"episode-{index:03d}.json"
+            episode = json.loads(episode_path.read_text(encoding="utf-8"))
+            episode["protocol"]["runtime_config_sha256"] = old_runtime_config
+            episode_path.write_text(
+                json.dumps(episode, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+
+        resumed_provider = ResumeRecordingS3Provider(self.user_messages[2:])
+        result = build_s3_store(
+            STREAM,
+            STREAM_MANIFEST,
+            PROMPT_CONTRACT,
+            RUNTIME_CONTRACT,
+            self.paths["store"],
+            self.paths["manifest"],
+            self.paths["trace"],
+            self.paths["marker"],
+            self.paths["work"],
+            resumed_provider,
+            code_revision="test-s3-resume",
+            code_dirty=False,
+            test_mode=True,
+            resume_run_id=run_dir.name,
+            resume_source_code_revision="test-s3-runner",
+        )
+        self.assertEqual(result["status"], "published")
+        index = json.loads(
+            (self.paths["trace"] / "index.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(index["resume"]["source_runtime_contract_sha256"], old_contract)
+        self.assertEqual(
+            json.loads(
+                (self.paths["trace"] / "episode-001.json").read_text(encoding="utf-8")
+            )["protocol"]["runtime_config_sha256"],
+            old_runtime_config,
+        )
+        self.assertEqual(
+            json.loads(
+                (self.paths["trace"] / "episode-003.json").read_text(encoding="utf-8")
+            )["protocol"]["runtime_config_sha256"],
+            FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256,
+        )
+        self.assertEqual(self.verify()["status"], "verified")
+
     def test_resume_rejects_a_tampered_checkpoint_before_provider_call(self):
         failing = RecordingS3Provider(self.user_messages, fail_episode=2)
         with self.assertRaises(S3BuildError):

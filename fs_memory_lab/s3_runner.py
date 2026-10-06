@@ -62,11 +62,26 @@ _LIST_FACT_LINE = re.compile(r"^\s*(?:[-+*]\s+|\d+[.)]\s+)\S")
 _LEGACY_RESUMABLE_RUNTIME_CONTRACTS = {
     # Runner v2: post-tool locator feedback, before cross-reference feedback/resume.
     "36b043ad7cc0afcab45d671e42f3e03b8ed339c3486bd396d2820d9d72c94f4a",
+    # Runner v3: validated resume and cross-reference repair, before compaction retries.
+    "f9f02a125edad9fd16a1e2c9117e392b81794101c8a570312b2c04f46579389f",
+}
+_LEGACY_RUNTIME_CONFIG_BY_CONTRACT = {
+    contract: "434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183"
+    for contract in _LEGACY_RESUMABLE_RUNTIME_CONTRACTS
 }
 
 
 class S3BuildError(RuntimeError):
     """Raised when an S3 build or verification cannot proceed safely."""
+
+
+def _runtime_config_sha_for_contract(contract_sha256: str) -> str:
+    if contract_sha256 == EXPECTED_S3_RUNTIME_CONTRACT_SHA256:
+        return FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256
+    legacy = _LEGACY_RUNTIME_CONFIG_BY_CONTRACT.get(contract_sha256)
+    if legacy is None:
+        raise S3BuildError("Runtime contract is not approved for S3 resume")
+    return legacy
 
 
 @dataclass(frozen=True)
@@ -1166,6 +1181,9 @@ def _load_resume_prefix(
         | {EXPECTED_S3_RUNTIME_CONTRACT_SHA256}
     ):
         raise S3BuildError("Failed run used an unapproved runtime contract")
+    source_runtime_config_hash = _runtime_config_sha_for_contract(
+        str(source_runtime_hash)
+    )
 
     trace_source = run_dir / "quarantine" / "trace"
     if trace_source.is_symlink() or not trace_source.is_dir():
@@ -1181,7 +1199,7 @@ def _load_resume_prefix(
 
     episode_protocol = {
         "management_prompt_sha256": sha256_bytes(MANAGEMENT_PROMPT.encode("utf-8")),
-        "runtime_config_sha256": FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256,
+        "runtime_config_sha256": source_runtime_config_hash,
         "tool_profile_sha256": FROZEN_MANAGEMENT_TOOL_PROFILE_SHA256,
         "tool_schema_sha256": FROZEN_MANAGEMENT_TOOL_SCHEMA_SHA256,
     }
@@ -2082,6 +2100,25 @@ def _validate_trace_directory(
     episodes = index.get("episodes")
     if not isinstance(episodes, list) or len(episodes) != len(stream.chunks):
         raise S3BuildError("S3 trace episode index length mismatch")
+    resume = index.get("resume")
+    resumed_prefix_end = 0
+    resumed_prefix_runtime_config_sha: str | None = None
+    if resume is not None:
+        if not isinstance(resume, dict):
+            raise S3BuildError("S3 trace resume metadata is invalid")
+        start_chunk = resume.get("start_chunk")
+        source_runtime_contract = resume.get("source_runtime_contract_sha256")
+        if (
+            not isinstance(start_chunk, int)
+            or isinstance(start_chunk, bool)
+            or not 1 <= start_chunk <= len(stream.chunks)
+            or not isinstance(source_runtime_contract, str)
+        ):
+            raise S3BuildError("S3 trace resume prefix is invalid")
+        resumed_prefix_end = start_chunk - 1
+        resumed_prefix_runtime_config_sha = _runtime_config_sha_for_contract(
+            source_runtime_contract
+        )
     prior_store_sha = sha256_bytes(canonical_json_bytes({}))
     prior_store_files: dict[str, str] = {}
     all_usage: list[dict[str, Any]] = []
@@ -2089,14 +2126,22 @@ def _validate_trace_directory(
     total_rounds = 0
     total_llm_calls = 0
     expected_event_rows: list[dict[str, Any]] = []
-    episode_protocol = {
+    episode_protocol_base = {
         "management_prompt_sha256": sha256_bytes(MANAGEMENT_PROMPT.encode("utf-8")),
-        "runtime_config_sha256": FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256,
         "tool_profile_sha256": FROZEN_MANAGEMENT_TOOL_PROFILE_SHA256,
         "tool_schema_sha256": FROZEN_MANAGEMENT_TOOL_SCHEMA_SHA256,
     }
     for chunk, summary in zip(stream.chunks, episodes):
         expected_filename = f"episode-{chunk['global_chunk_index']:03d}.json"
+        expected_runtime_config_sha = (
+            resumed_prefix_runtime_config_sha
+            if chunk["global_chunk_index"] <= resumed_prefix_end
+            else FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256
+        )
+        episode_protocol = {
+            **episode_protocol_base,
+            "runtime_config_sha256": expected_runtime_config_sha,
+        }
         if (
             not isinstance(summary, dict)
             or summary.get("filename") != expected_filename
