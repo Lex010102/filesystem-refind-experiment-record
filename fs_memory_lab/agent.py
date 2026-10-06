@@ -374,6 +374,7 @@ class AgentRunner:
                 function = call.get("function") or {}
                 name = function.get("name", "")
                 args: dict | None = None
+                completed_observation: str | None = None
                 try:
                     arguments = function.get("arguments", "{}")
                     if self.tool_hook is not None:
@@ -384,11 +385,18 @@ class AgentRunner:
                     if self.tool_hook is not None:
                         self.tool_hook("before", name, args)
                     observation = self.memory.call(role, name, args)
+                    completed_observation = observation
                     if self.tool_hook is not None:
                         self.tool_hook("after", name, args)
                     ok = True
                 except (json.JSONDecodeError, ToolError) as exc:
-                    observation = f"TOOL ERROR: {exc}"
+                    if completed_observation is None:
+                        observation = f"TOOL ERROR: {exc}"
+                    else:
+                        observation = (
+                            f"{completed_observation}\n\n"
+                            f"POST-TOOL VALIDATION ERROR: {exc}"
+                        )
                     ok = False
                 except Exception as exc:
                     total_calls += 1

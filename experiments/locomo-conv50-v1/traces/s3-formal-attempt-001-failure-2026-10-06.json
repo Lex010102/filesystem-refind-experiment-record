@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "formal-s3-build-failure-summary",
+  "status": "failed-safely-no-formal-publication",
+  "run_id": "20261005T191027554957Z-2715bad3",
+  "code_revision": "648f384d52df16953b23767ff5137fcfbde02aa9",
+  "runtime": {
+    "runner_version": "s3-safe-runner-v1",
+    "runtime_contract_sha256": "ae480c40162e5262f74ef3fb5cb64314ad2507a744d59122c019039e8bb3017f",
+    "runtime_config_sha256": "da352bbdcbc12fa68169ac5ea8307fa5238f506b7040473f5272d7729ad18be2",
+    "requested_model": "coding",
+    "served_model": "qwen3.8:27b"
+  },
+  "progress": {
+    "completed_chunks": 1,
+    "failed_chunk": 2,
+    "failed_chunk_filename": "session_01_chunk_02.txt",
+    "http_requests": 8,
+    "tool_calls": 11,
+    "tool_sequence_by_chunk": {
+      "1": [
+        "view",
+        "create",
+        "create"
+      ],
+      "2": [
+        "view",
+        "view",
+        "view",
+        "str_replace",
+        "str_replace",
+        "str_replace",
+        "str_replace",
+        "view"
+      ]
+    },
+    "usage_totals": {
+      "prompt_tokens": 45010,
+      "completion_tokens": 3997,
+      "total_tokens": 49007
+    }
+  },
+  "failure": {
+    "gate": "strict episode store gate",
+    "message": "Malformed source locator '[S15]' in people/calvin.md",
+    "all_observed_malformed_locators": [
+      "[S15]",
+      "[S11]",
+      "[S13]"
+    ],
+    "intended_locators": [
+      "[S1T15]",
+      "[S1T11]",
+      "[S1T13]"
+    ],
+    "interpretation": "The model shortened three required [S{session}T{turn}] locators. The strict gate correctly rejected the store; the data, API and provider were otherwise available."
+  },
+  "safety_outcome": {
+    "formal_store_published": false,
+    "formal_manifest_published": false,
+    "formal_trace_directory_published": false,
+    "formal_commit_marker_published": false,
+    "checkpoints_retained_locally": true,
+    "quarantine_retained_locally": true
+  },
+  "follow_up": {
+    "action": "Do not relax or normalize citations. Add post-tool locator validation feedback so the same agent can repair its own write, while retaining the strict episode and global gates.",
+    "new_runner_version": "s3-safe-runner-v2",
+    "old_failed_run_reused": false,
+    "restart_policy": "Restart from an empty store and chunk 1 after tests, contract refreeze and a clean commit."
+  }
+}

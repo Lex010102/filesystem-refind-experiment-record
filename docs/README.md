@@ -10,7 +10,7 @@
 
 - [2026-09-16 研究进度](progress/2026-09-16-research-log.md)：本地 harness、Alice 两批增量写入、ReFind 学习和组合思路。
 - [2026-09-22 仓库整理与 GitHub 备份](progress/2026-09-22-repository-setup.md)：本次目录重组、保留内容与安全规则。
-- [2026-10-05/06 LoCoMo 与 S1–S3 准备](progress/2026-10-05-locomo-data-preparation.md)：官方数据、canonical records、S1/S2、85-chunk S3 stream、Management prompt、七工具/runtime contract 与 safe runner；真实 S3 API build 尚未运行。
+- [2026-10-05/06 LoCoMo 与 S1–S3 准备](progress/2026-10-05-locomo-data-preparation.md)：官方数据、canonical records、S1/S2、85-chunk S3 stream、Management prompt、七工具/runtime contract、smoke、第一次安全失败及 runner v2 修复；正式 S3 store 尚未发布。
 
 ## Data
 

@@ -182,8 +182,8 @@ view, create, str_replace, insert, delete, rename, grep
 | --- | --- |
 | 85-chunk stream manifest | `6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5` |
 | Management prompt contract | `2b16c9041829666e3825d2d349c689b6cc1ce4b9de6e367f35a123c485918a20` |
-| Runtime contract 文件 | `ae480c40162e5262f74ef3fb5cb64314ad2507a744d59122c019039e8bb3017f` |
-| Runtime config canonical JSON | `da352bbdcbc12fa68169ac5ea8307fa5238f506b7040473f5272d7729ad18be2` |
+| Runtime contract 文件（runner v2） | `36b043ad7cc0afcab45d671e42f3e03b8ed339c3486bd396d2820d9d72c94f4a` |
+| Runtime config canonical JSON | `434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183` |
 | 七工具有序 profile | `e4541dedafbd645e6e11f8847c95283b8738c668915b006f06dd0dea57c0945e` |
 | 七工具有序 schema（canonical JSON） | `3f4b2edc2045348743961231bc174c973e9c8a5147225bb9caece1fc7a254b56` |
 | 七工具实际 wire-order 紧凑 JSON | `f365069d4e826f8489273b85496ebdf3a61b93bbd7678baef531cec273f3c282` |
@@ -212,10 +212,12 @@ python3 -m fs_memory_lab.cli build-s3
 python3 -m fs_memory_lab.cli verify-s3
 ```
 
-正式 `build-s3` 只接受 clean worktree 的 40 位 Git commit、受审的 `CompatibleChatProvider` 和上述精确 NUS portable profile；测试专用 artifact ID 与 `test-*` revision 被隔离，不能冒充正式产物。Runner 从空 staging store 开始，按全局 chunk index 串行运行 85 个全新 Agent contexts，episode 之间只共享文件系统。每块发送前重验输入 hash，每块前保存 checkpoint，逐事件 `fsync` trace，并在每次工具调用后执行路径/体积上限；每个 episode 后核对 Markdown/frontmatter、只引用已见 locator、cross-reference、文件 hash chain 和最低限度的行内来源标注。任何 API、模型、工具、gate 或发布错误都只保留在 `local-runs/s3-management/` 的 quarantine/诊断中，不会留下可被下游接受的正式 artifact。全部 85 块通过全局 gate 后才发布 store、85 个 episode traces、trace index、manifest，并最后发布 `s3-curated.COMMITTED`。
+正式 `build-s3` 只接受 clean worktree 的 40 位 Git commit、受审的 `CompatibleChatProvider` 和上述精确 NUS portable profile；测试专用 artifact ID 与 `test-*` revision 被隔离，不能冒充正式产物。Runner 从空 staging store 开始，按全局 chunk index 串行运行 85 个全新 Agent contexts，episode 之间只共享文件系统。每块发送前重验输入 hash，每块前保存 checkpoint，逐事件 `fsync` trace，并在每次工具调用后执行路径/体积上限。Runner v2 还会在每次工具调用后扫描整个 staging store 的 malformed/future locators；若发现问题，工具动作仍保留，但错误会带文件、行号和全部（最多 100 条）诊断反馈给同一 Agent 自行修正。它不是自动改写或放宽 locator。每个 episode 后的严格 gate 仍核对 Markdown/frontmatter、只引用已见 locator、cross-reference、文件 hash chain 和最低限度的行内来源标注。任何 API、模型、工具、gate 或发布错误都只保留在 `local-runs/s3-management/` 的 quarantine/诊断中，不会留下可被下游接受的正式 artifact。全部 85 块通过全局 gate 后才发布 store、85 个 episode traces、trace index、manifest，并最后发布 `s3-curated.COMMITTED`。
 
-离线测试已用 deterministic fake provider 完整走通 85 episodes，并覆盖输入或 contract 篡改、provider/profile/served-model 漂移、未来 locator、超限资源、并发锁、失败恢复、发布回滚与正式 artifact 交叉复核；全套测试通过。另一次隔离 smoke 已用 NUS API 处理首个冻结 chunk。两者合起来仍**不能写成正式 85-chunk S3 build 已完成**；`stores/s3-curated/` 仍不存在。
+离线测试已用 deterministic fake provider 完整走通 85 episodes，并覆盖输入或 contract 篡改、provider/profile/served-model 漂移、未来 locator、写后畸形 locator 的同 episode 自修复、未修复终态拒绝、超限资源、并发锁、失败恢复、发布回滚与正式 artifact 交叉复核；当前 81 项全套测试通过。另一次隔离 smoke 已用 NUS API 处理首个冻结 chunk。这些结果仍**不能写成正式 85-chunk S3 build 已完成**；`stores/s3-curated/` 仍不存在。
 
 当前自动验收仍有两个明确边界：第一，trace verifier 验证请求、事件、文件 hash 与前后状态链的一致性，但不会重新 replay 每个工具调用来作“该调用因果上产生该文件差异”的形式证明；第二，程序可强制列表和表格中的事实候选带 locator，却不能完美判断所有自由自然语言段落是否逐条完整引用。后续仍需抽样人工审计，不能把结构 gate 写成语义完备性证明。
 
 2026-10-06 的隔离 smoke 使用 `session_01_chunk_01.txt`，严格限制为最多 4 次 HTTP 请求和 12 次工具调用。实际由 requested alias `coding`、served model `qwen3.8:27b` 完成 3 次请求与 `view/create/create` 3 次工具调用，生成 `people/calvin.md`、`people/dave.md`，保留 7 次 locator mentions，并通过 S3 store gate；总 usage 为 15,652 prompt、1,009 completion、16,661 tokens。输出只在被 Git 忽略的 `local-runs/s3-smoke-20261005T185937697619Z-eac18b90/`，正式四个目标保持不存在。下一步是在新的 clean commit 上启动唯一一次正式 `build-s3`，而不是把 smoke 结果当成正式 store。
+
+同日第一次正式 v1 尝试从空 store 启动：chunk 1 完成，chunk 2 的模型写入把 `[S1T15]`、`[S1T11]`、`[S1T13]` 缩写成 `[S15]`、`[S11]`、`[S13]`，严格 episode gate 因而终止构建。8 次 API 请求共使用 49,007 tokens；正式 store、manifest、trace directory 与 COMMITTED marker 均未发布。可追溯摘要在 `traces/s3-formal-attempt-001-failure-2026-10-06.json`。该失败驱动了上述 runner v2 写后反馈机制；旧运行不会拼接或复用，v2 必须在新 clean commit 上从 chunk 1 重启。

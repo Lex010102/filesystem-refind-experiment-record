@@ -203,7 +203,10 @@ def main() -> None:
                 "frozen_tool_schema_sha256": FROZEN_FOLDERING_TOOL_SCHEMA_SHA256,
             },
             "s3_runtime": {
-                "status": "runner-ready; formal 85-chunk build not started",
+                "status": (
+                    "runner-v2 ready; first v1 formal attempt failed safely at chunk 2; "
+                    "no formal store published"
+                ),
                 "stream_manifest_sha256": EXPECTED_S3_STREAM_MANIFEST_SHA256,
                 "prompt_contract_sha256": EXPECTED_S3_PROMPT_CONTRACT_SHA256,
                 "runtime_contract_sha256": EXPECTED_S3_RUNTIME_CONTRACT_SHA256,

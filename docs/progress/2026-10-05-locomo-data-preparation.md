@@ -365,8 +365,8 @@ Management Agent 的有序七工具 profile 固定为 `view/create/str_replace/i
 | --- | --- |
 | S3 stream manifest 文件 | `6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5` |
 | S3 prompt contract 文件 | `2b16c9041829666e3825d2d349c689b6cc1ce4b9de6e367f35a123c485918a20` |
-| S3 runtime contract 文件 | `ae480c40162e5262f74ef3fb5cb64314ad2507a744d59122c019039e8bb3017f` |
-| Runtime config canonical JSON | `da352bbdcbc12fa68169ac5ea8307fa5238f506b7040473f5272d7729ad18be2` |
+| S3 runtime contract 文件（初始 runner v1） | `ae480c40162e5262f74ef3fb5cb64314ad2507a744d59122c019039e8bb3017f` |
+| Runtime config canonical JSON（初始 runner v1） | `da352bbdcbc12fa68169ac5ea8307fa5238f506b7040473f5272d7729ad18be2` |
 | 有序七工具 profile | `e4541dedafbd645e6e11f8847c95283b8738c668915b006f06dd0dea57c0945e` |
 | 有序七工具 schema canonical JSON | `3f4b2edc2045348743961231bc174c973e9c8a5147225bb9caece1fc7a254b56` |
 | 实际 wire-order 紧凑 JSON | `f365069d4e826f8489273b85496ebdf3a61b93bbd7678baef531cec273f3c282` |
@@ -422,3 +422,29 @@ deterministic fake provider 已把完整 85-episode 流从空 store 跑到发布
 第一次受限进程尝试在 DNS 阶段被本地网络沙盒拦截，没有到达学校 API；获准联网后没有自动重试，而是重新进行一次明确授权的 smoke。最终通过结果不能写成“正式 S3 已完成”，它只证明当前 NUS 路由、served-model 锁定、七工具函数调用、实际文件写入、locator 和单块 store gate 可以一起工作。
 
 当前下一步更新为：把本次记录提交成 clean Git revision，然后执行唯一一次正式 85-chunk `build-s3`，完成后立即运行离线 `verify-s3` 并冻结成本与 artifact hashes。
+
+## 2026-10-06：第一次正式 S3 尝试安全失败与 runner v2
+
+第一次正式 85-chunk build 在 clean commit `648f384d52df16953b23767ff5137fcfbde02aa9` 上从空 store 启动，使用冻结的 v1 runtime contract。Chunk 1 完整通过；chunk 2 的模型写入中，把三处要求的 `[S{session}T{turn}]` 标签缩写成 `[S15]`、`[S11]`、`[S13]`。这些实际分别应为 `[S1T15]`、`[S1T11]`、`[S1T13]`。严格 episode gate 报出 `Malformed source locator '[S15]' in people/calvin.md` 并终止运行。
+
+失败结果：
+
+- 完成 1 个 chunk，在第 2 个 chunk 失败；
+- 共 8 次 API responses、11 次工具调用；
+- usage 合计 45,010 prompt tokens、3,997 completion tokens、49,007 total tokens；
+- staging store、增量 events、checkpoints 和 quarantine 保留在本地诊断目录；
+- 正式 `stores/s3-curated/`、manifest、trace directory 和 COMMITTED marker 均未发布；
+- 没有手工改正文件、没有把畸形标签当成合法标签、没有从旧 checkpoint 拼接下一次正式运行；
+- 脱敏机器摘要保存为 `experiments/locomo-conv50-v1/traces/s3-formal-attempt-001-failure-2026-10-06.json`。
+
+这次失败暴露的是执行协议缺口：v1 只在 episode 结束后运行完整语义 gate，因此模型虽然在最终回答中写出了正确引用，却没有意识到文件里的三个缩写已经不合法。为保持规范同时让模型自己修复，runner 升级为 `s3-safe-runner-v2`：
+
+1. 每个 episode 开始时，允许 locator 集固定为“此前已完成 chunks + 当前 chunk”；
+2. 每次工具调用完成后扫描整个 staging store 的 locator；
+3. malformed/future locator 按 `文件:行号` 聚合反馈给同一 Agent，工具动作明确标记为已生效；正常的 `view/grep` 观察不会因反馈而丢失；
+4. 最多反馈 100 条诊断，超出时要求检查已列出的文件；
+5. 不自动替换、不猜测 locator，也不放宽 episode/global strict gate；Agent 若不修正，构建仍失败。
+
+新增测试用 malformed store 一次制造三个短标签，验证同一 episode 收到完整反馈后用 `str_replace` 修复，再完成全部 85-chunk fake-provider build；另验证不修复时终态 gate 仍失败、future locator 仍在即时反馈和终态两层被拒绝。当前全套 81 项离线测试全部通过。
+
+v2 冻结值：runtime contract SHA-256 `36b043ad7cc0afcab45d671e42f3e03b8ed339c3486bd396d2820d9d72c94f4a`，runtime config canonical SHA-256 `434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183`。Management Prompt、user wrapper、85-chunk stream 及七工具 profile/schema/wire hashes 均未改变。下一次正式运行必须基于这个 v2 clean commit，从空 store 和 chunk 1 重新开始。

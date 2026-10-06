@@ -487,6 +487,62 @@ def _resolved_section_reference(text: str, tail: str) -> str | None:
     return None
 
 
+def validate_incremental_source_locators(
+    root: Path,
+    allowed_locators: frozenset[str] | set[str],
+) -> int:
+    """Reject every malformed/future locator while allowing transient cross-links.
+
+    This is intentionally narrower than ``validate_curated_store`` so two files
+    created in one parallel tool response may temporarily cross-reference a file
+    that has not been created yet.  It runs after every tool action and returns
+    all locator errors together so the agent can repair its own write before it
+    finishes the episode.  The strict full store gate still runs afterwards.
+    """
+    raw_root = Path(root)
+    if raw_root.is_symlink() or not raw_root.is_dir():
+        raise S3BuildError("S3 store must be an existing non-symlink directory")
+    root = raw_root.resolve(strict=False)
+    _validate_resource_limits(root)
+    issues: list[str] = []
+    mentions = 0
+    for path in sorted(root.rglob("*")):
+        if path.is_dir():
+            continue
+        relative = path.relative_to(root).as_posix()
+        if path.is_symlink() or not path.is_file() or path.suffix != ".md":
+            issues.append(f"invalid memory entry {relative}")
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError) as exc:
+            issues.append(f"unreadable UTF-8 memory file {relative}: {exc}")
+            continue
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            for token in _LOCATOR_CANDIDATE.findall(line):
+                if _LOCATOR.fullmatch(token) is None:
+                    issues.append(
+                        f"{relative}:L{line_number} malformed source locator {token!r}"
+                    )
+                elif token not in allowed_locators:
+                    issues.append(
+                        f"{relative}:L{line_number} unknown or future source locator {token}"
+                    )
+                else:
+                    mentions += 1
+    if issues:
+        unique = list(dict.fromkeys(issues))
+        limit = S3_RESOURCE_LIMITS["max_locator_diagnostics_per_tool"]
+        displayed = unique[:limit]
+        suffix = (
+            f"; plus {len(unique) - limit} more; inspect the listed files"
+            if len(unique) > limit
+            else ""
+        )
+        raise S3BuildError("; ".join(displayed) + suffix)
+    return mentions
+
+
 def validate_curated_store(
     root: Path,
     allowed_locators: frozenset[str] | set[str],
@@ -1138,6 +1194,9 @@ def build_s3_store(
 
         for chunk in stream.chunks:
             current_chunk = chunk["global_chunk_index"]
+            episode_allowed_locators = frozenset(
+                seen_locators.union(chunk["locators"])
+            )
             checkpoint_name = f"chunk-{current_chunk:03d}-before"
             checkpoint = run_dir / "checkpoints" / checkpoint_name
             shutil.copytree(staging, checkpoint)
@@ -1214,6 +1273,16 @@ def build_s3_store(
                     raise S3BuildError(f"Unknown S3 tool-hook stage: {stage}")
                 _validate_resource_limits(staging)
                 enforce_work_limits()
+                try:
+                    validate_incremental_source_locators(
+                        staging, episode_allowed_locators
+                    )
+                except S3BuildError as exc:
+                    raise ToolError(
+                        "POST-WRITE S3 LOCATOR VALIDATION ERROR: the tool action was "
+                        "applied, but every listed locator must be repaired before "
+                        f"finishing the episode: {exc}"
+                    ) from exc
 
             update_state("EPISODE_RUNNING", chunk_filename=chunk["filename"])
             runner = AgentRunner(

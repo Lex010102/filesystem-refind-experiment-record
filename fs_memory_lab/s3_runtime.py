@@ -36,7 +36,7 @@ from .s3_protocol import (
 
 
 S3_RUNTIME_CONTRACT_SCHEMA_VERSION = "s3-management-runtime-contract-v1"
-S3_RUNNER_VERSION = "s3-safe-runner-v1"
+S3_RUNNER_VERSION = "s3-safe-runner-v2"
 
 EXPECTED_S3_STREAM_MANIFEST_SHA256 = (
     "6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5"
@@ -45,7 +45,7 @@ EXPECTED_S3_PROMPT_CONTRACT_SHA256 = (
     "2b16c9041829666e3825d2d349c689b6cc1ce4b9de6e367f35a123c485918a20"
 )
 EXPECTED_S3_RUNTIME_CONTRACT_SHA256 = (
-    "ae480c40162e5262f74ef3fb5cb64314ad2507a744d59122c019039e8bb3017f"
+    "36b043ad7cc0afcab45d671e42f3e03b8ed339c3486bd396d2820d9d72c94f4a"
 )
 FROZEN_MANAGEMENT_TOOL_PROFILE_SHA256 = (
     "e4541dedafbd645e6e11f8847c95283b8738c668915b006f06dd0dea57c0945e"
@@ -57,7 +57,7 @@ FROZEN_MANAGEMENT_TOOL_WIRE_SHA256 = (
     "f365069d4e826f8489273b85496ebdf3a61b93bbd7678baef531cec273f3c282"
 )
 FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256 = (
-    "da352bbdcbc12fa68169ac5ea8307fa5238f506b7040473f5272d7729ad18be2"
+    "434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183"
 )
 
 # This is the local experimental provider profile, not the paper's model.
@@ -78,6 +78,7 @@ S3_RESOURCE_LIMITS = {
     "max_directory_depth": 8,
     "max_file_bytes": 1_000_000,
     "max_files": 512,
+    "max_locator_diagnostics_per_tool": 100,
     "max_paths": 1_536,
     "max_tool_arguments_bytes": 2_000_000,
     "max_tool_calls_per_episode": 256,
@@ -176,7 +177,7 @@ def runtime_contract_document() -> dict[str, Any]:
     return {
         "schema_version": S3_RUNTIME_CONTRACT_SCHEMA_VERSION,
         "condition": "S3 Agent-curated filesystem",
-        "status": "frozen-runner-ready-formal-build-not-started",
+        "status": "frozen-runner-v2-ready-after-v1-attempt-failed-safely",
         "runner": {
             "module": "fs_memory_lab.s3_runner",
             "version": S3_RUNNER_VERSION,
@@ -233,6 +234,7 @@ def runtime_contract_document() -> dict[str, Any]:
             "image_urls_fetched": False,
             "publication_fsyncs_files_and_parent_directories": True,
             "resource_limits_enforced_after_every_tool_call": True,
+            "locator_gate_feedback_after_every_tool_call": True,
             "uncited_list_or_table_fact_candidates_rejected": True,
         },
     }

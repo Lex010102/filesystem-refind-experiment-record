@@ -23,7 +23,7 @@
   },
   "runner": {
     "module": "fs_memory_lab.s3_runner",
-    "version": "s3-safe-runner-v1"
+    "version": "s3-safe-runner-v2"
   },
   "runtime_config": {
     "context_compaction": {
@@ -94,6 +94,7 @@
       "max_directory_depth": 8,
       "max_file_bytes": 1000000,
       "max_files": 512,
+      "max_locator_diagnostics_per_tool": 100,
       "max_paths": 1536,
       "max_tool_arguments_bytes": 2000000,
       "max_tool_calls_per_episode": 256,
@@ -104,7 +105,7 @@
     },
     "role": "management"
   },
-  "runtime_config_sha256": "da352bbdcbc12fa68169ac5ea8307fa5238f506b7040473f5272d7729ad18be2",
+  "runtime_config_sha256": "434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183",
   "safety_policy": {
     "checkpoint_before_every_chunk": true,
     "commit_marker_published_last": true,
@@ -115,6 +116,7 @@
     "gold_inputs_exposed_to_agent_messages_or_tools": false,
     "image_urls_fetched": false,
     "incremental_events_fsynced": true,
+    "locator_gate_feedback_after_every_tool_call": true,
     "one_new_agent_context_per_chunk": true,
     "overwrite_existing_formal_artifacts": false,
     "per_episode_file_hash_inventories_recorded": true,
@@ -123,7 +125,7 @@
     "uncited_list_or_table_fact_candidates_rejected": true
   },
   "schema_version": "s3-management-runtime-contract-v1",
-  "status": "frozen-runner-ready-formal-build-not-started",
+  "status": "frozen-runner-v2-ready-after-v1-attempt-failed-safely",
   "tools": {
     "ordered_schema_sha256": "3f4b2edc2045348743961231bc174c973e9c8a5147225bb9caece1fc7a254b56",
     "profile": [

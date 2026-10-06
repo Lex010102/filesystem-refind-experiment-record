@@ -43,6 +43,8 @@ VALID_MEMORY = (
     "- Alice appears in the first source turn [S1T1].\n"
 )
 FUTURE_MEMORY = VALID_MEMORY.replace("[S1T1]", "[S30T1]")
+MALFORMED_MEMORY = VALID_MEMORY.replace("[S1T1]", "[S11][S13][S15]")
+REPAIRED_MEMORY = VALID_MEMORY.replace("[S1T1]", "[S1T1][S1T3][S1T5]")
 
 
 def tool_call(call_id: str, name: str, **arguments) -> dict:
@@ -144,6 +146,47 @@ class RecordingS3Provider:
 
 class WrongProfileProvider(RecordingS3Provider):
     model = "not-coding"
+
+
+class RepairingLocatorProvider(RecordingS3Provider):
+    def __init__(self, expected_user_messages: list[str]):
+        super().__init__(expected_user_messages, first_memory=MALFORMED_MEMORY)
+        self.repair_sent = False
+        self.feedback = ""
+
+    def complete(self, messages, tools, config):
+        if self.episode == 1 and len(messages) > 2 and not self.repair_sent:
+            self.calls += 1
+            self.assert_protocol(messages, tools, config)
+            tool_messages = [message for message in messages if message.get("role") == "tool"]
+            self.assert_first_feedback(tool_messages)
+            self.repair_sent = True
+            return tool_round(
+                tool_call(
+                    "repair-alice",
+                    "str_replace",
+                    path="/memories/people/alice.md",
+                    old_str="[S11][S13][S15]",
+                    new_str="[S1T1][S1T3][S1T5]",
+                ),
+                served_model=self.served_model,
+            )
+        return super().complete(messages, tools, config)
+
+    def assert_first_feedback(self, tool_messages: list[dict]) -> None:
+        if len(tool_messages) != 1 or tool_messages[0].get("tool_call_id") != "create-alice":
+            raise AssertionError("Malformed write did not produce one immediate tool result")
+        self.feedback = str(tool_messages[0].get("content", ""))
+        required = (
+            "POST-TOOL VALIDATION ERROR",
+            "the tool action was applied",
+            "people/alice.md:L8",
+            "[S11]",
+            "[S13]",
+            "[S15]",
+        )
+        if any(value not in self.feedback for value in required):
+            raise AssertionError(f"Incomplete locator repair feedback: {self.feedback}")
 
 
 class TooManyCallsProvider(RecordingS3Provider):
@@ -370,6 +413,44 @@ class S3SafeRunnerTest(unittest.TestCase):
             self.build(provider)
         self.assert_no_formal_outputs()
 
+    def test_incremental_locator_feedback_allows_same_episode_repair(self):
+        provider = RepairingLocatorProvider(self.user_messages)
+        result = self.build(provider)
+        self.assertEqual(result["status"], "published")
+        self.assertEqual(provider.episode, 85)
+        self.assertEqual(provider.calls, 87)
+        self.assertTrue(provider.repair_sent)
+        self.assertIn("[S11]", provider.feedback)
+        memory_path = self.paths["store"] / "people" / "alice.md"
+        self.assertEqual(memory_path.read_text(encoding="utf-8"), REPAIRED_MEMORY)
+
+        episode = json.loads(
+            (self.paths["trace"] / "episode-001.json").read_text(encoding="utf-8")
+        )
+        tool_events = [event for event in episode["result"]["trace"] if "tool" in event]
+        self.assertEqual(
+            [(event["round"], event["tool"], event["ok"]) for event in tool_events],
+            [(1, "create", False), (2, "str_replace", True)],
+        )
+        self.assertIn("POST-TOOL VALIDATION ERROR", tool_events[0]["observation"])
+        self.assertEqual(episode["result"]["rounds"], 3)
+        self.assertEqual(episode["result"]["tool_calls"], 2)
+        self.assertEqual(self.verify()["status"], "verified")
+
+    def test_unrepaired_malformed_locator_still_fails_final_gate(self):
+        provider = RecordingS3Provider(
+            self.user_messages, first_memory=MALFORMED_MEMORY
+        )
+        with self.assertRaises(S3BuildError):
+            self.build(provider)
+        self.assert_no_formal_outputs()
+        run_dir = next(path for path in self.paths["work"].iterdir() if path.is_dir())
+        failure = json.loads((run_dir / "failure.json").read_text(encoding="utf-8"))
+        self.assertEqual(failure["current_chunk"], 1)
+        self.assertIn("Malformed source locator", failure["error"]["message"])
+        quarantined = run_dir / "quarantine" / "store" / "people" / "alice.md"
+        self.assertEqual(quarantined.read_text(encoding="utf-8"), MALFORMED_MEMORY)
+
     def test_tool_call_count_and_raw_argument_limits_fail_closed(self):
         for provider_type in (TooManyCallsProvider, OversizedRawArgumentsProvider):
             with self.subTest(provider=provider_type.__name__):
@@ -416,6 +497,18 @@ class S3SafeRunnerTest(unittest.TestCase):
         failure = json.loads((run_dir / "failure.json").read_text(encoding="utf-8"))
         self.assertEqual(failure["current_chunk"], 1)
         self.assertIn("future source locator", failure["error"]["message"])
+        rows = [
+            json.loads(line)
+            for line in (run_dir / "events.jsonl").read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        tool_events = [event for event in rows if event.get("tool") == "create"]
+        self.assertEqual(len(tool_events), 1)
+        self.assertFalse(tool_events[0]["ok"])
+        self.assertIn(
+            "unknown or future source locator [S30T1]",
+            tool_events[0]["observation"],
+        )
 
     def test_store_gate_rejects_future_locator_and_bad_frontmatter(self):
         allowed = {"[S1T1]"}
