@@ -53,7 +53,7 @@ _LOCATOR_CANDIDATE = re.compile(
 )
 _CROSS_REFERENCE = re.compile(r"/memories/[^\n\[\]>]*?\.md")
 _SECTION_REFERENCE = re.compile(
-    r"(?P<path>/memories/[^\n\[\]>]*?\.md)\s*>\s*"
+    r"(?P<path>/memories/(?:(?!/memories/)[^\n\[\]>])*?\.md)\s*>\s*"
     r"(?P<tail>[^\n\[]+)"
 )
 _HEADING = re.compile(r"^#{1,6}\s+", re.MULTILINE)

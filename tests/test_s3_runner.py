@@ -783,6 +783,26 @@ class S3SafeRunnerTest(unittest.TestCase):
         with self.assertRaisesRegex(S3BuildError, "ambiguous section cross-reference"):
             validate_curated_store(store, {"[S1T1]"})
 
+    def test_plain_link_before_section_link_does_not_merge_into_one_path(self):
+        store = self.base / "multiple-links-in-one-line"
+        store.mkdir()
+        (store / "calvin.md").write_text(
+            "---\nname: calvin\ndescription: Calvin relationship notes.\n---\n\n"
+            "# Calvin\n\n## Relationships\n\nA relationship fact [S1T1].\n",
+            encoding="utf-8",
+        )
+        (store / "dave.md").write_text(
+            "---\nname: dave\ndescription: Dave links to Calvin twice.\n---\n\n"
+            "# Dave\n\nDetails in /memories/calvin.md, relationship notes in "
+            "/memories/calvin.md > ## Relationships. [S1T1]\n",
+            encoding="utf-8",
+        )
+        gate = validate_curated_store(store, {"[S1T1]"})
+        self.assertEqual(
+            gate.files["dave.md"]["section_cross_references"],
+            ["/memories/calvin.md > ## Relationships"],
+        )
+
     def test_unicode_cross_reference_and_malformed_locator_are_not_silently_ignored(self):
         store = self.base / "invalid-reference-tokens"
         store.mkdir()
