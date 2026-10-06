@@ -23,7 +23,7 @@
   },
   "runner": {
     "module": "fs_memory_lab.s3_runner",
-    "version": "s3-safe-runner-v2"
+    "version": "s3-safe-runner-v3"
   },
   "runtime_config": {
     "context_compaction": {
@@ -109,6 +109,8 @@
   "safety_policy": {
     "checkpoint_before_every_chunk": true,
     "commit_marker_published_last": true,
+    "cross_reference_gate_feedback_after_every_tool_call": true,
+    "failed_run_prefix_resume_requires_hash_chain_revalidation": true,
     "failure_outputs_quarantined": true,
     "filesystem_persists_between_chunks": true,
     "formal_outputs_published_only_after_global_gate": true,
@@ -125,7 +127,7 @@
     "uncited_list_or_table_fact_candidates_rejected": true
   },
   "schema_version": "s3-management-runtime-contract-v1",
-  "status": "frozen-runner-v2-ready-after-v1-attempt-failed-safely",
+  "status": "frozen-runner-v3-with-validated-failure-resume",
   "tools": {
     "ordered_schema_sha256": "3f4b2edc2045348743961231bc174c973e9c8a5147225bb9caece1fc7a254b56",
     "profile": [

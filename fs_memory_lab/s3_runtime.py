@@ -36,7 +36,7 @@ from .s3_protocol import (
 
 
 S3_RUNTIME_CONTRACT_SCHEMA_VERSION = "s3-management-runtime-contract-v1"
-S3_RUNNER_VERSION = "s3-safe-runner-v2"
+S3_RUNNER_VERSION = "s3-safe-runner-v3"
 
 EXPECTED_S3_STREAM_MANIFEST_SHA256 = (
     "6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5"
@@ -45,7 +45,7 @@ EXPECTED_S3_PROMPT_CONTRACT_SHA256 = (
     "2b16c9041829666e3825d2d349c689b6cc1ce4b9de6e367f35a123c485918a20"
 )
 EXPECTED_S3_RUNTIME_CONTRACT_SHA256 = (
-    "36b043ad7cc0afcab45d671e42f3e03b8ed339c3486bd396d2820d9d72c94f4a"
+    "f9f02a125edad9fd16a1e2c9117e392b81794101c8a570312b2c04f46579389f"
 )
 FROZEN_MANAGEMENT_TOOL_PROFILE_SHA256 = (
     "e4541dedafbd645e6e11f8847c95283b8738c668915b006f06dd0dea57c0945e"
@@ -177,7 +177,7 @@ def runtime_contract_document() -> dict[str, Any]:
     return {
         "schema_version": S3_RUNTIME_CONTRACT_SCHEMA_VERSION,
         "condition": "S3 Agent-curated filesystem",
-        "status": "frozen-runner-v2-ready-after-v1-attempt-failed-safely",
+        "status": "frozen-runner-v3-with-validated-failure-resume",
         "runner": {
             "module": "fs_memory_lab.s3_runner",
             "version": S3_RUNNER_VERSION,
@@ -235,6 +235,8 @@ def runtime_contract_document() -> dict[str, Any]:
             "publication_fsyncs_files_and_parent_directories": True,
             "resource_limits_enforced_after_every_tool_call": True,
             "locator_gate_feedback_after_every_tool_call": True,
+            "cross_reference_gate_feedback_after_every_tool_call": True,
+            "failed_run_prefix_resume_requires_hash_chain_revalidation": True,
             "uncited_list_or_table_fact_candidates_rejected": True,
         },
     }

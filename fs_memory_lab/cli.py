@@ -140,6 +140,16 @@ def main() -> None:
     sub.add_parser("verify-s2", help="Recompute and verify the published S2 without API")
     sub.add_parser("s3-preflight", help="Validate frozen S3 inputs/contracts/targets without API")
     sub.add_parser("build-s3", help="Safely build all 85 S3 episodes and publish after verification")
+    resume_s3 = sub.add_parser(
+        "resume-s3",
+        help="Resume a validated failed S3 run from its retained pre-chunk checkpoint",
+    )
+    resume_s3.add_argument("--run-id", required=True)
+    resume_s3.add_argument(
+        "--source-code-revision",
+        required=True,
+        help="Git revision that produced the failed prefix (recorded as operator attestation)",
+    )
     sub.add_parser("verify-s3", help="Recompute and verify the published S3 without API")
     sub.add_parser("check-api", help="Make one read-only function-call request without writing memory")
     ingest = sub.add_parser("ingest", help="Send each dialogue chunk to the management agent")
@@ -204,8 +214,8 @@ def main() -> None:
             },
             "s3_runtime": {
                 "status": (
-                    "runner-v2 ready; first v1 formal attempt failed safely at chunk 2; "
-                    "no formal store published"
+                    "runner-v3 ready; validated formal prefix covers chunks 1-9 and "
+                    "can resume at chunk 10; no formal store published"
                 ),
                 "stream_manifest_sha256": EXPECTED_S3_STREAM_MANIFEST_SHA256,
                 "prompt_contract_sha256": EXPECTED_S3_PROMPT_CONTRACT_SHA256,
@@ -282,7 +292,7 @@ def main() -> None:
         return
     # API configuration is checked before touching persistent directories.
     provider = CompatibleChatProvider.from_environment() if args.command in {
-        "ingest", "ask", "check-api", "build-s2", "build-s3"
+        "ingest", "ask", "check-api", "build-s2", "build-s3", "resume-s3"
     } else None
     if args.command == "check-api":
         result = provider.complete(
@@ -329,6 +339,27 @@ def main() -> None:
             code_revision=code["commit"],
             code_dirty=code["dirty"],
             repo_root=project,
+        )
+        print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
+        return
+    if args.command == "resume-s3":
+        code = git_state(project)
+        report = build_s3_store(
+            s3_paths["stream_dir"],
+            s3_paths["stream_manifest"],
+            s3_paths["prompt_contract"],
+            s3_paths["runtime_contract"],
+            s3_paths["s3_store"],
+            s3_paths["s3_manifest"],
+            s3_paths["trace_dir"],
+            s3_paths["commit_marker"],
+            s3_paths["work_root"],
+            provider,
+            code_revision=code["commit"],
+            code_dirty=code["dirty"],
+            repo_root=project,
+            resume_run_id=args.run_id,
+            resume_source_code_revision=args.source_code_revision,
         )
         print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
         return

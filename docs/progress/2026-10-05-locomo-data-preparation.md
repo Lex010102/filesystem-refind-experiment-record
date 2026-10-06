@@ -448,3 +448,17 @@ deterministic fake provider 已把完整 85-episode 流从空 store 跑到发布
 新增测试用 malformed store 一次制造三个短标签，验证同一 episode 收到完整反馈后用 `str_replace` 修复，再完成全部 85-chunk fake-provider build；另验证不修复时终态 gate 仍失败、future locator 仍在即时反馈和终态两层被拒绝。当前全套 81 项离线测试全部通过。
 
 v2 冻结值：runtime contract SHA-256 `36b043ad7cc0afcab45d671e42f3e03b8ed339c3486bd396d2820d9d72c94f4a`，runtime config canonical SHA-256 `434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183`。Management Prompt、user wrapper、85-chunk stream 及七工具 profile/schema/wire hashes 均未改变。下一次正式运行必须基于这个 v2 clean commit，从空 store 和 chunk 1 重新开始。
+
+## 2026-10-06：第二次正式运行停在 chunk 10 与 runner v3 续跑修复
+
+第二次正式运行在 clean commit `2d67f269e79dce68fed83f04044d9751864006ac` 上启动。Chunks 1–9 全部通过并保存完整 episode traces；chunk 10 的文件内容写入完成后，严格 episode gate 发现 `calvin.md` 使用 `/memories/dave.md > ## Auto maintenance shop)`，而目标文件的真实标题是 `## Auto maintenance shop (opened 2023-05-01)`。路径存在，但章节简称无法唯一、精确解析，因此运行安全停止。失败前共记录 55 次 responses、81 次工具调用和 419,651 total tokens；正式四个目标仍未发布。
+
+Runner 随后升级为 `s3-safe-runner-v3`：
+
+1. 每次工具调用后除 locator 外，也扫描文件路径和章节交叉引用；不精确章节会连同来源文件、行号和目标文件可用标题反馈给同一 Agent 自修复；
+2. 新增 `resume-s3`，只允许使用 `failed` 且未留下正式输出的运行；续跑前逐一验证连续 episode 前缀、冻结输入、prompt/runtime 身份、provider metadata、store 文件 inventory/hash chain，以及失败 chunk 前的 checkpoint；
+3. 失败 chunk 的写入不会复用。事件日志由已验证的 completed episode traces 重建，随后从该 chunk 的 `before` checkpoint 重新调用模型；
+4. 最终 manifest 和 trace index 会记录续跑起点、复用的已完成 chunk 数、旧/新 runtime contract hashes 和来源代码 revision；
+5. episode/global gate、85 块齐全后才发布及 marker-last 协议均未放宽。
+
+v3 runtime contract SHA-256 为 `f9f02a125edad9fd16a1e2c9117e392b81794101c8a570312b2c04f46579389f`；runtime config、Management Prompt、user wrapper、85-chunk stream 和七工具 schema 均未改变。83 项离线测试通过，其中包含完整的“第 10 块失败→只运行 10–85→最终 85 traces 独立验证”测试。实际失败运行 `20261006T022525914538Z-a1352213` 的前 9 个 episodes 与 `chunk-010-before` checkpoint 也已通过只读续跑预检。

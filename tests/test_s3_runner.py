@@ -189,6 +189,90 @@ class RepairingLocatorProvider(RecordingS3Provider):
             raise AssertionError(f"Incomplete locator repair feedback: {self.feedback}")
 
 
+class RepairingCrossReferenceProvider(RecordingS3Provider):
+    target_memory = (
+        "---\nname: target\ndescription: A target with a dated exact heading.\n---\n\n"
+        "# Overview\n\n## Auto maintenance shop (opened 2023-05-01)\n\n"
+        "The shop opened [S1T1].\n"
+    )
+    bad_source_memory = (
+        "---\nname: index\ndescription: An index with a repairable section link.\n---\n\n"
+        "# Index\n\nSee /memories/target.md > ## Auto maintenance shop) [S1T1].\n"
+    )
+
+    def __init__(self, expected_user_messages: list[str]):
+        super().__init__(expected_user_messages)
+        self.first_episode_step = 0
+        self.feedback = ""
+
+    def complete(self, messages, tools, config):
+        if self.episode == 0 or (self.episode == 1 and len(messages) > 2):
+            self.calls += 1
+            self.assert_protocol(messages, tools, config)
+            if len(messages) == 2:
+                self.episode = 1
+                self.first_contexts.append(copy.deepcopy(messages))
+                return tool_round(
+                    tool_call(
+                        "create-target",
+                        "create",
+                        path="/memories/target.md",
+                        file_text=self.target_memory,
+                    ),
+                    served_model=self.served_model,
+                )
+            self.first_episode_step += 1
+            if self.first_episode_step == 1:
+                return tool_round(
+                    tool_call(
+                        "create-index",
+                        "create",
+                        path="/memories/index.md",
+                        file_text=self.bad_source_memory,
+                    ),
+                    served_model=self.served_model,
+                )
+            if self.first_episode_step == 2:
+                tool_messages = [m for m in messages if m.get("role") == "tool"]
+                self.feedback = str(tool_messages[-1].get("content", ""))
+                required = (
+                    "POST-TOOL VALIDATION ERROR",
+                    "CROSS-REFERENCE VALIDATION ERROR",
+                    "index.md:L8",
+                    "## Auto maintenance shop (opened 2023-05-01)",
+                )
+                if any(value not in self.feedback for value in required):
+                    raise AssertionError(f"Incomplete cross-reference feedback: {self.feedback}")
+                return tool_round(
+                    tool_call(
+                        "repair-index",
+                        "str_replace",
+                        path="/memories/index.md",
+                        old_str="## Auto maintenance shop)",
+                        new_str="## Auto maintenance shop (opened 2023-05-01)",
+                    ),
+                    served_model=self.served_model,
+                )
+            return answer_round(self.episode, served_model=self.served_model)
+        return super().complete(messages, tools, config)
+
+
+class ResumeRecordingS3Provider(RecordingS3Provider):
+    """A no-write provider whose first episode corresponds to resume chunk N."""
+
+    def complete(self, messages, tools, config):
+        self.calls += 1
+        self.assert_protocol(messages, tools, config)
+        if len(messages) != 2:
+            raise AssertionError("Resume no-write provider received an unexpected tool round")
+        self.episode += 1
+        expected = self.expected_user_messages[self.episode - 1]
+        if messages[1] != {"role": "user", "content": expected}:
+            raise AssertionError(f"Unexpected resumed user message {self.episode}")
+        self.first_contexts.append(copy.deepcopy(messages))
+        return answer_round(self.episode, served_model=self.served_model)
+
+
 class TooManyCallsProvider(RecordingS3Provider):
     def complete(self, messages, tools, config):
         self.calls += 1
@@ -436,6 +520,97 @@ class S3SafeRunnerTest(unittest.TestCase):
         self.assertEqual(episode["result"]["rounds"], 3)
         self.assertEqual(episode["result"]["tool_calls"], 2)
         self.assertEqual(self.verify()["status"], "verified")
+
+    def test_incremental_cross_reference_feedback_allows_exact_heading_repair(self):
+        provider = RepairingCrossReferenceProvider(self.user_messages)
+        result = self.build(provider)
+        self.assertEqual(result["status"], "published")
+        self.assertIn("CROSS-REFERENCE VALIDATION ERROR", provider.feedback)
+        self.assertIn(
+            "## Auto maintenance shop (opened 2023-05-01)",
+            (self.paths["store"] / "index.md").read_text(encoding="utf-8"),
+        )
+        episode = json.loads(
+            (self.paths["trace"] / "episode-001.json").read_text(encoding="utf-8")
+        )
+        tool_events = [event for event in episode["result"]["trace"] if "tool" in event]
+        self.assertEqual([event["ok"] for event in tool_events], [True, False, True])
+        self.assertEqual(self.verify()["status"], "verified")
+
+    def test_validated_resume_reuses_prefix_and_starts_at_failed_chunk(self):
+        failing = RecordingS3Provider(self.user_messages, fail_episode=10)
+        with self.assertRaises(S3BuildError):
+            self.build(failing)
+        run_dir = next(path for path in self.paths["work"].iterdir() if path.is_dir())
+        run_id = run_dir.name
+        with (run_dir / "events.jsonl").open("a", encoding="utf-8") as handle:
+            handle.write('{"event":"stale_failed_attempt","chunk":10}\n')
+
+        resumed_provider = ResumeRecordingS3Provider(self.user_messages[9:])
+        result = build_s3_store(
+            STREAM,
+            STREAM_MANIFEST,
+            PROMPT_CONTRACT,
+            RUNTIME_CONTRACT,
+            self.paths["store"],
+            self.paths["manifest"],
+            self.paths["trace"],
+            self.paths["marker"],
+            self.paths["work"],
+            resumed_provider,
+            code_revision="test-s3-resume",
+            code_dirty=False,
+            test_mode=True,
+            resume_run_id=run_id,
+            resume_source_code_revision="test-s3-runner",
+        )
+        self.assertEqual(result["status"], "published")
+        self.assertEqual(result["chunks"], 85)
+        self.assertEqual(resumed_provider.episode, 76)
+        self.assertEqual(len(resumed_provider.first_contexts), 76)
+        self.assertEqual(
+            resumed_provider.first_contexts[0][1]["content"], self.user_messages[9]
+        )
+        index = json.loads(
+            (self.paths["trace"] / "index.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(index["resume"]["start_chunk"], 10)
+        self.assertEqual(index["resume"]["reused_completed_chunks"], 9)
+        self.assertEqual(index["resume"]["source_failed_run_id"], run_id)
+        self.assertNotIn(
+            "stale_failed_attempt",
+            (self.paths["trace"] / "events.jsonl").read_text(encoding="utf-8"),
+        )
+        self.assertEqual(self.verify()["status"], "verified")
+
+    def test_resume_rejects_a_tampered_checkpoint_before_provider_call(self):
+        failing = RecordingS3Provider(self.user_messages, fail_episode=2)
+        with self.assertRaises(S3BuildError):
+            self.build(failing)
+        run_dir = next(path for path in self.paths["work"].iterdir() if path.is_dir())
+        checkpoint = run_dir / "checkpoints" / "chunk-002-before" / "people" / "alice.md"
+        checkpoint.write_text(VALID_MEMORY + "\nTampered.\n", encoding="utf-8")
+        resumed_provider = ResumeRecordingS3Provider(self.user_messages[1:])
+        with self.assertRaisesRegex(S3BuildError, "checkpoint"):
+            build_s3_store(
+                STREAM,
+                STREAM_MANIFEST,
+                PROMPT_CONTRACT,
+                RUNTIME_CONTRACT,
+                self.paths["store"],
+                self.paths["manifest"],
+                self.paths["trace"],
+                self.paths["marker"],
+                self.paths["work"],
+                resumed_provider,
+                code_revision="test-s3-resume",
+                code_dirty=False,
+                test_mode=True,
+                resume_run_id=run_dir.name,
+                resume_source_code_revision="test-s3-runner",
+            )
+        self.assertEqual(resumed_provider.calls, 0)
+        self.assert_no_formal_outputs()
 
     def test_unrepaired_malformed_locator_still_fails_final_gate(self):
         provider = RecordingS3Provider(

@@ -182,7 +182,7 @@ view, create, str_replace, insert, delete, rename, grep
 | --- | --- |
 | 85-chunk stream manifest | `6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5` |
 | Management prompt contract | `2b16c9041829666e3825d2d349c689b6cc1ce4b9de6e367f35a123c485918a20` |
-| Runtime contract 文件（runner v2） | `36b043ad7cc0afcab45d671e42f3e03b8ed339c3486bd396d2820d9d72c94f4a` |
+| Runtime contract 文件（runner v3） | `f9f02a125edad9fd16a1e2c9117e392b81794101c8a570312b2c04f46579389f` |
 | Runtime config canonical JSON | `434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183` |
 | 七工具有序 profile | `e4541dedafbd645e6e11f8847c95283b8738c668915b006f06dd0dea57c0945e` |
 | 七工具有序 schema（canonical JSON） | `3f4b2edc2045348743961231bc174c973e9c8a5147225bb9caece1fc7a254b56` |
@@ -212,7 +212,7 @@ python3 -m fs_memory_lab.cli build-s3
 python3 -m fs_memory_lab.cli verify-s3
 ```
 
-正式 `build-s3` 只接受 clean worktree 的 40 位 Git commit、受审的 `CompatibleChatProvider` 和上述精确 NUS portable profile；测试专用 artifact ID 与 `test-*` revision 被隔离，不能冒充正式产物。Runner 从空 staging store 开始，按全局 chunk index 串行运行 85 个全新 Agent contexts，episode 之间只共享文件系统。每块发送前重验输入 hash，每块前保存 checkpoint，逐事件 `fsync` trace，并在每次工具调用后执行路径/体积上限。Runner v2 还会在每次工具调用后扫描整个 staging store 的 malformed/future locators；若发现问题，工具动作仍保留，但错误会带文件、行号和全部（最多 100 条）诊断反馈给同一 Agent 自行修正。它不是自动改写或放宽 locator。每个 episode 后的严格 gate 仍核对 Markdown/frontmatter、只引用已见 locator、cross-reference、文件 hash chain 和最低限度的行内来源标注。任何 API、模型、工具、gate 或发布错误都只保留在 `local-runs/s3-management/` 的 quarantine/诊断中，不会留下可被下游接受的正式 artifact。全部 85 块通过全局 gate 后才发布 store、85 个 episode traces、trace index、manifest，并最后发布 `s3-curated.COMMITTED`。
+正式 `build-s3` 只接受 clean worktree 的 40 位 Git commit、受审的 `CompatibleChatProvider` 和上述精确 NUS portable profile；测试专用 artifact ID 与 `test-*` revision 被隔离，不能冒充正式产物。Runner 从空 staging store 开始，按全局 chunk index 串行运行 85 个全新 Agent contexts，episode 之间只共享文件系统。每块发送前重验输入 hash，每块前保存 checkpoint，逐事件 `fsync` trace，并在每次工具调用后执行路径/体积上限。Runner v3 会在每次工具调用后扫描整个 staging store 的 malformed/future locators 和无法精确解析的文件/章节交叉引用；若发现问题，工具动作仍保留，但错误会带文件、行号及可用标题反馈给同一 Agent 自行修正。它不是自动改写或放宽 gate。`resume-s3` 只接受验证通过的连续失败前缀，并核对 episode 输入、trace、store hash chain 和 pre-chunk checkpoint 后，从失败 chunk 重新开始。每个 episode 后的严格 gate 仍核对 Markdown/frontmatter、只引用已见 locator、cross-reference、文件 hash chain 和最低限度的行内来源标注。任何 API、模型、工具、gate 或发布错误都只保留在 `local-runs/s3-management/` 的 quarantine/诊断中，不会留下可被下游接受的正式 artifact。全部 85 块通过全局 gate 后才发布 store、85 个 episode traces、trace index、manifest，并最后发布 `s3-curated.COMMITTED`。
 
 离线测试已用 deterministic fake provider 完整走通 85 episodes，并覆盖输入或 contract 篡改、provider/profile/served-model 漂移、未来 locator、写后畸形 locator 的同 episode 自修复、未修复终态拒绝、超限资源、并发锁、失败恢复、发布回滚与正式 artifact 交叉复核；当前 81 项全套测试通过。另一次隔离 smoke 已用 NUS API 处理首个冻结 chunk。这些结果仍**不能写成正式 85-chunk S3 build 已完成**；`stores/s3-curated/` 仍不存在。
 
@@ -220,4 +220,4 @@ python3 -m fs_memory_lab.cli verify-s3
 
 2026-10-06 的隔离 smoke 使用 `session_01_chunk_01.txt`，严格限制为最多 4 次 HTTP 请求和 12 次工具调用。实际由 requested alias `coding`、served model `qwen3.8:27b` 完成 3 次请求与 `view/create/create` 3 次工具调用，生成 `people/calvin.md`、`people/dave.md`，保留 7 次 locator mentions，并通过 S3 store gate；总 usage 为 15,652 prompt、1,009 completion、16,661 tokens。输出只在被 Git 忽略的 `local-runs/s3-smoke-20261005T185937697619Z-eac18b90/`，正式四个目标保持不存在。下一步是在新的 clean commit 上启动唯一一次正式 `build-s3`，而不是把 smoke 结果当成正式 store。
 
-同日第一次正式 v1 尝试从空 store 启动：chunk 1 完成，chunk 2 的模型写入把 `[S1T15]`、`[S1T11]`、`[S1T13]` 缩写成 `[S15]`、`[S11]`、`[S13]`，严格 episode gate 因而终止构建。8 次 API 请求共使用 49,007 tokens；正式 store、manifest、trace directory 与 COMMITTED marker 均未发布。可追溯摘要在 `traces/s3-formal-attempt-001-failure-2026-10-06.json`。该失败驱动了上述 runner v2 写后反馈机制；旧运行不会拼接或复用，v2 必须在新 clean commit 上从 chunk 1 重启。
+同日第一次正式 v1 尝试从空 store 启动：chunk 1 完成，chunk 2 的模型写入把 `[S1T15]`、`[S1T11]`、`[S1T13]` 缩写成 `[S15]`、`[S11]`、`[S13]`，严格 episode gate 因而终止构建。8 次 API 请求共使用 49,007 tokens；正式 store、manifest、trace directory 与 COMMITTED marker 均未发布。可追溯摘要在 `traces/s3-formal-attempt-001-failure-2026-10-06.json`。该失败驱动了 runner v2 locator 写后反馈。后续 v2 正式运行通过前 9 个 chunks，并在 chunk 10 因不精确的章节交叉引用停止；runner v3 新增交叉引用写后反馈和经哈希链复核的失败前缀续跑，允许从保留的 `chunk-010-before` 重试 chunk 10，而不会采用失败 chunk 的写入或事件。

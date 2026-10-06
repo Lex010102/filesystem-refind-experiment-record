@@ -17,7 +17,7 @@ GitHub：<https://github.com/Lex010102/filesystem-refind-experiment-record>
 - 已冻结 S3 Management Agent 的七工具顺序/schema、上下文压缩协议、论文目标参数与 NUS 本地实际请求配置，并实现 `s3-preflight`、`build-s3`、`verify-s3` 安全执行链；
 - S3 safe runner 已用隔离的 deterministic fake provider 完整走通 85 个连续 build episodes，覆盖恢复点、增量 trace、逐块 gate、失败隔离、发布回滚和离线复核；这不是一次真实 API 运行；
 - 尚未完成 ReFind-style R2、统一 Answerer、批量评测与七条件实验；
-- 当前最准确的说法是：**正式数据底座、S1/S2 stores、S3 输入流、prompt/tool/runtime contracts 与安全 runner v2 已固定；首个冻结 chunk 的 NUS smoke 已通过，第一次正式尝试在 chunk 2 因模型写出畸形 locator 被安全拒绝，尚未构建正式 S3 store。**
+- 当前最准确的说法是：**正式数据底座、S1/S2 stores、S3 输入流、prompt/tool/runtime contracts 与安全 runner v3 已固定；NUS smoke 已通过，最近一次正式运行的前 9 个 chunk 已通过并被严格验证，chunk 10 因章节交叉引用不精确而安全停止，尚未构建正式 S3 store。**
 
 完整的一个月工作路线见 [实验地图](docs/plans/one-month-experiment-map.md)。历史进度见 [研究进度日志](docs/progress/2026-09-16-research-log.md)，最新数据与 S1/S2 准备状态见 [LoCoMo 数据准备记录](docs/progress/2026-10-05-locomo-data-preparation.md)。
 
@@ -91,7 +91,7 @@ python3 -m unittest discover -s tests -v
 
 `demo` 使用临时目录，不调用 API。
 
-`s3-preflight` 也完全离线：它核对固定的 85-chunk stream、prompt/runtime contracts、七工具 hashes 和正式输出目标是否为空。`build-s3` 只接受 clean、40 位 Git commit 上的受审 `CompatibleChatProvider` 与冻结的 NUS profile。2026-10-06 的第一次正式尝试在 chunk 2 被严格 gate 安全拒绝，没有发布半成品；v2 增加写后 locator 校验反馈，允许同一 Agent 自行修正但不放宽最终 gate。下一次仍必须从空 store 和 chunk 1 开始。
+`s3-preflight` 也完全离线：它核对固定的 85-chunk stream、prompt/runtime contracts、七工具 hashes 和正式输出目标是否为空。`build-s3` 只接受 clean、40 位 Git commit 上的受审 `CompatibleChatProvider` 与冻结的 NUS profile。Runner v3 在 v2 的 locator 写后反馈上增加了文件/章节交叉引用写后反馈；`resume-s3` 只允许从完整验证过的失败前缀续跑，会重验失败记录、连续 episode traces、输入、store hash chain 与 pre-chunk checkpoint，并重建事件日志，不复用失败 chunk 的状态。
 
 LoCoMo 的官方来源、许可、固定 commit、schema 和校验值见 [数据说明](data/README.md)。S1/S2 stores 与 S3 管理输入流的格式、位置、生成命令和完整性保证见 [实验产物说明](experiments/locomo-conv50-v1/README.md)。
 

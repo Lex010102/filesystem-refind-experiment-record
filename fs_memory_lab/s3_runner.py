@@ -59,6 +59,10 @@ _SECTION_REFERENCE = re.compile(
 _HEADING = re.compile(r"^#{1,6}\s+", re.MULTILINE)
 _HEADING_LINE = re.compile(r"^(#{1,6})\s+.+$")
 _LIST_FACT_LINE = re.compile(r"^\s*(?:[-+*]\s+|\d+[.)]\s+)\S")
+_LEGACY_RESUMABLE_RUNTIME_CONTRACTS = {
+    # Runner v2: post-tool locator feedback, before cross-reference feedback/resume.
+    "36b043ad7cc0afcab45d671e42f3e03b8ed339c3486bd396d2820d9d72c94f4a",
+}
 
 
 class S3BuildError(RuntimeError):
@@ -90,6 +94,21 @@ class S3StoreGate:
     unique_locators: int
     cross_reference_count: int
     max_depth: int
+
+
+@dataclass(frozen=True)
+class S3ResumePrefix:
+    run_id: str
+    run_dir: Path
+    start_chunk: int
+    started_at: str
+    episodes: list[dict[str, Any]]
+    checkpoint: Path
+    previous_checkpoint: Path | None
+    reconstructed_events: bytes
+    source_runtime_contract_sha256: str
+    source_code_revision: str
+    resumed_at: str
 
 
 def _utc_now() -> str:
@@ -541,6 +560,79 @@ def validate_incremental_source_locators(
         )
         raise S3BuildError("; ".join(displayed) + suffix)
     return mentions
+
+
+def validate_incremental_cross_references(root: Path) -> int:
+    """Report broken filesystem links immediately after a tool action.
+
+    A parallel tool response may create a source file before its target file.  The
+    write therefore remains applied and the diagnostic is returned to the same
+    Agent as a repairable tool error.  The episode-level store gate remains the
+    authority: it must still pass after all calls finish.
+    """
+    raw_root = Path(root)
+    if raw_root.is_symlink() or not raw_root.is_dir():
+        raise S3BuildError("S3 store must be an existing non-symlink directory")
+    root = raw_root.resolve(strict=False)
+    _validate_resource_limits(root)
+    entries = list(root.rglob("*"))
+    relative_files = {
+        path.relative_to(root).as_posix(): path
+        for path in entries
+        if path.is_file() and not path.is_symlink() and path.suffix == ".md"
+    }
+    issues: list[str] = []
+    references = 0
+    for relative, path in sorted(relative_files.items()):
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError) as exc:
+            issues.append(f"unreadable UTF-8 memory file {relative}: {exc}")
+            continue
+        for match in _CROSS_REFERENCE.finditer(text):
+            reference = match.group(0)
+            line_number = text.count("\n", 0, match.start()) + 1
+            target = relative_files.get(reference[len("/memories/"):])
+            if target is None:
+                issues.append(
+                    f"{relative}:L{line_number} broken cross-reference {reference}"
+                )
+            references += 1
+        for match in _SECTION_REFERENCE.finditer(text):
+            reference = match.group("path")
+            tail = match.group("tail").strip()
+            line_number = text.count("\n", 0, match.start()) + 1
+            target = relative_files.get(reference[len("/memories/"):])
+            if target is None:
+                # The path diagnostic above already identifies the missing file.
+                continue
+            target_text = target.read_text(encoding="utf-8")
+            if _resolved_section_reference(target_text, tail) is not None:
+                continue
+            headings = [
+                line.strip()
+                for line in target_text.splitlines()
+                if _HEADING_LINE.fullmatch(line.strip()) is not None
+            ]
+            available = ", ".join(repr(value) for value in headings[:20])
+            if len(headings) > 20:
+                available += f", plus {len(headings) - 20} more"
+            issues.append(
+                f"{relative}:L{line_number} broken or ambiguous section "
+                f"cross-reference {reference} > {tail!r}; exact headings in target: "
+                f"{available or '(none)'}"
+            )
+    if issues:
+        unique = list(dict.fromkeys(issues))
+        limit = S3_RESOURCE_LIMITS["max_locator_diagnostics_per_tool"]
+        displayed = unique[:limit]
+        suffix = (
+            f"; plus {len(unique) - limit} more; inspect the listed files"
+            if len(unique) > limit
+            else ""
+        )
+        raise S3BuildError("; ".join(displayed) + suffix)
+    return references
 
 
 def validate_curated_store(
@@ -1026,6 +1118,249 @@ def _build_cost(episodes: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def _load_resume_prefix(
+    work_root: Path,
+    run_id: str,
+    stream: S3StreamSnapshot,
+    *,
+    prompt_contract_sha256: str,
+    source_code_revision: str,
+    test_mode: bool,
+) -> S3ResumePrefix:
+    """Validate an entire failed-run prefix before permitting an API resume."""
+    if _RUN_ID.fullmatch(run_id) is None:
+        raise S3BuildError("Resume run id is invalid")
+    revision_pattern = r"test-[a-z0-9-]+" if test_mode else r"[0-9a-f]{40}"
+    if re.fullmatch(revision_pattern, source_code_revision) is None:
+        raise S3BuildError("Resume source code revision has the wrong form")
+    run_dir = work_root / run_id
+    if run_dir.is_symlink() or not run_dir.is_dir():
+        raise S3BuildError(f"Resume run directory is missing: {run_dir}")
+    failure, _ = _load_json_object(run_dir / "failure.json", "S3 failed-run record")
+    state, _ = _load_json_object(run_dir / "run-state.json", "S3 failed-run state")
+    if (
+        failure.get("schema_version") != 1
+        or failure.get("status") != "failed"
+        or failure.get("run_id") != run_id
+        or failure.get("formal_outputs_published") is not False
+        or failure.get("residual_formal_outputs") != []
+        or failure.get("cleanup_errors") != []
+        or failure.get("checkpoints_retained") is not True
+    ):
+        raise S3BuildError("Failed-run record is not safe to resume")
+    start_chunk = failure.get("current_chunk")
+    if (
+        not isinstance(start_chunk, int)
+        or isinstance(start_chunk, bool)
+        or not 1 <= start_chunk <= len(stream.chunks)
+        or state.get("schema_version") != 1
+        or state.get("run_id") != run_id
+        or state.get("current_chunk") != start_chunk
+        or state.get("stream_manifest_sha256") != stream.manifest_sha256
+        or state.get("prompt_contract_sha256") != prompt_contract_sha256
+    ):
+        raise S3BuildError("Failed-run state does not match the frozen stream")
+    source_runtime_hash = state.get("runtime_contract_sha256")
+    if source_runtime_hash not in (
+        _LEGACY_RESUMABLE_RUNTIME_CONTRACTS
+        | {EXPECTED_S3_RUNTIME_CONTRACT_SHA256}
+    ):
+        raise S3BuildError("Failed run used an unapproved runtime contract")
+
+    trace_source = run_dir / "quarantine" / "trace"
+    if trace_source.is_symlink() or not trace_source.is_dir():
+        raise S3BuildError("Failed-run trace quarantine is missing")
+    trace_paths = list(trace_source.iterdir())
+    if any(path.is_symlink() or not path.is_file() for path in trace_paths):
+        raise S3BuildError("Failed-run trace quarantine must contain regular files only")
+    expected_trace_names = {
+        f"episode-{index:03d}.json" for index in range(1, start_chunk)
+    }
+    if {path.name for path in trace_paths} != expected_trace_names:
+        raise S3BuildError("Failed-run completed episode set is not a contiguous prefix")
+
+    episode_protocol = {
+        "management_prompt_sha256": sha256_bytes(MANAGEMENT_PROMPT.encode("utf-8")),
+        "runtime_config_sha256": FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256,
+        "tool_profile_sha256": FROZEN_MANAGEMENT_TOOL_PROFILE_SHA256,
+        "tool_schema_sha256": FROZEN_MANAGEMENT_TOOL_SCHEMA_SHA256,
+    }
+    prior_store_sha = sha256_bytes(canonical_json_bytes({}))
+    prior_store_files: dict[str, str] = {}
+    episodes: list[dict[str, Any]] = []
+    event_rows: list[dict[str, Any]] = []
+    for chunk in stream.chunks[: start_chunk - 1]:
+        index = chunk["global_chunk_index"]
+        filename = f"episode-{index:03d}.json"
+        episode, _ = _load_json_object(trace_source / filename, filename)
+        payload = (stream.root / chunk["filename"]).read_text(encoding="utf-8")
+        user_message = render_s3_user_message(payload)
+        episode_chunk = episode.get("chunk", {})
+        if (
+            episode.get("schema_version") != 1
+            or episode.get("status") != "completed"
+            or episode.get("run_id") != run_id
+            or episode.get("protocol") != episode_protocol
+            or episode.get("checkpoint") != f"checkpoints/chunk-{index:03d}-before"
+            or episode_chunk.get("filename") != chunk["filename"]
+            or episode_chunk.get("global_chunk_index") != index
+            or episode_chunk.get("payload_sha256") != chunk["sha256"]
+            or episode_chunk.get("locators") != chunk["locators"]
+            or episode_chunk.get("user_message_sha256")
+            != sha256_bytes(user_message.encode("utf-8"))
+            or episode.get("user_message") != user_message
+        ):
+            raise S3BuildError(f"Resume episode identity mismatch: {filename}")
+        before_files = episode.get("store_files_before")
+        after_files = episode.get("store_files_after")
+        if (
+            not isinstance(before_files, dict)
+            or not isinstance(after_files, dict)
+            or any(
+                not isinstance(name, str)
+                or re.fullmatch(r"[0-9a-f]{64}", str(digest)) is None
+                for inventory in (before_files, after_files)
+                for name, digest in inventory.items()
+            )
+            or before_files != prior_store_files
+            or episode.get("store_before_sha256") != prior_store_sha
+            or sha256_bytes(canonical_json_bytes(before_files)) != prior_store_sha
+            or sha256_bytes(canonical_json_bytes(after_files))
+            != episode.get("store_after_sha256")
+        ):
+            raise S3BuildError(f"Resume store hash chain is invalid: {filename}")
+        before_names = set(before_files)
+        after_names = set(after_files)
+        expected_diff = {
+            "added": sorted(after_names - before_names),
+            "modified": sorted(
+                name
+                for name in before_names & after_names
+                if before_files[name] != after_files[name]
+            ),
+            "removed": sorted(before_names - after_names),
+        }
+        if episode.get("store_diff") != expected_diff:
+            raise S3BuildError(f"Resume store diff is invalid: {filename}")
+        result = episode.get("result")
+        if not isinstance(result, dict):
+            raise S3BuildError(f"Resume result is invalid: {filename}")
+        try:
+            restored_result = EpisodeResult(
+                answer=result["answer"],
+                rounds=result["rounds"],
+                tool_calls=result["tool_calls"],
+                usage=result["usage"],
+                trace=result["trace"],
+                role=result["role"],
+                configuration=result["configuration"],
+                prompt_sha256=result["prompt_sha256"],
+                input_sha256=result["input_sha256"],
+            )
+        except KeyError as exc:
+            raise S3BuildError(f"Resume result is incomplete: {filename}") from exc
+        assistant_events = [
+            event
+            for event in restored_result.trace
+            if isinstance(event, dict) and "assistant_content" in event
+        ]
+        tool_events = [
+            event
+            for event in restored_result.trace
+            if isinstance(event, dict) and "tool" in event
+        ]
+        if (
+            restored_result.role != "management"
+            or restored_result.configuration != asdict(MANAGEMENT)
+            or restored_result.prompt_sha256
+            != sha256_bytes(MANAGEMENT_PROMPT.encode("utf-8"))
+            or restored_result.input_sha256
+            != sha256_bytes(user_message.encode("utf-8"))
+            or not isinstance(restored_result.answer, str)
+            or not restored_result.answer.strip()
+            or not isinstance(restored_result.rounds, int)
+            or isinstance(restored_result.rounds, bool)
+            or not 1 <= restored_result.rounds <= MANAGEMENT.max_rounds
+            or len(assistant_events) != restored_result.rounds
+            or not isinstance(restored_result.tool_calls, int)
+            or isinstance(restored_result.tool_calls, bool)
+            or restored_result.tool_calls < 0
+            or len(tool_events) != restored_result.tool_calls
+            or not isinstance(restored_result.usage, list)
+        ):
+            raise S3BuildError(f"Resume result metadata is invalid: {filename}")
+        _validate_episode_provider_metadata(restored_result)
+        event_rows.extend(
+            {"event": "agent_trace", "chunk": index, **event}
+            for event in restored_result.trace
+        )
+        episodes.append(episode)
+        prior_store_files = after_files
+        prior_store_sha = episode["store_after_sha256"]
+
+    checkpoint = run_dir / "checkpoints" / f"chunk-{start_chunk:03d}-before"
+    prefix_locators = {
+        locator
+        for chunk in stream.chunks[: start_chunk - 1]
+        for locator in chunk["locators"]
+    }
+    checkpoint_gate = validate_curated_store(
+        checkpoint, frozenset(prefix_locators), allow_empty=True
+    )
+    checkpoint_files = {
+        name: metadata["sha256"] for name, metadata in checkpoint_gate.files.items()
+    }
+    if (
+        checkpoint_gate.tree_sha256 != prior_store_sha
+        or checkpoint_files != prior_store_files
+    ):
+        raise S3BuildError("Resume checkpoint does not match the validated episode prefix")
+    previous_checkpoint = (
+        run_dir / "checkpoints" / f"chunk-{start_chunk - 1:03d}-before"
+        if start_chunk > 1
+        else None
+    )
+    if previous_checkpoint is not None and (
+        previous_checkpoint.is_symlink() or not previous_checkpoint.is_dir()
+    ):
+        raise S3BuildError("Resume rolling checkpoint predecessor is missing")
+
+    raw_events = run_dir / "events.jsonl"
+    if raw_events.is_symlink() or not raw_events.is_file():
+        raise S3BuildError("Failed-run events log is missing")
+    try:
+        first_line = next(
+            line for line in raw_events.read_text(encoding="utf-8").splitlines() if line
+        )
+        build_start = json.loads(first_line)
+    except (StopIteration, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise S3BuildError("Failed-run build_start event is invalid") from exc
+    if (
+        not isinstance(build_start, dict)
+        or build_start.get("event") != "build_start"
+        or build_start.get("run_id") != run_id
+        or not isinstance(build_start.get("time"), str)
+        or not build_start["time"]
+    ):
+        raise S3BuildError("Failed-run build_start identity is invalid")
+    reconstructed_events = b"".join(
+        canonical_json_bytes(row) + b"\n" for row in [build_start, *event_rows]
+    )
+    return S3ResumePrefix(
+        run_id=run_id,
+        run_dir=run_dir,
+        start_chunk=start_chunk,
+        started_at=build_start["time"],
+        episodes=episodes,
+        checkpoint=checkpoint,
+        previous_checkpoint=previous_checkpoint,
+        reconstructed_events=reconstructed_events,
+        source_runtime_contract_sha256=str(source_runtime_hash),
+        source_code_revision=source_code_revision,
+        resumed_at=_utc_now(),
+    )
+
+
 def build_s3_store(
     stream_dir: Path,
     stream_manifest: Path,
@@ -1042,6 +1377,8 @@ def build_s3_store(
     code_dirty: bool,
     repo_root: Path | None = None,
     test_mode: bool = False,
+    resume_run_id: str | None = None,
+    resume_source_code_revision: str | None = None,
 ) -> dict[str, Any]:
     """Build all 85 episodes in staging and publish only after global validation."""
     if code_dirty:
@@ -1090,7 +1427,13 @@ def build_s3_store(
     _, prompt_contract_hash = _validate_prompt_contract(paths["prompt_contract"])
     _, runtime_contract_hash = _validate_runtime_contract(paths["runtime_contract"])
 
-    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ-") + secrets.token_hex(4)
+    if (resume_run_id is None) != (resume_source_code_revision is None):
+        raise S3BuildError(
+            "Resume requires both run id and the attested source code revision"
+        )
+    run_id = resume_run_id or (
+        datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ-") + secrets.token_hex(4)
+    )
     if _RUN_ID.fullmatch(run_id) is None:
         raise S3BuildError("Internal S3 run id generation failed")
     run_dir = paths["work_root"] / run_id
@@ -1098,6 +1441,8 @@ def build_s3_store(
     trace_staging = paths["trace_dir"].parent / f".{paths['trace_dir'].name}.staging-{run_id}"
     lock_path = paths["s3_store"].parent / f".{paths['s3_store'].name}.lock"
     started_at = _utc_now()
+    resume_prefix: S3ResumePrefix | None = None
+    resume_metadata: dict[str, Any] | None = None
     current_state = "PRECHECK"
     current_chunk: int | None = None
     published_files: list[tuple[Path, bytes]] = []
@@ -1127,15 +1472,66 @@ def build_s3_store(
     if len(devices) != 1:
         raise S3BuildError("S3 staging, work and formal outputs must share one filesystem")
 
+    if resume_run_id is not None:
+        resume_prefix = _load_resume_prefix(
+            paths["work_root"],
+            resume_run_id,
+            stream,
+            prompt_contract_sha256=prompt_contract_hash,
+            source_code_revision=str(resume_source_code_revision),
+            test_mode=test_mode,
+        )
+        started_at = resume_prefix.started_at
+
     lock_payload, lock_inode = _acquire_lock(lock_path, run_id)
     try:
         for name in ("s3_store", "s3_manifest", "trace_dir", "commit_marker"):
             if paths[name].exists() or paths[name].is_symlink():
                 raise S3BuildError(f"A formal artifact appeared while acquiring the lock: {name}")
-        run_dir.mkdir(parents=False, exist_ok=False)
-        (run_dir / "checkpoints").mkdir()
-        staging.mkdir()
-        trace_staging.mkdir()
+        if resume_prefix is None:
+            run_dir.mkdir(parents=False, exist_ok=False)
+            (run_dir / "checkpoints").mkdir()
+            staging.mkdir()
+            trace_staging.mkdir()
+        else:
+            if staging.exists() or staging.is_symlink():
+                raise S3BuildError("Resume staging store already exists")
+            if trace_staging.exists() or trace_staging.is_symlink():
+                raise S3BuildError("Resume staging trace already exists")
+            shutil.copytree(resume_prefix.checkpoint, staging)
+            trace_staging.mkdir()
+            source_trace = run_dir / "quarantine" / "trace"
+            for episode in resume_prefix.episodes:
+                index = episode["chunk"]["global_chunk_index"]
+                filename = f"episode-{index:03d}.json"
+                shutil.copyfile(source_trace / filename, trace_staging / filename)
+            suffix = 1
+            while (run_dir / f"prior-failure-quarantine-{suffix:02d}").exists():
+                suffix += 1
+            os.rename(
+                run_dir / "quarantine",
+                run_dir / f"prior-failure-quarantine-{suffix:02d}",
+            )
+            os.rename(
+                run_dir / "failure.json",
+                run_dir / f"prior-failure-{suffix:02d}.json",
+            )
+            os.rename(
+                run_dir / "events.jsonl",
+                run_dir / f"prior-failure-events-{suffix:02d}.jsonl",
+            )
+            resume_metadata = {
+                "resumed": True,
+                "start_chunk": resume_prefix.start_chunk,
+                "reused_completed_chunks": len(resume_prefix.episodes),
+                "source_failed_run_id": run_id,
+                "source_code_revision": resume_prefix.source_code_revision,
+                "source_runtime_contract_sha256": (
+                    resume_prefix.source_runtime_contract_sha256
+                ),
+                "resume_runtime_contract_sha256": runtime_contract_hash,
+                "resumed_at": resume_prefix.resumed_at,
+            }
 
         def update_state(state: str, **extra: Any) -> None:
             nonlocal current_state
@@ -1157,15 +1553,15 @@ def build_s3_store(
                 ),
             )
 
-        update_state("STAGED")
+        update_state("STAGED", resume=resume_metadata)
         event_path = run_dir / "events.jsonl"
-        _atomic_write(
-            event_path,
-            canonical_json_bytes(
-                {"event": "build_start", "run_id": run_id, "time": _utc_now()}
-            )
-            + b"\n",
-        )
+        if resume_prefix is None:
+            initial_events = canonical_json_bytes(
+                {"event": "build_start", "run_id": run_id, "time": started_at}
+            ) + b"\n"
+        else:
+            initial_events = resume_prefix.reconstructed_events
+        _atomic_write(event_path, initial_events)
 
         def enforce_work_limits() -> None:
             event_bytes = event_path.stat().st_size if event_path.is_file() else 0
@@ -1188,18 +1584,25 @@ def build_s3_store(
 
         enforce_work_limits()
         memory = MemoryFS(staging, run_dir / "trash")
-        episodes: list[dict[str, Any]] = []
-        seen_locators: set[str] = set()
-        previous_checkpoint: Path | None = None
+        episodes = list(resume_prefix.episodes) if resume_prefix is not None else []
+        seen_locators = {
+            locator
+            for chunk in stream.chunks[: len(episodes)]
+            for locator in chunk["locators"]
+        }
+        previous_checkpoint = (
+            resume_prefix.previous_checkpoint if resume_prefix is not None else None
+        )
 
-        for chunk in stream.chunks:
+        for chunk in stream.chunks[len(episodes):]:
             current_chunk = chunk["global_chunk_index"]
             episode_allowed_locators = frozenset(
                 seen_locators.union(chunk["locators"])
             )
             checkpoint_name = f"chunk-{current_chunk:03d}-before"
             checkpoint = run_dir / "checkpoints" / checkpoint_name
-            shutil.copytree(staging, checkpoint)
+            if resume_prefix is None or current_chunk != resume_prefix.start_chunk:
+                shutil.copytree(staging, checkpoint)
             before_gate = validate_curated_store(
                 staging, frozenset(seen_locators), allow_empty=True
             )
@@ -1282,6 +1685,14 @@ def build_s3_store(
                         "POST-WRITE S3 LOCATOR VALIDATION ERROR: the tool action was "
                         "applied, but every listed locator must be repaired before "
                         f"finishing the episode: {exc}"
+                    ) from exc
+                try:
+                    validate_incremental_cross_references(staging)
+                except S3BuildError as exc:
+                    raise ToolError(
+                        "POST-WRITE S3 CROSS-REFERENCE VALIDATION ERROR: the tool "
+                        "action was applied, but every listed file or section link "
+                        f"must be repaired before finishing the episode: {exc}"
                     ) from exc
 
             update_state("EPISODE_RUNNING", chunk_filename=chunk["filename"])
@@ -1395,6 +1806,8 @@ def build_s3_store(
             "build_cost": build_cost,
             "final_store_sha256": final_gate.tree_sha256,
         }
+        if resume_metadata is not None:
+            trace_index["resume"] = resume_metadata
         _atomic_write(trace_staging / "index.json", _pretty_json_bytes(trace_index))
         enforce_work_limits()
         trace_tree_sha256 = _directory_tree_sha256(trace_staging)
@@ -1474,6 +1887,8 @@ def build_s3_store(
                 "formal_outputs_published_from_staging": True,
             },
         }
+        if resume_metadata is not None:
+            manifest_document["build"]["resume"] = resume_metadata
         manifest_bytes = _pretty_json_bytes(manifest_document)
         marker_document = {
             "schema_version": 1,
@@ -1537,6 +1952,7 @@ def build_s3_store(
             "build_cost": build_cost,
             "preflight": preflight,
             "provider_profile": provider_profile,
+            "resume": resume_metadata,
             "verification": verification_report,
         }
     except BaseException as exc:
@@ -1958,6 +2374,43 @@ def verify_published_s3(
         or build.get("mode") != expected_mode
     ):
         raise S3BuildError("S3 manifest build/trace cross-link mismatch")
+    resume = build.get("resume")
+    if resume != trace_index.get("resume"):
+        raise S3BuildError("S3 manifest/trace resume provenance mismatch")
+    if resume is not None:
+        expected_resume_keys = {
+            "resumed",
+            "start_chunk",
+            "reused_completed_chunks",
+            "source_failed_run_id",
+            "source_code_revision",
+            "source_runtime_contract_sha256",
+            "resume_runtime_contract_sha256",
+            "resumed_at",
+        }
+        if (
+            not isinstance(resume, dict)
+            or set(resume) != expected_resume_keys
+            or resume.get("resumed") is not True
+            or resume.get("source_failed_run_id") != trace_index.get("run_id")
+            or re.fullmatch(
+                expected_revision, str(resume.get("source_code_revision"))
+            )
+            is None
+            or resume.get("source_runtime_contract_sha256")
+            not in (
+                _LEGACY_RESUMABLE_RUNTIME_CONTRACTS
+                | {EXPECTED_S3_RUNTIME_CONTRACT_SHA256}
+            )
+            or resume.get("resume_runtime_contract_sha256") != runtime_hash
+            or not isinstance(resume.get("start_chunk"), int)
+            or isinstance(resume.get("start_chunk"), bool)
+            or not 1 <= resume["start_chunk"] <= len(stream.chunks)
+            or resume.get("reused_completed_chunks") != resume["start_chunk"] - 1
+            or not isinstance(resume.get("resumed_at"), str)
+            or not resume["resumed_at"]
+        ):
+            raise S3BuildError("S3 resume provenance is invalid")
     expected_counts = {
         "files": len(final_gate.files),
         "directories": len(final_gate.directories),

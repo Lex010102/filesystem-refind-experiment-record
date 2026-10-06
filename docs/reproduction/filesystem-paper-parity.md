@@ -24,13 +24,13 @@
 | 文件视图 | 同表 | `view` 不截断文件，目录最多显示相对 3 层 | 对齐 |
 | 工具删除 | Table 12 | 虚拟 `/memories` 中删除；本地保留可恢复副本，不向模型展示主机路径 | 模型可见行为近似；磁盘副作用不同 |
 | API 适配 | Appendix A 开头、C.4 | 论文目标为 Chat Completions、高努力与输出上限；本地 S3 固定 NUS endpoint、`portable`、`stream=false`、有工具时 `tool_choice=auto`、300 秒 timeout、20 MB response cap、零自动重试 | `portable` 实际省略 reasoning、completion cap、temperature 和 seed；论文未提供原始请求 JSON 或版本锁定 |
-| S3 runtime contract | 论文的 build/runtime 参数分散于 Appendix C.1/C.4 | `manifests/s3-management-runtime.json`、`fs_memory_lab/s3_runtime.py` | runner v2 contract 文件 SHA-256 `36b043…94f4a`；canonical runtime config SHA-256 `434d4d…64183`；同时记录论文目标与 NUS 实际配置，不把本地 operationalization 冒充原文 |
+| S3 runtime contract | 论文的 build/runtime 参数分散于 Appendix C.1/C.4 | `manifests/s3-management-runtime.json`、`fs_memory_lab/s3_runtime.py` | runner v3 contract 文件 SHA-256 `f9f02a…389f`；canonical runtime config SHA-256 仍为 `434d4d…64183`；同时记录论文目标与 NUS 实际配置，不把本地 operationalization 冒充原文 |
 | S3 安全执行与发布 | 论文说明逐 chunk build episode，但未公开事务 runner | `fs_memory_lab/s3_runner.py` 与 `s3-preflight/build-s3/verify-s3` | 本地新增：输入/contract freeze、空 staging、85 个新上下文串行 episodes、跨块持久 filesystem、checkpoint、增量 trace、资源 gate、失败 quarantine/rollback、marker-last 发布和离线复核；v2 另加 post-tool locator 错误反馈供同一 Agent 修复，严格终态 gate 不变。这些都不是作者代码 |
 
 ## 为什么还不能说“完全复现”
 
 1. Management Prompt 1/2 已可从作者官方 arXiv TeX 的 promptbox 精确提取；但论文仍没有发布 per-chunk user turn 的精确措辞、完整函数工具 JSON 包装和上下文摘要器 prompt。Prompt 1 与 Prompt 2 之间使用一个换行连接，也是本项目单独冻结的组合边界。
-2. 本项目已固定 LoCoMo10、`conv-50` canonical records、正式 S1/S2 stores、85 个确定性 S3 管理输入 chunks、prompt/tool/runtime contracts，并完成 S3 safe runner 的离线 85-episode fake-provider 验证及首个冻结 chunk 的 NUS API smoke。第一次正式尝试在 chunk 2 被严格 locator gate 安全拒绝，未发布 S3 store；统一检索/回答/评测 runner、八题并发和 judge 也尚未完成，因此仍不能复现论文表格分数。
+2. 本项目已固定 LoCoMo10、`conv-50` canonical records、正式 S1/S2 stores、85 个确定性 S3 管理输入 chunks、prompt/tool/runtime contracts，并完成 S3 safe runner 的离线 85-episode fake-provider 验证及 NUS API smoke。最近一次正式运行的前 9 个 chunks 已通过，chunk 10 被严格 section cross-reference gate 安全拒绝，未发布 S3 store；runner v3 支持验证该前缀后从 chunk 10 续跑。统一检索/回答/评测 runner、八题并发和 judge 也尚未完成，因此仍不能复现论文表格分数。
 3. 正式 S2 已用一次 NUS API episode 构建：requested alias 为 `coding`、served model 为 `qwen3.8:27b`，12 次模型调用完成 32 次 `view` 与 30 次 `rename`，随后通过离线完整性验证。该运行不是论文所用 backbone。
 4. NUS 当前实际 served model 不是论文的 `gpt-5.4-mini`；即便兼容函数调用，模型和提供商缓存/采样行为仍与论文不同。
 
@@ -41,4 +41,4 @@
 - Store gate 能拒绝伪造/未来 locator，验证 file/section cross-reference，并要求列表或表格中的事实候选带行内 locator；自然语言段落的语义事实边界和 citation completeness 无法由正则完全判定，正式 store 仍需抽样人工审计。
 - “gold 未暴露”的精确含义是 QA、answer、category、gold evidence 没有挂载到 Management Agent 的 messages 或 tools；不是声称这些数据在仓库磁盘上不存在。
 
-当前可运行 `python3 -m fs_memory_lab.cli config` 和完全离线的 `python3 -m fs_memory_lab.cli s3-preflight`。隔离 NUS API smoke 已于 2026-10-06 通过；v1 第一次正式尝试的失败已冻结，下一阶段是在 runner v2 的 clean commit 上从空 store 重启 `build-s3`，随后离线 `verify-s3`。不要把密钥贴到聊天、代码或 trace 里。
+当前可运行 `python3 -m fs_memory_lab.cli config` 和完全离线的 `python3 -m fs_memory_lab.cli s3-preflight`。隔离 NUS API smoke 已于 2026-10-06 通过；下一阶段是在 runner v3 的 clean commit 上严格验证失败前缀，从 `chunk-010-before` 续跑 `resume-s3`，随后离线 `verify-s3`。不要把密钥贴到聊天、代码或 trace 里。
