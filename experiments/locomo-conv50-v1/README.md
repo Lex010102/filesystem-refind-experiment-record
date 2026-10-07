@@ -221,3 +221,26 @@ python3 -m fs_memory_lab.cli verify-s3
 2026-10-06 的隔离 smoke 使用 `session_01_chunk_01.txt`，严格限制为最多 4 次 HTTP 请求和 12 次工具调用。实际由 requested alias `coding`、served model `qwen3.8:27b` 完成 3 次请求与 `view/create/create` 3 次工具调用，生成 `people/calvin.md`、`people/dave.md`，保留 7 次 locator mentions，并通过 S3 store gate；总 usage 为 15,652 prompt、1,009 completion、16,661 tokens。输出只在被 Git 忽略的 `local-runs/s3-smoke-20261005T185937697619Z-eac18b90/`，正式四个目标保持不存在。下一步是在新的 clean commit 上启动唯一一次正式 `build-s3`，而不是把 smoke 结果当成正式 store。
 
 同日第一次正式 v1 尝试从空 store 启动：chunk 1 完成，chunk 2 的模型写入把 `[S1T15]`、`[S1T11]`、`[S1T13]` 缩写成 `[S15]`、`[S11]`、`[S13]`，严格 episode gate 因而终止构建。8 次 API 请求共使用 49,007 tokens；正式 store、manifest、trace directory 与 COMMITTED marker 均未发布。可追溯摘要在 `traces/s3-formal-attempt-001-failure-2026-10-06.json`。该失败驱动了 runner v2 locator 写后反馈。后续 v2 正式运行通过前 9 个 chunks，并在 chunk 10 因不精确的章节交叉引用停止；runner v3 新增交叉引用写后反馈和经哈希链复核的失败前缀续跑，允许从保留的 `chunk-010-before` 重试 chunk 10，而不会采用失败 chunk 的写入或事件。
+
+## 冻结问题集：main-40 与 dev-6
+
+`question-sets/` 固定正式检索和答题所用的问题。它从官方 `conv-50` 的 204 道 QA 中排除 46 道 adversarial，并排除 Filesystem 论文列出的 4 道缺陷 gold，再从 154 道可靠题中确定性选择 40 道：Multi-hop 10、Temporal 10、Open-domain 7、Single-hop 13。选择使用 seed 42 的 `sha256-rank-v1`，并在任何检索或答题结果产生前冻结。
+
+覆盖约束包括全部 30 个 evidence sessions、各类别早/中/晚历史区间，以及 20 道 caption-evidence 题；其余为 18 道纯文本证据题和 2 道无完整 gold evidence 的 Open-domain 题。该40题集合用于七个条件，共280个最终结果；它是覆盖优先的资源受限子集，不能冒充完整158题或LoCoMo10结果。
+
+在线与离线字段严格分离：
+
+- `main-40-input.jsonl` 和 `dev-6-input.jsonl` 只提供 question，不含 answer、category 或 gold evidence；
+- `main-40-gold.jsonl` 和 `dev-6-gold.jsonl` 只能由离线 evaluator/Judge 使用；
+- `main-40-audit.md` 供人工核对，不是模型输入；
+- `manifest.json` 绑定官方数据、canonical records、source map 与所有输出 hashes；
+- `verification.json` 记录完整性 gate。
+
+重新生成或只读验证：
+
+```bash
+python3 -m fs_memory_lab.question_sets
+python3 -m fs_memory_lab.question_sets --verify-only
+```
+
+正式 input SHA-256 为 `31a65ab18797abb4491cf8de2e172050d25000eb5c1f6ddb77383d3900b757af`，gold SHA-256 为 `a6833ca585ca26efcdd038a5cf202fd46657999053ebd7b8cc73793f7544718b`，manifest SHA-256 为 `a58f07b3341ed7c79009fc233e7a9fc52ec2ba6f8ee59bc00c4602da759ba997`。

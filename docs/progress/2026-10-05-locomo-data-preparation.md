@@ -478,3 +478,73 @@ v4 runtime contract SHA-256 为 `bd3f429a532056513c0893b108023ad96a1bf5be4a74c9c
 Runner v5 将相同的有限 timeout retry 扩展到普通 provider 请求：最多 3 次，退避 2/4 秒；只有在完整响应尚未返回时重试，任何已返回 response 中的文件工具都只执行一次。重试事件和成功响应所用 attempts 均写入 trace。为支持再次续跑，prefix validator 现在验证多代 runtime config 的连续分段：本次实际前缀为 chunks 1–65 使用 v3 config、chunks 66–67 使用 v4 config，新 episodes 使用 v5 config；分段必须连续、只能按批准的版本顺序前进，并以失败运行的 runtime 结束。
 
 v5 runtime contract SHA-256 为 `76ba20c6b5b6d91f95371f61b85dada54de78ec6eb3514e8e89190a18c3e4d81`，runtime config canonical SHA-256 为 `2f866df6ce35c40c14c19aa1014771bd45cbbb901085898d73c7fde204a32128`。93 项离线测试通过，其中包含普通请求连续两次 timeout 后第三次成功、完整 85-episode build 只发布一次，以及 v3→v4→v5 混合前缀独立验证。实际运行已通过只读预检：复用 67 个 episodes，从 `chunk-068-before` 恢复。
+
+## 2026-10-07：40 道正式题与 6 道开发题已确定性冻结
+
+为控制七条件矩阵的时间与 API 成本，正式主测试由原计划的 60 题缩减为 40 题。七个条件因此产生 280 个最终答案，而不是 420 个。该改动在任何正式检索或答题结果产生前完成，不能再根据后续分数更换题目。
+
+### 候选池与排除规则
+
+抽样只使用官方 `conv-50` QA：
+
+- 官方共 204 题；
+- 排除 46 道 category 5 adversarial，剩余 158 道 category 1–4；
+- 再排除 Filesystem 论文 catalog 的非对抗评测顺序第 20、64、112、138 题，因为其 gold 与 transcript 有实质冲突；
+- 最终可靠候选池为 154 题：Multi-hop 30、Temporal 32、Open-domain 7、Single-hop 85。
+
+Category 5 没有普通 `answer`，而是给出诱导性的 `adversarial_answer`，正确行为通常是拒答或指出前提错误；它需要拒答准确率、诱导答案采纳率等另一套指标，因此不混入主 QA 平均分。若资源允许，只能作为独立附加实验。
+
+### 固定配额与覆盖约束
+
+正式题配额固定为：
+
+| Category | 类型 | 题数 |
+| ---: | --- | ---: |
+| 1 | Multi-hop | 10 |
+| 2 | Temporal | 10 |
+| 3 | Open-domain | 7（全部） |
+| 4 | Single-hop | 13 |
+|  | 合计 | 40 |
+
+这不是按 154 题原比例抽样，而是覆盖优先的分层子集。生成器使用 seed 42 的 `sha256-rank-v1`，按 question ID 的 SHA-256 排序产生候选，接受第一个同时满足以下事前约束的候选；Python 内部随机实现或字典顺序不会改变结果：
+
+1. 四类配额精确为 10/10/7/13；
+2. 40 题的 gold evidence 合计覆盖 30/30 个 sessions；
+3. 每个类别均覆盖对话早期（S1–S10）、中期（S11–S20）和后期（S21–S30）；
+4. caption-evidence 配额按类别固定为 7/4/4/5，共 20 题；
+5. 不读取任何模型输出或方法分数，也不按 answer 文本筛选。
+
+冻结结果为 20 道涉及 BLIP caption 的题、18 道纯文本证据题和 2 道官方未给完整 gold evidence 的 Open-domain 题。后两题仍参加 correctness/F1，但不进入 Evidence Recall 分母。该子集在四类非对抗问题、全部时间区间和主要证据形态上覆盖较广，但不能声称代表完整 `conv-50`、完整 LoCoMo10 或 adversarial 能力；类别内仅 7–13 题，细分类结论以描述性分析为主。
+
+### 在线输入、gold 与开发题物理隔离
+
+正式产物位于 `experiments/locomo-conv50-v1/question-sets/`：
+
+| 文件 | 用途 |
+| --- | --- |
+| `main-40-input.jsonl` | 在线检索器/Answerer 可读；只含 set ID、运行位置、question ID、conversation ID 和 question。 |
+| `main-40-gold.jsonl` | 仅离线 evaluator/Judge 使用；含 category、answer、官方及 canonical evidence IDs、locators、sessions 和 caption 标记。 |
+| `main-40-audit.md` | 人工核对40题、来源顺序、类别和覆盖情况；不是模型输入。 |
+| `dev-6-input.jsonl` / `dev-6-gold.jsonl` | 2 Multi-hop、2 Temporal、2 Single-hop 的工程开发集，与正式40题不重合。 |
+| `manifest.json` | 固定来源 hashes、排除规则、算法、配额、覆盖统计和所有输出 hashes。 |
+| `verification.json` | 自动完整性验证报告。 |
+
+正式输入中机械禁止 `answer`、`category` 和 gold evidence 字段。官方 QA 中的已知别名 `D30:05` 在 gold 层同时保留原始 ID，并规范化为 canonical `D30:5` / `[S30T5]`；在线输入看不到这些信息。
+
+关键 hashes：
+
+- `main-40-input.jsonl`：`31a65ab18797abb4491cf8de2e172050d25000eb5c1f6ddb77383d3900b757af`；
+- `main-40-gold.jsonl`：`a6833ca585ca26efcdd038a5cf202fd46657999053ebd7b8cc73793f7544718b`；
+- frozen manifest：`a58f07b3341ed7c79009fc233e7a9fc52ec2ba6f8ee59bc00c4602da759ba997`。
+
+生成与验证入口为 `python3 -m fs_memory_lab.question_sets` 和 `python3 -m fs_memory_lab.question_sets --verify-only`。仓库测试要求从官方固定数据重新生成后与所有 checked-in 产物逐字节相同，同时验证40题唯一、四类配额、缺陷题排除、30 sessions 覆盖、20道 caption-evidence、开发/正式集合不重合、来源/输出 hashes 以及在线/gold 隔离。题集4项专项测试和当前全套97项离线测试均通过。
+
+### 汇总与报告规则
+
+因为40题不是按原始类别比例抽样，主结果必须同时报告：每类分数、四类等权 macro、按可靠154题规模（30/32/7/85）计算的 post-stratified estimate，以及明确标注为“固定40题样本”的 micro average。所有 E1–E7 使用相同运行顺序和相同40题，主要比较必须逐题配对；一两题的差异只能称为趋势，不能直接声称稳定提升。
+
+## 2026-10-07：S3 从 chunk 68 续跑后停在 chunk 72
+
+Runner v5 从 `chunk-068-before` 后台恢复后，chunks 68–71 成功完成；chunk 72（`session_27_chunk_01.txt`）运行到第 18 个管理轮次时，普通 provider 请求连续 3 次超时，按固定重试规则安全停止。失败 episode 内曾发生错误删除 `/memories/calvin.md` 的工具动作，但整个 chunk 72 store 与 trace 已进入 `quarantine/`；续跑只允许从保留的 `checkpoints/chunk-072-before` 恢复，不能采用失败 episode 的任何写入。
+
+当前状态：前 71 个 completed episodes 保留；`formal_outputs_published=false`，没有残留正式 artifacts，也没有 cleanup error。后续不得自动重启；应先保持当前诊断资料，再基于 clean commit 运行只读 resume preflight，确认前缀、checkpoint 和 hash chain 后才可由用户明确启动 chunk 72。

@@ -1,10 +1,10 @@
 # 一个月实验地图：Filesystem Memory × ReFind-style Retrieval
 
-版本：v1.0（实验开始前草案）
-日期：2026-09-22
+版本：v1.1（40 题正式子集已冻结）
+日期：2026-10-07
 执行周期：4 周（D1–D28；D29–D30 作为缓冲）
 正式数据：LoCoMo `locomo10.json` 中的 `conv-50`
-正式规模：60 道预注册主测试题；资源允许时扩展到 154 道可靠题，并把 4 道已知缺陷题单列为附录
+正式规模：40 道预注册主测试题；资源允许时扩展到 154 道可靠题，并把 4 道已知缺陷题单列为附录
 
 ---
 
@@ -27,7 +27,7 @@
 
 - 三份存储都完成构建、校验、冻结；
 - 六个单源条件和一个双源条件共享统一的证据与回答协议；
-- 60 道正式题 × 7 个条件 = 420 个结果均可追溯；
+- 40 道正式题 × 7 个条件 = 280 个结果均可追溯；
 - 每个答案能回到 evidence package、检索 trace、存储位置和 LoCoMo 原始 `dia_id`；
 - 能自动输出效果、检索、成本、repair/harm 和错误类型表；
 - 能人工复核所有关键翻转案例；
@@ -69,7 +69,7 @@ Filesystem 论文使用 `gpt-5.4-mini`。本地 NUS SoC 网关目前请求别名
 | R1 Center | Filesystem §3、Appendix A.3：文件工具检索后直接回答 | 改为只收集证据，再交给统一回答器 |
 | R2 ReFind | ReFind §3：原始 chat 的 turn→session 两级多轮检索 | S1/S2 较接近原方法；S3 必须称 ReFind-inspired |
 | E7 双源 | 两篇论文都没有 | 本研究新条件 |
-| LoCoMo 60 题 | Filesystem 用 `conv-50` 的 158 道非对抗题 | 本月的预注册、资源受限子集 |
+| LoCoMo 40 题 | Filesystem 用 `conv-50` 的 158 道非对抗题 | 本月的预注册、资源受限且覆盖约束固定的子集 |
 
 统一两阶段协议是最重要的公平性改造：
 
@@ -194,7 +194,7 @@ Filesystem 论文使用 `gpt-5.4-mini`。本地 NUS SoC 网关目前请求别名
 - Single-hop 87；
 - Adversarial 46，不进入本研究主实验。
 
-Filesystem 论文指出评测顺序第 20、64、112、138 题的 gold 与 transcript 有实质冲突。我们的最低 60 题主实验从另外 154 道可靠题中抽取。若之后扩展：
+Filesystem 论文指出评测顺序第 20、64、112、138 题的 gold 与 transcript 有实质冲突。我们的 40 题主实验从另外 154 道可靠题中抽取。若之后扩展：
 
 1. 先扩到完整 154 道可靠题；
 2. 再把 4 道缺陷题单独运行并放入附录；
@@ -242,19 +242,19 @@ source_sha256
 
 ### 4.4 正式题与开发题
 
-主测试 60 题，抽样前剔除四个已知缺陷题：
+主测试 40 题，抽样前剔除四个已知缺陷题：
 
 | 类别 | 正式题数 |
 | --- | ---: |
-| Multi-hop | 13 |
-| Temporal | 13 |
+| Multi-hop | 10 |
+| Temporal | 10 |
 | Open-domain | 7 |
-| Single-hop | 27 |
-| 合计 | 60 |
+| Single-hop | 13 |
+| 合计 | 40 |
 
-使用 seed 42 在类别内部抽样，并立刻写出确切 question IDs 和 SHA-256。不能只保存 seed，因为库版本或排序变化可能使抽样结果改变。
+使用 seed 42 和 `sha256-rank-v1` 在类别内部产生候选，接受首个同时覆盖全部 30 个 evidence sessions、每类早/中/晚历史区间以及固定 caption-evidence 配额的候选。确切 question IDs、独立运行顺序和 SHA-256 已冻结在 `experiments/locomo-conv50-v1/question-sets/`；不能只保存 seed。
 
-另取 10 道不与正式题重叠的 `conv-50` QA 作为工程开发集，例如 3 Multi-hop、3 Temporal、4 Single-hop。Open-domain 全部保留给正式测试。开发集只用于：
+另取 6 道不与正式题重叠的 `conv-50` QA 作为工程开发集：2 Multi-hop、2 Temporal、2 Single-hop。Open-domain 全部保留给正式测试。开发集只用于：
 
 - 检查输出 schema；
 - 调整通用 prompt 表述；
@@ -628,7 +628,7 @@ status, retries, error, timestamps
 
 ### 12.1 运行顺序
 
-- 使用 seed 42 打乱 60 题顺序；
+- 使用冻结的 seed 42 SHA-256 顺序运行 40 题；
 - E1–E6 按 question block 交错运行，条件顺序做确定性轮换，避免所有 E1 都在某一天、E6 都在另一天；
 - 先得到 E1–E6 evidence 与答案；
 - E2/E6 齐全后生成 E7；
@@ -660,7 +660,7 @@ status, retries, error, timestamps
 ### 12.3 每日运行核对单
 
 - 今天新增多少成功/失败记录？
-- 420 个矩阵单元还缺多少？
+- 280 个矩阵单元还缺多少？
 - served model 是否一致？
 - 是否有异常高 token、hit-cap、空证据？
 - store hash 是否始终不变？
@@ -833,13 +833,13 @@ E6→E7 同样计算。另记录：
 - 四类问题分别结果；
 - hit-cap、empty evidence、system failure 数。
 
-60 题是分层抽样，不按 conv-50 原始类别比例。报告三种汇总：
+40 题是覆盖优先的分层抽样，不按 conv-50 原始类别比例。报告三种汇总：
 
 1. 每类别分数；
 2. 四类别 unweighted macro average；
 3. 使用可靠 154 题类别规模（Multi-hop 30、Temporal 32、Open-domain 7、Single-hop 85）计算的 post-stratified estimate。
 
-固定 60 题的直接 micro average 可以报告，但要写“该固定样本上的分数”，不能冒充完整 conv-50 分数。
+固定 40 题的直接 micro average 可以报告，但要写“该固定样本上的分数”，不能冒充完整 conv-50 分数。
 
 ### 15.2 成对比较
 
@@ -848,11 +848,11 @@ E6→E7 同样计算。另记录：
 - 报告百分点差、repair/harm 数、95% CI；
 - 主要比较 E6 vs E5、E7 vs E6 使用 Holm 校正；
 - 其他比较标为 secondary/exploratory；
-- 类别内只有 7–27 题，类别显著性只作描述，不作强结论。
+- 类别内只有 7–13 题，类别显著性只作描述，不作强结论。
 
 ### 15.3 Judge 稳定性
 
-主结果每个答案判断一次。另在结果前预先固定一个跨条件、跨类别的 60-answer 样本，各额外重复判断两次，报告：
+主结果每个答案判断一次。另在结果前预先固定一个跨条件、跨类别的 40-answer 样本，各额外重复判断两次，报告：
 
 - 二元一致率；
 - Cohen's κ；
@@ -863,7 +863,7 @@ E6→E7 同样计算。另记录：
 
 ### 15.4 系统随机性（推荐但可降级）
 
-预先从正式 60 题中选 12 道稳定性题：Multi-hop 3、Temporal 3、Open-domain 2、Single-hop 4。若时间和配额允许，仅对核心 E5/E6/E7 额外运行两次，比较：
+预先从正式 40 题中选 8 道稳定性题：Multi-hop 2、Temporal 2、Open-domain 1、Single-hop 3。若时间和配额允许，仅对核心 E5/E6/E7 额外运行两次，比较：
 
 - answer 一致率；
 - evidence ID Jaccard；
@@ -901,7 +901,7 @@ E6→E7 同样计算。另记录：
 
 ### Gate D：端到端 pilot 正确
 
-10 dev × 7 条件完成；
+6 dev × 7 条件完成；
 
 - 每条都有 trace、bundle、answer、citations、usage；
 - schema failure 低于 5%；
@@ -924,7 +924,7 @@ E6→E7 同样计算。另记录：
 
 ### Gate F：正式矩阵完整
 
-- 420 个单元均成功或有明确系统失败状态；
+- 280 个单元均成功或有明确系统失败状态；
 - 只对基础设施失败按固定规则重试；
 - 正式结果没有跨 config hash 混合；
 - 每条可追溯到 source。
@@ -943,7 +943,7 @@ E6→E7 同样计算。另记录：
 | --- | --- | --- |
 | D1 | 固定 RQ、七条件、主要比较、停止规则、目录结构 | 本文 v1.0，不能再随结果改研究问题 |
 | D2 | 下载/pin LoCoMo；实现 loader 和 source map | raw SHA、counts report、processed JSONL |
-| D3 | 固定 10 dev、60 test、12 stability IDs | split manifests + SHA |
+| D3 | 固定 6 dev、40 test；另固定 8 stability IDs | split manifests + SHA |
 | D4（已完成） | 实现/测试 S1 builder | 30 文件 + 无损反解析测试 |
 | D5（runner 已完成） | 正式运行一次 S2 folder-only builder 并离线复验 | S1/S2 hash equality report + layout hash + trace/manifest |
 | D6 | 用 Alice/小样本完成 S3 builder 最后工程检查；冻结 builder prompt | builder tests 与 prompt hash |
@@ -967,19 +967,19 @@ E6→E7 同样计算。另记录：
 
 | 天 | 工作 | 当日必须交付 |
 | --- | --- | --- |
-| D15 | 10 dev × 7 全跑；人工看 trace，不只看分数 | pilot report、bug list |
+| D15 | 6 dev × 7 全跑；人工看 trace，不只看分数 | pilot report、bug list |
 | D16 | 只修工程问题；重跑 pilot；冻结 v1.0 | frozen config + prompt/code/store hashes |
-| D17 | 正式问题 1–12，先跑 E1–E6；允许程序在非人工工作时间继续跑 | 约 72 个单源结果目标 |
-| D18 | 正式问题 13–24 | 约 144 个累计单源结果目标 |
-| D19 | 正式问题 25–36 | 约 216 个累计单源结果目标 |
-| D20 | 正式问题 37–48 | 约 288 个累计单源结果目标 |
-| D21 | 正式问题 49–60；生成 E7；只补基础设施失败 | 完整 420 项矩阵与 failure report |
+| D17 | 正式问题 1–10，先跑 E1–E6；允许程序在非人工工作时间继续跑 | 约 60 个单源结果目标 |
+| D18 | 正式问题 11–20 | 约 120 个累计单源结果目标 |
+| D19 | 正式问题 21–30 | 约 180 个累计单源结果目标 |
+| D20 | 正式问题 31–40 | 约 240 个累计单源结果目标 |
+| D21 | 生成 40 个 E7 结果；只补基础设施失败 | 完整 280 项矩阵与 failure report |
 
-每个“12 题批次”包含六个检索条件。支持断点的 runner 可在非人工操作期间继续运行；若网关较慢，则减小当日 batch，而不是通过提高并发破坏稳定性。
+每个“10 题批次”包含六个检索条件。支持断点的 runner 可在非人工操作期间继续运行；若网关较慢，则减小当日 batch，而不是通过提高并发破坏稳定性。
 
 是否扩展到 154 在主矩阵提前完成时才讨论。go 条件：
 
-- 核心 420 项已完整；
+- 核心 280 项已完整；
 - 系统失败率 <5%；
 - 指标与报告脚本已可用；
 - 预计扩展仍能给错误分析和写作留下至少 7 天；
@@ -1080,7 +1080,7 @@ python3 -m fs_memory_lab.benchmark report --run experiments/locomo-conv50-v1
 | S3 构建太慢/失败 | 单 chunk 多次 timeout/hit-cap | 串行、断点、同 snapshot 重试；不降低 prompt 后混用 |
 | S2 内容被改 | body hash 不同 | Gate B 失败，重新构建；绝不继续 |
 | R2 scope 失控 | 空结果、重复 group、时间边界错 | 先修 toy/integration tests，再调 API |
-| 420 项耗时过高 | D17 日吞吐不足 | 保住 60×7；取消稳定性复跑和 154 扩展 |
+| 280 项耗时过高 | D17 日吞吐不足 | 保住 40×7；取消稳定性复跑和 154 扩展 |
 | Judge 不稳定 | 重判 flip 多、JSON 错 | 固定更稳定 Judge；增加人工复核；保留 F1 |
 | gold evidence 不完整 | 答案明显对但 Evidence Recall=0 | evidence 指标作为辅助，人工核对，不强求 precision |
 | 双源只是“更多 token” | E7 budget 为 2B | 如实作系统比较；等预算版仅作为可选消融 |
@@ -1102,7 +1102,7 @@ python3 -m fs_memory_lab.benchmark report --run experiments/locomo-conv50-v1
 
 - “完全复现了两篇论文”；
 - “证明方法普遍优于所有记忆系统”；
-- “60 题结果代表整个 LoCoMo10”；
+- “40 题结果代表整个 LoCoMo10”；
 - “E7 的所有收益都由双源本身造成”，因为它有更多 evidence budget；
 - “有 locator 就说明记忆忠实”；
 - “一两道题的差异就是稳定提升”。
@@ -1123,7 +1123,7 @@ python3 -m fs_memory_lab.benchmark report --run experiments/locomo-conv50-v1
 - [ ] E2/E4 第一轮 BM25 不变量通过；
 - [ ] E7 只复用 E2/E6 evidence；
 - [ ] Answerer/Judge/prompts/config 均有 hash；
-- [ ] 420 个正式单元完整或有明确 failure 状态；
+- [ ] 280 个正式单元完整或有明确 failure 状态；
 - [ ] 每个 answer→evidence→store→dia_id 可追溯；
 - [ ] store 查询前后 hash 不变；
 - [ ] F1、Judge、Attribution、Evidence Recall 与成本表齐全；
