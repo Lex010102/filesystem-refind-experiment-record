@@ -72,6 +72,9 @@ _LEGACY_RUNTIME_CONFIG_BY_CONTRACT = {
     # Runner v5: ordinary timeout retries, before retryable HTTP status handling.
     "76ba20c6b5b6d91f95371f61b85dada54de78ec6eb3514e8e89190a18c3e4d81":
         "2f866df6ce35c40c14c19aa1014771bd45cbbb901085898d73c7fde204a32128",
+    # Runner v6: retryable HTTP handling, before immediate citation feedback.
+    "fc8c6d73da256181e8ca22b8d6af147c2038e2804875fef559e5b62bf98b21b8":
+        "ec9c97275f4ea8d353ea235f772c2893de6293a75a9d0bef843f4060d5663970",
 }
 _LEGACY_RESUMABLE_RUNTIME_CONTRACTS = set(_LEGACY_RUNTIME_CONFIG_BY_CONTRACT)
 
@@ -634,6 +637,100 @@ def validate_incremental_source_locators(
     return mentions
 
 
+def _uncited_list_or_table_fact_issues(text: str, relative: str) -> list[str]:
+    """Return citation-coverage errors using the exact final-gate line rules."""
+    lines = text.splitlines()
+    try:
+        frontmatter_end = lines.index("---", 1)
+    except ValueError:
+        return [f"S3 memory file has incomplete frontmatter: {relative}"]
+    table_separators = {
+        index
+        for index, line in enumerate(lines)
+        if line.strip().startswith("|")
+        and not line.strip().strip("|:- ")
+    }
+    issues: list[str] = []
+    for index, line in enumerate(lines):
+        if index <= frontmatter_end or not line.strip():
+            continue
+        stripped = line.strip()
+        list_candidate = _LIST_FACT_LINE.match(line) is not None
+        table_candidate = stripped.startswith("|") and stripped.endswith("|")
+        if table_candidate and (
+            index in table_separators or index + 1 in table_separators
+        ):
+            table_candidate = False
+        if not (list_candidate or table_candidate):
+            continue
+        line_locators = _LOCATOR_CANDIDATE.findall(line)
+        if not any(_LOCATOR.fullmatch(token) for token in line_locators):
+            issues.append(
+                f"Uncited list/table fact candidate in {relative}:L{index + 1}"
+            )
+    return issues
+
+
+def validate_incremental_citation_coverage(root: Path) -> int:
+    """Report uncited list/table facts while the same Agent can repair them."""
+    raw_root = Path(root)
+    if raw_root.is_symlink() or not raw_root.is_dir():
+        raise S3BuildError("S3 store must be an existing non-symlink directory")
+    root = raw_root.resolve(strict=False)
+    _validate_resource_limits(root)
+    issues: list[str] = []
+    cited_candidates = 0
+    for path in sorted(root.rglob("*")):
+        if path.is_dir():
+            continue
+        relative = path.relative_to(root).as_posix()
+        if path.is_symlink() or not path.is_file() or path.suffix != ".md":
+            issues.append(f"invalid memory entry {relative}")
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError) as exc:
+            issues.append(f"unreadable UTF-8 memory file {relative}: {exc}")
+            continue
+        citation_issues = _uncited_list_or_table_fact_issues(text, relative)
+        issues.extend(citation_issues)
+        if not citation_issues:
+            lines = text.splitlines()
+            try:
+                frontmatter_end = lines.index("---", 1)
+            except ValueError:
+                continue
+            table_separators = {
+                index
+                for index, line in enumerate(lines)
+                if line.strip().startswith("|")
+                and not line.strip().strip("|:- ")
+            }
+            for index, line in enumerate(lines):
+                if index <= frontmatter_end or not line.strip():
+                    continue
+                stripped = line.strip()
+                list_candidate = _LIST_FACT_LINE.match(line) is not None
+                table_candidate = stripped.startswith("|") and stripped.endswith("|")
+                if table_candidate and (
+                    index in table_separators or index + 1 in table_separators
+                ):
+                    table_candidate = False
+                if list_candidate or table_candidate:
+                    cited_candidates += 1
+    if issues:
+        unique = list(dict.fromkeys(issues))
+        limit = S3_RESOURCE_LIMITS["max_locator_diagnostics_per_tool"]
+        displayed = unique[:limit]
+        suffix = (
+            f"; plus {len(unique) - limit} more; inspect the listed files"
+            if len(unique) > limit
+            else ""
+        )
+        raise S3BuildError("; ".join(displayed) + suffix)
+    return cited_candidates
+
+
 def validate_incremental_cross_references(root: Path) -> int:
     """Report broken filesystem links immediately after a tool action.
 
@@ -758,33 +855,9 @@ def validate_curated_store(
                 raise S3BuildError(f"Unknown or future source locator {token} in {relative}")
             locators.append(token)
         lines = text.splitlines()
-        try:
-            frontmatter_end = lines.index("---", 1)
-        except ValueError as exc:
-            raise S3BuildError(f"S3 memory file has incomplete frontmatter: {relative}") from exc
-        table_separators = {
-            index
-            for index, line in enumerate(lines)
-            if line.strip().startswith("|")
-            and not line.strip().strip("|:- ")
-        }
-        for index, line in enumerate(lines):
-            if index <= frontmatter_end or not line.strip():
-                continue
-            stripped = line.strip()
-            list_candidate = _LIST_FACT_LINE.match(line) is not None
-            table_candidate = stripped.startswith("|") and stripped.endswith("|")
-            if table_candidate and (
-                index in table_separators or index + 1 in table_separators
-            ):
-                table_candidate = False
-            if not (list_candidate or table_candidate):
-                continue
-            line_locators = _LOCATOR_CANDIDATE.findall(line)
-            if not any(_LOCATOR.fullmatch(token) for token in line_locators):
-                raise S3BuildError(
-                    f"Uncited list/table fact candidate in {relative}:L{index + 1}"
-                )
+        citation_issues = _uncited_list_or_table_fact_issues(text, relative)
+        if citation_issues:
+            raise S3BuildError(citation_issues[0])
         cross_references = sorted(set(_CROSS_REFERENCE.findall(text)))
         for reference in cross_references:
             target = reference[len("/memories/"):]
@@ -1803,6 +1876,15 @@ def build_s3_store(
                         "POST-WRITE S3 LOCATOR VALIDATION ERROR: the tool action was "
                         "applied, but every listed locator must be repaired before "
                         f"finishing the episode: {exc}"
+                    ) from exc
+                try:
+                    validate_incremental_citation_coverage(staging)
+                except S3BuildError as exc:
+                    raise ToolError(
+                        "POST-WRITE S3 CITATION VALIDATION ERROR: the tool action "
+                        "was applied, but every listed fact must receive an inline "
+                        "source locator or be repaired before finishing the episode: "
+                        f"{exc}"
                     ) from exc
                 try:
                     validate_incremental_cross_references(staging)

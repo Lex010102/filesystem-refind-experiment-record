@@ -669,6 +669,31 @@ RRF(c) = 1 / (60 + r1(c)) + 1 / (60 + r2(c))
 
 一句话概括：R1 把“怎么找”主要交给 LLM 和文件结构；R2 把“初步找候选”交给 BM25，把“下一轮怎么找”交给 LLM。
 
+### “两种还是三种检索方式”的固定命名
+
+研究层面仍定义为两个检索范式，不新增第三个独立算法：
+
+| 固定名称 | 适用 store | 定位 |
+| --- | --- | --- |
+| R1 Filesystem/Center | S1、S2、S3 | LLM 使用只读文件工具自行路由和读取 |
+| R2-Raw ReFind-style | S1、S2 | 在 utterance→session 两级结构上运行 ReFind 核心机制 |
+| R2-Curated ReFind-inspired | S3 | 把同一核心机制适配为 section→topic-group 两级结构 |
+
+因此，本地代码可以为了工程清晰把第三个适配器暂称 `R3`，但报告不能把它表述为与 R1、R2 并列的第三套独立检索算法。推荐实现为一个共享 `ReFindCore` 加 `RawChatAdapter` 和 `CuratedMarkdownAdapter`；报告使用 `R2-Raw` 与 `R2-Curated`，并明确后者是 ReFind-inspired。这样 BM25、RRF、多轮 controller、Top-K、时间过滤、去重和 note-taking 只实现一次，变化仅限 unit、group 和 context expansion 的定义。
+
+### R2 的 Top-5 与“前后文”精确定义
+
+ReFind 原文最终返回的是 **Top-5 turn-level hits，不是 Top-5 sessions**。对每个细粒度 turn 先取得 BM25 排名；再把同一 session 中所有 turn 的 BM25 分数相加形成 session 排名；每个 turn 继承所属 session 的排名；最后用 `1/(60+r_turn) + 1/(60+r_session)` 融合并选择分数最高的 5 个 turns。Session 只参与加分，Top-5 中可能有多个 turns 来自同一 session。
+
+原文的 local context expansion 指：对每个中心命中，沿同一 session 的时间顺序返回它前面 2 个 turns、中心 turn 和后面 2 个 turns，并在 session 边界截断。它不是排名前后两个结果，也不跨到前后 session。例如命中一个七-turn session 的 Turn 4，会返回 Turn 2–6；命中 Turn 1，只能返回 Turn 1–3。
+
+本项目的具体映射为：
+
+- R2-Raw：Top-5 是 utterance/source-turn units；每个中心命中扩展同一 session 内前后各 2 条 utterances；
+- R2-Curated：Top-5 是 leaf Markdown sections；每个中心命中扩展同一 top-level topic group 内前后各 2 个 sibling/leaf sections，不能跨 topic-group 边界。
+
+若多个 Top-5 中心命中的 ±2 窗口重叠，重复文字会影响 EvidenceBundle 与 token 成本。正式 R2 runner 实现前必须冻结“重叠窗口合并、结果 ID、排序和 token 计数”规则，并用单元测试证明同一原文片段不会因重叠被重复计费或重复交给 Answerer；这一点不能在跑完结果后再决定。
+
 ### Alice 饮食问题的直观例子
 
 问题：“Alice 现在的饮食习惯是什么，与过去相比有什么变化？”
@@ -696,6 +721,34 @@ R1 或 R2 只收集证据
 ```
 
 R1 因此会在论文四个文件工具之外增加实验控制动作 `take_note` 和 `finish_search`；它们只负责形成统一证据包，不改变 store，也不能伪造证据。R2 保留 ReFind 的 evidence-only 设计。这样 E1–E6 的主要区别是“证据如何被找到”，而不是最终回答模型或输入格式不同。
+
+### R1 主实验协议已冻结为 evidence-only
+
+2026-10-07 最终决定：为了控制实验规模并让 R1/R2 的比较能够归因于检索，E1、E3、E5 的正式主实验只运行 **R1 evidence-only**，不再把 `paper-direct` 作为另一套正式主条件。当前实现计划也不单独开发或运行一套 `paper-direct` runner；只保留论文 Prompt 5/6/7 原文、配置和行为说明作为审计基线，用派生 prompt diff 证明 evidence-only 改了什么。除非之后明确扩展范围，否则 `paper-direct` 不进入七条件主表，也不额外形成需要运行的结果。
+
+Filesystem 论文原生 R1 是：Search Agent 使用 `view/grep/toc/section_read` 搜索，并由同一个 Agent 直接生成答案和文件引用。主实验的 evidence-only 版本保留其按 store 区分的检索策略、四个只读文件工具和搜索上限，但作如下受控改造：
+
+1. Search Agent 的职责从“搜索并回答”改成“只搜索并选择证据”，不得输出最终答案；
+2. 在论文四个只读文件工具之外增加 `take_note` 与 `finish_search` 两个 orchestration actions；它们不是文件系统工具，不能读写 store；
+3. `take_note` 只能选择已经由文件工具返回的真实 path/line/section 片段，程序重新从冻结 store 解析原文，不接受模型自由改写成证据；
+4. Search Agent 输出统一 `EvidenceBundle`，随后由 E1–E7 共用的固定 Answerer 根据 question + evidence 作答；
+5. Answerer 不能看到 condition 名、gold answer、gold evidence 或检索器的隐藏推理；
+6. 检索成本、Answerer 成本和总成本分开记录，避免把新增回答调用隐藏在汇总数字中。
+
+三种 store 的 evidence-only R1 映射固定为：S1 使用 Appendix A.3 Prompt 7 的 flat/raw-session 搜索策略并保留 20-round hard cap；S2 使用 Prompt 6 的 foldered/raw-session 搜索策略并保留 20-round hard cap；S3 使用 Prompt 5 的 hierarchical-store 搜索策略并保留 40-round hard cap。由于原 prompt 的角色说明、Cost model、Verify-then-stop、Multiple-choice、Inference、Absence、Citation Format 和 Output 等位置都带有直接回答措辞，正式实现必须对三个 prompt 做完整 redline，不能只替换开头和 Output，也不能声称逐字使用 Prompt 5/6/7。应保存论文刊出文本、其 hash、派生 evidence-only prompt 的 hash 和明确 diff，把未改动的论文搜索文字标为 `paper_published_text_reused`，把所有角色/回答/证据动作改写标为 `controlled_modification`；只有后续从作者官方源文件完成逐字冻结后，才可使用 `verbatim` 或 `byte-exact` 表述。
+
+#### evidence-only 与 paper-direct 的取舍
+
+| 方面 | paper-direct | evidence-only（本项目选择） |
+| --- | --- | --- |
+| 与 Filesystem 原论文一致性 | 最高；Searcher 边搜边答 | 较低；改变角色输出并新增证据控制动作 |
+| R1/R2 检索公平性 | 较弱；回答架构不同 | 较强；两者交给同一 Answerer |
+| 错误归因 | 检索与推理混在一个 Agent 内 | 可区分 store 缺失、检索漏失和 Answerer 推理错误 |
+| E7 双源融合 | 需要重新设计如何拆出证据 | 可直接融合两个 EvidenceBundle |
+| API 成本 | 少一次回答调用 | 多统一 Answerer，但所有条件一致且可分项核算 |
+| 论文表述 | 可称 native/paper-direct R1 | 必须称 `Center-derived evidence-only retrieval` 或 controlled adaptation |
+
+选择 evidence-only 的原因不是预期它分数更高，而是本报告的核心问题是“不同检索方法找到了什么证据”，且需要对 E5→E6、E6→E7 做写入/检索/推理错误分解。统一 Answerer 可以去掉一项明显混杂因素，并让双源融合只发生在证据层。相应代价是 E1/E3/E5 结果不能与 Filesystem 论文的 paper-direct 分数作严格同协议对比；报告只能称为方法约束下的受控扩展，并同时披露不同 backbone、40题子集和 evidence-only 改造。
 
 ### R2 在三种 store 上的固定适配
 
@@ -739,6 +792,24 @@ E7 再融合 E2 的原始聊天证据和 E6 的整理后证据；它不是第三
 
 本节记录的是已经冻结的实验方法，不代表检索 runner 已经完成。截至本节记录时，S1/S2 stores 已完成，S3 正式构建仍在续跑；正式 evidence-only R1、BM25/RRF R2、统一 Answerer、E7 fusion 和批量评测 runner 尚待实现和测试。后续代码必须以 `docs/plans/one-month-experiment-map.md` 的固定参数为准，若改变 unit、group、Top-K、上下文窗口或搜索轮数，必须更新 manifest 和本笔记，不能静默漂移。
 
+### 两篇论文对 S1/S2 与检索细节的公开程度审计
+
+本项目的 `S1`、`S2` 是我们为实验方便使用的名称，分别对应 Filesystem 论文的 `Verbatim dump` 与 `Foldered sessions`；ReFind 论文没有把条件命名为 S1/S2。
+
+| 项目 | 论文是否明确给出 | 是否逐项完整 | 本地处理 |
+| --- | --- | --- | --- |
+| S1 建库原则 | 是。Filesystem §3（PDF 第 7 页）规定：每个自然 session 一个文件、正文 verbatim、frontmatter description 只写 session 编号、日期和说话人、根目录平铺、确定性构建、零模型成本 | 否。论文未公开构建脚本、精确文件名、逐字节 Markdown 模板、空白/换行规则、LoCoMo 图片 caption/URL 的序列化规则 | 使用确定性 builder 固定这些未公开的工程细节，并在 manifest 中记录 hashes；不能称为作者源码复刻 |
+| S1 建库 prompt | 不适用。S1 不调用 LLM，因此没有建库 prompt | — | 不自行伪造一个 LLM prompt；只使用确定性代码 |
+| S1 查询 prompt | 是。Filesystem Appendix A.3 Prompt 7（PDF 第 35–36 页）完整给出 Verbatim dump Search Agent system prompt | 核心文本完整；仍需把问题作为固定 user turn 注入，工具 schema 由函数调用接口单独提供 | 后续应逐字冻结 Prompt 7，并把本项目 evidence-only 改造明确标为实验控制，而非论文原文 |
+| S2 建库原则 | 是。Filesystem §3（PDF 第 7 页）规定：从 S1 开始，让 LLM 自己设计 folder taxonomy，只移动完整 session 文件，正文零字节修改，目录是相对 S1 唯一新增信号 | 否。目录名称和数量本来就由模型自定；论文也没有公开这次 foldering pass 的完整 system/user prompt、终止措辞、路径冲突处理、校验和恢复程序 | `foldering_prompt.py` 是 `paper-constrained-local-v1` 重建版，不是作者 prompt；本地额外加入同 basename、zero-byte hash、staging、rollback 和完整性 gates |
+| S2 查询 prompt | 是。Filesystem Appendix A.3 Prompt 6（PDF 第 33–35 页）完整给出 Foldered sessions Search Agent system prompt | 核心文本完整；它是查询 prompt，不是建库 prompt | 后续逐字冻结 Prompt 6；不能拿 Prompt 6 冒充 S2 foldering prompt |
+| S1/S2 查询工具与配置 | 是。Filesystem Table 12（PDF 第 49–50 页）逐项给出 `view/grep/toc/section_read` schema；Table 11（PDF 第 47–48 页）给出模型、effort、round cap、output cap、并发和 compaction 等共同配置 | 接近实验合同级完整，但仍不是可直接运行的代码库；API wrapper、日志格式、失败恢复、结果排序等工程实现没有全部公开 | 本地 runner 需冻结这些工程选择，并逐项标注 paper-specified 或 project-defined |
+| ReFind 与 S1 | ReFind §3（PDF 第 3–6 页）明确规定保留 raw chat，不做 LLM 总结/重写，以 turn、session、timestamp 和 raw text 建 BM25 索引；概念上接近原始聊天存储 | 它没有规定“一个 Markdown 文件一个 session”，也不是 Filesystem 的 S1 文件布局 | 本项目的 R2-Raw 是把 ReFind 检索适配到 S1/S2 原始 session 文件，不能说 ReFind 原文实现了 S1 |
+| ReFind 与 S2 | 没有。ReFind 不让 LLM 设计文件夹 taxonomy，也没有 Foldered sessions 条件 | 不适用 | S2+ReFind 是本项目新增组合 |
+| ReFind 检索 prompt/参数 | 是。Appendix A（PDF 第 13–16 页）完整给出 Stage 1 Retrieval Agent、时间过滤 addendum、observation user message、Stage 2 answer templates；Appendix B 给出 BM25 `k1=1.2,b=0.75`、Top-5、±2、RRF `k=60`、最多4轮、去重/时间过滤、模型与 token caps | 仍非逐行可执行实现：论文未给出完整源码、索引库与版本、具体 stopword 表、同分 tie-break、重叠 ±2 窗口合并/排序/计费、日期边界和部分 backend JSON/result-ID 细节 | 正式 R2 前必须把这些未公开决定冻结到 protocol、manifest 和单元测试中；S3 的 section→topic-group 映射必须标为 ReFind-inspired |
+
+结论：S1 的核心建库规则和查询 prompt 足够明确，但逐字节文件格式不是全部公开；S2 的核心约束和查询 prompt 明确，**真正负责“设计目录并移动文件”的建库 prompt 没有公开**。因此我们可以做高保真、可审计的 constrained reproduction，但不能声称 S2 是作者代码与 prompt 的完全一比一复现。ReFind 对自己的原始聊天检索流程与两阶段 prompt 公布得更完整，但它本身没有 S1/S2 文件系统条件，尤其没有 S2 foldering。
+
 ## 2026-10-07：chunk 73 网关 503 与 runner v6
 
 使用 runner v5 从 `chunk-072-before` 恢复后，chunk 72 成功完成；chunk 73（`session_27_chunk_02.txt`）在第 11 个管理轮次的普通 provider 请求上收到 HTTP 503：学校网关报告 backend group `180` 暂无健康后端。该失败不是 API key、输入、文件系统 gate 或模型工具格式问题。失败 episode 的 17 次文件工具调用已随整个 chunk 73 一起隔离并回滚；前 72 个 completed episodes、`chunk-073-before` checkpoint 和 hash chain 保留，正式 store 仍未发布，也没有 cleanup error。
@@ -746,3 +817,13 @@ E7 再融合 E2 的原始聊天证据和 E6 的整理后证据；它不是第三
 Runner 随后升级为 `s3-safe-runner-v6`。Provider adapter 只把 HTTP 408、429、500、502、503、504 分类为可恢复的 `TransientProviderError`；400/401 等配置或认证错误仍立即失败，不能用 retry 掩盖。Timeout 继续最多尝试 3 次并退避 2/4 秒；retryable HTTP 最多尝试 5 次并退避 5/15/30/60 秒。普通管理请求和 context-compaction 请求都使用该分类，但只允许在完整 assistant response 尚未返回时重试；已经返回的 response 及其文件工具永不重放。每次 retry 记录错误种类、HTTP 状态、脱敏错误文本、attempt、上限、退避和是否继续。
 
 v6 canonical runtime config SHA-256 为 `ec9c97275f4ea8d353ea235f772c2893de6293a75a9d0bef843f4060d5663970`；runtime contract 文件 SHA-256 为 `fc8c6d73da256181e8ca22b8d6af147c2038e2804875fef559e5b62bf98b21b8`。v5 contract/config 已加入批准的续跑 lineage，因此后续只读 preflight 必须证明 chunks 1–72 的多版本前缀连续且以 v5 结束，再从 `chunk-073-before` 用 v6 继续。
+
+## 2026-10-07：chunk 74 缺少行内来源与 runner v7
+
+chunk 73 使用 v6 成功写入后，chunk 74（`session_28_chunk_01.txt`）在 episode 结束后的严格 store gate 被拒绝。失败不是 API、checkpoint 或既有记忆污染：模型在 `dave.md:L70` 新增了一条关于 car-mod blog 与既往改装经历关系的列表事实，但该行没有任何 `[SxTy]` 来源标签。隔离 store 的完整扫描只发现这一处漏引；失败 chunk 的全部改动被 quarantine，chunks 1–73、`chunk-074-before` checkpoint 与 trace/hash chain 保持完整。
+
+根因是本地 runner 的反馈时机不完整：v6 已会在每次工具调用后即时检查 malformed/future locator 与 cross-reference，但“列表/表格事实是否有行内 locator”只在 Agent 停止之后由最终 gate 检查。于是最终 gate 正确拒绝了漏引，却没有给同一 Agent 留下修复机会。
+
+runner 因此升级为 `s3-safe-runner-v7`：每次工具调用后新增 citation-completeness 检查，并与最终 gate 复用同一套列表/表格识别规则。写入动作仍然保留，错误以可恢复的 tool observation 返回文件路径和行号，Agent 必须补充有效的已见 source locator 或删除/改写该事实后才能结束；最终严格 gate 没有删除或放宽。新增回归覆盖“先写无引用事实、收到即时反馈、同 episode 补引并通过”、Markdown 表头/分隔行排除与数据行检查，以及完整 85-episode fake build/verify。全套 102 项离线测试通过。
+
+v7 不改变 Management Prompt、七工具 schema、provider 参数或 retry 参数，因此 canonical runtime config SHA-256 仍为 `ec9c97275f4ea8d353ea235f772c2893de6293a75a9d0bef843f4060d5663970`；新的 runtime contract 文件 SHA-256 为 `43e6317efddb3a3509b16d48feafb52317bf416c807e61326a45f0d214ec6819`。v6 contract/config 已加入批准的恢复 lineage。真实恢复 preflight 已重新证明：应复用 chunks 1–73，从未经污染的 `checkpoints/chunk-074-before` 重放 chunk 74，不能手改或继续使用失败的 quarantine store。

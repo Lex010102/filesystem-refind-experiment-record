@@ -14,6 +14,7 @@ from fs_memory_lab.s3_runner import (
     S3BuildError,
     build_s3_store,
     preflight_s3_build,
+    validate_incremental_citation_coverage,
     validate_curated_store,
     verify_published_s3,
 )
@@ -47,6 +48,7 @@ VALID_MEMORY = (
 FUTURE_MEMORY = VALID_MEMORY.replace("[S1T1]", "[S30T1]")
 MALFORMED_MEMORY = VALID_MEMORY.replace("[S1T1]", "[S11][S13][S15]")
 REPAIRED_MEMORY = VALID_MEMORY.replace("[S1T1]", "[S1T1][S1T3][S1T5]")
+UNCITED_MEMORY = VALID_MEMORY.replace(" [S1T1]", "")
 
 
 def tool_call(call_id: str, name: str, **arguments) -> dict:
@@ -202,6 +204,42 @@ class RepairingLocatorProvider(RecordingS3Provider):
         )
         if any(value not in self.feedback for value in required):
             raise AssertionError(f"Incomplete locator repair feedback: {self.feedback}")
+
+
+class RepairingCitationProvider(RecordingS3Provider):
+    def __init__(self, expected_user_messages: list[str]):
+        super().__init__(expected_user_messages, first_memory=UNCITED_MEMORY)
+        self.repair_sent = False
+        self.feedback = ""
+
+    def complete(self, messages, tools, config):
+        if self.episode == 1 and len(messages) > 2 and not self.repair_sent:
+            self.calls += 1
+            self.assert_protocol(messages, tools, config)
+            tool_messages = [message for message in messages if message.get("role") == "tool"]
+            if len(tool_messages) != 1 or tool_messages[0].get("tool_call_id") != "create-alice":
+                raise AssertionError("Uncited write did not produce immediate tool feedback")
+            self.feedback = str(tool_messages[0].get("content", ""))
+            required = (
+                "POST-TOOL VALIDATION ERROR",
+                "CITATION VALIDATION ERROR",
+                "the tool action was applied",
+                "people/alice.md:L8",
+            )
+            if any(value not in self.feedback for value in required):
+                raise AssertionError(f"Incomplete citation repair feedback: {self.feedback}")
+            self.repair_sent = True
+            return tool_round(
+                tool_call(
+                    "repair-alice-citation",
+                    "str_replace",
+                    path="/memories/people/alice.md",
+                    old_str="- Alice appears in the first source turn.",
+                    new_str="- Alice appears in the first source turn [S1T1].",
+                ),
+                served_model=self.served_model,
+            )
+        return super().complete(messages, tools, config)
 
 
 class RepairingCrossReferenceProvider(RecordingS3Provider):
@@ -553,6 +591,25 @@ class S3SafeRunnerTest(unittest.TestCase):
         self.assertIn("POST-TOOL VALIDATION ERROR", tool_events[0]["observation"])
         self.assertEqual(episode["result"]["rounds"], 3)
         self.assertEqual(episode["result"]["tool_calls"], 2)
+        self.assertEqual(self.verify()["status"], "verified")
+
+    def test_incremental_citation_feedback_allows_same_episode_repair(self):
+        provider = RepairingCitationProvider(self.user_messages)
+        result = self.build(provider)
+        self.assertEqual(result["status"], "published")
+        self.assertEqual(provider.episode, 85)
+        self.assertEqual(provider.calls, 87)
+        self.assertTrue(provider.repair_sent)
+        self.assertIn("people/alice.md:L8", provider.feedback)
+        memory_path = self.paths["store"] / "people" / "alice.md"
+        self.assertEqual(memory_path.read_text(encoding="utf-8"), VALID_MEMORY)
+
+        episode = json.loads(
+            (self.paths["trace"] / "episode-001.json").read_text(encoding="utf-8")
+        )
+        tool_events = [event for event in episode["result"]["trace"] if "tool" in event]
+        self.assertEqual([event["ok"] for event in tool_events], [False, True])
+        self.assertIn("CITATION VALIDATION ERROR", tool_events[0]["observation"])
         self.assertEqual(self.verify()["status"], "verified")
 
     def test_incremental_cross_reference_feedback_allows_exact_heading_repair(self):
@@ -998,6 +1055,22 @@ class S3SafeRunnerTest(unittest.TestCase):
         )
         with self.assertRaisesRegex(S3BuildError, "Uncited list/table fact"):
             validate_curated_store(store, {"[S1T1]"})
+
+    def test_incremental_citation_gate_ignores_table_header_but_checks_data_rows(self):
+        store = self.base / "citation-table"
+        store.mkdir()
+        path = store / "notes.md"
+        prefix = (
+            "---\nname: notes\ndescription: Citation table behavior.\n---\n\n"
+            "# Facts\n\n| Person | Preference |\n| --- | --- |\n"
+        )
+        path.write_text(prefix + "| Alice | Cats |\n", encoding="utf-8")
+        with self.assertRaisesRegex(
+            S3BuildError, "Uncited list/table fact candidate in notes.md:L10"
+        ):
+            validate_incremental_citation_coverage(store)
+        path.write_text(prefix + "| Alice | Cats [S1T1] |\n", encoding="utf-8")
+        validate_incremental_citation_coverage(store)
 
     def test_store_gate_counts_empty_directory_depth(self):
         store = self.base / "deep-empty-directories"
