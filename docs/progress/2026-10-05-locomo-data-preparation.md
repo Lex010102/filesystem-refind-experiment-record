@@ -853,3 +853,17 @@ R1 开发继续只发生在隔离 worktree `/Users/wangwenqi/.codex/worktrees/r1
 阶段 2 已通过独立最终 gate 并提交为 `0e0d947`。阶段 3 先只冻结论文 Appendix C.4 Table 12 的四个只读 filesystem functions，顺序严格为 `view → grep → toc → section_read`，没有混入 `take_note` 或 `finish_search`。`fs_memory_lab/r1_tools.py` 以现有 Table 12 转录为唯一来源，分别冻结有序 profile hash `d100442f…a483`、递归键排序的 ordered schema hash `6d9d68f0…3c6`、保留 dict 插入顺序的 compact wire hash `d6130495…6d1b`。任何名称、顺序、description、参数、required 数组、wrapper 或 key insertion order 漂移都会 fail closed。
 
 论文没有公开可执行语言的默认参数，因此本地默认值单独标为 project-defined：`view(start_line=1,end_line=-1)`；`grep(path=/memories,case_sensitive=false,max_results=100)`；`toc/section_read` 无补充默认值。默认值没有偷偷写入论文 schema，并另有 hash `59a34c97…52d`。3A 专项 schema 测试为 3/3 通过。下一小步 3B 才实现严格只读 executor、结构化 coverage 与调用前后 snapshot gate；现有会创建目录且仍带写方法的 `MemoryFS` 不会直接作为正式 R1 executor。
+
+## 2026-10-08：R1 阶段 3B——严格只读执行器与恢复型 TOCTOU 防护
+
+阶段 3B 完成 `R1ReadOnlyFilesystem`。它只暴露论文 Table 12 的 `view`、`grep`、`toc`、`section_read`，不复用带写能力且会自动创建目录的旧 `MemoryFS`。路径解析只接受冻结 manifest 中已经验证的文件和目录；目录浏览也从 manifest inventory 生成，而不是信任运行时 `rglob` 的结果。每次实际文件读取都逐级使用 no-follow 文件描述符，要求最终节点是普通文件，并在文字进入 tool result 之前与 `VerifiedStoreManifest` 中冻结的逐文件 SHA-256 再核对。`view` 与 `section_read` 只为真正返回的行生成 inclusive coverage；`grep` 只记录实际返回的命中行；目录 `view` 与 `toc` 不产生可选证据 coverage。成功结果是不可变、内容寻址的 `ReadToolResult`，记录 canonical arguments、内容 hash、coverage、截断状态、root survey/whole-tree grep 标志和相同的 pre/post tree identity。
+
+这里要区分论文原文与本地补全。四个工具的名称、描述和参数来自论文 Table 12；但完整 JSON wrapper、默认值、Python regex 行为、稳定排序、行号输出、Markdown heading parser、1 MiB 输出上限、regex 512 字符/1000 ms 限制、逐文件 hash、no-follow 读取、manifest namespace、错误码、coverage/result schema 和 snapshot gate 都是论文未公开时为本实验补充并冻结的工程规则，不能写成作者源码。
+
+独立对抗审查先后发现并关闭了三项真实问题：
+
+1. 只有调用前后整树 hash 时，攻击者可以临时替换文件、让工具读到污染内容，再在 post-check 前恢复；现在每次读取的 payload 必须单独匹配 frozen file hash，因此这种恢复型 TOCTOU 无法产出结果。
+2. 未配对 Unicode surrogate 曾会泄漏为原始 `UnicodeEncodeError`；现在 path、pattern、section path 和 coverage path 都要求严格 UTF-8，并把不可信参数稳定映射为结构化 `R1ToolError`。
+3. 512 字符以内的畸形 regex 仍可让 `re.compile` 抛出 `RecursionError` 或 `OverflowError`；现在编译和执行阶段均被收口为安全 `invalid_regex`/`regex_timeout` 工具错误，失败后照常执行 post-snapshot 检查。
+
+真实 S1 平铺 store 与真实 S2 四层主题目录产物均已通过同一执行器集成测试；S3 fixture 用于验证 manifest 的嵌套 inventory，但在真实 85-chunk S3 正式发布并通过其 manifest/COMMITTED/trace gate 前，R1 不会把 staging 或 fixture 当作 E5 输入。最终独立 Gate 为 PASS：Evidence + R1 共 50/50、全仓离线测试 152/152、`git diff --check` 均通过。此阶段仍未调用学校 API，也没有生成任何 40 题实验答案；下一阶段是 observation ledger 与 `take_note` 防伪解析器。

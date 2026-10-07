@@ -432,6 +432,75 @@ class EvidenceSchemaTest(unittest.TestCase):
         with self.assertRaisesRegex(EvidenceValidationError, "produced by its loader"):
             replace(self.s1_manifest, _verification_seal=object())
 
+    def test_verified_manifest_freezes_inventory_and_proves_each_read_payload(self):
+        expected_files = tuple(f"session-{index:02d}.md" for index in range(1, 31))
+        self.assertEqual(self.s1_manifest.file_paths, expected_files)
+        self.assertEqual(self.s1_manifest.directory_paths, ())
+        relative = "session-01.md"
+        payload = (self.s1_root / relative).read_bytes()
+        self.s1_manifest.assert_file_payload(relative, payload)
+        with self.assertRaisesRegex(EvidenceValidationError, "Read payload differs"):
+            self.s1_manifest.assert_file_payload(relative, payload + b"x")
+        with self.assertRaisesRegex(EvidenceValidationError, "absent"):
+            self.s1_manifest.assert_file_payload("unknown.md", b"x")
+        for invalid in (bytearray(payload), payload.decode("utf-8")):
+            with self.subTest(payload_type=type(invalid).__name__):
+                with self.assertRaisesRegex(EvidenceValidationError, "must be bytes"):
+                    self.s1_manifest.assert_file_payload(relative, invalid)
+        detached = self.s1_manifest.file_paths
+        detached += ("invented.md",)
+        self.assertEqual(self.s1_manifest.file_paths, expected_files)
+
+    def test_s2_and_s3_manifest_inventory_preserves_nested_layout(self):
+        s2 = VerifiedStoreManifest.load(
+            root=EXPERIMENT / "stores" / "s2-foldered",
+            store_id="s2",
+            catalog=self.catalog,
+            manifest_path=EXPERIMENT / "manifests" / "s2-foldered.json",
+            expected_manifest_sha256=S2_MANIFEST_SHA256,
+            commit_marker_path=EXPERIMENT / "manifests" / "s2-foldered.COMMITTED",
+            expected_commit_marker_sha256=S2_MARKER_SHA256,
+            path_map_path=EXPERIMENT / "manifests" / "s2-foldered-path-map.json",
+            trace_path=EXPERIMENT / "traces" / "s2-foldering.json",
+        )
+        self.assertEqual(
+            s2.directory_paths,
+            (
+                "cars-and-auto-work",
+                "music-and-performance",
+                "photography",
+                "travel-and-outdoors",
+            ),
+        )
+        self.assertEqual(len(s2.file_paths), 30)
+        self.assertIn("travel-and-outdoors/session-01.md", s2.file_paths)
+
+        nested_path = "people/notes.md"
+        self.write_curated(name=nested_path)
+        source_index = {
+            "[S1T13]": [{"file": nested_path, "line": 8}],
+            "[S2T2]": [{"file": nested_path, "line": 9}],
+        }
+        s3, _, _ = self.make_s3_manifest(source_index)
+        self.assertEqual(s3.directory_paths, ("people",))
+        self.assertEqual(s3.file_paths, (nested_path,))
+
+    def test_manifest_paths_reject_control_characters(self):
+        manifest = json.loads((EXPERIMENT / "manifests" / "s1-flat.json").read_text())
+        metadata = manifest["files"].pop("session-01.md")
+        manifest["files"]["bad\nname.md"] = metadata
+        payload = (json.dumps(manifest, sort_keys=True, indent=2) + "\n").encode()
+        path = self.temp_root / "control-path-s1.json"
+        path.write_bytes(payload)
+        with self.assertRaisesRegex(EvidenceValidationError, "safe POSIX"):
+            VerifiedStoreManifest.load(
+                root=self.s1_root,
+                store_id="s1",
+                catalog=self.catalog,
+                manifest_path=path,
+                expected_manifest_sha256=sha256_bytes(payload),
+            )
+
     def test_raw_manifest_must_cover_every_canonical_locator(self):
         manifest = json.loads((EXPERIMENT / "manifests" / "s1-flat.json").read_text())
         manifest["source_index"].pop("[S1T13]")

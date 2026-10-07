@@ -12,8 +12,8 @@ import json
 import math
 import os
 import re
-from dataclasses import InitVar, asdict, dataclass
-from pathlib import Path
+from dataclasses import InitVar, asdict, dataclass, field
+from pathlib import Path, PurePosixPath
 from types import MappingProxyType
 from typing import Any, Iterable, Mapping, Sequence
 
@@ -569,9 +569,17 @@ class SourceCatalog:
 
 def _canonical_relative_markdown_path(value: Any, label: str) -> str:
     path_text = _require_nonempty(value, label)
-    if "\\" in path_text:
-        raise EvidenceValidationError(f"{label} must use POSIX separators")
-    path = Path(path_text)
+    try:
+        path_text.encode("utf-8", errors="strict")
+    except UnicodeEncodeError as exc:
+        raise EvidenceValidationError(f"{label} must be valid UTF-8 text") from exc
+    if "\\" in path_text or any(
+        ord(character) < 32 or ord(character) == 127 for character in path_text
+    ):
+        raise EvidenceValidationError(
+            f"{label} must use safe POSIX path characters"
+        )
+    path = PurePosixPath(path_text)
     if (
         path.is_absolute()
         or not path.parts
@@ -822,9 +830,17 @@ def _body_bytes(payload: bytes) -> bytes:
 
 def _canonical_relative_directory_path(value: Any, label: str) -> str:
     path_text = _require_nonempty(value, label)
-    if "\\" in path_text:
-        raise EvidenceValidationError(f"{label} must use POSIX separators")
-    path = Path(path_text)
+    try:
+        path_text.encode("utf-8", errors="strict")
+    except UnicodeEncodeError as exc:
+        raise EvidenceValidationError(f"{label} must be valid UTF-8 text") from exc
+    if "\\" in path_text or any(
+        ord(character) < 32 or ord(character) == 127 for character in path_text
+    ):
+        raise EvidenceValidationError(
+            f"{label} must use safe POSIX path characters"
+        )
+    path = PurePosixPath(path_text)
     if (
         path.is_absolute()
         or not path.parts
@@ -879,6 +895,8 @@ class VerifiedStoreManifest:
     total_bytes: int
     attribution_index: AttributionIndex
     _resolved_root: str
+    _file_sha256_by_path: Mapping[str, str] = field(repr=False, compare=False)
+    _directories: tuple[str, ...] = field(repr=False, compare=False)
     _verification_seal: InitVar[object]
 
     def __post_init__(self, _verification_seal: object) -> None:
@@ -912,6 +930,33 @@ class VerifiedStoreManifest:
         resolved_root = Path(self._resolved_root)
         if not resolved_root.is_absolute() or resolved_root.as_posix() != self._resolved_root:
             raise EvidenceValidationError("Verified manifest root is not canonical")
+        if not isinstance(self._file_sha256_by_path, Mapping):
+            raise EvidenceValidationError("Verified manifest file index is invalid")
+        file_index: dict[str, str] = {}
+        for relative, digest in self._file_sha256_by_path.items():
+            canonical = _canonical_relative_markdown_path(
+                relative, "verified manifest file path"
+            )
+            if canonical in file_index:
+                raise EvidenceValidationError("Verified manifest repeats a file path")
+            file_index[canonical] = _require_sha256(
+                digest, "verified manifest file digest"
+            )
+        if len(file_index) != self.file_count:
+            raise EvidenceValidationError("Verified manifest file index count differs")
+        directories = _ordered_tuple(
+            self._directories, "verified manifest directories"
+        )
+        canonical_directories = tuple(
+            _canonical_relative_directory_path(value, "verified manifest directory")
+            for value in directories
+        )
+        if len(canonical_directories) != len(set(canonical_directories)):
+            raise EvidenceValidationError("Verified manifest repeats a directory")
+        object.__setattr__(
+            self, "_file_sha256_by_path", MappingProxyType(dict(sorted(file_index.items())))
+        )
+        object.__setattr__(self, "_directories", tuple(sorted(canonical_directories)))
 
     def assert_mounted_root(self, root: Path) -> None:
         """Reject copies and staging directories, even when their bytes are identical."""
@@ -923,6 +968,30 @@ class VerifiedStoreManifest:
         if raw_root.resolve().as_posix() != self._resolved_root:
             raise EvidenceValidationError(
                 "Mounted store root differs from the verified published root"
+            )
+
+    @property
+    def file_paths(self) -> tuple[str, ...]:
+        return tuple(self._file_sha256_by_path)
+
+    @property
+    def directory_paths(self) -> tuple[str, ...]:
+        return self._directories
+
+    def assert_file_payload(self, relative_path: str, payload: bytes) -> None:
+        canonical = _canonical_relative_markdown_path(
+            relative_path, "verified read path"
+        )
+        expected = self._file_sha256_by_path.get(canonical)
+        if expected is None:
+            raise EvidenceValidationError(
+                "Read path is absent from the verified store manifest"
+            )
+        if not isinstance(payload, bytes):
+            raise EvidenceValidationError("Verified file payload must be bytes")
+        if sha256_bytes(payload) != expected:
+            raise EvidenceValidationError(
+                "Read payload differs from the verified store manifest"
             )
 
     @classmethod
@@ -1243,6 +1312,8 @@ class VerifiedStoreManifest:
             total_bytes=total_bytes,
             attribution_index=attribution_index,
             _resolved_root=resolved_root.as_posix(),
+            _file_sha256_by_path=file_digests,
+            _directories=tuple(actual_directories),
             _verification_seal=_VERIFIED_MANIFEST_SEAL,
         )
 
