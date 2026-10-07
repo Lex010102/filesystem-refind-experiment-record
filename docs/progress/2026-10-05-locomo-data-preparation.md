@@ -847,3 +847,9 @@ R1 开发继续只发生在隔离 worktree `/Users/wangwenqi/.codex/worktrees/r1
 独立对抗审查中发现并修复了多类 fail-open 风险：重复 locator occurrence 的 hash 语义、caller 自签 manifest、S2 path-map/trace 未绑定、S3 trace/publication 未绑定、目录空节点未进入 tree hash、catalog 与 manifest 可错配、深层可变对象可篡改、failure artifact 可篡改、停止理由与 fallback proof 不一致、证据顺序重复/倒序、同一路径重叠或紧邻证据被拆开计费、无序 set/dict 被误当协议数组、整数/浮点 score 产生不同 canonical bytes，以及“把正式 store 原样复制到 staging 路径后仍被接受”。最终规则要求 manifest loader 保存已验证 published root；即使内容逐字节相同，另一路径也会被拒绝。所有协议数组只接受有序 list/tuple，score 统一成 float（包括负零归一化）；`no_progress_after_global_fallback` 也已与冻结计划对齐为全局兜底后连续两轮无新增证据。
 
 当前专项测试覆盖真实 S1/S2 固定产物以及合成的 formal S3 fixture。真实 S3 在 85 chunks 完成并正式发布前仍会被 fail-closed 拒绝，这是预期行为，不以测试夹具冒充实验结果。阶段 2 最后一轮专项回归为 31/31 通过；加入既有 S1/S2/S3、数据与题集测试后的全仓库离线回归为 133/133 通过。独立 PASS gate 放行后才进入阶段 3 的四个只读 filesystem tools。本文记录的是基础设施验证结果，不是 40 道题的检索或回答结果。
+
+## 2026-10-08：R1 阶段 3A——论文四工具的 wire schema 冻结
+
+阶段 2 已通过独立最终 gate 并提交为 `0e0d947`。阶段 3 先只冻结论文 Appendix C.4 Table 12 的四个只读 filesystem functions，顺序严格为 `view → grep → toc → section_read`，没有混入 `take_note` 或 `finish_search`。`fs_memory_lab/r1_tools.py` 以现有 Table 12 转录为唯一来源，分别冻结有序 profile hash `d100442f…a483`、递归键排序的 ordered schema hash `6d9d68f0…3c6`、保留 dict 插入顺序的 compact wire hash `d6130495…6d1b`。任何名称、顺序、description、参数、required 数组、wrapper 或 key insertion order 漂移都会 fail closed。
+
+论文没有公开可执行语言的默认参数，因此本地默认值单独标为 project-defined：`view(start_line=1,end_line=-1)`；`grep(path=/memories,case_sensitive=false,max_results=100)`；`toc/section_read` 无补充默认值。默认值没有偷偷写入论文 schema，并另有 hash `59a34c97…52d`。3A 专项 schema 测试为 3/3 通过。下一小步 3B 才实现严格只读 executor、结构化 coverage 与调用前后 snapshot gate；现有会创建目录且仍带写方法的 `MemoryFS` 不会直接作为正式 R1 executor。
