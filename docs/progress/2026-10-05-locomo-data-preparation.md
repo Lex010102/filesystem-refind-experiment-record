@@ -470,3 +470,11 @@ v3 runtime contract SHA-256 为 `f9f02a125edad9fd16a1e2c9117e392b81794101c8a5703
 Runner v4 只对 context-compaction 这类不执行文件工具的只读请求增加有限重试：最多 3 次，失败后分别退避 2 秒和 4 秒；普通管理请求、文件工具及整个 episode 均不自动重试，因此不会重复写文件。每次 retry 与最终成功所用 attempt 会写入 trace。旧 v3 前缀的 runtime config hash 与 v4 新 episodes 的 hash 分别保留，最终验证按 `resume.start_chunk` 校验混合前缀，不能把旧 episode 冒充新协议。
 
 v4 runtime contract SHA-256 为 `bd3f429a532056513c0893b108023ad96a1bf5be4a74c9c419c4fd5293593eb5`，runtime config canonical SHA-256 为 `612fa89e9212ebec6c1cd78d44ad88388c53f5d801bd751fd78a6c3308a37005`。实际运行 `20261006T022525914538Z-a1352213` 已通过只读续跑预检：复用 65 个 completed episodes，从 `chunk-066-before` 恢复，不重跑 chunks 1–65。
+
+## 2026-10-07：chunk 68 普通请求超时与 runner v5
+
+使用 runner v4 从 `chunk-066-before` 恢复后，chunks 66–67 成功完成；chunk 68 在第 8 个管理轮次的普通 provider 请求上超时。该请求没有返回完整 assistant response，因此其后不存在待执行的工具调用；runner 回滚到 `chunk-068-before`，正式输出仍未发布，前 67 个 completed episodes 与文件 hash chain 均保留。
+
+Runner v5 将相同的有限 timeout retry 扩展到普通 provider 请求：最多 3 次，退避 2/4 秒；只有在完整响应尚未返回时重试，任何已返回 response 中的文件工具都只执行一次。重试事件和成功响应所用 attempts 均写入 trace。为支持再次续跑，prefix validator 现在验证多代 runtime config 的连续分段：本次实际前缀为 chunks 1–65 使用 v3 config、chunks 66–67 使用 v4 config，新 episodes 使用 v5 config；分段必须连续、只能按批准的版本顺序前进，并以失败运行的 runtime 结束。
+
+v5 runtime contract SHA-256 为 `76ba20c6b5b6d91f95371f61b85dada54de78ec6eb3514e8e89190a18c3e4d81`，runtime config canonical SHA-256 为 `2f866df6ce35c40c14c19aa1014771bd45cbbb901085898d73c7fde204a32128`。93 项离线测试通过，其中包含普通请求连续两次 timeout 后第三次成功、完整 85-episode build 只发布一次，以及 v3→v4→v5 混合前缀独立验证。实际运行已通过只读预检：复用 67 个 episodes，从 `chunk-068-before` 恢复。

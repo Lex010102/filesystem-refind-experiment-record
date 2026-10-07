@@ -14,6 +14,8 @@ from .agent import (
     COMPACTION_SUMMARY_MAX_ROUNDS,
     COMPACTION_SYSTEM_PROMPT,
     COMPACTION_USER_PREFIX,
+    ORDINARY_REQUEST_MAX_ATTEMPTS,
+    ORDINARY_REQUEST_RETRY_BACKOFF_SECONDS,
 )
 from .management_prompt import (
     BUILDER_PROMPT_VERSION,
@@ -38,7 +40,7 @@ from .s3_protocol import (
 
 
 S3_RUNTIME_CONTRACT_SCHEMA_VERSION = "s3-management-runtime-contract-v1"
-S3_RUNNER_VERSION = "s3-safe-runner-v4"
+S3_RUNNER_VERSION = "s3-safe-runner-v5"
 
 EXPECTED_S3_STREAM_MANIFEST_SHA256 = (
     "6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5"
@@ -47,7 +49,7 @@ EXPECTED_S3_PROMPT_CONTRACT_SHA256 = (
     "2b16c9041829666e3825d2d349c689b6cc1ce4b9de6e367f35a123c485918a20"
 )
 EXPECTED_S3_RUNTIME_CONTRACT_SHA256 = (
-    "bd3f429a532056513c0893b108023ad96a1bf5be4a74c9c419c4fd5293593eb5"
+    "76ba20c6b5b6d91f95371f61b85dada54de78ec6eb3514e8e89190a18c3e4d81"
 )
 FROZEN_MANAGEMENT_TOOL_PROFILE_SHA256 = (
     "e4541dedafbd645e6e11f8847c95283b8738c668915b006f06dd0dea57c0945e"
@@ -59,7 +61,7 @@ FROZEN_MANAGEMENT_TOOL_WIRE_SHA256 = (
     "f365069d4e826f8489273b85496ebdf3a61b93bbd7678baef531cec273f3c282"
 )
 FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256 = (
-    "612fa89e9212ebec6c1cd78d44ad88388c53f5d801bd751fd78a6c3308a37005"
+    "2f866df6ce35c40c14c19aa1014771bd45cbbb901085898d73c7fde204a32128"
 )
 
 # This is the local experimental provider profile, not the paper's model.
@@ -170,8 +172,15 @@ def management_runtime_config() -> dict[str, Any]:
                 "tools": "ordered frozen seven-tool schema",
             },
             "automatic_retries": {
-                "ordinary_agent_requests": 0,
+                "ordinary_agent_requests": ORDINARY_REQUEST_MAX_ATTEMPTS - 1,
                 "context_compaction": COMPACTION_MAX_ATTEMPTS - 1,
+            },
+            "ordinary_request_retry_policy": {
+                "max_attempts": ORDINARY_REQUEST_MAX_ATTEMPTS,
+                "backoff_seconds": list(ORDINARY_REQUEST_RETRY_BACKOFF_SECONDS),
+                "retryable_error": "TransientProviderError",
+                "scope": "provider calls before a complete response is returned",
+                "tool_replay": False,
             },
             "local_max_rounds_per_episode": MANAGEMENT.max_rounds,
         },
@@ -190,7 +199,7 @@ def runtime_contract_document() -> dict[str, Any]:
     return {
         "schema_version": S3_RUNTIME_CONTRACT_SCHEMA_VERSION,
         "condition": "S3 Agent-curated filesystem",
-        "status": "frozen-runner-v4-with-compaction-timeout-retry",
+        "status": "frozen-runner-v5-with-provider-timeout-retry",
         "runner": {
             "module": "fs_memory_lab.s3_runner",
             "version": S3_RUNNER_VERSION,

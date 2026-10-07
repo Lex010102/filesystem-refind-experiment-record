@@ -23,7 +23,7 @@
   },
   "runner": {
     "module": "fs_memory_lab.s3_runner",
-    "version": "s3-safe-runner-v4"
+    "version": "s3-safe-runner-v5"
   },
   "runtime_config": {
     "context_compaction": {
@@ -66,10 +66,20 @@
     "effective_local_execution": {
       "automatic_retries": {
         "context_compaction": 2,
-        "ordinary_agent_requests": 0
+        "ordinary_agent_requests": 2
       },
       "expected_served_model": "qwen3.8:27b",
       "local_max_rounds_per_episode": 60,
+      "ordinary_request_retry_policy": {
+        "backoff_seconds": [
+          2,
+          4
+        ],
+        "max_attempts": 3,
+        "retryable_error": "TransientProviderError",
+        "scope": "provider calls before a complete response is returned",
+        "tool_replay": false
+      },
       "provider_profile": {
         "api_style": "portable",
         "endpoint": "https://soclaas-api.comp.nus.edu.sg/v1/chat/completions",
@@ -119,7 +129,7 @@
     },
     "role": "management"
   },
-  "runtime_config_sha256": "612fa89e9212ebec6c1cd78d44ad88388c53f5d801bd751fd78a6c3308a37005",
+  "runtime_config_sha256": "2f866df6ce35c40c14c19aa1014771bd45cbbb901085898d73c7fde204a32128",
   "safety_policy": {
     "checkpoint_before_every_chunk": true,
     "commit_marker_published_last": true,
@@ -141,7 +151,7 @@
     "uncited_list_or_table_fact_candidates_rejected": true
   },
   "schema_version": "s3-management-runtime-contract-v1",
-  "status": "frozen-runner-v4-with-compaction-timeout-retry",
+  "status": "frozen-runner-v5-with-provider-timeout-retry",
   "tools": {
     "ordered_schema_sha256": "3f4b2edc2045348743961231bc174c973e9c8a5147225bb9caece1fc7a254b56",
     "profile": [

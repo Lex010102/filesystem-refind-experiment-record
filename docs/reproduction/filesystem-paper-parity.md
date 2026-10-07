@@ -20,17 +20,17 @@
 | 数据流分块 | 同表和 C.1 Stream units；Prompt 8；Figure 5 | `fs_memory_lab/s3_chunks.py` 直接按 canonical source-turn records 切分；自然 session 内最多 8 turns，最终模型可见 payload 最多 3,000 Unicode code points，每块一个管理 episode | 双上限和每块一个 episode 为论文明文；session 硬边界由论文 chunk 命名及 85-step LoCoMo trajectory 推定；header、分隔符、字符度量和超长拒绝策略为本地冻结协议，作者未公开 byte-exact chunker |
 | 随机种子 | 同表 | 每次 CLI 调用设置 Python seed 42；S3 runtime contract 明记 provider request 不发送 seed | 只对本地随机流程生效，不能据此宣称真实 LLM 输出可重复 |
 | 查询并发 | 同表 | 常量 8，单题 CLI 不启用 | 批量 benchmark 环节未实现 |
-| 上下文压缩 | 同表及 C.1 Generation and episode parameters | 超过 96k prompt tokens 时，用运行摘要代替旧轮，保留最近 3 轮；摘要 prompt、旧消息序列化、8,192-token/1-round 摘要配置和 trace 字段均随 S3 runtime contract 冻结；仅压缩请求遇到瞬时 timeout 时最多尝试 3 次，退避 2/4 秒 | 形状对齐；具体摘要 prompt/表示方式和 timeout retry 是本地近似/可靠性措施，作者未公开；普通管理请求与文件工具不自动重试 |
+| 上下文压缩 | 同表及 C.1 Generation and episode parameters | 超过 96k prompt tokens 时，用运行摘要代替旧轮，保留最近 3 轮；摘要 prompt、旧消息序列化、8,192-token/1-round 摘要配置和 trace 字段均随 S3 runtime contract 冻结；压缩请求遇到瞬时 timeout 时最多尝试 3 次，退避 2/4 秒 | 形状对齐；具体摘要 prompt/表示方式和 timeout retry 是本地近似/可靠性措施，作者未公开；文件工具本身不重试 |
 | 文件视图 | 同表 | `view` 不截断文件，目录最多显示相对 3 层 | 对齐 |
 | 工具删除 | Table 12 | 虚拟 `/memories` 中删除；本地保留可恢复副本，不向模型展示主机路径 | 模型可见行为近似；磁盘副作用不同 |
-| API 适配 | Appendix A 开头、C.4 | 论文目标为 Chat Completions、高努力与输出上限；本地 S3 固定 NUS endpoint、`portable`、`stream=false`、有工具时 `tool_choice=auto`、300 秒 timeout、20 MB response cap；普通请求零自动重试，仅只读压缩请求有 timeout retry | `portable` 实际省略 reasoning、completion cap、temperature 和 seed；论文未提供原始请求 JSON 或版本锁定 |
-| S3 runtime contract | 论文的 build/runtime 参数分散于 Appendix C.1/C.4 | `manifests/s3-management-runtime.json`、`fs_memory_lab/s3_runtime.py` | runner v4 contract 文件 SHA-256 `bd3f42…93eb5`；canonical runtime config SHA-256 `612fa8…7005`；同时记录论文目标与 NUS 实际配置，不把本地 operationalization 冒充原文 |
+| API 适配 | Appendix A 开头、C.4 | 论文目标为 Chat Completions、高努力与输出上限；本地 S3 固定 NUS endpoint、`portable`、`stream=false`、有工具时 `tool_choice=auto`、300 秒 timeout、20 MB response cap；普通/压缩 provider 请求在完整响应返回前遇到 timeout 时最多尝试 3 次、退避 2/4 秒 | `portable` 实际省略 reasoning、completion cap、temperature 和 seed；重试不会重放文件工具，但可能增加网关计算成本；论文未提供原始请求 JSON、retry 或版本锁定 |
+| S3 runtime contract | 论文的 build/runtime 参数分散于 Appendix C.1/C.4 | `manifests/s3-management-runtime.json`、`fs_memory_lab/s3_runtime.py` | runner v5 contract 文件 SHA-256 `76ba20…e4d81`；canonical runtime config SHA-256 `2f866d…32128`；同时记录论文目标与 NUS 实际配置，不把本地 operationalization 冒充原文 |
 | S3 安全执行与发布 | 论文说明逐 chunk build episode，但未公开事务 runner | `fs_memory_lab/s3_runner.py` 与 `s3-preflight/build-s3/verify-s3` | 本地新增：输入/contract freeze、空 staging、85 个新上下文串行 episodes、跨块持久 filesystem、checkpoint、增量 trace、资源 gate、失败 quarantine/rollback、marker-last 发布和离线复核；v2 另加 post-tool locator 错误反馈供同一 Agent 修复，严格终态 gate 不变。这些都不是作者代码 |
 
 ## 为什么还不能说“完全复现”
 
 1. Management Prompt 1/2 已可从作者官方 arXiv TeX 的 promptbox 精确提取；但论文仍没有发布 per-chunk user turn 的精确措辞、完整函数工具 JSON 包装和上下文摘要器 prompt。Prompt 1 与 Prompt 2 之间使用一个换行连接，也是本项目单独冻结的组合边界。
-2. 本项目已固定 LoCoMo10、`conv-50` canonical records、正式 S1/S2 stores、85 个确定性 S3 管理输入 chunks、prompt/tool/runtime contracts，并完成 S3 safe runner 的离线 85-episode fake-provider 验证及 NUS API smoke。正式运行已验证并保留前 65 个 chunks；chunk 66 在本地近似的 context-compaction 请求上发生 timeout，未发布 S3 store。runner v4 对该只读请求增加有限重试，并支持从 `chunk-066-before` 继续。统一检索/回答/评测 runner、八题并发和 judge 也尚未完成，因此仍不能复现论文表格分数。
+2. 本项目已固定 LoCoMo10、`conv-50` canonical records、正式 S1/S2 stores、85 个确定性 S3 管理输入 chunks、prompt/tool/runtime contracts，并完成 S3 safe runner 的离线 85-episode fake-provider 验证及 NUS API smoke。正式运行已验证并保留前 67 个 chunks；chunk 68 的普通 provider 请求发生 timeout，未发布 S3 store。runner v5 对普通请求与压缩请求都增加响应前有限重试，并支持从 `chunk-068-before` 继续。统一检索/回答/评测 runner、八题并发和 judge 也尚未完成，因此仍不能复现论文表格分数。
 3. 正式 S2 已用一次 NUS API episode 构建：requested alias 为 `coding`、served model 为 `qwen3.8:27b`，12 次模型调用完成 32 次 `view` 与 30 次 `rename`，随后通过离线完整性验证。该运行不是论文所用 backbone。
 4. NUS 当前实际 served model 不是论文的 `gpt-5.4-mini`；即便兼容函数调用，模型和提供商缓存/采样行为仍与论文不同。
 

@@ -33,6 +33,8 @@ COMPACTION_SUMMARY_MAX_COMPLETION_TOKENS = 8192
 COMPACTION_SUMMARY_MAX_ROUNDS = 1
 COMPACTION_MAX_ATTEMPTS = 3
 COMPACTION_RETRY_BACKOFF_SECONDS = (2, 4)
+ORDINARY_REQUEST_MAX_ATTEMPTS = 3
+ORDINARY_REQUEST_RETRY_BACKOFF_SECONDS = (2, 4)
 
 
 class TransientProviderError(RuntimeError):
@@ -322,10 +324,39 @@ class AgentRunner:
 
         for round_number in range(1, limit + 1):
             round_starts.append(len(messages))
-            try:
-                result = self.provider.complete(messages, tools, config)
-            except Exception as exc:
-                raise failure(str(exc), "provider", round_number) from exc
+            result: dict | None = None
+            for attempt in range(1, ORDINARY_REQUEST_MAX_ATTEMPTS + 1):
+                try:
+                    result = self.provider.complete(messages, tools, config)
+                    break
+                except TransientProviderError as exc:
+                    will_retry = attempt < ORDINARY_REQUEST_MAX_ATTEMPTS
+                    delay = (
+                        ORDINARY_REQUEST_RETRY_BACKOFF_SECONDS[attempt - 1]
+                        if will_retry
+                        else 0
+                    )
+                    self._emit(trace, {
+                        "round": round_number,
+                        "provider_retry": True,
+                        "attempt": attempt,
+                        "max_attempts": ORDINARY_REQUEST_MAX_ATTEMPTS,
+                        "will_retry": will_retry,
+                        "delay_seconds": delay,
+                        "error_type": "TransientProviderError",
+                    })
+                    if not will_retry:
+                        raise failure(
+                            "Provider API request timed out after "
+                            f"{ORDINARY_REQUEST_MAX_ATTEMPTS} attempts",
+                            "provider",
+                            round_number,
+                        ) from exc
+                    time.sleep(delay)
+                except Exception as exc:
+                    raise failure(str(exc), "provider", round_number) from exc
+            if result is None:  # pragma: no cover - defensive invariant
+                raise failure("Provider returned no result", "provider", round_number)
             if not isinstance(result, dict):
                 raise failure(
                     "Provider response must be a JSON object",
@@ -382,6 +413,7 @@ class AgentRunner:
                     round_number,
                 )
             self._emit(trace, {"round": round_number,
+                               "attempts": attempt,
                                "assistant_content": message.get("content"),
                                "tool_calls": [
                                    {"id": call.get("id"),

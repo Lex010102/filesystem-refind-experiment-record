@@ -3,7 +3,9 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
+from fs_memory_lab.agent import TransientProviderError
 from fs_memory_lab.management_prompt import MANAGEMENT_PROMPT
 from fs_memory_lab.paper_config import MANAGEMENT
 from fs_memory_lab.paper_tools import MANAGEMENT_PROFILE, TOOL_DEFINITIONS
@@ -146,6 +148,19 @@ class RecordingS3Provider:
 
 class WrongProfileProvider(RecordingS3Provider):
     model = "not-coding"
+
+
+class RetryingS3Provider(RecordingS3Provider):
+    def __init__(self, expected_user_messages: list[str]):
+        super().__init__(expected_user_messages)
+        self.initial_attempts = 0
+
+    def complete(self, messages, tools, config):
+        if self.episode == 0 and self.initial_attempts < 2:
+            self.initial_attempts += 1
+            raise TransientProviderError("API request timed out")
+        self.initial_attempts += 1
+        return super().complete(messages, tools, config)
 
 
 class RepairingLocatorProvider(RecordingS3Provider):
@@ -462,6 +477,25 @@ class S3SafeRunnerTest(unittest.TestCase):
         marker_path.write_bytes(original_marker)
         self.assertEqual(self.verify()["status"], "verified")
 
+    def test_transient_provider_timeout_retries_and_publishes_once(self):
+        provider = RetryingS3Provider(self.user_messages)
+        with patch("fs_memory_lab.agent.time.sleep") as sleep:
+            result = self.build(provider)
+        self.assertEqual(result["status"], "published")
+        self.assertEqual(provider.episode, 85)
+        self.assertEqual(provider.initial_attempts, 88)
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [2, 4])
+        episode = json.loads(
+            (self.paths["trace"] / "episode-001.json").read_text(encoding="utf-8")
+        )
+        retries = [
+            event for event in episode["result"]["trace"]
+            if event.get("provider_retry")
+        ]
+        self.assertEqual([event["attempt"] for event in retries], [1, 2])
+        self.assertEqual(episode["result"]["tool_calls"], 1)
+        self.assertEqual(self.verify()["status"], "verified")
+
     def test_provider_profile_mismatch_fails_before_any_call(self):
         provider = WrongProfileProvider(self.user_messages)
         with self.assertRaisesRegex(S3BuildError, "Provider profile"):
@@ -583,7 +617,7 @@ class S3SafeRunnerTest(unittest.TestCase):
         )
         self.assertEqual(self.verify()["status"], "verified")
 
-    def test_resume_accepts_v3_prefix_and_records_v4_for_new_episodes(self):
+    def test_resume_accepts_v3_prefix_before_v5(self):
         failing = RecordingS3Provider(self.user_messages, fail_episode=3)
         with self.assertRaises(S3BuildError):
             self.build(failing)
@@ -639,6 +673,65 @@ class S3SafeRunnerTest(unittest.TestCase):
             json.loads(
                 (self.paths["trace"] / "episode-003.json").read_text(encoding="utf-8")
             )["protocol"]["runtime_config_sha256"],
+            FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256,
+        )
+        self.assertEqual(self.verify()["status"], "verified")
+
+    def test_resume_accepts_mixed_v3_v4_prefix_before_v5(self):
+        failing = RecordingS3Provider(self.user_messages, fail_episode=4)
+        with self.assertRaises(S3BuildError):
+            self.build(failing)
+        run_dir = next(path for path in self.paths["work"].iterdir() if path.is_dir())
+        v4_contract = "bd3f429a532056513c0893b108023ad96a1bf5be4a74c9c419c4fd5293593eb5"
+        v3_config = "434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183"
+        v4_config = "612fa89e9212ebec6c1cd78d44ad88388c53f5d801bd751fd78a6c3308a37005"
+        state_path = run_dir / "run-state.json"
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        state["runtime_contract_sha256"] = v4_contract
+        state_path.write_text(
+            json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        for index, runtime_config in ((1, v3_config), (2, v3_config), (3, v4_config)):
+            episode_path = run_dir / "quarantine" / "trace" / f"episode-{index:03d}.json"
+            episode = json.loads(episode_path.read_text(encoding="utf-8"))
+            episode["protocol"]["runtime_config_sha256"] = runtime_config
+            episode_path.write_text(
+                json.dumps(episode, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+
+        resumed_provider = ResumeRecordingS3Provider(self.user_messages[3:])
+        result = build_s3_store(
+            STREAM,
+            STREAM_MANIFEST,
+            PROMPT_CONTRACT,
+            RUNTIME_CONTRACT,
+            self.paths["store"],
+            self.paths["manifest"],
+            self.paths["trace"],
+            self.paths["marker"],
+            self.paths["work"],
+            resumed_provider,
+            code_revision="test-s3-resume",
+            code_dirty=False,
+            test_mode=True,
+            resume_run_id=run_dir.name,
+            resume_source_code_revision="test-s3-runner",
+        )
+        self.assertEqual(result["status"], "published")
+        index = json.loads(
+            (self.paths["trace"] / "index.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(index["resume"]["prefix_runtime_config_segments"], [
+            {"start_chunk": 1, "end_chunk": 2, "runtime_config_sha256": v3_config},
+            {"start_chunk": 3, "end_chunk": 3, "runtime_config_sha256": v4_config},
+        ])
+        episode4 = json.loads(
+            (self.paths["trace"] / "episode-004.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            episode4["protocol"]["runtime_config_sha256"],
             FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256,
         )
         self.assertEqual(self.verify()["status"], "verified")

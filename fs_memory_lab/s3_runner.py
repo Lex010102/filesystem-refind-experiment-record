@@ -59,16 +59,18 @@ _SECTION_REFERENCE = re.compile(
 _HEADING = re.compile(r"^#{1,6}\s+", re.MULTILINE)
 _HEADING_LINE = re.compile(r"^(#{1,6})\s+.+$")
 _LIST_FACT_LINE = re.compile(r"^\s*(?:[-+*]\s+|\d+[.)]\s+)\S")
-_LEGACY_RESUMABLE_RUNTIME_CONTRACTS = {
-    # Runner v2: post-tool locator feedback, before cross-reference feedback/resume.
-    "36b043ad7cc0afcab45d671e42f3e03b8ed339c3486bd396d2820d9d72c94f4a",
-    # Runner v3: validated resume and cross-reference repair, before compaction retries.
-    "f9f02a125edad9fd16a1e2c9117e392b81794101c8a570312b2c04f46579389f",
-}
 _LEGACY_RUNTIME_CONFIG_BY_CONTRACT = {
-    contract: "434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183"
-    for contract in _LEGACY_RESUMABLE_RUNTIME_CONTRACTS
+    # Runner v2: post-tool locator feedback, before cross-reference feedback/resume.
+    "36b043ad7cc0afcab45d671e42f3e03b8ed339c3486bd396d2820d9d72c94f4a":
+        "434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183",
+    # Runner v3: validated resume and cross-reference repair, before compaction retries.
+    "f9f02a125edad9fd16a1e2c9117e392b81794101c8a570312b2c04f46579389f":
+        "434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183",
+    # Runner v4: compaction-only timeout retries, before ordinary request retries.
+    "bd3f429a532056513c0893b108023ad96a1bf5be4a74c9c419c4fd5293593eb5":
+        "612fa89e9212ebec6c1cd78d44ad88388c53f5d801bd751fd78a6c3308a37005",
 }
+_LEGACY_RESUMABLE_RUNTIME_CONTRACTS = set(_LEGACY_RUNTIME_CONFIG_BY_CONTRACT)
 
 
 class S3BuildError(RuntimeError):
@@ -82,6 +84,57 @@ def _runtime_config_sha_for_contract(contract_sha256: str) -> str:
     if legacy is None:
         raise S3BuildError("Runtime contract is not approved for S3 resume")
     return legacy
+
+
+def _approved_runtime_config_lineage() -> tuple[str, ...]:
+    ordered = [*_LEGACY_RUNTIME_CONFIG_BY_CONTRACT.values(),
+               FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256]
+    return tuple(dict.fromkeys(ordered))
+
+
+def _validate_prefix_runtime_config_segments(
+    value: Any, *, start_chunk: int, source_runtime_contract_sha256: str
+) -> dict[int, str]:
+    if not isinstance(value, list):
+        raise S3BuildError("S3 resume runtime segments must be a list")
+    lineage = _approved_runtime_config_lineage()
+    source_config = _runtime_config_sha_for_contract(
+        source_runtime_contract_sha256
+    )
+    source_rank = lineage.index(source_config)
+    previous_rank = -1
+    expected_start = 1
+    by_chunk: dict[int, str] = {}
+    for segment in value:
+        if not isinstance(segment, dict) or set(segment) != {
+            "start_chunk", "end_chunk", "runtime_config_sha256"
+        }:
+            raise S3BuildError("S3 resume runtime segment is invalid")
+        first = segment.get("start_chunk")
+        last = segment.get("end_chunk")
+        runtime_config = segment.get("runtime_config_sha256")
+        if (
+            not isinstance(first, int)
+            or isinstance(first, bool)
+            or not isinstance(last, int)
+            or isinstance(last, bool)
+            or first != expected_start
+            or last < first
+            or last >= start_chunk
+            or runtime_config not in lineage
+        ):
+            raise S3BuildError("S3 resume runtime segment bounds are invalid")
+        rank = lineage.index(str(runtime_config))
+        if rank < previous_rank or rank > source_rank:
+            raise S3BuildError("S3 resume runtime segment lineage is invalid")
+        previous_rank = rank
+        by_chunk.update({index: str(runtime_config) for index in range(first, last + 1)})
+        expected_start = last + 1
+    if expected_start != start_chunk:
+        raise S3BuildError("S3 resume runtime segments do not cover the prefix")
+    if value and value[-1]["runtime_config_sha256"] != source_config:
+        raise S3BuildError("S3 resume runtime segments do not end at the source runtime")
+    return by_chunk
 
 
 @dataclass(frozen=True)
@@ -121,6 +174,7 @@ class S3ResumePrefix:
     checkpoint: Path
     previous_checkpoint: Path | None
     reconstructed_events: bytes
+    prefix_runtime_config_segments: list[dict[str, Any]]
     source_runtime_contract_sha256: str
     source_code_revision: str
     resumed_at: str
@@ -1197,12 +1251,15 @@ def _load_resume_prefix(
     if {path.name for path in trace_paths} != expected_trace_names:
         raise S3BuildError("Failed-run completed episode set is not a contiguous prefix")
 
-    episode_protocol = {
+    episode_protocol_base = {
         "management_prompt_sha256": sha256_bytes(MANAGEMENT_PROMPT.encode("utf-8")),
-        "runtime_config_sha256": source_runtime_config_hash,
         "tool_profile_sha256": FROZEN_MANAGEMENT_TOOL_PROFILE_SHA256,
         "tool_schema_sha256": FROZEN_MANAGEMENT_TOOL_SCHEMA_SHA256,
     }
+    runtime_lineage = _approved_runtime_config_lineage()
+    source_runtime_rank = runtime_lineage.index(source_runtime_config_hash)
+    previous_runtime_rank = -1
+    prefix_runtime_config_segments: list[dict[str, Any]] = []
     prior_store_sha = sha256_bytes(canonical_json_bytes({}))
     prior_store_files: dict[str, str] = {}
     episodes: list[dict[str, Any]] = []
@@ -1214,11 +1271,30 @@ def _load_resume_prefix(
         payload = (stream.root / chunk["filename"]).read_text(encoding="utf-8")
         user_message = render_s3_user_message(payload)
         episode_chunk = episode.get("chunk", {})
+        episode_protocol = episode.get("protocol")
+        episode_runtime_config = (
+            episode_protocol.get("runtime_config_sha256")
+            if isinstance(episode_protocol, dict)
+            else None
+        )
+        if episode_runtime_config not in runtime_lineage:
+            raise S3BuildError(f"Resume episode runtime is unapproved: {filename}")
+        episode_runtime_rank = runtime_lineage.index(str(episode_runtime_config))
+        if (
+            episode_runtime_rank < previous_runtime_rank
+            or episode_runtime_rank > source_runtime_rank
+        ):
+            raise S3BuildError(f"Resume episode runtime lineage is invalid: {filename}")
+        previous_runtime_rank = episode_runtime_rank
+        expected_episode_protocol = {
+            **episode_protocol_base,
+            "runtime_config_sha256": episode_runtime_config,
+        }
         if (
             episode.get("schema_version") != 1
             or episode.get("status") != "completed"
             or episode.get("run_id") != run_id
-            or episode.get("protocol") != episode_protocol
+            or episode_protocol != expected_episode_protocol
             or episode.get("checkpoint") != f"checkpoints/chunk-{index:03d}-before"
             or episode_chunk.get("filename") != chunk["filename"]
             or episode_chunk.get("global_chunk_index") != index
@@ -1229,6 +1305,18 @@ def _load_resume_prefix(
             or episode.get("user_message") != user_message
         ):
             raise S3BuildError(f"Resume episode identity mismatch: {filename}")
+        if (
+            not prefix_runtime_config_segments
+            or prefix_runtime_config_segments[-1]["runtime_config_sha256"]
+            != episode_runtime_config
+        ):
+            prefix_runtime_config_segments.append({
+                "start_chunk": index,
+                "end_chunk": index,
+                "runtime_config_sha256": episode_runtime_config,
+            })
+        else:
+            prefix_runtime_config_segments[-1]["end_chunk"] = index
         before_files = episode.get("store_files_before")
         after_files = episode.get("store_files_after")
         if (
@@ -1316,6 +1404,11 @@ def _load_resume_prefix(
         prior_store_files = after_files
         prior_store_sha = episode["store_after_sha256"]
 
+    if episodes and prefix_runtime_config_segments[-1]["runtime_config_sha256"] != (
+        source_runtime_config_hash
+    ):
+        raise S3BuildError("Resume prefix does not end with the failed run runtime")
+
     checkpoint = run_dir / "checkpoints" / f"chunk-{start_chunk:03d}-before"
     prefix_locators = {
         locator
@@ -1373,6 +1466,7 @@ def _load_resume_prefix(
         checkpoint=checkpoint,
         previous_checkpoint=previous_checkpoint,
         reconstructed_events=reconstructed_events,
+        prefix_runtime_config_segments=prefix_runtime_config_segments,
         source_runtime_contract_sha256=str(source_runtime_hash),
         source_code_revision=source_code_revision,
         resumed_at=_utc_now(),
@@ -1546,6 +1640,9 @@ def build_s3_store(
                 "source_code_revision": resume_prefix.source_code_revision,
                 "source_runtime_contract_sha256": (
                     resume_prefix.source_runtime_contract_sha256
+                ),
+                "prefix_runtime_config_segments": (
+                    resume_prefix.prefix_runtime_config_segments
                 ),
                 "resume_runtime_contract_sha256": runtime_contract_hash,
                 "resumed_at": resume_prefix.resumed_at,
@@ -2102,7 +2199,7 @@ def _validate_trace_directory(
         raise S3BuildError("S3 trace episode index length mismatch")
     resume = index.get("resume")
     resumed_prefix_end = 0
-    resumed_prefix_runtime_config_sha: str | None = None
+    resumed_prefix_runtime_configs: dict[int, str] = {}
     if resume is not None:
         if not isinstance(resume, dict):
             raise S3BuildError("S3 trace resume metadata is invalid")
@@ -2116,8 +2213,10 @@ def _validate_trace_directory(
         ):
             raise S3BuildError("S3 trace resume prefix is invalid")
         resumed_prefix_end = start_chunk - 1
-        resumed_prefix_runtime_config_sha = _runtime_config_sha_for_contract(
-            source_runtime_contract
+        resumed_prefix_runtime_configs = _validate_prefix_runtime_config_segments(
+            resume.get("prefix_runtime_config_segments"),
+            start_chunk=start_chunk,
+            source_runtime_contract_sha256=source_runtime_contract,
         )
     prior_store_sha = sha256_bytes(canonical_json_bytes({}))
     prior_store_files: dict[str, str] = {}
@@ -2134,7 +2233,7 @@ def _validate_trace_directory(
     for chunk, summary in zip(stream.chunks, episodes):
         expected_filename = f"episode-{chunk['global_chunk_index']:03d}.json"
         expected_runtime_config_sha = (
-            resumed_prefix_runtime_config_sha
+            resumed_prefix_runtime_configs[chunk["global_chunk_index"]]
             if chunk["global_chunk_index"] <= resumed_prefix_end
             else FROZEN_MANAGEMENT_RUNTIME_CONFIG_SHA256
         )
@@ -2430,6 +2529,7 @@ def verify_published_s3(
             "source_failed_run_id",
             "source_code_revision",
             "source_runtime_contract_sha256",
+            "prefix_runtime_config_segments",
             "resume_runtime_contract_sha256",
             "resumed_at",
         }
@@ -2456,6 +2556,11 @@ def verify_published_s3(
             or not resume["resumed_at"]
         ):
             raise S3BuildError("S3 resume provenance is invalid")
+        _validate_prefix_runtime_config_segments(
+            resume.get("prefix_runtime_config_segments"),
+            start_chunk=resume["start_chunk"],
+            source_runtime_contract_sha256=resume["source_runtime_contract_sha256"],
+        )
     expected_counts = {
         "files": len(final_gate.files),
         "directories": len(final_gate.directories),

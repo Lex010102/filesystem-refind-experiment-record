@@ -119,6 +119,61 @@ class FilesystemTest(unittest.TestCase):
         self.assertEqual(provider.last_messages[0]["content"], MANAGEMENT_PROMPT)
         self.assertEqual(provider.last_tools, [TOOL_DEFINITIONS[name] for name in MANAGEMENT_PROFILE])
 
+    def test_ordinary_request_retries_timeout_without_replaying_tools(self):
+        view_call = {"id": "call_1", "type": "function", "function": {
+            "name": "view", "arguments": '{"path":"/memories"}'}}
+
+        class RetryProvider(FakeProvider):
+            def __init__(self):
+                super().__init__([
+                    {"role": "assistant", "content": None, "tool_calls": [view_call]},
+                    {"role": "assistant", "content": "Done."},
+                ])
+                self.second_round_attempts = 0
+
+            def complete(self, messages, tools, config):
+                if any(message.get("role") == "tool" for message in messages):
+                    self.second_round_attempts += 1
+                    if self.second_round_attempts < 3:
+                        raise TransientProviderError("API request timed out")
+                return super().complete(messages, tools, config)
+
+        provider = RetryProvider()
+        with patch("fs_memory_lab.agent.time.sleep") as sleep:
+            result = AgentRunner(self.fs, provider).run("search", "What is stored?")
+
+        retries = [event for event in result.trace if event.get("provider_retry")]
+        self.assertEqual(provider.second_round_attempts, 3)
+        self.assertEqual([event["attempt"] for event in retries], [1, 2])
+        self.assertEqual([event["delay_seconds"] for event in retries], [2, 4])
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [2, 4])
+        self.assertEqual(result.tool_calls, 1)
+        responses = [event for event in result.trace if "assistant_content" in event]
+        self.assertEqual([event["attempts"] for event in responses], [1, 3])
+
+    def test_ordinary_request_stops_after_three_timeouts(self):
+        class AlwaysTimeoutProvider(FakeProvider):
+            def complete(self, messages, tools, config):
+                raise TransientProviderError("API request timed out")
+
+        with patch("fs_memory_lab.agent.time.sleep") as sleep:
+            with self.assertRaisesRegex(
+                AgentRunError, "timed out after 3 attempts"
+            ) as raised:
+                AgentRunner(self.fs, AlwaysTimeoutProvider([])).run(
+                    "search", "What is stored?"
+                )
+
+        retries = [
+            event
+            for event in raised.exception.partial["trace"]
+            if event.get("provider_retry")
+        ]
+        self.assertEqual([event["attempt"] for event in retries], [1, 2, 3])
+        self.assertEqual([event["will_retry"] for event in retries], [True, True, False])
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [2, 4])
+        self.assertEqual(raised.exception.partial["tool_calls"], 0)
+
     def test_foldering_agent_has_only_read_move_tools_and_preserves_file(self):
         session = "---\nname: session-01\ndescription: Session 1 on 2023-01-01 between A and B.\n---\n\n# Session 1\n\nA: Original text.\n[S1T1] (dia_id: D1:1)\n"
         self.fs.create("/memories/session-01.md", session)
