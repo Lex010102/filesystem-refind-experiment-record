@@ -23,7 +23,7 @@
   },
   "runner": {
     "module": "fs_memory_lab.s3_runner",
-    "version": "s3-safe-runner-v5"
+        "version": "s3-safe-runner-v6"
   },
   "runtime_config": {
     "context_compaction": {
@@ -32,14 +32,34 @@
       "provenance": "local approximation; author prompt not published",
       "recent_rounds": 3,
       "required_finish_reason": "stop",
-      "retry_policy": {
-        "backoff_seconds": [
-          2,
-          4
-        ],
-        "max_attempts": 3,
-        "retryable_error": "TransientProviderError",
-        "scope": "read-only context-compaction requests only"
+            "retry_policy": {
+                "retryable_error": "TransientProviderError",
+                "retryable_http": {
+                    "backoff_seconds": [
+                        5,
+                        15,
+                        30,
+                        60
+                    ],
+                    "max_attempts": 5,
+                    "status_codes": [
+                        408,
+                        429,
+                        500,
+                        502,
+                        503,
+                        504
+                    ]
+                },
+                "scope": "read-only context-compaction requests only",
+                "timeout": {
+                    "backoff_seconds": [
+                        2,
+                        4
+                    ],
+                    "max_attempts": 3
+                },
+                "tool_replay": false
       },
       "summary_role_config": {
         "max_completion_tokens": 8192,
@@ -64,22 +84,57 @@
       "user_prefix_sha256": "618d4fe745eb258e9600c6ea2abf16b7ad7fec1d3a35f2bea0fafdc764bcc77c"
     },
     "effective_local_execution": {
-      "automatic_retries": {
-        "context_compaction": 2,
-        "ordinary_agent_requests": 2
+            "automatic_retries": {
+                "context_compaction": {
+                    "retryable_http": 4,
+                    "timeout": 2
+                },
+                "ordinary_agent_requests": {
+                    "retryable_http": 4,
+                    "timeout": 2
+                }
       },
       "expected_served_model": "qwen3.8:27b",
       "local_max_rounds_per_episode": 60,
-      "ordinary_request_retry_policy": {
-        "backoff_seconds": [
-          2,
-          4
-        ],
-        "max_attempts": 3,
-        "retryable_error": "TransientProviderError",
-        "scope": "provider calls before a complete response is returned",
-        "tool_replay": false
-      },
+            "ordinary_request_retry_policy": {
+                "retryable_error": "TransientProviderError",
+                "retryable_http": {
+                    "backoff_seconds": [
+                        5,
+                        15,
+                        30,
+                        60
+                    ],
+                    "max_attempts": 5,
+                    "status_codes": [
+                        408,
+                        429,
+                        500,
+                        502,
+                        503,
+                        504
+                    ]
+                },
+                "scope": "provider calls before a complete response is returned",
+                "timeout": {
+                    "backoff_seconds": [
+                        2,
+                        4
+                    ],
+                    "max_attempts": 3
+                },
+                "tool_replay": false,
+                "trace_fields": [
+                    "attempt",
+                    "max_attempts",
+                    "will_retry",
+                    "delay_seconds",
+                    "error_type",
+                    "error_kind",
+                    "http_status",
+                    "error_message"
+                ]
+            },
       "provider_profile": {
         "api_style": "portable",
         "endpoint": "https://soclaas-api.comp.nus.edu.sg/v1/chat/completions",
@@ -129,7 +184,7 @@
     },
     "role": "management"
   },
-  "runtime_config_sha256": "2f866df6ce35c40c14c19aa1014771bd45cbbb901085898d73c7fde204a32128",
+    "runtime_config_sha256": "ec9c97275f4ea8d353ea235f772c2893de6293a75a9d0bef843f4060d5663970",
   "safety_policy": {
     "checkpoint_before_every_chunk": true,
     "commit_marker_published_last": true,
@@ -151,7 +206,7 @@
     "uncited_list_or_table_fact_candidates_rejected": true
   },
   "schema_version": "s3-management-runtime-contract-v1",
-  "status": "frozen-runner-v5-with-provider-timeout-retry",
+    "status": "frozen-runner-v6-with-timeout-and-retryable-http-retry",
   "tools": {
     "ordered_schema_sha256": "3f4b2edc2045348743961231bc174c973e9c8a5147225bb9caece1fc7a254b56",
     "profile": [

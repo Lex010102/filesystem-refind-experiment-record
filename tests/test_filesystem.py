@@ -174,6 +174,74 @@ class FilesystemTest(unittest.TestCase):
         self.assertEqual([call.args[0] for call in sleep.call_args_list], [2, 4])
         self.assertEqual(raised.exception.partial["tool_calls"], 0)
 
+    def test_ordinary_request_retries_http_503_without_replaying_tools(self):
+        view_call = {"id": "call_1", "type": "function", "function": {
+            "name": "view", "arguments": '{"path":"/memories"}'}}
+
+        class RetryProvider(FakeProvider):
+            def __init__(self):
+                super().__init__([
+                    {"role": "assistant", "content": None, "tool_calls": [view_call]},
+                    {"role": "assistant", "content": "Done."},
+                ])
+                self.second_round_attempts = 0
+
+            def complete(self, messages, tools, config):
+                if any(message.get("role") == "tool" for message in messages):
+                    self.second_round_attempts += 1
+                    if self.second_round_attempts < 5:
+                        raise TransientProviderError(
+                            'API returned HTTP 503: no healthy provider backends',
+                            kind="http",
+                            http_status=503,
+                        )
+                return super().complete(messages, tools, config)
+
+        provider = RetryProvider()
+        with patch("fs_memory_lab.agent.time.sleep") as sleep:
+            result = AgentRunner(self.fs, provider).run("search", "What is stored?")
+
+        retries = [event for event in result.trace if event.get("provider_retry")]
+        self.assertEqual(provider.second_round_attempts, 5)
+        self.assertEqual([event["attempt"] for event in retries], [1, 2, 3, 4])
+        self.assertEqual(
+            [event["delay_seconds"] for event in retries], [5, 15, 30, 60]
+        )
+        self.assertEqual([event["http_status"] for event in retries], [503] * 4)
+        self.assertEqual([event["error_kind"] for event in retries], ["http"] * 4)
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [5, 15, 30, 60])
+        self.assertEqual(result.tool_calls, 1)
+
+    def test_ordinary_request_stops_after_five_http_503_responses(self):
+        class AlwaysUnavailableProvider(FakeProvider):
+            def complete(self, messages, tools, config):
+                raise TransientProviderError(
+                    'API returned HTTP 503: no healthy provider backends',
+                    kind="http",
+                    http_status=503,
+                )
+
+        with patch("fs_memory_lab.agent.time.sleep") as sleep:
+            with self.assertRaisesRegex(
+                AgentRunError, "retryable HTTP 503 after 5 attempts"
+            ) as raised:
+                AgentRunner(self.fs, AlwaysUnavailableProvider([])).run(
+                    "search", "What is stored?"
+                )
+
+        retries = [
+            event
+            for event in raised.exception.partial["trace"]
+            if event.get("provider_retry")
+        ]
+        self.assertEqual([event["attempt"] for event in retries], [1, 2, 3, 4, 5])
+        self.assertEqual(
+            [event["will_retry"] for event in retries],
+            [True, True, True, True, False],
+        )
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [5, 15, 30, 60])
+        self.assertEqual(raised.exception.partial["tool_calls"], 0)
+
     def test_foldering_agent_has_only_read_move_tools_and_preserves_file(self):
         session = "---\nname: session-01\ndescription: Session 1 on 2023-01-01 between A and B.\n---\n\n# Session 1\n\nA: Original text.\n[S1T1] (dia_id: D1:1)\n"
         self.fs.create("/memories/session-01.md", session)
@@ -319,6 +387,27 @@ class FilesystemTest(unittest.TestCase):
         with patch("urllib.request.urlopen", side_effect=TimeoutError("read timed out")):
             with self.assertRaisesRegex(TransientProviderError, "timed out"):
                 provider.complete([{"role": "user", "content": "hello"}], [], SEARCH)
+
+    def test_compatible_api_adapter_marks_http_503_as_transient(self):
+        provider = CompatibleChatProvider(
+            "https://api.example.test/v1", "coding", "test-key", api_style="portable"
+        )
+        error = urllib.error.HTTPError(
+            "https://api.example.test/v1/chat/completions",
+            503,
+            "Service Unavailable",
+            {},
+            io.BytesIO(json.dumps({
+                "error": {"message": "no healthy provider backends"}
+            }).encode("utf-8")),
+        )
+        with patch("urllib.request.urlopen", side_effect=error):
+            with self.assertRaisesRegex(
+                TransientProviderError, "HTTP 503.*no healthy provider backends"
+            ) as raised:
+                provider.complete([{"role": "user", "content": "hello"}], [], SEARCH)
+        self.assertEqual(raised.exception.kind, "http")
+        self.assertEqual(raised.exception.http_status, 503)
 
     def test_http_error_reports_parameter_but_redacts_key(self):
         secret = "test-api-key-not-a-real-secret"

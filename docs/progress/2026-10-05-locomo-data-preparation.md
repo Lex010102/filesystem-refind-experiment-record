@@ -67,7 +67,7 @@ D30:05 -> D30:5 -> [S30T5]
 
 `conv-50` 的一个 source turn 平均约 142 个字符、26 个英文词，中位数约 128 个字符、24 个词；每个 session 平均 18.9 个 source turns。正式构建必须使用全部 568 个 source turns，不能根据 gold evidence 预筛选。
 
-ReFind 原文对 `turn` 使用了不同定义：一个 user utterance 和对应 assistant response 合为一个 turn。为了避免歧义，本项目不直接沿用这个含混名称，而使用上表的 `source turn` 与 `exchange`。当前计划是：canonical records 始终保持 568 个 source turns；实现 raw-chat ReFind-style 检索时再派生 exchange-level retrieval units，并让每个 exchange 保留其包含的全部 `dia_id` 和 source locators。该派生视图不得改写或删除 canonical records。
+ReFind 原文对 `turn` 使用了不同定义：一个 user utterance 和对应 assistant response 合为一个 turn。为了避免歧义，本项目不直接沿用这个含混名称，而使用上表的 `source turn` 与 `exchange`。早期曾考虑派生 exchange-level retrieval units；该想法已被 2026-10-07 的正式实验地图取代。当前固定方案是：canonical records 始终保持 568 个 source turns；S1/S2 的 raw-chat ReFind-style 检索以一条 LoCoMo utterance/source turn 为最小 unit，以 session 为 group，并在同一 session 内返回命中 utterance 前后各 2 条。每个 unit 保留其 `dia_id` 和 source locator。报告必须把这项选择写成面向 LoCoMo 数据结构的适配，不能冒充 ReFind 原文的 paired-turn 定义。
 
 ## 图片 turn 的统一处理
 
@@ -254,7 +254,7 @@ PRECHECK → LOCKED → STAGED → AGENT_RUNNING → AGENT_SUCCEEDED
 
 ## S2 完成时记录的原下一步（已被 2026-10-06 决策调整）
 
-当时的顺序设想是：冻结并提交正式 S2 后先实现 ReFind-style R2，再实现 evidence-only R1；R2 仍需先将 exchange 派生规则、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则写成测试。2026-10-06 决定先推进 S3 输入准备，因此该顺序已调整；“不应未经 prompt/runner 冻结就直接运行 S3 管理 LLM”和“不为六个条件分别切一次原始数据”两项约束继续有效。
+当时的顺序设想是：冻结并提交正式 S2 后先实现 ReFind-style R2，再实现 evidence-only R1；当时还准备设计 exchange 派生、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则。2026-10-06 决定先推进 S3 输入准备，因此实现顺序已调整；2026-10-07 的正式实验地图又以 utterance-level unit 取代了早期 exchange-level 设想，所以 singleton exchange 规则不再属于当前协议。“不应未经 prompt/runner 冻结就直接运行 S3 管理 LLM”和“不为六个条件分别切一次原始数据”两项约束继续有效。
 
 ## 2026-10-06：S3 路线与确定性 chunk 输入流
 
@@ -548,3 +548,201 @@ Category 5 没有普通 `answer`，而是给出诱导性的 `adversarial_answer`
 Runner v5 从 `chunk-068-before` 后台恢复后，chunks 68–71 成功完成；chunk 72（`session_27_chunk_01.txt`）运行到第 18 个管理轮次时，普通 provider 请求连续 3 次超时，按固定重试规则安全停止。失败 episode 内曾发生错误删除 `/memories/calvin.md` 的工具动作，但整个 chunk 72 store 与 trace 已进入 `quarantine/`；续跑只允许从保留的 `checkpoints/chunk-072-before` 恢复，不能采用失败 episode 的任何写入。
 
 当前状态：前 71 个 completed episodes 保留；`formal_outputs_published=false`，没有残留正式 artifacts，也没有 cleanup error。后续不得自动重启；应先保持当前诊断资料，再基于 clean commit 运行只读 resume preflight，确认前缀、checkpoint 和 hash chain 后才可由用户明确启动 chunk 72。
+
+## 2026-10-07：R1 Filesystem 与 R2 ReFind-style 检索说明
+
+### 先区分“存储”和“检索”
+
+S1、S2、S3 是三种**记忆存储形式**；R1、R2 是两种**从记忆中寻找证据的方式**。最简单的记忆方法是：
+
+- R1 Filesystem/Center：让 LLM 像人一样打开文件夹、看目录、搜索关键词、阅读文件；
+- R2 ReFind-style：先用 BM25 从记录中找候选，再让 LLM 根据上一轮结果多轮改写关键词、保存证据。
+
+因此，实验比较的不是两个完全独立的系统，而是把同一份存储分别交给两种检索器：E1/E3/E5 使用 R1，E2/E4/E6 使用 R2。
+
+### R1：Filesystem/Center 原生文件检索
+
+Filesystem 论文主实验中的 filesystem variants 使用四个只读工具：
+
+| 工具 | 作用 |
+| --- | --- |
+| `view` | 列出目录，或读取文件全文/指定行范围 |
+| `grep` | 用正则表达式在 Markdown 文件中按行搜索 |
+| `toc` | 查看 Markdown 文件的标题目录 |
+| `section_read` | 读取指定标题路径下的章节 |
+
+论文的层级存储 Searcher Prompt 给出的检索逻辑是：
+
+```text
+问题
+  -> view /memories，一次性查看目录、文件名和 description
+  -> 根据主题选择少量可能相关的子树或文件
+  -> grep 短而有区分度的关键词及同义词
+  -> 用 view/toc/section_read 阅读命中位置所需的上下文
+  -> 检查问题的每个部分是否都有证据
+  -> 证据充分便停止，并回答及给出文件/行号/章节引用
+```
+
+它没有一个固定排名器替模型决定哪个文件最相关。LLM 自己决定搜索路径、关键词、需要打开的章节以及停止时机。因此，文件夹名、文件名、frontmatter `description`、Markdown 标题和正文都会直接影响它能否找到答案。层级结构好时，模型可以先路由到人物或主题，再读取小章节；结构不好时，模型可能走错目录、漏掉同义表达，或者读取大量无关内容。
+
+R1 可以多轮调用工具，但不是固定轮数。论文 hard cap 为：Verbatim dump/Foldered sessions 等较简单 store 最多 20 个 search tool rounds；Agent-curated/Reorganized 等层级 store 最多 40 个。hard cap 只是防止失控，容易的问题应提前停止；一次 assistant turn 也可并行发出多个互不依赖的只读工具调用。
+
+需要避免一个常见误解：Filesystem 论文中虽然出现 BM25，但默认 filesystem 检索并不是 BM25。论文另有三个概念：
+
+1. `Chunk retrieval` baseline：把对话切成原始 chunks，用 BM25 返回 Top-3；
+2. `Center+BM25` harness ablation：在 Center 工具上额外增加 ranked keyword search；
+3. 默认 filesystem variants：只用 `view/grep/toc/section_read`。本报告的 R1 指第三项。
+
+论文依据：Filesystem §3（PDF 第 7–8 页）及 Appendix A.3 Prompt 5–7（PDF 第 31–35 页）。原论文的 Search Agent 搜索后直接回答并引用文件。
+
+### R2：ReFind 的 BM25 加 LLM 多轮检索
+
+ReFind 不在提问前用 LLM 总结或重写聊天，也不构建人物卡、知识图谱或语义树。它保留原始聊天、session ID、时间戳和细粒度记录，并建立不需要 LLM 调用的 BM25 倒排索引。问题到来后，ReAct controller 决定搜索词和参数。
+
+原方法分为两个阶段：
+
+```text
+Stage 1 Retrieval
+问题
+  -> LLM 提出关键词和可选日期范围
+  -> BM25 在细粒度聊天记录上打分
+  -> 细粒度排名与 session 聚合排名用 RRF 融合
+  -> 返回 Top-5 命中，每个命中带同 session 内前后各 2 个单位
+  -> LLM 用 take_note 保存可能有用的完整原文证据
+  -> 根据结果更换关键词、补另一个多跳事实或缩小时间范围
+  -> 最多 4 次 search；证据充分则 finish_search
+
+Stage 2 Reasoning
+保存的 notes 按 session 分组并按时间排序
+  -> 独立 Answerer 只根据这些证据回答
+```
+
+ReFind Retrieval Agent 使用三个工具：
+
+| 工具 | 作用 |
+| --- | --- |
+| `search_chatrecord` | 用关键词以及可选 `date_from/date_to` 搜索聊天 |
+| `take_note` | 保存上一轮中可能相关的完整原始结果 |
+| `finish_search` | 结束证据收集，进入回答阶段 |
+
+新搜索会替换上一轮 observation，因此有用结果必须先 `take_note`。Prompt 要求检索器只收集证据、不提前回答，并尝试不同关键词。它是真正的多轮搜索：后面的 query 应根据前一轮暴露的人名、事件、日期或缺失的多跳事实发生变化，而不是机械重复同一个问题。
+
+#### BM25 与两级 RRF
+
+ReFind 的 BM25 固定为 `k1=1.2`、`b=0.75`，预处理包括 lowercase、空格/标点切分、Porter stemming 和 stopword removal。对每个细粒度记录 `c` 计算两个排名：
+
+1. `r1(c)`：该记录本身的 BM25 排名；
+2. `r2(c)`：把同一 session 内所有记录的 BM25 分数相加，对 session 排名后，每个记录继承所属 session 的排名。
+
+最终融合为：
+
+```text
+RRF(c) = 1 / (60 + r1(c)) + 1 / (60 + r2(c))
+```
+
+如果同一 session 中多条记录都命中查询，该 session 及其中的记录就会得到提升。每轮默认返回 Top-5。
+
+#### 四个 chat-native controls
+
+1. **Session-aware rank fusion**：把细粒度命中和 session 整体相关性结合；
+2. **Local context expansion**：返回命中位置前后各 2 个单位，并在 session 边界截断；
+3. **Temporal narrowing**：LLM 可以提供日期范围，在 BM25 打分前过滤；Prompt 建议先宽搜，再用发现的时间线索窄搜，以免遗漏后来的回顾性提及；
+4. **Seen-session filtering**：已经在前一轮返回的 session 在后续轮中排除，减少重复、提高每轮的信息增益。
+
+因此，ReFind 并不只是“BM25 搜四次”。它是“LLM 控制的多轮 BM25”，并在每一轮维护已保存证据、已看 session 和上一轮 observation 的状态。
+
+论文依据：ReFind §3（PDF 第 4–6 页）及 Appendix A Retrieval Agent Prompt（PDF 第 13–14 页）。
+
+### R1 与 R2 的核心差异
+
+| 对比项 | R1 Filesystem/Center | R2 ReFind-style |
+| --- | --- | --- |
+| 直观理解 | LLM 自己翻文件夹 | BM25 先筛选，LLM 再多轮调整搜索 |
+| 默认排名引擎 | 无 | BM25 + unit/group RRF |
+| 主要路由信号 | 目录、文件名、description、标题、正文 | 关键词、时间、细粒度命中、group 聚合 |
+| 上下文获取 | LLM 决定读哪些行/章节/文件 | 系统固定返回命中及同 group 的 ±2 邻居 |
+| 跨轮去重 | 依靠 LLM 不重复搜索 | 系统排除已返回 group |
+| 搜索预算 | S1/S2 20 rounds；S3 40 rounds hard cap | 最多 4 次 `search_chatrecord`，可提前停止 |
+| 原论文回答方式 | Search Agent 边搜边回答 | Retrieval 与 Answerer 分离 |
+| 主要优势 | 能直接利用 LLM 建出的文件结构 | 在原始记录上提供稳定、可审计的候选排名和多轮修正 |
+| 主要风险 | 走错目录、同义词漏检、工具轮次和上下文成本高 | BM25 词汇不匹配；固定邻域或 group 设计可能不适合改写后的 store |
+
+一句话概括：R1 把“怎么找”主要交给 LLM 和文件结构；R2 把“初步找候选”交给 BM25，把“下一轮怎么找”交给 LLM。
+
+### Alice 饮食问题的直观例子
+
+问题：“Alice 现在的饮食习惯是什么，与过去相比有什么变化？”
+
+R1 可能执行：
+
+```text
+view /memories
+  -> 找到 people/alice.md
+  -> grep "diet|vegetarian|yakiniku|seafood"
+  -> 读取 Diet 章节和命中行附近内容
+  -> 根据日期及 [SxTy] 比较新旧状态
+```
+
+R2 可能先搜索 `Alice + vegetarian`，保存开始吃素的原始对话；再搜索 `Alice + yakiniku + seafood`，排除已看 session，寻找更早的饮食偏好；最后由 Answerer 比较新旧证据。R2 的第二轮关键词来自第一轮之后仍缺失的“过去状态”，而不是预先写死。
+
+### 本项目对两种检索的统一改造
+
+为了公平比较，不能让 R1 自己回答而 R2 使用单独 Answerer。正式协议统一为：
+
+```text
+R1 或 R2 只收集证据
+  -> 输出统一 EvidenceBundle
+  -> 同一个 Answerer 生成最终答案和 citations
+```
+
+R1 因此会在论文四个文件工具之外增加实验控制动作 `take_note` 和 `finish_search`；它们只负责形成统一证据包，不改变 store，也不能伪造证据。R2 保留 ReFind 的 evidence-only 设计。这样 E1–E6 的主要区别是“证据如何被找到”，而不是最终回答模型或输入格式不同。
+
+### R2 在三种 store 上的固定适配
+
+**S1/S2（ReFind-style）**：
+
+- unit：一条 LoCoMo utterance/source turn；
+- group：自然 session；
+- 上下文：同 session 前后各 2 条 utterances；
+- 时间：session date；
+- seen-group dedup：后续轮排除已返回 session；
+- BM25 不把 S2 文件夹路径加入打分，保证 E2/E4 第一轮排名相同；但结果 provenance 显示路径，controller 可在后续轮利用主题目录词。
+
+这与 ReFind 原文把一组 user utterance + assistant response 视为一个 turn 不完全相同，必须称为 LoCoMo 数据适配。
+
+**S3（必须称 ReFind-inspired）**：
+
+- unit：最小 leaf Markdown section；无 heading 时整文件为一个 unit；
+- BM25 文本：frontmatter description + heading path + section body；文件系统 path 不直接参加打分；
+- group：unit 所属 top-level heading region；没有一级标题时退回文件；
+- group score：同 group 的 unit BM25 分数求和；
+- context：同 group 内相邻的前后各 2 个 sibling/leaf sections；
+- seen-group dedup：排除已经返回的 topic group，而不是整个大型人物文件；
+- 时间：通过 section 中的 source locators 映射回原始 session 日期，绝不用文件 mtime。
+
+原始 ReFind 的层级是细粒度聊天记录→session；S3 已被 LLM 改写成 section→topic hierarchy，所以 E6 不能写成“复现 ReFind”，只能写成“把 ReFind 的多轮检索机制适配到 agent-curated filesystem”。
+
+### 六个主条件中的位置
+
+| 条件 | Store | Retrieval | 研究作用 |
+| --- | --- | --- | --- |
+| E1 | S1 平铺原始 session | R1 | 原始文件基线 |
+| E2 | S1 平铺原始 session | R2 ReFind-style | 原始聊天增强检索 |
+| E3 | S2 文件夹化原始 session | R1 | 目录分类是否帮助文件 Agent |
+| E4 | S2 文件夹化原始 session | R2 ReFind-style | 多轮检索能否利用路径线索 |
+| E5 | S3 LLM 整理文件系统 | R1 | Filesystem 主基线 |
+| E6 | S3 LLM 整理文件系统 | R2 ReFind-inspired | 核心跨论文组合 |
+
+E7 再融合 E2 的原始聊天证据和 E6 的整理后证据；它不是第三种独立检索器，而是两路已有 evidence bundles 的确定性融合加统一 Answerer。
+
+### 当前实现状态边界
+
+本节记录的是已经冻结的实验方法，不代表检索 runner 已经完成。截至本节记录时，S1/S2 stores 已完成，S3 正式构建仍在续跑；正式 evidence-only R1、BM25/RRF R2、统一 Answerer、E7 fusion 和批量评测 runner 尚待实现和测试。后续代码必须以 `docs/plans/one-month-experiment-map.md` 的固定参数为准，若改变 unit、group、Top-K、上下文窗口或搜索轮数，必须更新 manifest 和本笔记，不能静默漂移。
+
+## 2026-10-07：chunk 73 网关 503 与 runner v6
+
+使用 runner v5 从 `chunk-072-before` 恢复后，chunk 72 成功完成；chunk 73（`session_27_chunk_02.txt`）在第 11 个管理轮次的普通 provider 请求上收到 HTTP 503：学校网关报告 backend group `180` 暂无健康后端。该失败不是 API key、输入、文件系统 gate 或模型工具格式问题。失败 episode 的 17 次文件工具调用已随整个 chunk 73 一起隔离并回滚；前 72 个 completed episodes、`chunk-073-before` checkpoint 和 hash chain 保留，正式 store 仍未发布，也没有 cleanup error。
+
+Runner 随后升级为 `s3-safe-runner-v6`。Provider adapter 只把 HTTP 408、429、500、502、503、504 分类为可恢复的 `TransientProviderError`；400/401 等配置或认证错误仍立即失败，不能用 retry 掩盖。Timeout 继续最多尝试 3 次并退避 2/4 秒；retryable HTTP 最多尝试 5 次并退避 5/15/30/60 秒。普通管理请求和 context-compaction 请求都使用该分类，但只允许在完整 assistant response 尚未返回时重试；已经返回的 response 及其文件工具永不重放。每次 retry 记录错误种类、HTTP 状态、脱敏错误文本、attempt、上限、退避和是否继续。
+
+v6 canonical runtime config SHA-256 为 `ec9c97275f4ea8d353ea235f772c2893de6293a75a9d0bef843f4060d5663970`；runtime contract 文件 SHA-256 为 `fc8c6d73da256181e8ca22b8d6af147c2038e2804875fef559e5b62bf98b21b8`。v5 contract/config 已加入批准的续跑 lineage，因此后续只读 preflight 必须证明 chunks 1–72 的多版本前缀连续且以 v5 结束，再从 `chunk-073-before` 用 v6 继续。

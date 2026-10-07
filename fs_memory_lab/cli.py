@@ -43,7 +43,8 @@ from .s3_runtime import (EXPECTED_S3_PROMPT_CONTRACT_SHA256,
                          FROZEN_MANAGEMENT_TOOL_PROFILE_SHA256,
                          FROZEN_MANAGEMENT_TOOL_SCHEMA_SHA256,
                          FROZEN_MANAGEMENT_TOOL_WIRE_SHA256,
-                         LOCAL_S3_PROVIDER_PROFILE, S3_RESOURCE_LIMITS)
+                         LOCAL_S3_PROVIDER_PROFILE, S3_RESOURCE_LIMITS,
+                         S3_RUNNER_VERSION)
 from .s2 import (build_s2_store, git_state, preflight_s2_build,
                  verify_published_s2)
 
@@ -214,8 +215,8 @@ def main() -> None:
             },
             "s3_runtime": {
                 "status": (
-                    "runner-v3 ready; validated formal prefix covers chunks 1-9 and "
-                    "can resume at chunk 10; no formal store published"
+                    f"{S3_RUNNER_VERSION}; timeout and retryable HTTP recovery enabled; "
+                    "formal store publishes only after all 85 chunks pass"
                 ),
                 "stream_manifest_sha256": EXPECTED_S3_STREAM_MANIFEST_SHA256,
                 "prompt_contract_sha256": EXPECTED_S3_PROMPT_CONTRACT_SHA256,

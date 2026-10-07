@@ -69,6 +69,9 @@ _LEGACY_RUNTIME_CONFIG_BY_CONTRACT = {
     # Runner v4: compaction-only timeout retries, before ordinary request retries.
     "bd3f429a532056513c0893b108023ad96a1bf5be4a74c9c419c4fd5293593eb5":
         "612fa89e9212ebec6c1cd78d44ad88388c53f5d801bd751fd78a6c3308a37005",
+    # Runner v5: ordinary timeout retries, before retryable HTTP status handling.
+    "76ba20c6b5b6d91f95371f61b85dada54de78ec6eb3514e8e89190a18c3e4d81":
+        "2f866df6ce35c40c14c19aa1014771bd45cbbb901085898d73c7fde204a32128",
 }
 _LEGACY_RESUMABLE_RUNTIME_CONTRACTS = set(_LEGACY_RUNTIME_CONFIG_BY_CONTRACT)
 

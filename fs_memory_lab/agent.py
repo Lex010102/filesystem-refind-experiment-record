@@ -35,10 +35,46 @@ COMPACTION_MAX_ATTEMPTS = 3
 COMPACTION_RETRY_BACKOFF_SECONDS = (2, 4)
 ORDINARY_REQUEST_MAX_ATTEMPTS = 3
 ORDINARY_REQUEST_RETRY_BACKOFF_SECONDS = (2, 4)
+RETRYABLE_HTTP_STATUS_CODES = frozenset({408, 429, 500, 502, 503, 504})
+TRANSIENT_HTTP_MAX_ATTEMPTS = 5
+TRANSIENT_HTTP_RETRY_BACKOFF_SECONDS = (5, 15, 30, 60)
 
 
 class TransientProviderError(RuntimeError):
     """A provider failure that is safe to retry for a read-only request."""
+
+    def __init__(self, message: str, *, kind: str = "timeout",
+                 http_status: int | None = None):
+        if kind not in {"timeout", "http"}:
+            raise ValueError("Transient provider error kind must be timeout or http")
+        if kind == "http" and http_status not in RETRYABLE_HTTP_STATUS_CODES:
+            raise ValueError("Transient HTTP status is not approved for retry")
+        if kind == "timeout" and http_status is not None:
+            raise ValueError("Timeout errors cannot carry an HTTP status")
+        super().__init__(message)
+        self.kind = kind
+        self.http_status = http_status
+
+
+def _transient_retry_policy(
+    error: TransientProviderError, *, compaction: bool
+) -> tuple[int, tuple[int, ...]]:
+    if error.kind == "http":
+        return TRANSIENT_HTTP_MAX_ATTEMPTS, TRANSIENT_HTTP_RETRY_BACKOFF_SECONDS
+    if compaction:
+        return COMPACTION_MAX_ATTEMPTS, COMPACTION_RETRY_BACKOFF_SECONDS
+    return ORDINARY_REQUEST_MAX_ATTEMPTS, ORDINARY_REQUEST_RETRY_BACKOFF_SECONDS
+
+
+def _transient_failure_message(
+    scope: str, error: TransientProviderError, attempts: int
+) -> str:
+    if error.kind == "http":
+        return (
+            f"{scope} failed with retryable HTTP {error.http_status} after "
+            f"{attempts} attempts: {error}"
+        )
+    return f"{scope} timed out after {attempts} attempts"
 
 
 class ChatProvider(Protocol):
@@ -127,7 +163,12 @@ class CompatibleChatProvider:
                     )
                 data = json.loads(raw.decode("utf-8"))
         except urllib.error.HTTPError as exc:
-            raise RuntimeError(self._safe_http_error(exc)) from exc
+            detail = self._safe_http_error(exc)
+            if exc.code in RETRYABLE_HTTP_STATUS_CODES:
+                raise TransientProviderError(
+                    detail, kind="http", http_status=exc.code
+                ) from exc
+            raise RuntimeError(detail) from exc
         except urllib.error.URLError as exc:
             if isinstance(exc.reason, TimeoutError):
                 raise TransientProviderError("API request timed out") from exc
@@ -219,14 +260,18 @@ class AgentRunner:
             {"role": "user", "content": old_text},
         ]
         result: dict | None = None
-        for attempt in range(1, COMPACTION_MAX_ATTEMPTS + 1):
+        attempt = 0
+        while result is None:
+            attempt += 1
             try:
                 result = self.provider.complete(request, [], summary_config)
-                break
-            except TransientProviderError:
-                will_retry = attempt < COMPACTION_MAX_ATTEMPTS
+            except TransientProviderError as exc:
+                max_attempts, backoff = _transient_retry_policy(
+                    exc, compaction=True
+                )
+                will_retry = attempt < max_attempts
                 delay = (
-                    COMPACTION_RETRY_BACKOFF_SECONDS[attempt - 1]
+                    backoff[attempt - 1]
                     if will_retry
                     else 0
                 )
@@ -234,16 +279,18 @@ class AgentRunner:
                     "round": round_number,
                     "compaction_retry": True,
                     "attempt": attempt,
-                    "max_attempts": COMPACTION_MAX_ATTEMPTS,
+                    "max_attempts": max_attempts,
                     "will_retry": will_retry,
                     "delay_seconds": delay,
                     "error_type": "TransientProviderError",
+                    "error_kind": exc.kind,
+                    "http_status": exc.http_status,
+                    "error_message": str(exc),
                 })
                 if not will_retry:
-                    raise RuntimeError(
-                        "Context compaction API request timed out after "
-                        f"{COMPACTION_MAX_ATTEMPTS} attempts"
-                    )
+                    raise RuntimeError(_transient_failure_message(
+                        "Context compaction API request", exc, attempt
+                    )) from exc
                 time.sleep(delay)
         if result is None:  # pragma: no cover - defensive invariant
             raise RuntimeError("Context compaction produced no provider result")
@@ -325,14 +372,18 @@ class AgentRunner:
         for round_number in range(1, limit + 1):
             round_starts.append(len(messages))
             result: dict | None = None
-            for attempt in range(1, ORDINARY_REQUEST_MAX_ATTEMPTS + 1):
+            attempt = 0
+            while result is None:
+                attempt += 1
                 try:
                     result = self.provider.complete(messages, tools, config)
-                    break
                 except TransientProviderError as exc:
-                    will_retry = attempt < ORDINARY_REQUEST_MAX_ATTEMPTS
+                    max_attempts, backoff = _transient_retry_policy(
+                        exc, compaction=False
+                    )
+                    will_retry = attempt < max_attempts
                     delay = (
-                        ORDINARY_REQUEST_RETRY_BACKOFF_SECONDS[attempt - 1]
+                        backoff[attempt - 1]
                         if will_retry
                         else 0
                     )
@@ -340,15 +391,19 @@ class AgentRunner:
                         "round": round_number,
                         "provider_retry": True,
                         "attempt": attempt,
-                        "max_attempts": ORDINARY_REQUEST_MAX_ATTEMPTS,
+                        "max_attempts": max_attempts,
                         "will_retry": will_retry,
                         "delay_seconds": delay,
                         "error_type": "TransientProviderError",
+                        "error_kind": exc.kind,
+                        "http_status": exc.http_status,
+                        "error_message": str(exc),
                     })
                     if not will_retry:
                         raise failure(
-                            "Provider API request timed out after "
-                            f"{ORDINARY_REQUEST_MAX_ATTEMPTS} attempts",
+                            _transient_failure_message(
+                                "Provider API request", exc, attempt
+                            ),
                             "provider",
                             round_number,
                         ) from exc
