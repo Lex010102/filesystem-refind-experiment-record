@@ -593,7 +593,7 @@ R1 可以多轮调用工具，但不是固定轮数。论文 hard cap 为：Verb
 2. `Center+BM25` harness ablation：在 Center 工具上额外增加 ranked keyword search；
 3. 默认 filesystem variants：只用 `view/grep/toc/section_read`。本报告的 R1 指第三项。
 
-论文依据：Filesystem §3（PDF 第 7–8 页）及 Appendix A.3 Prompt 5–7（PDF 第 31–35 页）。原论文的 Search Agent 搜索后直接回答并引用文件。
+论文依据：Filesystem §3（PDF 第 7–8 页）及 Appendix A.3 Prompt 5–7（第 31 页为导言，Prompt 正文位于 PDF 第 32–36 页）。原论文的 Search Agent 搜索后直接回答并引用文件。
 
 ### R2：ReFind 的 BM25 加 LLM 多轮检索
 
@@ -827,3 +827,11 @@ chunk 73 使用 v6 成功写入后，chunk 74（`session_28_chunk_01.txt`）在 
 runner 因此升级为 `s3-safe-runner-v7`：每次工具调用后新增 citation-completeness 检查，并与最终 gate 复用同一套列表/表格识别规则。写入动作仍然保留，错误以可恢复的 tool observation 返回文件路径和行号，Agent 必须补充有效的已见 source locator 或删除/改写该事实后才能结束；最终严格 gate 没有删除或放宽。新增回归覆盖“先写无引用事实、收到即时反馈、同 episode 补引并通过”、Markdown 表头/分隔行排除与数据行检查，以及完整 85-episode fake build/verify。全套 102 项离线测试通过。
 
 v7 不改变 Management Prompt、七工具 schema、provider 参数或 retry 参数，因此 canonical runtime config SHA-256 仍为 `ec9c97275f4ea8d353ea235f772c2893de6293a75a9d0bef843f4060d5663970`；新的 runtime contract 文件 SHA-256 为 `43e6317efddb3a3509b16d48feafb52317bf416c807e61326a45f0d214ec6819`。v6 contract/config 已加入批准的恢复 lineage。真实恢复 preflight 已重新证明：应复用 chunks 1–73，从未经污染的 `checkpoints/chunk-074-before` 重放 chunk 74，不能手改或继续使用失败的 quarantine store。
+
+## 2026-10-07：R1 evidence-only 实现启动
+
+为避免正在运行的正式 S3 在结束时因主仓库变脏而失败，R1 开发被隔离到 `codex/r1-evidence-only` worktree；主目录在 S3 完成前不接收 R1 修改。第一阶段完成了论文与现有代码的只读审计，并冻结 `docs/reproduction/r1-evidence-only-contract.md` 作为施工合同。
+
+审计确认的映射为 S1→Prompt 7/20 rounds、S2→Prompt 6/20 rounds、S3→Prompt 5/40 rounds；论文正文位置为 Appendix A.3 第 31 页导言、Prompt 5 第 32–33 页、Prompt 6 第 33–35 页、Prompt 7 第 35–36 页，Table 11 第 47–48 页，Table 12 第 49–50 页。此前把 Prompt 5 起始页写成 31 的记录需要在本分支中更正。
+
+第一阶段同时冻结了边界：`view/grep/toc/section_read` 是论文四个文件工具；`take_note/finish_search` 与 `EvidenceBundle` 是本项目的 controlled adaptation，必须分开统计和披露。正式 R1 不能复用当前 `AgentRunner.run("search")`，因为它把三个 store 都绑定到 Prompt 5/40 rounds，并允许自然语言直接作答；后续将实现独立 evidence-only 状态机、observation ledger、host re-read 防伪以及 S1/S2/S3 store snapshot gate。截至本节，尚未调用 R1 API，也没有产生任何 R1 实验结果。
