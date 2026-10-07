@@ -835,3 +835,15 @@ v7 不改变 Management Prompt、七工具 schema、provider 参数或 retry 参
 审计确认的映射为 S1→Prompt 7/20 rounds、S2→Prompt 6/20 rounds、S3→Prompt 5/40 rounds；论文正文位置为 Appendix A.3 第 31 页导言、Prompt 5 第 32–33 页、Prompt 6 第 33–35 页、Prompt 7 第 35–36 页，Table 11 第 47–48 页，Table 12 第 49–50 页。此前把 Prompt 5 起始页写成 31 的记录需要在本分支中更正。
 
 第一阶段同时冻结了边界：`view/grep/toc/section_read` 是论文四个文件工具；`take_note/finish_search` 与 `EvidenceBundle` 是本项目的 controlled adaptation，必须分开统计和披露。正式 R1 不能复用当前 `AgentRunner.run("search")`，因为它把三个 store 都绑定到 Prompt 5/40 rounds，并允许自然语言直接作答；后续将实现独立 evidence-only 状态机、observation ledger、host re-read 防伪以及 S1/S2/S3 store snapshot gate。截至本节，尚未调用 R1 API，也没有产生任何 R1 实验结果。
+
+## 2026-10-08：R1 阶段 2——EvidenceBundle 与存储真实性基础
+
+R1 开发继续只发生在隔离 worktree `/Users/wangwenqi/.codex/worktrees/r1-evidence-only/memory bench` 的 `codex/r1-evidence-only` 分支，没有修改仍承载正式 S3 运行的主目录，也没有调用学校 API。阶段 2 新增 `fs_memory_lab/evidence.py` 与专项测试 `tests/test_evidence.py`，先把“什么才算一份可信证据”固定下来，再进入文件工具和 Agent 实现。
+
+本阶段实现的共享边界包括：严格白名单的 online question（禁止 gold answer、category、gold evidence 泄漏）；由固定 `source_map.json` 与 canonical records 构造的 `SourceCatalog`；由外部冻结 hash、manifest、S2/S3 `COMMITTED` marker、path-map/trace 和实际挂载字节共同验证的 `VerifiedStoreManifest`；不可变的 `StoreSnapshotRef`、`AttributionUnit`、`EvidenceItem`、`EvidenceBundle`；以及与成功 bundle 分离的 `RetrievalFailureArtifact`。共享 bundle 可供后续 R1/R2/R3/fusion 使用，但 R1 profile 会额外禁止 rank/score。
+
+来源规则也已固定。S1/S2 的一个 evidence unit 必须是完整的 canonical source-turn block，不能只截一半发言；S3 的 evidence unit 必须是实际 Markdown 事实行，并逐行带可解析的 `[SxTy]`。证据文字、locator、`dia_id`、日期、speaker 和 hashes 全部由 host 重读冻结 store 后生成，模型后续只能选择已经观察到的位置，不能提交自写引文。真正的 observation ledger 将在阶段 4 接上；当前 schema 已预留并校验 observation IDs，但不会把“模型声称看过”直接当成证明。
+
+独立对抗审查中发现并修复了多类 fail-open 风险：重复 locator occurrence 的 hash 语义、caller 自签 manifest、S2 path-map/trace 未绑定、S3 trace/publication 未绑定、目录空节点未进入 tree hash、catalog 与 manifest 可错配、深层可变对象可篡改、failure artifact 可篡改、停止理由与 fallback proof 不一致、证据顺序重复/倒序、同一路径重叠或紧邻证据被拆开计费、无序 set/dict 被误当协议数组、整数/浮点 score 产生不同 canonical bytes，以及“把正式 store 原样复制到 staging 路径后仍被接受”。最终规则要求 manifest loader 保存已验证 published root；即使内容逐字节相同，另一路径也会被拒绝。所有协议数组只接受有序 list/tuple，score 统一成 float（包括负零归一化）；`no_progress_after_global_fallback` 也已与冻结计划对齐为全局兜底后连续两轮无新增证据。
+
+当前专项测试覆盖真实 S1/S2 固定产物以及合成的 formal S3 fixture。真实 S3 在 85 chunks 完成并正式发布前仍会被 fail-closed 拒绝，这是预期行为，不以测试夹具冒充实验结果。阶段 2 最后一轮专项回归为 31/31 通过；加入既有 S1/S2/S3、数据与题集测试后的全仓库离线回归为 133/133 通过。独立 PASS gate 放行后才进入阶段 3 的四个只读 filesystem tools。本文记录的是基础设施验证结果，不是 40 道题的检索或回答结果。

@@ -133,6 +133,8 @@ Fixed stop reasons:
 `evidence_sufficient` requires at least one validated EvidenceItem. The two global
 fallback reasons require both a root survey and a whole-tree body grep. Round limit is
 a completed retrieval outcome with `hit_cap=true`, not an infrastructure failure.
+`no_progress_after_global_fallback` additionally requires two consecutive provider
+rounds with no newly accepted evidence.
 
 ## 6. Evidence integrity
 
@@ -168,6 +170,14 @@ The store must exist before a filesystem object is constructed. A whole-store id
 is computed before the first model call and after finalization. Any byte, path or
 manifest drift invalidates the cell; the runner never modifies the store.
 
+The manifest and, for S2/S3, the `COMMITTED` marker are accepted only against hashes
+already frozen in the runtime contract. The verifier binds that externally pinned
+manifest to the canonical `source_map.json` and records, recomputes the exact file and
+directory tree, validates every source-index placement against mounted bytes, and
+remembers the canonical resolved mount root. A byte-identical copy at another path is
+still rejected: content-addressing alone must not make a staging or quarantine copy a
+formal input.
+
 ## 8. EvidenceBundle boundary
 
 The shared `EvidenceBundle` will contain:
@@ -182,12 +192,31 @@ The shared `EvidenceBundle` will contain:
 - provider rounds, model calls, four-tool calls, orchestration calls and usage totals;
 - requested/served model and safe provider metadata;
 - pre/post store hashes and verification result;
-- structured failure information when no valid bundle can be produced.
+
+`EvidenceBundle` is retrieval-neutral so R1, R2, R3 adapters and fusion can use one
+validated boundary. Its R1 profile additionally requires `retrieval_id=r1` and null
+rank/score fields. An unsuccessful or interrupted run must not emit a partially valid
+bundle: it emits a separate, hash-addressed `RetrievalFailureArtifact` containing only
+safe failure and recovery metadata.
 
 R1 rank and score fields are null. Evidence text is the exact selected store text.
 Token budgets will not be claimed until a tokenizer ID/version/hash suitable for the
 served model is explicitly frozen; bytes and Unicode character counts may be recorded
 without pretending they are tokens.
+
+The schema implementation is fail-closed: online questions have an exact allow-list
+that excludes gold answers, categories and gold evidence; provenance is derived from
+the frozen catalog rather than model text; raw selections must contain complete
+canonical source-turn blocks; curated selections must be physical fact lines with
+valid inline locators; nested records are deeply immutable; deterministic IDs and
+hashes are recomputed during validation; and evidence selection ordinals must be
+unique and strictly increasing in serialized order. The bundle rejects overlapping
+ranges from the same file; deterministic overlap/adjacency merging belongs to the
+later observation-ledger resolver and cannot be deferred to the Answerer.
+Protocol arrays accept only ordered list/tuple inputs—sets, mappings, generators and
+strings are rejected rather than assigned an accidental iteration order. Numeric
+retrieval scores have one canonical float representation, including normalization of
+negative zero, so equivalent inputs cannot produce different artifact IDs.
 
 ## 9. Required implementation sequence and gates
 
