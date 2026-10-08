@@ -1,0 +1,57 @@
+{
+  "schema_version": "r1-prompt-manifest-v1",
+  "primary_source": {
+    "path": "papers/primary/filesystem-based-memory-for-llm-agents.pdf",
+    "sha256": "4186ea9a8ca5b5534e644a2a8c36e5594226df440b167093ea406e0e9a9bf42c",
+    "appendix": "A.3",
+    "qualification": "normalized transcription from the printed PDF; author prompt source files were not published"
+  },
+  "profiles": [
+    {
+      "cell_id": "E1",
+      "store_id": "S1",
+      "paper_prompt_number": 7,
+      "paper_pdf_pages": [35, 36],
+      "hard_round_cap": 20,
+      "published_sha256": "6732049a8b94724d38473fc72f53f93310bfe4414d0eeba4450d3078dcf6d4d8",
+      "derived_sha256": "62b8b913b4150076b36955c9c8aa8ce9c72e8670988668ff57a4397171d44129"
+    },
+    {
+      "cell_id": "E3",
+      "store_id": "S2",
+      "paper_prompt_number": 6,
+      "paper_pdf_pages": [33, 34, 35],
+      "hard_round_cap": 20,
+      "published_sha256": "4d89230b7718f28f8770faaabede2d4a3ea6ce2e174a1883f2923d371d36f6f2",
+      "derived_sha256": "3a6c8a077746b1297c02152b53359533cbb02d6f8488ea56f51ce9894d112b3c"
+    },
+    {
+      "cell_id": "E5",
+      "store_id": "S3",
+      "paper_prompt_number": 5,
+      "paper_pdf_pages": [32, 33],
+      "hard_round_cap": 40,
+      "published_sha256": "de03315ff999a8bcea7e08a10866f3a6dc74badf690d23a036e35c74ff81335c",
+      "derived_sha256": "56a7ee328b702acf677218605c2d649afe0089eda09165e5aadb286969116965"
+    }
+  ],
+  "user_turn": {
+    "status": "controlled_modification",
+    "version": "r1-evidence-only-user-turn-v1",
+    "sha256": "f20cd087abf1f96cc228342c81be31af49c670c6933da54fc0fbb9b0d78e43f9",
+    "reason": "the paper describes a common question/citation instruction but does not publish a separately delimited author-source template; evidence-only retrieval must not request an answer"
+  },
+  "redline_blocks": {
+    "store_specific_routing_and_cost_guidance": "paper_published_text_reused",
+    "role": "controlled_modification",
+    "cost_model_commit": "controlled_modification",
+    "raw_store_evidence_instruction": "controlled_modification",
+    "verify_then_stop": "controlled_modification",
+    "inference": "controlled_modification",
+    "multiple_choice": "controlled_modification",
+    "citation_format": "controlled_modification",
+    "absence": "controlled_modification",
+    "output": "controlled_modification",
+    "take_note_and_finish_search_protocol": "controlled_addition"
+  }
+}
