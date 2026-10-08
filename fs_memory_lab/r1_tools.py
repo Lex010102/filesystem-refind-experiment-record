@@ -29,6 +29,7 @@ from .evidence import (
     sha256_bytes,
     validate_store_snapshot,
 )
+from .markdown_structure import parse_markdown_headings
 from .paper_tools import SEARCH_PROFILE, TOOL_DEFINITIONS
 
 
@@ -447,6 +448,62 @@ class R1ReadOnlyFilesystem:
     def store_id(self) -> str:
         return self._snapshot.store_id
 
+    @property
+    def snapshot_tree_sha256(self) -> str:
+        return self._snapshot.tree_sha256
+
+    def authenticate_result(self, result: ReadToolResult) -> None:
+        """Replay a claimed result locally before an evidence ledger trusts it."""
+        if not isinstance(result, ReadToolResult):
+            raise EvidenceValidationError("Claimed read result has the wrong type")
+        if (
+            result.pre_tree_sha256 != self._snapshot.tree_sha256
+            or result.post_tree_sha256 != self._snapshot.tree_sha256
+        ):
+            raise EvidenceValidationError("Read result belongs to another store snapshot")
+        replay_args = dict(result.canonical_args)
+        directory_view = False
+        if result.tool_name == "view":
+            replay_path = replay_args.get("path")
+            if not isinstance(replay_path, str):
+                raise EvidenceValidationError("View result lacks a valid path argument")
+            directory_view = self._resolve(replay_path).is_directory
+        if directory_view:
+            expected_directory_args = {
+                "path": replay_args["path"],
+                "start_line": R1_PROJECT_DEFAULTS["view"]["start_line"],
+                "end_line": R1_PROJECT_DEFAULTS["view"]["end_line"],
+            }
+            if replay_args != expected_directory_args:
+                raise EvidenceValidationError(
+                    "Directory view result has noncanonical arguments"
+                )
+            self._validate_snapshot()
+            try:
+                raw = self._view(replay_args, {"path": replay_args["path"]})
+            except Exception:
+                self._validate_snapshot()
+                raise
+            self._validate_snapshot()
+            replayed = ReadToolResult.create(
+                tool_name="view",
+                canonical_args=replay_args,
+                content=raw.content,
+                coverage=raw.coverage,
+                truncated=raw.truncated,
+                result_count=raw.result_count,
+                root_survey=raw.root_survey,
+                whole_tree_grep=raw.whole_tree_grep,
+                pre_tree_sha256=self._snapshot.tree_sha256,
+                post_tree_sha256=self._snapshot.tree_sha256,
+            )
+        else:
+            replayed = self.execute(result.tool_name, replay_args)
+        if replayed != result:
+            raise EvidenceValidationError(
+                "Read result does not match a verified local replay"
+            )
+
     def _validate_snapshot(self) -> None:
         validate_store_snapshot(
             self._snapshot,
@@ -812,41 +869,7 @@ class R1ReadOnlyFilesystem:
 
     @staticmethod
     def _headings(lines: list[str]) -> list[tuple[int, int, str, tuple[str, ...]]]:
-        headings: list[tuple[int, int, str, tuple[str, ...]]] = []
-        stack: list[str] = []
-        in_fence = False
-        fence_char = ""
-        fence_length = 0
-        frontmatter_end = 0
-        if lines and lines[0] == "---":
-            try:
-                frontmatter_end = lines.index("---", 1) + 1
-            except ValueError:
-                frontmatter_end = len(lines)
-        for number, line in enumerate(lines, 1):
-            if number <= frontmatter_end:
-                continue
-            fence = re.match(r"^ {0,3}(`{3,}|~{3,})", line)
-            if fence:
-                marker = fence.group(1)
-                if not in_fence:
-                    in_fence = True
-                    fence_char = marker[0]
-                    fence_length = len(marker)
-                elif marker[0] == fence_char and len(marker) >= fence_length:
-                    in_fence = False
-                continue
-            if in_fence:
-                continue
-            match = re.match(r"^(#{1,6})[ \t]+(.+?)[ \t]*$", line)
-            if not match:
-                continue
-            level = len(match.group(1))
-            label = line.strip()
-            stack = stack[: level - 1]
-            stack.append(label)
-            headings.append((number, level, label, tuple(stack)))
-        return headings
+        return parse_markdown_headings(lines)
 
     def _toc(self, args: Mapping[str, Any]) -> _RawRead:
         target = self._resolve(args["path"])

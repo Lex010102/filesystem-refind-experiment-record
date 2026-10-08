@@ -867,3 +867,19 @@ R1 开发继续只发生在隔离 worktree `/Users/wangwenqi/.codex/worktrees/r1
 3. 512 字符以内的畸形 regex 仍可让 `re.compile` 抛出 `RecursionError` 或 `OverflowError`；现在编译和执行阶段均被收口为安全 `invalid_regex`/`regex_timeout` 工具错误，失败后照常执行 post-snapshot 检查。
 
 真实 S1 平铺 store 与真实 S2 四层主题目录产物均已通过同一执行器集成测试；S3 fixture 用于验证 manifest 的嵌套 inventory，但在真实 85-chunk S3 正式发布并通过其 manifest/COMMITTED/trace gate 前，R1 不会把 staging 或 fixture 当作 E5 输入。最终独立 Gate 为 PASS：Evidence + R1 共 50/50、全仓离线测试 152/152、`git diff --check` 均通过。此阶段仍未调用学校 API，也没有生成任何 40 题实验答案；下一阶段是 observation ledger 与 `take_note` 防伪解析器。
+
+## 2026-10-08：R1 阶段 4——Observation Ledger、`take_note` 与可信停止
+
+阶段 4 在隔离 worktree 中完成，未调用学校 API，也未读写正式 S3 进程。新增 `fs_memory_lab/r1_orchestration.py`，把论文四个只读文件工具的结果接到本项目 evidence-only 控制层。这里必须继续区分来源：`view/grep/toc/section_read` 来自 Filesystem 论文 Table 12；`take_note`、`finish_search`、Observation Ledger、证据预算、状态链、全局回退证明与 EvidenceBundle 都是为了统一 R1/R2 Answerer 而增加的 project-defined controlled adaptation，并非论文作者公开的工具或源码。
+
+`take_note` 的模型参数只允许 `observation_ids + path + line_start + line_end`。模型不能传 evidence text、答案、locator、`dia_id`、日期或 speaker。每个成功文件工具结果由本题、本次 episode 的 host 执行入口产生，再得到连续的 `obs-0001...`；裸 `ReadToolResult` 已不能事后写入 ledger。每个 observation 同时带 HMAC execution receipt，绑定 episode ID、题目 hash、完整 StoreSnapshotRef hash、轮次、动作序号与结果 hash。公开 trace 字段可以保存 key ID、receipt body 与 MAC，但不包含 HMAC secret；后续 runner/恢复阶段必须把 secret 放入独立的私有 checkpoint，缺少或错误 secret 时 fail closed，不能退化为只验证公开 SHA。
+
+被选择的证据区间必须由更早 provider round 的成功 `view`、`grep` 或 `section_read` 连续覆盖；目录 `view`、`toc`、失败调用、截断后未返回的 grep 行和 coverage gap 都不能成为证据。Host 随后重读冻结文件，按 manifest 的逐文件 hash 与完整 StoreSnapshot 验证，再由 `build_evidence_item` 生成精确文字与来源。S1/S2 必须选择完整 source-turn block；S3 必须选择带合法 inline `[SxTy]` 的真实事实行。相同文件的重叠/相邻区间按传递闭包确定性合并；完全重复不算进展；范围扩张或桥接会原子替换旧 items。预算只使用明确的 bytes 或 Unicode characters，超限时整项跳过、绝不截断 evidence。
+
+Evidence note state 绑定 question SHA-256 和完整 `StoreSnapshotRef`。每个 `TakeNoteResolution` 绑定题目、先前 observation-ledger hash、selector、prior/output state hash 和完整结果。`ProviderRoundLedger` 在构造、关闭每轮和最终停止时重放全部 `take_note` transition；同一轮多次 notes 必须形成严格状态链。初始 note state 必须为空，不能通过直接 dataclass constructor 预置一条真实 evidence。每轮的 `newly_accepted_evidence_ids` 由经过重放的 resolutions 唯一推导，调用者不能删掉真实进展来提前制造“连续两轮无进展”，也不能塞假 ID 重置计数。
+
+`finish_search` 不能携带答案。`missing_aspects` 冻结为八个非证据标签：`subject_identity`、`event_or_fact`、`time`、`location`、`cause_or_reason`、`sequence_or_relation`、`comparison_or_choice`、`corroborating_evidence`。`evidence_sufficient` 至少需要一项已验证 evidence；absence/no-progress 必须由“先 root survey、后未截断 whole-tree grep”的真实 observations 证明；fallback 完成轮本身不计入 dry rounds，新 evidence 会重置计数，连续两轮无新增后才允许 no-progress stop；budget stop 必须来自被可信重放的 budget-skipped transition。
+
+轮数上限现在是所有构造边界的硬约束，不是停止时才检查的提示：S1=20、S2=20、S3=40，并纳入 canonical limits freeze。达到上限后，observation、take-note resolution、round record 与 direct-constructor ledger 都不能产生 cap+1；只有 host 可以生成 `round_limit` stop。Observation/orchestration protocol 因 episode receipt 升为 v2；论文四工具 schema 及 `take_note/finish_search` 模型 wire schema没有因此改变。
+
+本阶段的对抗回归实际覆盖：cross-question 与同题跨运行 observation rebound、伪造初始 evidence、伪造 budget transition、tampered/cross-snapshot EvidenceItem、答案夹带、任意 caller cap、S1 第 21 轮/S3 第 41 轮、HMAC receipt 篡改、无序 set/dict IDs，以及篡改本轮新增 evidence 统计。真实 S1、真实 S2 nested store 与 formal S3-shaped fixture 使用同一控制层；S3 fixture 仅验证 curated evidence 规则和 Unicode 预算，不冒充尚未发布的正式 S3 artifact。最终 Evidence + 四工具 + orchestration 联合测试为 84/84，全仓离线回归为 186/186，`black --check` 与 `git diff --check` 通过。当前仍没有运行正式 R1 问题；下一阶段才冻结 Prompt 5/6/7 的 published transcription、evidence-only derived prompts 与 hashes，随后实现 Research Agent 状态机。

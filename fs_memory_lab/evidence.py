@@ -12,10 +12,13 @@ import json
 import math
 import os
 import re
+import stat
 from dataclasses import InitVar, asdict, dataclass, field
 from pathlib import Path, PurePosixPath
 from types import MappingProxyType
 from typing import Any, Iterable, Mapping, Sequence
+
+from .markdown_structure import parse_markdown_headings
 
 
 EVIDENCE_SCHEMA_VERSION = 1
@@ -871,6 +874,51 @@ def _linked_directory_tree_sha256(root: Path, label: str) -> str:
     return sha256_bytes(canonical_json_bytes(index))
 
 
+def _read_relative_file_no_follow(
+    root: Path, relative_path: str, *, max_bytes: int
+) -> bytes:
+    """Read a relative file without following any path component symlink."""
+    if any(not hasattr(os, flag) for flag in ("O_NOFOLLOW", "O_DIRECTORY")):
+        raise EvidenceValidationError("No-follow evidence reads are unavailable")
+    directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+    file_flags = os.O_RDONLY | os.O_NOFOLLOW
+    if hasattr(os, "O_CLOEXEC"):
+        directory_flags |= os.O_CLOEXEC
+        file_flags |= os.O_CLOEXEC
+    parts = PurePosixPath(relative_path).parts
+    current_fd: int | None = None
+    file_fd: int | None = None
+    try:
+        current_fd = os.open(Path(root), directory_flags)
+        for part in parts[:-1]:
+            next_fd = os.open(part, directory_flags, dir_fd=current_fd)
+            os.close(current_fd)
+            current_fd = next_fd
+        file_fd = os.open(parts[-1], file_flags, dir_fd=current_fd)
+        if not stat.S_ISREG(os.fstat(file_fd).st_mode):
+            raise EvidenceValidationError("Evidence path is not a regular file")
+        chunks: list[bytes] = []
+        total = 0
+        while True:
+            chunk = os.read(file_fd, 64 * 1024)
+            if not chunk:
+                break
+            total += len(chunk)
+            if total > max_bytes:
+                raise EvidenceValidationError(
+                    "Evidence file exceeds the verified store size"
+                )
+            chunks.append(chunk)
+        return b"".join(chunks)
+    except OSError as exc:
+        raise EvidenceValidationError("Evidence file could not be read safely") from exc
+    finally:
+        if file_fd is not None:
+            os.close(file_fd)
+        if current_fd is not None:
+            os.close(current_fd)
+
+
 @dataclass(frozen=True)
 class VerifiedStoreManifest:
     """A manifest accepted only after external-hash and mounted-store checks.
@@ -993,6 +1041,22 @@ class VerifiedStoreManifest:
             raise EvidenceValidationError(
                 "Read payload differs from the verified store manifest"
             )
+
+    def read_verified_file(self, root: Path, relative_path: str) -> bytes:
+        """Read and authenticate one mounted file against the frozen manifest."""
+        self.assert_mounted_root(root)
+        canonical = _canonical_relative_markdown_path(
+            relative_path, "verified read path"
+        )
+        if canonical not in self._file_sha256_by_path:
+            raise EvidenceValidationError(
+                "Read path is absent from the verified store manifest"
+            )
+        payload = _read_relative_file_no_follow(
+            root, canonical, max_bytes=self.total_bytes
+        )
+        self.assert_file_payload(canonical, payload)
+        return payload
 
     @classmethod
     def load(
@@ -1840,22 +1904,17 @@ def _frontmatter_end(lines: Sequence[str]) -> int:
 def _section_for_range(
     lines: Sequence[str], line_start: int, line_end: int
 ) -> tuple[str | None, str | None]:
-    headings: list[tuple[int, int, str]] = []
-    for line_number, line in enumerate(lines, start=1):
-        match = _HEADING.fullmatch(line)
-        if match:
-            headings.append((line_number, len(match.group(1)), line.strip()))
-    if any(line_start < number <= line_end for number, _, _ in headings):
+    headings = parse_markdown_headings(lines)
+    if any(line_start < number <= line_end for number, _, _, _ in headings):
         raise EvidenceValidationError("Evidence selection crosses a Markdown section boundary")
-    stack: list[str] = []
-    for number, level, label in headings:
+    section_path: tuple[str, ...] = ()
+    for number, _level, _label, heading_path in headings:
         if number > line_start:
             break
-        stack = stack[: level - 1]
-        stack.append(label)
-    if not stack:
+        section_path = heading_path
+    if not section_path:
         return None, None
-    return " > ".join(stack), stack[0]
+    return " > ".join(section_path), section_path[0]
 
 
 def _attribution_unit(
@@ -2090,11 +2149,26 @@ def build_evidence_item(
     ):
         raise EvidenceValidationError("score must be a finite JSON number or null")
     frozen_score = float(score) if score is not None else None
-    source_file = _resolve_virtual_file(root, path)
+    if not isinstance(path, str) or _VIRTUAL_PATH.fullmatch(path) is None:
+        raise EvidenceValidationError(
+            "Evidence path must be a .md file under /memories"
+        )
     try:
-        lines = source_file.read_text(encoding="utf-8").splitlines()
-    except (OSError, UnicodeDecodeError) as exc:
-        raise EvidenceValidationError(f"Cannot read evidence source: {exc}") from exc
+        relative_path = _canonical_relative_markdown_path(
+            path[len("/memories/") :], "evidence path"
+        )
+    except EvidenceValidationError as exc:
+        raise EvidenceValidationError(
+            "Evidence path must use canonical POSIX spelling"
+        ) from exc
+    try:
+        lines = verified_manifest.read_verified_file(
+            root, relative_path
+        ).decode("utf-8", errors="strict").splitlines()
+    except UnicodeDecodeError as exc:  # manifest loader already proves UTF-8
+        raise EvidenceValidationError(
+            "Verified evidence source is not valid UTF-8"
+        ) from exc
     if line_end > len(lines):
         raise EvidenceValidationError("Evidence line range exceeds the source file")
     frontmatter_end = _frontmatter_end(lines)

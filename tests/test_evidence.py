@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from unittest.mock import patch
 
 from fs_memory_lab.evidence import (
     AttributionIndex,
@@ -450,6 +451,60 @@ class EvidenceSchemaTest(unittest.TestCase):
         detached = self.s1_manifest.file_paths
         detached += ("invented.md",)
         self.assertEqual(self.s1_manifest.file_paths, expected_files)
+
+    def test_evidence_read_rejects_recovery_style_temporary_replacement(self):
+        relative = "session-01.md"
+        target = self.s1_root / relative
+        original_payload = target.read_bytes()
+        from fs_memory_lab import evidence as evidence_module
+
+        primitive = evidence_module._read_relative_file_no_follow
+
+        def read_temporary_tamper(root, requested, *, max_bytes):
+            if requested != relative:
+                return primitive(root, requested, max_bytes=max_bytes)
+            target.write_bytes(b"---\nname: injected\ndescription: injected\n---\n")
+            try:
+                malicious = primitive(root, requested, max_bytes=max_bytes)
+            finally:
+                target.write_bytes(original_payload)
+            return malicious
+
+        with patch(
+            "fs_memory_lab.evidence._read_relative_file_no_follow",
+            side_effect=read_temporary_tamper,
+        ):
+            with self.assertRaisesRegex(EvidenceValidationError, "Read payload differs"):
+                self.raw_item()
+        self.assertEqual(target.read_bytes(), original_payload)
+
+    def test_evidence_section_ignores_frontmatter_and_fenced_code_headings(self):
+        text = (
+            "---\nname: notes\ndescription: '# frontmatter fake'\n---\n\n"
+            "```md\n# fenced fake\n```\n"
+            "# Combined\n\n"
+            "- Calvin planned to visit Japan [S1T13].\n"
+            "- Dave later encouraged him [S2T2].\n"
+        )
+        self.write_curated(text)
+        source_index = {
+            "[S1T13]": [{"file": "notes.md", "line": 11}],
+            "[S2T2]": [{"file": "notes.md", "line": 12}],
+        }
+        verified, _, _ = self.make_s3_manifest(source_index)
+        snapshot = StoreSnapshotRef.capture(
+            root=self.s3_root,
+            catalog=self.catalog,
+            verified_manifest=verified,
+        )
+        item = self.curated_item(
+            verified,
+            snapshot,
+            line_start=11,
+            line_end=12,
+        )
+        self.assertEqual(item.section, "# Combined")
+        self.assertEqual(item.group_id, "/memories/notes.md > # Combined")
 
     def test_s2_and_s3_manifest_inventory_preserves_nested_layout(self):
         s2 = VerifiedStoreManifest.load(
