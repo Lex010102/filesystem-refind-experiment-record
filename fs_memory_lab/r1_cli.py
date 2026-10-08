@@ -70,9 +70,7 @@ def _preflight(repo_root: Path) -> dict:
             "unit": R1_AGENT_LIMITS["token_safety_fuse_unit"],
             "limit": R1_AGENT_LIMITS["token_safety_fuse_limit"],
             "scope": R1_AGENT_LIMITS["token_safety_fuse_scope"],
-            "filesystem_result_truncation": R1_AGENT_LIMITS[
-                "filesystem_result_truncation"
-            ],
+            "file_view_truncation": R1_AGENT_LIMITS["file_view_truncation"],
         },
         "api_called": False,
     }

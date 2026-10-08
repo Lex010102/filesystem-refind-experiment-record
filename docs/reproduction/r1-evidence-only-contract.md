@@ -83,7 +83,8 @@ The formal R1 runtime also has one project-defined emergency token fuse shared
 unchanged by E1, E3 and E5: `1,000,000 provider_reported_total_tokens` per question,
 counting research completions, rejected-prose correction completions and context
 compaction completions. This is not a paper setting, a retrieval budget, or an
-EvidenceBundle size limit. No filesystem result is clipped, and E5 receives no
+EvidenceBundle size limit. The fuse never clips a `view` result; ordinary `grep`
+`max_results` behavior remains part of the paper tool. E5 receives no
 condition-specific read limit. Each completed response is recorded first; if its
 cumulative reported total reaches the fuse, the proposed actions in that triggering
 response are not executed, no later provider request is sent, and the run publishes a

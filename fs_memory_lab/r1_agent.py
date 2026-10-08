@@ -82,21 +82,21 @@ R1_AGENT_LIMITS = MappingProxyType(
         "free_text_corrections_per_round": 1,
         "free_text_corrections_per_episode": 3,
         # Project-defined, condition-invariant emergency fuse.  This is not an
-        # evidence budget and never clips a filesystem result.  It counts every
+        # evidence budget and never clips file-view content.  It counts every
         # successful provider completion in the episode, including protocol
         # corrections and context compaction.
         "token_safety_fuse_unit": "provider_reported_total_tokens",
         "token_safety_fuse_limit": 1_000_000,
         "token_safety_fuse_scope": "per_episode_all_model_calls",
         "token_safety_fuse_requires_usage": True,
-        "filesystem_result_truncation": "none",
+        "file_view_truncation": "none",
         "context_compaction_prompt_token_trigger": CONTEXT_COMPACTION_TRIGGER,
         "context_compaction_recent_rounds": CONTEXT_COMPACTION_KEEP_ROUNDS,
         "context_compaction_max_completion_tokens": 8192,
     }
 )
 FROZEN_R1_AGENT_LIMITS_SHA256 = (
-    "0e58bdf9a83e0e357564986753d5e59f9a237feb390344e123e9c05e3af0abe2"
+    "ed5f6b5077da7406b5fa2919a3c8100f4379cde23939e661f4a8caf02281024a"
 )
 R1_TOOL_NAMES = (*R1_FILESYSTEM_TOOL_NAMES, *R1_ORCHESTRATION_ACTION_NAMES)
 
@@ -490,7 +490,7 @@ class R1ResearchAgent:
                     "cumulative_usage": cumulative,
                     "fuse_unit": R1_AGENT_LIMITS["token_safety_fuse_unit"],
                     "fuse_limit": limit,
-                    "filesystem_results_clipped": False,
+                    "file_view_content_clipped": False,
                     "response_actions_executed": False,
                 },
             )
@@ -654,9 +654,7 @@ class R1ResearchAgent:
                 "token_safety_fuse_unit": R1_AGENT_LIMITS["token_safety_fuse_unit"],
                 "token_safety_fuse_limit": R1_AGENT_LIMITS["token_safety_fuse_limit"],
                 "token_safety_fuse_scope": R1_AGENT_LIMITS["token_safety_fuse_scope"],
-                "filesystem_result_truncation": R1_AGENT_LIMITS[
-                    "filesystem_result_truncation"
-                ],
+                "file_view_truncation": R1_AGENT_LIMITS["file_view_truncation"],
             },
         )
 

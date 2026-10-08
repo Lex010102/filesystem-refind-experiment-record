@@ -477,7 +477,7 @@ class R1ResearchAgentTest(unittest.TestCase):
             if event.get("kind") == "token_safety_fuse_triggered"
         ]
         self.assertEqual(len(triggered), 1)
-        self.assertFalse(triggered[0]["filesystem_results_clipped"])
+        self.assertFalse(triggered[0]["file_view_content_clipped"])
         self.assertFalse(triggered[0]["response_actions_executed"])
 
     def test_limits_are_explicit_and_content_addressed(self):
@@ -490,7 +490,7 @@ class R1ResearchAgentTest(unittest.TestCase):
             R1_AGENT_LIMITS["token_safety_fuse_unit"],
             "provider_reported_total_tokens",
         )
-        self.assertEqual(R1_AGENT_LIMITS["filesystem_result_truncation"], "none")
+        self.assertEqual(R1_AGENT_LIMITS["file_view_truncation"], "none")
         self.assertRegex(r1_agent_limits_sha256(), r"^[0-9a-f]{64}$")
         self.assertEqual(r1_agent_limits_sha256(), FROZEN_R1_AGENT_LIMITS_SHA256)
         verify_r1_agent_limits()
