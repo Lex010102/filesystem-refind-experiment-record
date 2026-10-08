@@ -898,6 +898,22 @@ Appendix A.3 说明所有变体使用相同问题和引用要求，却没有单�
 
 状态机把每次 provider completion 定义为一个 round，并强制每个 response 只能处于三种互斥模式之一：批量只读 filesystem calls、批量 `take_note`、或唯一一个 `finish_search`。自由文本答案、未知工具、混合读取与记笔记、多个 finish、重复 tool-call ID 和不兼容 wrapper 全部 fail closed；参数 JSON 格式错误、普通文件工具参数错误、未观察/不完整 evidence selector 和尚不满足条件的 finish 则作为结构化 tool error 返回，让 Agent 在下一轮纠正。成功 read 由 host 执行后生成 observation ID 和 coverage；成功 note 仍由 Stage 4 resolver 重放和重读；finish 只有在 ProviderRoundLedger 已关闭本轮后才能验证。到达 cap 时只有 host 可以生成 `round_limit`，模型 schema 不提供该理由。
 
-Retry 只覆盖尚未返回完整 assistant response 的 timeout 和指定 transient HTTP；已经返回的 response 及其任何 action 绝不重放。调用次数、filesystem/orchestration 次数、served model、response metadata、usage、round hash 和安全 trace 分别记录。Provider 必须返回明确 served model；token usage 若提供则必须同时含 prompt/completion/total 且加总一致，否则拒绝，避免把 requested alias 冒充实际模型或保存自相矛盾成本。项目定义的 per-response/per-episode tool-call 限制与 retry 参数另有冻结 hash `0a532bf…b551`。
+Retry 只覆盖尚未返回完整 assistant response 的 timeout 和指定 transient HTTP；已经返回的 response 及其任何 action 绝不重放。调用次数、filesystem/orchestration 次数、served model、response metadata、usage、round hash 和安全 trace 分别记录。Provider 必须返回明确 served model；token usage 若提供则必须同时含 prompt/completion/total 且加总一致，否则拒绝，避免把 requested alias 冒充实际模型或保存自相矛盾成本。项目定义的 per-response/per-episode tool-call 限制、retry 参数和论文 Table 11 的 context-compaction 触发条件另有冻结 hash；在阶段 7 把可恢复的私有 checkpoint 与 compaction 实现接入后，当前正式 hash 更新为 `c1b3dc7b…8c2`，旧值不再是可执行合同。
 
 fake-provider 端到端测试已经证明完整的 “view 真实 source-turn→下一轮 take_note→finish_search” 路径能产生 host-verified `[S1T13]` EvidenceItem；同时覆盖错误 note 恢复、非法 JSON 恢复、混合模式/自由文本/未知工具拒绝、served-model/usage gate、一次 timeout retry 不重复 action，以及 S1 精确第 20 轮 host cap。专项为 9/9，通过 Prompt/四工具/orchestration/evidence 联合回归 101/101。此阶段仍没有调用学校 API。下一阶段将实现固定 store preflight、S3 正式发布识别、atomic episode artifact/EvidenceBundle 与恢复安全，然后才允许小型真实 API smoke test。
+
+## 2026-10-08：R1 阶段 7——正式输入、上下文压缩与原子产物链
+
+阶段 7 把 Research Agent 从 fake fixture 接到本项目真正的冻结输入。`fs_memory_lab/r1_inputs.py` 固定并逐项验证：canonical `source_map.json`、568 条 records、S1/S2/S3 manifest 与 commit marker、S2 path-map/trace、S3 management trace，以及 dev-6/main-40 的在线问题文件。加载器要求 store 位于审阅过的正式发布路径；即使把相同字节复制到 staging 目录也会拒绝。正式 S3 已被识别为 85/85 chunks 完成后的 published store，当前 tree SHA-256 为 `983238fd…cad2`、2 个 Markdown 文件、304640 bytes；它不再使用 fixture 或中间 checkpoint 冒充 E5 输入。
+
+R1 的 context compaction 也在本阶段落地：只有 provider 报告的 prompt tokens 超过 96000、尚未停止、且已经积累超过 3 个 round 时才触发；保留最近 3 轮，旧消息交给单独一次 summarizer completion，并把该调用的 attempts、usage、served model 和 hash trace 分开记账。论文给了 96k/最近 3 轮这两个配置，但没有公开 summarizer prompt，所以 `COMPACTION_SYSTEM_PROMPT` 明确标为 `project-defined approximation`。压缩调用同样只在完整 response 返回前允许 timeout/指定 transient HTTP retry；不允许工具调用、空 summary 或自由格式混入。
+
+每个 episode 启动时会生成 observation HMAC secret，并以独占创建、0600 权限保存到私有 `episode-secret.json`；公开 trace 只保存 key ID，不保存 secret。成功运行原子发布 `trace.jsonl + episode-secret.json + bundle.json + episode.json + COMPLETED`；失败运行发布独立的 `failure.json + FAILED`，绝不创建貌似有效的 EvidenceBundle。成功和失败两条路径都带完整 hash chain，任一 bundle/failure/trace/index 被修改都会被离线 verifier 拒绝。失败记录会准确区分已完成 response、未闭合 round、API attempt、模型调用、文件工具和 orchestration 调用，并重新计算失败时的 store tree，不能在外部发生 store drift 后仍声称 `store_unchanged=true`。
+
+## 2026-10-08：R1 阶段 8——单题、批量入口与真实三存储预检
+
+新增 `fs_memory_lab/r1_runner.py` 与独立命令 `python3 -m fs_memory_lab.r1_cli`。`run-one` 运行一题；`run-batch` 采用确定性的 cell-major 顺序（先条件、再题号），默认首个失败即停止，每道题独立原子发布，批次最后生成带自身 hash 的 `batch-summary.json`。正式 runner 当前刻意使用 sequential execution；论文的 batch concurrency=8 不被偷偷套入本地实验，若以后引入并行，必须作为新的 runtime condition 冻结。`verify` 与 `verify-batch` 全部离线工作，后者会重新校验 summary 顺序、计数、路径边界、每一个成功/失败 artifact 及相应 store snapshot。
+
+证据预算没有在代码中暗设一个正式默认值。`run-one`/`run-batch` 都强制显式传入 `--budget-characters`；先用 dev-6 做预算敏感性冻结，再运行 main-40，避免看完正式答案后调整。API 配置仍只从既有 `FSMEM_*` 环境变量读取，不写 key 文件、不显示 key，也不在失败时清除 key。
+
+使用新代码对主项目执行的只读 `preflight` 已同时通过 E1/S1、E3/S2、E5/S3、dev-6 和 main-40，输出明确标记 `api_called=false`。预检期间发现 macOS 自动写入 S2 正式目录的 `.DS_Store`；该系统元数据被移到 `/private/tmp/locomo-s2-foldered.DS_Store.r1-preflight-backup` 后，S2 再次严格匹配冻结的 30 个 Markdown 文件、114456 bytes 与 manifest。包含 runner 成功、失败、批量、summary 篡改和 CLI gate 在内的 R1/evidence 聚焦回归为 114/114；与已有 S1/S2/S3、数据、题集等测试合并后的全仓离线回归为 216/216。至此离线 R1 harness 已具备真实 API smoke test 的前置条件，但本阶段仍未调用学校 API、未产生 dev-6/main-40 检索结果，也未决定正式 evidence budget。

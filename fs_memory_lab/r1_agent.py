@@ -15,7 +15,12 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Callable, Mapping, Protocol, Sequence
 
-from .agent import ChatProvider, TransientProviderError
+from .agent import (
+    COMPACTION_SYSTEM_PROMPT,
+    COMPACTION_USER_PREFIX,
+    ChatProvider,
+    TransientProviderError,
+)
 from .evidence import (
     EvidenceValidationError,
     QuestionInput,
@@ -27,7 +32,12 @@ from .evidence import (
     sha256_bytes,
     validate_store_snapshot,
 )
-from .paper_config import SEARCH, RoleConfig
+from .paper_config import (
+    CONTEXT_COMPACTION_KEEP_ROUNDS,
+    CONTEXT_COMPACTION_TRIGGER,
+    SEARCH,
+    RoleConfig,
+)
 from .r1_orchestration import (
     R1_ORCHESTRATION_ACTION_NAMES,
     R1_ROUND_LIMIT_BY_STORE,
@@ -63,10 +73,13 @@ R1_AGENT_LIMITS = MappingProxyType(
         "timeout_retry_backoff_seconds": (2, 4),
         "http_max_attempts": 5,
         "http_retry_backoff_seconds": (5, 15, 30, 60),
+        "context_compaction_prompt_token_trigger": CONTEXT_COMPACTION_TRIGGER,
+        "context_compaction_recent_rounds": CONTEXT_COMPACTION_KEEP_ROUNDS,
+        "context_compaction_max_completion_tokens": 8192,
     }
 )
 FROZEN_R1_AGENT_LIMITS_SHA256 = (
-    "0a532bf20fe5747cb8a92c6550fdfd500843893a32aed33462c6c78e6834b551"
+    "c1b3dc7be8a0911aa2009273d88076c3ae8cca8a70e6e750bbca3400e43d08c2"
 )
 R1_TOOL_NAMES = (*R1_FILESYSTEM_TOOL_NAMES, *R1_ORCHESTRATION_ACTION_NAMES)
 
@@ -113,6 +126,8 @@ class R1EpisodeOutcome:
     trace: tuple[Mapping[str, Any], ...]
     usage: tuple[Mapping[str, Any], ...]
     provider_request_attempts: int
+    model_calls: int
+    compaction_calls: int
     filesystem_tool_calls: int
     orchestration_calls: int
     requested_model: str
@@ -147,6 +162,8 @@ class R1EpisodeOutcome:
             raise EvidenceValidationError("R1 episode model identity is incomplete")
         for value in (
             self.provider_request_attempts,
+            self.model_calls,
+            self.compaction_calls,
             self.filesystem_tool_calls,
             self.orchestration_calls,
         ):
@@ -154,6 +171,10 @@ class R1EpisodeOutcome:
                 raise EvidenceValidationError("R1 episode metric is invalid")
         if self.provider_request_attempts < self.rounds.rounds_completed:
             raise EvidenceValidationError("R1 provider attempts are undercounted")
+        if self.model_calls != self.rounds.rounds_completed + self.compaction_calls:
+            raise EvidenceValidationError("R1 model-call count is inconsistent")
+        if self.provider_request_attempts < self.model_calls:
+            raise EvidenceValidationError("R1 provider attempts are below model calls")
         object.__setattr__(
             self, "trace", tuple(MappingProxyType(dict(x)) for x in self.trace)
         )
@@ -293,6 +314,7 @@ class R1ResearchAgent:
         budget_limit: int,
         event_sink: Callable[[Mapping[str, Any]], None] | None = None,
         sleeper: Callable[[float], None] = time.sleep,
+        private_checkpoint_path: Path | None = None,
     ) -> None:
         verify_r1_prompts()
         verify_r1_agent_limits()
@@ -322,6 +344,11 @@ class R1ResearchAgent:
         self._budget_limit = budget_limit
         self._event_sink = event_sink
         self._sleeper = sleeper
+        self._private_checkpoint_path = (
+            Path(private_checkpoint_path)
+            if private_checkpoint_path is not None
+            else None
+        )
         self._filesystem = R1ReadOnlyFilesystem(
             root=root,
             catalog=catalog,
@@ -376,6 +403,7 @@ class R1ResearchAgent:
         prior_attempts: int,
         filesystem_calls: int,
         orchestration_calls: int,
+        request_kind: str = "research",
     ) -> tuple[dict[str, Any], int]:
         local_attempt = 0
         while True:
@@ -399,6 +427,7 @@ class R1ResearchAgent:
                     trace,
                     {
                         "kind": "provider_retry",
+                        "request_kind": request_kind,
                         "provider_round": provider_round,
                         "attempt_in_request": local_attempt,
                         "provider_request_attempt": total_attempt,
@@ -460,6 +489,8 @@ class R1ResearchAgent:
             question_sha256=question.sha256,
             snapshot=self._snapshot,
         )
+        if self._private_checkpoint_path is not None:
+            observations.write_private_checkpoint(self._private_checkpoint_path)
         notes = EvidenceNoteState.start(
             question_sha256=question.sha256,
             snapshot=self._snapshot,
@@ -487,7 +518,10 @@ class R1ResearchAgent:
         attempts = 0
         filesystem_calls = 0
         orchestration_calls = 0
+        model_calls = 0
+        compaction_calls = 0
         action_ordinal = 0
+        round_starts: list[int] = []
 
         self._emit(
             trace,
@@ -508,6 +542,7 @@ class R1ResearchAgent:
 
         stop: StopRecord | None = None
         for round_number in range(1, cap + 1):
+            round_starts.append(len(messages))
             result, attempts = self._complete_with_retry(
                 messages=messages,
                 tools=tools,
@@ -518,11 +553,31 @@ class R1ResearchAgent:
                 filesystem_calls=filesystem_calls,
                 orchestration_calls=orchestration_calls,
             )
+            model_calls += 1
+            round_usage: dict[str, Any] | None = None
+            served = result.get("served_model")
             try:
+                round_usage = _safe_usage(result.get("usage", {}))
+                if not isinstance(served, str) or not served.strip():
+                    raise ValueError("Provider response lacks a served model identity")
                 message = result["message"]
                 calls = _parse_tool_calls(message)
-                round_usage = _safe_usage(result.get("usage", {}))
             except Exception as exc:
+                self._emit(
+                    trace,
+                    {
+                        "kind": "provider_response_rejected",
+                        "provider_round": round_number,
+                        "provider_request_attempts_total": attempts,
+                        "served_model": (
+                            served
+                            if isinstance(served, str) and served.strip()
+                            else None
+                        ),
+                        "usage": round_usage,
+                        "error_type": type(exc).__name__,
+                    },
+                )
                 raise self._fail(
                     str(exc),
                     stage="provider_response",
@@ -546,17 +601,6 @@ class R1ResearchAgent:
                     trace=trace,
                 )
             usage.append(round_usage)
-            served = result.get("served_model")
-            if not isinstance(served, str) or not served.strip():
-                raise self._fail(
-                    "Provider response lacks a served model identity",
-                    stage="provider_response",
-                    provider_round=round_number,
-                    attempts=attempts,
-                    filesystem_calls=filesystem_calls,
-                    orchestration_calls=orchestration_calls,
-                    trace=trace,
-                )
             served_models.append(served)
             self._emit(
                 trace,
@@ -626,7 +670,13 @@ class R1ResearchAgent:
                                 "root_survey": observation.result.root_survey,
                                 "whole_tree_grep": observation.result.whole_tree_grep,
                             }
-                            self._emit(trace, observation.to_dict())
+                            self._emit(
+                                trace,
+                                {
+                                    "kind": "filesystem_observation",
+                                    **observation.to_dict(),
+                                },
+                            )
                         except R1ToolError as exc:
                             payload = {
                                 "ok": False,
@@ -682,6 +732,7 @@ class R1ResearchAgent:
                     pending_finish = arguments
 
                 if mode != "finish":
+                    completed_payload = json.loads(messages[-1]["content"])
                     self._emit(
                         trace,
                         {
@@ -691,10 +742,19 @@ class R1ResearchAgent:
                             "tool_call_id": call["id"],
                             "tool_name": name,
                             "mode": mode,
-                            "ok": (
-                                isinstance(arguments, Mapping)
-                                and messages[-1]["role"] == "tool"
-                                and json.loads(messages[-1]["content"])["ok"]
+                            "arguments": (
+                                dict(arguments)
+                                if isinstance(arguments, Mapping)
+                                else None
+                            ),
+                            "arguments_wire_sha256": sha256_bytes(
+                                call["function"]["arguments"].encode("utf-8")
+                            ),
+                            "ok": bool(completed_payload["ok"]),
+                            "error_code": (
+                                completed_payload.get("error", {}).get("code")
+                                if not completed_payload["ok"]
+                                else None
                             ),
                         },
                     )
@@ -796,6 +856,120 @@ class R1ResearchAgent:
                     },
                 )
 
+            prompt_tokens = round_usage.get("prompt_tokens")
+            should_compact = (
+                stop is None
+                and round_number < cap
+                and isinstance(prompt_tokens, int)
+                and prompt_tokens > CONTEXT_COMPACTION_TRIGGER
+                and len(round_starts) > CONTEXT_COMPACTION_KEEP_ROUNDS
+            )
+            if should_compact:
+                keep_start = round_starts[-CONTEXT_COMPACTION_KEEP_ROUNDS]
+                older_messages = messages[2:keep_start]
+                compaction_input = canonical_json_bytes(older_messages).decode("utf-8")
+                compact_config = RoleConfig(
+                    model=SEARCH.model,
+                    reasoning_effort=SEARCH.reasoning_effort,
+                    max_completion_tokens=R1_AGENT_LIMITS[
+                        "context_compaction_max_completion_tokens"
+                    ],
+                    max_rounds=1,
+                )
+                compact_result, attempts = self._complete_with_retry(
+                    messages=[
+                        {"role": "system", "content": COMPACTION_SYSTEM_PROMPT},
+                        {"role": "user", "content": compaction_input},
+                    ],
+                    tools=[],
+                    config=compact_config,
+                    provider_round=round_number,
+                    trace=trace,
+                    prior_attempts=attempts,
+                    filesystem_calls=filesystem_calls,
+                    orchestration_calls=orchestration_calls,
+                    request_kind="compaction",
+                )
+                model_calls += 1
+                compaction_calls += 1
+                compact_usage: dict[str, Any] | None = None
+                compact_served = compact_result.get("served_model")
+                try:
+                    compact_message = compact_result["message"]
+                    summary = compact_message.get("content")
+                    if (
+                        not isinstance(compact_message, Mapping)
+                        or compact_message.get("role") not in {None, "assistant"}
+                        or not isinstance(summary, str)
+                        or not summary.strip()
+                        or compact_message.get("tool_calls")
+                        or compact_result.get("finish_reason") != "stop"
+                    ):
+                        raise ValueError(
+                            "Context compaction did not return clean summary text"
+                        )
+                    compact_usage = _safe_usage(compact_result.get("usage", {}))
+                    if (
+                        not isinstance(compact_served, str)
+                        or not compact_served.strip()
+                    ):
+                        raise ValueError(
+                            "Context compaction lacks served model identity"
+                        )
+                except Exception as exc:
+                    self._emit(
+                        trace,
+                        {
+                            "kind": "context_compaction_rejected",
+                            "after_provider_round": round_number,
+                            "provider_request_attempts_total": attempts,
+                            "served_model": (
+                                compact_served
+                                if isinstance(compact_served, str)
+                                and compact_served.strip()
+                                else None
+                            ),
+                            "usage": compact_usage,
+                            "error_type": type(exc).__name__,
+                        },
+                    )
+                    raise self._fail(
+                        str(exc),
+                        stage="compaction_response",
+                        provider_round=round_number,
+                        attempts=attempts,
+                        filesystem_calls=filesystem_calls,
+                        orchestration_calls=orchestration_calls,
+                        trace=trace,
+                    ) from exc
+                usage.append({"compaction": True, **compact_usage})
+                served_models.append(compact_served)
+                self._emit(
+                    trace,
+                    {
+                        "kind": "context_compaction",
+                        "after_provider_round": round_number,
+                        "dropped_messages": len(older_messages),
+                        "kept_rounds": CONTEXT_COMPACTION_KEEP_ROUNDS,
+                        "input_sha256": sha256_bytes(compaction_input.encode("utf-8")),
+                        "summary": summary,
+                        "summary_sha256": sha256_bytes(summary.encode("utf-8")),
+                        "served_model": compact_served,
+                        "response_id": compact_result.get("response_id"),
+                        "system_fingerprint": compact_result.get("system_fingerprint"),
+                        "usage": compact_usage,
+                    },
+                )
+                messages = (
+                    messages[:2]
+                    + [{"role": "user", "content": COMPACTION_USER_PREFIX + summary}]
+                    + messages[keep_start:]
+                )
+                round_starts = [
+                    start - keep_start + 3
+                    for start in round_starts[-CONTEXT_COMPACTION_KEEP_ROUNDS:]
+                ]
+
         if stop is None:  # pragma: no cover - cap branch is exhaustive
             raise EvidenceValidationError("R1 episode ended without a stop record")
         validate_store_snapshot(
@@ -818,6 +992,8 @@ class R1ResearchAgent:
             trace=tuple(trace),
             usage=tuple(usage),
             provider_request_attempts=attempts,
+            model_calls=model_calls,
+            compaction_calls=compaction_calls,
             filesystem_tool_calls=filesystem_calls,
             orchestration_calls=orchestration_calls,
             requested_model=self._requested_model,

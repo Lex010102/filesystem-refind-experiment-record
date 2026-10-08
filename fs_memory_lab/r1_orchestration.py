@@ -11,8 +11,10 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import os
 import re
 import secrets
+import stat
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import MappingProxyType
@@ -851,6 +853,11 @@ class ObservationLedger:
     def ledger_sha256(self) -> str:
         return sha256_bytes(canonical_json_bytes(self.to_dict()))
 
+    @property
+    def episode_key_id(self) -> str:
+        """Return the public identifier of the private episode capability."""
+        return self._episode_receipt.key_id
+
     def prefix_through_round(self, round_number: int) -> "ObservationLedger":
         _positive_integer(round_number, "round_number")
         return ObservationLedger(
@@ -892,6 +899,106 @@ class ObservationLedger:
 
     def to_action_dicts(self) -> tuple[Mapping[str, Any], ...]:
         return tuple(observation.to_action_dict() for observation in self.observations)
+
+    def write_private_checkpoint(self, path: Path) -> None:
+        """Persist the episode HMAC secret once, outside public traces.
+
+        The checkpoint is intentionally not sufficient to resume a provider
+        conversation by itself.  It is the private capability required by any
+        future recovery implementation to authenticate serialized observations;
+        absence, wrong mode or wrong key fails closed.
+        """
+        target = Path(path)
+        parent = target.parent
+        if parent.is_symlink() or not parent.is_dir():
+            raise EvidenceValidationError(
+                "Private checkpoint parent must be an existing regular directory"
+            )
+        body = {
+            "schema_version": 1,
+            "episode_id": self.episode_id,
+            "episode_key_id": self._episode_receipt.key_id,
+            "question_sha256": self.question_sha256,
+            "snapshot_ref_sha256": self._episode_receipt.snapshot_ref_sha256,
+            "secret_hex": self._episode_receipt._secret.hex(),
+        }
+        payload = canonical_json_bytes(body) + b"\n"
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+        if hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+        descriptor: int | None = None
+        try:
+            descriptor = os.open(target, flags, 0o600)
+            written = 0
+            while written < len(payload):
+                count = os.write(descriptor, payload[written:])
+                if count <= 0:
+                    raise OSError("short private-checkpoint write")
+                written += count
+            os.fsync(descriptor)
+        except FileExistsError as exc:
+            raise EvidenceValidationError(
+                "Private episode checkpoint already exists"
+            ) from exc
+        except OSError as exc:
+            try:
+                if target.is_file() and not target.is_symlink():
+                    target.unlink()
+            except OSError:
+                pass
+            raise EvidenceValidationError(
+                "Private episode checkpoint could not be written"
+            ) from exc
+        finally:
+            if descriptor is not None:
+                os.close(descriptor)
+        self.verify_private_checkpoint(target)
+
+    def verify_private_checkpoint(self, path: Path) -> None:
+        target = Path(path)
+        if target.is_symlink() or not target.is_file():
+            raise EvidenceValidationError("Private episode checkpoint is missing")
+        mode = stat.S_IMODE(target.stat().st_mode)
+        if mode != 0o600:
+            raise EvidenceValidationError(
+                "Private episode checkpoint mode must be exactly 0600"
+            )
+        try:
+            value = json.loads(target.read_bytes().decode("utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            raise EvidenceValidationError(
+                "Private episode checkpoint is unreadable"
+            ) from exc
+        expected_keys = {
+            "schema_version",
+            "episode_id",
+            "episode_key_id",
+            "question_sha256",
+            "snapshot_ref_sha256",
+            "secret_hex",
+        }
+        if not isinstance(value, dict) or set(value) != expected_keys:
+            raise EvidenceValidationError(
+                "Private episode checkpoint fields are invalid"
+            )
+        try:
+            secret = bytes.fromhex(value["secret_hex"])
+        except (TypeError, ValueError) as exc:
+            raise EvidenceValidationError(
+                "Private episode checkpoint secret is invalid"
+            ) from exc
+        if (
+            value["schema_version"] != 1
+            or value["episode_id"] != self.episode_id
+            or value["episode_key_id"] != self._episode_receipt.key_id
+            or value["question_sha256"] != self.question_sha256
+            or value["snapshot_ref_sha256"] != self._episode_receipt.snapshot_ref_sha256
+            or secret != self._episode_receipt._secret
+            or sha256_bytes(secret) != self._episode_receipt.key_id
+        ):
+            raise EvidenceValidationError(
+                "Private episode checkpoint does not authenticate this episode"
+            )
 
 
 @dataclass(frozen=True)

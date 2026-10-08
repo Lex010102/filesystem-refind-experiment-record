@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import tempfile
 import unittest
@@ -8,10 +9,12 @@ from pathlib import Path
 
 from fs_memory_lab.agent import TransientProviderError
 from fs_memory_lab.evidence import (
+    EvidenceValidationError,
     QuestionInput,
     SourceCatalog,
     StoreSnapshotRef,
     VerifiedStoreManifest,
+    canonical_json_bytes,
 )
 from fs_memory_lab.r1_agent import (
     FROZEN_R1_AGENT_LIMITS_SHA256,
@@ -323,12 +326,80 @@ class R1ResearchAgentTest(unittest.TestCase):
         self.assertEqual(outcome.filesystem_tool_calls, 20)
         self.assertEqual(len(provider.calls), 20)
 
+    def test_context_compaction_is_separate_model_call_and_keeps_host_state(self):
+        high_usage = tool_response(("root-4", "view", {"path": "/memories"}))
+        high_usage["usage"] = {
+            "prompt_tokens": 97_001,
+            "completion_tokens": 5,
+            "total_tokens": 97_006,
+        }
+        summary = {
+            "message": {
+                "role": "assistant",
+                "content": "Earlier rounds surveyed the same root; no evidence was saved.",
+            },
+            "usage": {
+                "prompt_tokens": 100,
+                "completion_tokens": 20,
+                "total_tokens": 120,
+            },
+            "finish_reason": "stop",
+            "served_model": "fake-r1",
+        }
+        responses = [
+            tool_response(("root-1", "view", {"path": "/memories"})),
+            tool_response(("root-2", "view", {"path": "/memories"})),
+            tool_response(("root-3", "view", {"path": "/memories"})),
+            high_usage,
+            summary,
+            self.successful_script()[0],
+            tool_response(
+                (
+                    "note-after-compact",
+                    "take_note",
+                    {
+                        "observation_ids": ["obs-0005"],
+                        "path": self.path,
+                        "line_start": self.span.line_start,
+                        "line_end": self.span.line_end,
+                    },
+                )
+            ),
+            self.successful_script()[2],
+        ]
+        provider = ScriptedProvider(responses)
+        outcome = self.agent(provider).run(cell_id="E1", question=self.question)
+        self.assertEqual(outcome.rounds.rounds_completed, 7)
+        self.assertEqual(outcome.compaction_calls, 1)
+        self.assertEqual(outcome.model_calls, 8)
+        self.assertEqual(outcome.provider_request_attempts, 8)
+        self.assertEqual(provider.calls[4]["tools"], [])
+        self.assertIn("Running summary", provider.calls[5]["messages"][2]["content"])
+        self.assertEqual(len(outcome.notes.evidence_items), 1)
+        self.assertTrue(
+            any(event.get("kind") == "context_compaction" for event in outcome.trace)
+        )
+
     def test_limits_are_explicit_and_content_addressed(self):
         self.assertEqual(R1_AGENT_LIMITS["max_tool_calls_per_response"], 16)
         self.assertEqual(R1_AGENT_LIMITS["max_tool_calls_per_episode"], 320)
         self.assertRegex(r1_agent_limits_sha256(), r"^[0-9a-f]{64}$")
         self.assertEqual(r1_agent_limits_sha256(), FROZEN_R1_AGENT_LIMITS_SHA256)
         verify_r1_agent_limits()
+
+    def test_private_episode_secret_is_mode_0600_and_absent_from_trace(self):
+        private_path = Path(self.temporary.name) / "private" / "episode-secret.json"
+        private_path.parent.mkdir()
+        provider = ScriptedProvider(self.successful_script())
+        outcome = self.agent(provider, private_checkpoint_path=private_path).run(
+            cell_id="E1", question=self.question
+        )
+        self.assertEqual(os.stat(private_path).st_mode & 0o777, 0o600)
+        outcome.observations.verify_private_checkpoint(private_path)
+        self.assertNotIn(b"secret_hex", canonical_json_bytes(outcome.trace))
+        os.chmod(private_path, 0o644)
+        with self.assertRaisesRegex(EvidenceValidationError, "0600"):
+            outcome.observations.verify_private_checkpoint(private_path)
 
 
 if __name__ == "__main__":
