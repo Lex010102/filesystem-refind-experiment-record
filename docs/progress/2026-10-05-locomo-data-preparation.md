@@ -891,3 +891,13 @@ Evidence note state 绑定 question SHA-256 和完整 `StoreSnapshotRef`。每�
 派生不是只改第一句和最后一句。Role、Cost-model commit、raw-store evidence instruction、Verify-then-stop、Inference、Multiple-choice、Citation Format、Absence 和 Output 均按阶段 1 合同完整 redline；`take_note/finish_search`、三种互斥 action mode 和 prior-observation selector 是明确的 controlled additions。论文中按 store 区分的目录/文件路由、短关键词 grep、scoped→global fallback、批量独立读取、open-question completeness 与 read-scope 指导则保留并标为 `paper_published_text_reused`。详细对照在 `docs/reproduction/r1-prompt-redline.md`，机器可读分类在 prompt manifest。
 
 Appendix A.3 说明所有变体使用相同问题和引用要求，却没有单独刊出可直接复制的 user-message 源模板；本项目因此另行冻结 evidence-only user template，并明确标为 project-defined。它只注入 online question，禁止 answer、gold answer、category、gold evidence 和 evaluation label 进入检索上下文。专项测试覆盖 hash fail-closed、三 store 映射、20/20/40 caps、所有受控职责改写、S1/S2/S3 路由差异保留、user-turn 泄漏词与 JSON manifest/code 一致性，结果 8/8 通过。该阶段仍未调用学校 API，也未产生正式检索结果；下一阶段是 Research Agent 状态机和 fake-provider 端到端测试。
+
+## 2026-10-08：R1 阶段 6——Research Agent 状态机与 fake-provider E2E
+
+阶段 6 新增独立的 `fs_memory_lab/r1_agent.py`，没有复用旧的 direct-answer `AgentRunner.run("search")`。每个 episode 只接受白名单 `QuestionInput`、单一已验证 store snapshot 和对应 cell：E1 只能挂 S1/Prompt 7/20 rounds，E3 只能挂 S2/Prompt 6/20 rounds，E5 只能挂 S3/Prompt 5/40 rounds。发送给 provider 的工具按固定顺序严格为论文四工具 `view, grep, toc, section_read`，随后才是单独统计的项目动作 `take_note, finish_search`。
+
+状态机把每次 provider completion 定义为一个 round，并强制每个 response 只能处于三种互斥模式之一：批量只读 filesystem calls、批量 `take_note`、或唯一一个 `finish_search`。自由文本答案、未知工具、混合读取与记笔记、多个 finish、重复 tool-call ID 和不兼容 wrapper 全部 fail closed；参数 JSON 格式错误、普通文件工具参数错误、未观察/不完整 evidence selector 和尚不满足条件的 finish 则作为结构化 tool error 返回，让 Agent 在下一轮纠正。成功 read 由 host 执行后生成 observation ID 和 coverage；成功 note 仍由 Stage 4 resolver 重放和重读；finish 只有在 ProviderRoundLedger 已关闭本轮后才能验证。到达 cap 时只有 host 可以生成 `round_limit`，模型 schema 不提供该理由。
+
+Retry 只覆盖尚未返回完整 assistant response 的 timeout 和指定 transient HTTP；已经返回的 response 及其任何 action 绝不重放。调用次数、filesystem/orchestration 次数、served model、response metadata、usage、round hash 和安全 trace 分别记录。Provider 必须返回明确 served model；token usage 若提供则必须同时含 prompt/completion/total 且加总一致，否则拒绝，避免把 requested alias 冒充实际模型或保存自相矛盾成本。项目定义的 per-response/per-episode tool-call 限制与 retry 参数另有冻结 hash `0a532bf…b551`。
+
+fake-provider 端到端测试已经证明完整的 “view 真实 source-turn→下一轮 take_note→finish_search” 路径能产生 host-verified `[S1T13]` EvidenceItem；同时覆盖错误 note 恢复、非法 JSON 恢复、混合模式/自由文本/未知工具拒绝、served-model/usage gate、一次 timeout retry 不重复 action，以及 S1 精确第 20 轮 host cap。专项为 9/9，通过 Prompt/四工具/orchestration/evidence 联合回归 101/101。此阶段仍没有调用学校 API。下一阶段将实现固定 store preflight、S3 正式发布识别、atomic episode artifact/EvidenceBundle 与恢复安全，然后才允许小型真实 API smoke test。
