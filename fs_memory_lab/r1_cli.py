@@ -9,6 +9,7 @@ from pathlib import Path
 from .agent import CompatibleChatProvider
 from .evidence import EvidenceValidationError
 from .paper_config import SEARCH
+from .r1_agent import R1_AGENT_LIMITS
 from .r1_artifacts import (
     verify_r1_episode_artifact,
     verify_r1_failure_artifact,
@@ -64,6 +65,15 @@ def _preflight(repo_root: Path) -> dict:
         },
         "stores": stores,
         "question_sets": sets,
+        "shared_token_safety_fuse": {
+            "cells": list(R1_PROMPT_PROFILES),
+            "unit": R1_AGENT_LIMITS["token_safety_fuse_unit"],
+            "limit": R1_AGENT_LIMITS["token_safety_fuse_limit"],
+            "scope": R1_AGENT_LIMITS["token_safety_fuse_scope"],
+            "filesystem_result_truncation": R1_AGENT_LIMITS[
+                "filesystem_result_truncation"
+            ],
+        },
         "api_called": False,
     }
 

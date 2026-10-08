@@ -64,7 +64,13 @@ from .r1_tools import (
 )
 
 
-R1_AGENT_PROTOCOL_VERSION = "r1-evidence-agent-v1"
+R1_AGENT_PROTOCOL_VERSION = "r1-evidence-agent-v3"
+R1_FREE_TEXT_CORRECTION_PROMPT = (
+    "Protocol correction: the preceding response was not executed because "
+    "evidence-only mode forbids assistant free text. Return only permitted "
+    "tool calls with empty assistant content. Do not repeat, summarize, or "
+    "answer the benchmark question in text."
+)
 R1_AGENT_LIMITS = MappingProxyType(
     {
         "max_tool_calls_per_response": 16,
@@ -73,13 +79,24 @@ R1_AGENT_LIMITS = MappingProxyType(
         "timeout_retry_backoff_seconds": (2, 4),
         "http_max_attempts": 5,
         "http_retry_backoff_seconds": (5, 15, 30, 60),
+        "free_text_corrections_per_round": 1,
+        "free_text_corrections_per_episode": 3,
+        # Project-defined, condition-invariant emergency fuse.  This is not an
+        # evidence budget and never clips a filesystem result.  It counts every
+        # successful provider completion in the episode, including protocol
+        # corrections and context compaction.
+        "token_safety_fuse_unit": "provider_reported_total_tokens",
+        "token_safety_fuse_limit": 1_000_000,
+        "token_safety_fuse_scope": "per_episode_all_model_calls",
+        "token_safety_fuse_requires_usage": True,
+        "filesystem_result_truncation": "none",
         "context_compaction_prompt_token_trigger": CONTEXT_COMPACTION_TRIGGER,
         "context_compaction_recent_rounds": CONTEXT_COMPACTION_KEEP_ROUNDS,
         "context_compaction_max_completion_tokens": 8192,
     }
 )
 FROZEN_R1_AGENT_LIMITS_SHA256 = (
-    "c1b3dc7be8a0911aa2009273d88076c3ae8cca8a70e6e750bbca3400e43d08c2"
+    "0e58bdf9a83e0e357564986753d5e59f9a237feb390344e123e9c05e3af0abe2"
 )
 R1_TOOL_NAMES = (*R1_FILESYSTEM_TOOL_NAMES, *R1_ORCHESTRATION_ACTION_NAMES)
 
@@ -111,6 +128,10 @@ class R1AgentError(RuntimeError):
         self.trace = tuple(dict(item) for item in trace)
 
 
+class _FreeTextWithValidToolCalls(ValueError):
+    """A structurally valid tool response polluted by assistant prose."""
+
+
 @dataclass(frozen=True)
 class R1EpisodeOutcome:
     protocol_version: str
@@ -128,6 +149,7 @@ class R1EpisodeOutcome:
     provider_request_attempts: int
     model_calls: int
     compaction_calls: int
+    protocol_correction_calls: int
     filesystem_tool_calls: int
     orchestration_calls: int
     requested_model: str
@@ -164,6 +186,7 @@ class R1EpisodeOutcome:
             self.provider_request_attempts,
             self.model_calls,
             self.compaction_calls,
+            self.protocol_correction_calls,
             self.filesystem_tool_calls,
             self.orchestration_calls,
         ):
@@ -171,7 +194,11 @@ class R1EpisodeOutcome:
                 raise EvidenceValidationError("R1 episode metric is invalid")
         if self.provider_request_attempts < self.rounds.rounds_completed:
             raise EvidenceValidationError("R1 provider attempts are undercounted")
-        if self.model_calls != self.rounds.rounds_completed + self.compaction_calls:
+        if self.model_calls != (
+            self.rounds.rounds_completed
+            + self.compaction_calls
+            + self.protocol_correction_calls
+        ):
             raise EvidenceValidationError("R1 model-call count is inconsistent")
         if self.provider_request_attempts < self.model_calls:
             raise EvidenceValidationError("R1 provider attempts are below model calls")
@@ -231,6 +258,10 @@ def _safe_usage(value: Any) -> dict[str, Any]:
         plain["prompt_tokens"] + plain["completion_tokens"]
     ):
         raise ValueError("Provider usage token total is inconsistent")
+    if R1_AGENT_LIMITS["token_safety_fuse_requires_usage"] and present != token_keys:
+        raise ValueError(
+            "Provider usage token totals are required by the token safety fuse"
+        )
     return plain
 
 
@@ -240,8 +271,6 @@ def _parse_tool_calls(message: Mapping[str, Any]) -> tuple[dict[str, Any], ...]:
     if message.get("role") not in {None, "assistant"}:
         raise ValueError("Provider message role must be assistant")
     content = message.get("content")
-    if content not in (None, ""):
-        raise ValueError("Evidence-only assistant responses cannot contain free text")
     raw_calls = message.get("tool_calls")
     if not isinstance(raw_calls, list) or not raw_calls:
         raise ValueError("Evidence-only assistant response must contain tool calls")
@@ -295,6 +324,12 @@ def _parse_tool_calls(message: Mapping[str, Any]) -> tuple[dict[str, Any], ...]:
         raise ValueError("Assistant response mixes incompatible R1 action modes")
     for call in calls:
         call["mode"] = mode
+    if content not in (None, ""):
+        if not isinstance(content, str):
+            raise ValueError("Assistant content must be null, empty, or text")
+        raise _FreeTextWithValidToolCalls(
+            "Evidence-only assistant responses cannot contain free text"
+        )
     return tuple(calls)
 
 
@@ -391,6 +426,84 @@ class R1ResearchAgent:
             orchestration_calls=orchestration_calls,
             trace=trace,
         )
+
+    def _record_token_usage(
+        self,
+        *,
+        trace: list[dict[str, Any]],
+        usage_rows: list[dict[str, Any]],
+        stored_usage: Mapping[str, Any],
+        request_kind: str,
+        provider_round: int,
+        attempts: int,
+        filesystem_calls: int,
+        orchestration_calls: int,
+    ) -> None:
+        """Record one complete provider usage row and enforce the shared fuse.
+
+        The completed response is already billable when this runs.  If its
+        cumulative usage reaches the fuse, none of that response's proposed
+        actions are executed and no further provider request is made.
+        """
+        row = json.loads(canonical_json_bytes(stored_usage))
+        for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
+            value = row.get(key)
+            if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                raise self._fail(
+                    "Provider usage is unavailable for the token safety fuse",
+                    stage="token_usage_unavailable",
+                    provider_round=provider_round,
+                    attempts=attempts,
+                    filesystem_calls=filesystem_calls,
+                    orchestration_calls=orchestration_calls,
+                    trace=trace,
+                )
+        usage_rows.append(row)
+        cumulative = {
+            key: sum(item[key] for item in usage_rows)
+            for key in ("prompt_tokens", "completion_tokens", "total_tokens")
+        }
+        limit = R1_AGENT_LIMITS["token_safety_fuse_limit"]
+        self._emit(
+            trace,
+            {
+                "kind": "token_usage_checkpoint",
+                "request_kind": request_kind,
+                "provider_round": provider_round,
+                "usage": {
+                    key: row[key]
+                    for key in ("prompt_tokens", "completion_tokens", "total_tokens")
+                },
+                "cumulative_usage": cumulative,
+                "fuse_unit": R1_AGENT_LIMITS["token_safety_fuse_unit"],
+                "fuse_limit": limit,
+                "fuse_reached": cumulative["total_tokens"] >= limit,
+            },
+        )
+        if cumulative["total_tokens"] >= limit:
+            self._emit(
+                trace,
+                {
+                    "kind": "token_safety_fuse_triggered",
+                    "request_kind": request_kind,
+                    "provider_round": provider_round,
+                    "cumulative_usage": cumulative,
+                    "fuse_unit": R1_AGENT_LIMITS["token_safety_fuse_unit"],
+                    "fuse_limit": limit,
+                    "filesystem_results_clipped": False,
+                    "response_actions_executed": False,
+                },
+            )
+            raise self._fail(
+                "Episode reached the shared provider-token safety fuse; "
+                "the triggering response was recorded but its actions were not executed",
+                stage="token_safety_fuse",
+                provider_round=provider_round,
+                attempts=attempts,
+                filesystem_calls=filesystem_calls,
+                orchestration_calls=orchestration_calls,
+                trace=trace,
+            )
 
     def _complete_with_retry(
         self,
@@ -520,6 +633,7 @@ class R1ResearchAgent:
         orchestration_calls = 0
         model_calls = 0
         compaction_calls = 0
+        protocol_correction_calls = 0
         action_ordinal = 0
         round_starts: list[int] = []
 
@@ -537,56 +651,129 @@ class R1ResearchAgent:
                 "round_limit": cap,
                 "budget_unit": self._budget_unit,
                 "budget_limit": self._budget_limit,
+                "token_safety_fuse_unit": R1_AGENT_LIMITS["token_safety_fuse_unit"],
+                "token_safety_fuse_limit": R1_AGENT_LIMITS["token_safety_fuse_limit"],
+                "token_safety_fuse_scope": R1_AGENT_LIMITS["token_safety_fuse_scope"],
+                "filesystem_result_truncation": R1_AGENT_LIMITS[
+                    "filesystem_result_truncation"
+                ],
             },
         )
 
         stop: StopRecord | None = None
         for round_number in range(1, cap + 1):
             round_starts.append(len(messages))
-            result, attempts = self._complete_with_retry(
-                messages=messages,
-                tools=tools,
-                config=config,
-                provider_round=round_number,
-                trace=trace,
-                prior_attempts=attempts,
-                filesystem_calls=filesystem_calls,
-                orchestration_calls=orchestration_calls,
-            )
-            model_calls += 1
-            round_usage: dict[str, Any] | None = None
-            served = result.get("served_model")
-            try:
-                round_usage = _safe_usage(result.get("usage", {}))
-                if not isinstance(served, str) or not served.strip():
-                    raise ValueError("Provider response lacks a served model identity")
-                message = result["message"]
-                calls = _parse_tool_calls(message)
-            except Exception as exc:
-                self._emit(
-                    trace,
-                    {
-                        "kind": "provider_response_rejected",
-                        "provider_round": round_number,
-                        "provider_request_attempts_total": attempts,
-                        "served_model": (
-                            served
-                            if isinstance(served, str) and served.strip()
-                            else None
-                        ),
-                        "usage": round_usage,
-                        "error_type": type(exc).__name__,
-                    },
-                )
-                raise self._fail(
-                    str(exc),
-                    stage="provider_response",
+            corrections_this_round = 0
+            while True:
+                result, attempts = self._complete_with_retry(
+                    messages=messages,
+                    tools=tools,
+                    config=config,
                     provider_round=round_number,
-                    attempts=attempts,
+                    trace=trace,
+                    prior_attempts=attempts,
                     filesystem_calls=filesystem_calls,
                     orchestration_calls=orchestration_calls,
-                    trace=trace,
-                ) from exc
+                )
+                model_calls += 1
+                round_usage: dict[str, Any] | None = None
+                served = result.get("served_model")
+                try:
+                    round_usage = _safe_usage(result.get("usage", {}))
+                    if not isinstance(served, str) or not served.strip():
+                        raise ValueError(
+                            "Provider response lacks a served model identity"
+                        )
+                    message = result["message"]
+                    calls = _parse_tool_calls(message)
+                except _FreeTextWithValidToolCalls as exc:
+                    can_retry = (
+                        corrections_this_round
+                        < R1_AGENT_LIMITS["free_text_corrections_per_round"]
+                        and protocol_correction_calls
+                        < R1_AGENT_LIMITS["free_text_corrections_per_episode"]
+                    )
+                    self._emit(
+                        trace,
+                        {
+                            "kind": "provider_response_rejected",
+                            "provider_round": round_number,
+                            "provider_request_attempts_total": attempts,
+                            "served_model": served,
+                            "usage": round_usage,
+                            "error_type": type(exc).__name__,
+                            "error_code": "free_text_with_valid_tool_calls",
+                            "correction_will_retry": can_retry,
+                        },
+                    )
+                    if not can_retry:
+                        raise self._fail(
+                            str(exc),
+                            stage="provider_response",
+                            provider_round=round_number,
+                            attempts=attempts,
+                            filesystem_calls=filesystem_calls,
+                            orchestration_calls=orchestration_calls,
+                            trace=trace,
+                        ) from exc
+                    self._record_token_usage(
+                        trace=trace,
+                        usage_rows=usage,
+                        stored_usage={
+                            "protocol_correction_rejected": True,
+                            **round_usage,
+                        },
+                        request_kind="protocol_correction_rejected",
+                        provider_round=round_number,
+                        attempts=attempts,
+                        filesystem_calls=filesystem_calls,
+                        orchestration_calls=orchestration_calls,
+                    )
+                    served_models.append(served)
+                    corrections_this_round += 1
+                    protocol_correction_calls += 1
+                    messages.append(
+                        {"role": "user", "content": R1_FREE_TEXT_CORRECTION_PROMPT}
+                    )
+                    self._emit(
+                        trace,
+                        {
+                            "kind": "protocol_correction_requested",
+                            "provider_round": round_number,
+                            "correction_in_round": corrections_this_round,
+                            "corrections_in_episode": protocol_correction_calls,
+                            "prompt_sha256": sha256_bytes(
+                                R1_FREE_TEXT_CORRECTION_PROMPT.encode("utf-8")
+                            ),
+                        },
+                    )
+                    continue
+                except Exception as exc:
+                    self._emit(
+                        trace,
+                        {
+                            "kind": "provider_response_rejected",
+                            "provider_round": round_number,
+                            "provider_request_attempts_total": attempts,
+                            "served_model": (
+                                served
+                                if isinstance(served, str) and served.strip()
+                                else None
+                            ),
+                            "usage": round_usage,
+                            "error_type": type(exc).__name__,
+                        },
+                    )
+                    raise self._fail(
+                        str(exc),
+                        stage="provider_response",
+                        provider_round=round_number,
+                        attempts=attempts,
+                        filesystem_calls=filesystem_calls,
+                        orchestration_calls=orchestration_calls,
+                        trace=trace,
+                    ) from exc
+                break
             if (
                 action_ordinal + len(calls)
                 > R1_AGENT_LIMITS["max_tool_calls_per_episode"]
@@ -600,7 +787,6 @@ class R1ResearchAgent:
                     orchestration_calls=orchestration_calls,
                     trace=trace,
                 )
-            usage.append(round_usage)
             served_models.append(served)
             self._emit(
                 trace,
@@ -615,7 +801,18 @@ class R1ResearchAgent:
                     "usage": round_usage,
                     "tool_call_count": len(calls),
                     "mode": calls[0]["mode"],
+                    "protocol_corrections_before_accept": corrections_this_round,
                 },
+            )
+            self._record_token_usage(
+                trace=trace,
+                usage_rows=usage,
+                stored_usage=round_usage,
+                request_kind="research",
+                provider_round=round_number,
+                attempts=attempts,
+                filesystem_calls=filesystem_calls,
+                orchestration_calls=orchestration_calls,
             )
             assistant_wire = {
                 "role": "assistant",
@@ -942,7 +1139,6 @@ class R1ResearchAgent:
                         orchestration_calls=orchestration_calls,
                         trace=trace,
                     ) from exc
-                usage.append({"compaction": True, **compact_usage})
                 served_models.append(compact_served)
                 self._emit(
                     trace,
@@ -959,6 +1155,16 @@ class R1ResearchAgent:
                         "system_fingerprint": compact_result.get("system_fingerprint"),
                         "usage": compact_usage,
                     },
+                )
+                self._record_token_usage(
+                    trace=trace,
+                    usage_rows=usage,
+                    stored_usage={"compaction": True, **compact_usage},
+                    request_kind="compaction",
+                    provider_round=round_number,
+                    attempts=attempts,
+                    filesystem_calls=filesystem_calls,
+                    orchestration_calls=orchestration_calls,
                 )
                 messages = (
                     messages[:2]
@@ -994,6 +1200,7 @@ class R1ResearchAgent:
             provider_request_attempts=attempts,
             model_calls=model_calls,
             compaction_calls=compaction_calls,
+            protocol_correction_calls=protocol_correction_calls,
             filesystem_tool_calls=filesystem_calls,
             orchestration_calls=orchestration_calls,
             requested_model=self._requested_model,

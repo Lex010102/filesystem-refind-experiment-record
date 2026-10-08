@@ -41,12 +41,13 @@ class R1InputsTest(unittest.TestCase):
         self.assertEqual(r1_input_contract_sha256(), FROZEN_R1_INPUT_CONTRACT_SHA256)
         verify_r1_input_contract()
 
-    def test_checked_in_worktree_does_not_pretend_s3_is_published(self):
-        self.assertFalse(
-            (REPO_ROOT / R1_STORE_SPECS["s3"].store_relative_path).exists()
+    def test_checked_in_worktree_contains_verified_published_s3(self):
+        self.assertTrue(
+            (REPO_ROOT / R1_STORE_SPECS["s3"].store_relative_path).is_dir()
         )
-        with self.assertRaises(EvidenceValidationError):
-            load_r1_store(REPO_ROOT, "s3")
+        loaded = load_r1_store(REPO_ROOT, "s3")
+        self.assertEqual(loaded.snapshot.store_id, "s3")
+        self.assertEqual(loaded.snapshot.file_count, 2)
 
     def test_completed_main_s3_passes_formal_publication_gate(self):
         marker = MAIN_ROOT / R1_STORE_SPECS["s3"].marker_relative_path
@@ -77,10 +78,9 @@ class R1InputsTest(unittest.TestCase):
                 load_question_inputs(root, "dev-6")
 
             fake_s3 = root / R1_STORE_SPECS["s3"].store_relative_path
-            fake_s3.mkdir(parents=True)
             shutil.copyfile(
                 root / "experiments/locomo-conv50-v1/stores/s1-flat/session-01.md",
-                fake_s3 / "session-01.md",
+                fake_s3 / "calvin.md",
             )
             with self.assertRaises(EvidenceValidationError):
                 load_r1_store(root, "s3")

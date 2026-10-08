@@ -69,6 +69,27 @@ calls returned in that completion still count as one round. This is a project-de
 operationalization of the paper's “tool-round cap” wording and must remain fixed across
 E1, E3 and E5.
 
+The NUS-served model may occasionally return structurally valid tool calls together
+with assistant prose. Such a response is never executed: neither its prose nor its
+tool calls enter the observation ledger, message history, or EvidenceBundle. Agent
+protocol v2 permits one content-free corrective re-request in that provider round and
+at most three across an episode. The corrective prompt contains no rejected prose;
+the trace stores only the error class, usage, model identity, correction counters and
+prompt hash. A second polluted response in the same round, a content-only answer, an
+unknown tool, or any other malformed response still fails closed. Corrective requests
+count as model calls and token cost, but not as completed retrieval rounds.
+
+The formal R1 runtime also has one project-defined emergency token fuse shared
+unchanged by E1, E3 and E5: `1,000,000 provider_reported_total_tokens` per question,
+counting research completions, rejected-prose correction completions and context
+compaction completions. This is not a paper setting, a retrieval budget, or an
+EvidenceBundle size limit. No filesystem result is clipped, and E5 receives no
+condition-specific read limit. Each completed response is recorded first; if its
+cumulative reported total reaches the fuse, the proposed actions in that triggering
+response are not executed, no later provider request is sent, and the run publishes a
+`token_safety_fuse` failure artifact rather than a partial bundle. The same runtime
+contract fields and threshold must be used in all three cells.
+
 ## 4. Controlled evidence-only redline
 
 The following changes are required across the complete Prompt 5/6/7 family; changing
@@ -189,7 +210,9 @@ The shared `EvidenceBundle` will contain:
 - ordered search actions and observation coverage summary;
 - selected notes and normalized EvidenceItems;
 - stop reason, missing aspects, hit-cap and budget flags;
-- provider rounds, model calls, four-tool calls, orchestration calls and usage totals;
+- provider rounds, model calls, four-tool calls, orchestration calls and aggregate
+  prompt/completion/total token usage; the hash-bound trace retains the same usage for
+  each individual normal, correction and compaction completion;
 - requested/served model and safe provider metadata;
 - pre/post store hashes and verification result;
 
@@ -202,7 +225,8 @@ safe failure and recovery metadata.
 R1 rank and score fields are null. Evidence text is the exact selected store text.
 Token budgets will not be claimed until a tokenizer ID/version/hash suitable for the
 served model is explicitly frozen; bytes and Unicode character counts may be recorded
-without pretending they are tokens.
+without pretending they are tokens. Provider-reported API usage is a separate cost
+measurement and safety signal; it does not truncate or rank evidence.
 
 The schema implementation is fail-closed: online questions have an exact allow-list
 that excludes gold answers, categories and gold evidence; provenance is derived from

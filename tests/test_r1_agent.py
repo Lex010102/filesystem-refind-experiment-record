@@ -6,6 +6,7 @@ import shutil
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from fs_memory_lab.agent import TransientProviderError
 from fs_memory_lab.evidence import (
@@ -19,6 +20,7 @@ from fs_memory_lab.evidence import (
 from fs_memory_lab.r1_agent import (
     FROZEN_R1_AGENT_LIMITS_SHA256,
     R1_AGENT_LIMITS,
+    R1_FREE_TEXT_CORRECTION_PROMPT,
     R1_TOOL_NAMES,
     R1AgentError,
     R1ResearchAgent,
@@ -279,6 +281,71 @@ class R1ResearchAgentTest(unittest.TestCase):
                 ScriptedProvider([tool_response(("bad-tool", "create", {"path": "x"}))])
             ).run(cell_id="E1", question=self.question)
 
+    def test_valid_tool_calls_with_free_text_get_one_safe_correction(self):
+        polluted = self.successful_script()[0]
+        polluted["message"]["content"] = "I will inspect the memory now."
+        provider = ScriptedProvider([polluted, *self.successful_script()])
+
+        outcome = self.agent(provider).run(cell_id="E1", question=self.question)
+
+        self.assertEqual(outcome.stop.reason, "evidence_sufficient")
+        self.assertEqual(outcome.rounds.rounds_completed, 3)
+        self.assertEqual(outcome.model_calls, 4)
+        self.assertEqual(outcome.protocol_correction_calls, 1)
+        self.assertEqual(outcome.provider_request_attempts, 4)
+        self.assertEqual(len(outcome.observations.observations), 1)
+        self.assertEqual(len(outcome.notes.evidence_items), 1)
+        self.assertEqual(
+            provider.calls[1]["messages"][-1],
+            {"role": "user", "content": R1_FREE_TEXT_CORRECTION_PROMPT},
+        )
+        encoded_trace = canonical_json_bytes(outcome.trace)
+        self.assertNotIn(b"I will inspect the memory now", encoded_trace)
+        corrections = [
+            event
+            for event in outcome.trace
+            if event.get("kind") == "protocol_correction_requested"
+        ]
+        self.assertEqual(len(corrections), 1)
+
+    def test_repeated_free_text_with_tool_calls_still_fails_closed(self):
+        first = self.successful_script()[0]
+        first["message"]["content"] = "First invalid explanation."
+        second = self.successful_script()[0]
+        second["message"]["content"] = "Second invalid explanation."
+        provider = ScriptedProvider([first, second])
+
+        with self.assertRaises(R1AgentError) as raised:
+            self.agent(provider).run(cell_id="E1", question=self.question)
+
+        self.assertEqual(raised.exception.stage, "provider_response")
+        self.assertEqual(raised.exception.filesystem_tool_calls, 0)
+        self.assertEqual(len(provider.calls), 2)
+        self.assertEqual(
+            sum(
+                event.get("kind") == "protocol_correction_requested"
+                for event in raised.exception.trace
+            ),
+            1,
+        )
+
+    def test_nontext_assistant_content_is_not_correction_eligible(self):
+        malformed = self.successful_script()[0]
+        malformed["message"]["content"] = [{"type": "text", "text": "no"}]
+        provider = ScriptedProvider([malformed])
+
+        with self.assertRaises(R1AgentError) as raised:
+            self.agent(provider).run(cell_id="E1", question=self.question)
+
+        self.assertEqual(raised.exception.stage, "provider_response")
+        self.assertEqual(len(provider.calls), 1)
+        self.assertFalse(
+            any(
+                event.get("kind") == "protocol_correction_requested"
+                for event in raised.exception.trace
+            )
+        )
+
     def test_missing_served_model_or_inconsistent_usage_fails_closed(self):
         missing = self.successful_script()[0]
         missing.pop("served_model")
@@ -380,9 +447,50 @@ class R1ResearchAgentTest(unittest.TestCase):
             any(event.get("kind") == "context_compaction" for event in outcome.trace)
         )
 
+    def test_shared_token_safety_fuse_records_usage_and_executes_no_actions(self):
+        provider = ScriptedProvider(
+            [tool_response(("would-read", "view", {"path": "/memories"}))]
+        )
+        agent = self.agent(provider)
+        tiny_limits = dict(R1_AGENT_LIMITS)
+        tiny_limits["token_safety_fuse_limit"] = 15
+
+        with patch("fs_memory_lab.r1_agent.R1_AGENT_LIMITS", tiny_limits):
+            with self.assertRaises(R1AgentError) as raised:
+                agent.run(cell_id="E1", question=self.question)
+
+        error = raised.exception
+        self.assertEqual(error.stage, "token_safety_fuse")
+        self.assertEqual(error.filesystem_tool_calls, 0)
+        self.assertEqual(error.orchestration_calls, 0)
+        self.assertEqual(len(provider.calls), 1)
+        checkpoints = [
+            event
+            for event in error.trace
+            if event.get("kind") == "token_usage_checkpoint"
+        ]
+        self.assertEqual(len(checkpoints), 1)
+        self.assertEqual(checkpoints[0]["cumulative_usage"]["total_tokens"], 15)
+        triggered = [
+            event
+            for event in error.trace
+            if event.get("kind") == "token_safety_fuse_triggered"
+        ]
+        self.assertEqual(len(triggered), 1)
+        self.assertFalse(triggered[0]["filesystem_results_clipped"])
+        self.assertFalse(triggered[0]["response_actions_executed"])
+
     def test_limits_are_explicit_and_content_addressed(self):
         self.assertEqual(R1_AGENT_LIMITS["max_tool_calls_per_response"], 16)
         self.assertEqual(R1_AGENT_LIMITS["max_tool_calls_per_episode"], 320)
+        self.assertEqual(R1_AGENT_LIMITS["free_text_corrections_per_round"], 1)
+        self.assertEqual(R1_AGENT_LIMITS["free_text_corrections_per_episode"], 3)
+        self.assertEqual(R1_AGENT_LIMITS["token_safety_fuse_limit"], 1_000_000)
+        self.assertEqual(
+            R1_AGENT_LIMITS["token_safety_fuse_unit"],
+            "provider_reported_total_tokens",
+        )
+        self.assertEqual(R1_AGENT_LIMITS["filesystem_result_truncation"], "none")
         self.assertRegex(r1_agent_limits_sha256(), r"^[0-9a-f]{64}$")
         self.assertEqual(r1_agent_limits_sha256(), FROZEN_R1_AGENT_LIMITS_SHA256)
         verify_r1_agent_limits()

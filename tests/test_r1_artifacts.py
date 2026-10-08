@@ -147,6 +147,9 @@ class R1ArtifactTest(unittest.TestCase):
         self.assertEqual(verified.metrics["provider_rounds"], 3)
         self.assertEqual(verified.metrics["model_calls"], 3)
         self.assertEqual(verified.metrics["total_tokens"], 45)
+        self.assertEqual(verified.metrics["prompt_tokens"], 30)
+        self.assertEqual(verified.metrics["completion_tokens"], 15)
+        self.assertTrue(verified.metrics["token_usage_available"])
         self.assertEqual(verified.evidence_items[0].source_locators, ("[S1T13]",))
 
     def test_bundle_or_trace_tampering_breaks_hash_chain(self):

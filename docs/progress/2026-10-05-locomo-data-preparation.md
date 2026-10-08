@@ -934,3 +934,19 @@ S3 正式 run `20261006T022525914538Z-a1352213` 已完成全部 85 个 chunks �
 E5/R1 使用论文 Prompt 5 的 hierarchical filesystem 路线：Search Agent 用 `view/grep/toc/section_read` 自行选择人物文件和主题，随后用本项目 controlled actions `take_note/finish_search` 只选择先前真实读到、带 locator 的正文事实行，最多 40 provider rounds，输出 EvidenceBundle 而不直接回答。frontmatter 可以帮助路由，但不能作为最终 evidence。
 
 E6/R2 必须称 ReFind-inspired。正式 S3 的实际形状证明早期“leaf section→H1”适配太粗，因此现改为“fact bullet→H2 topic”：确定性 parser 把每条带 locator 的事实 bullet 建成 unit，以 `file + H2` 为 group；BM25 使用人物名、heading 与事实文本，按 `k1=1.2,b=0.75` 排名；同 group 分数求和后，以 `1/(60+r_unit)+1/(60+r_group)` 融合，返回 Top-5 中心 facts并在同 H2 内扩展 ±2 facts。最多 4 轮，Controller 可改写关键词和时间范围；时间来自 locator 对应的 canonical session date，重叠窗口必须合并。R1 与 R2 最终使用同一 S3 snapshot、同一 evidence budget、同一 EvidenceBundle schema 和同一 Answerer，唯一主要差异是 LLM 文件导航与 ReFind-inspired 排名检索。
+
+## 2026-10-08：R1 三存储真实 API smoke 与自由文本纠正协议
+
+使用同一道 dev 问题 `conv-50-q129`、同一 6000-character smoke evidence budget，依次测试 E1/S1、E3/S2、E5/S3。E3 在 6 个 provider rounds、5 次文件工具调用后完成，产生经离线 verifier 复验的 EvidenceBundle，并正确找到 `music-and-performance/session-24.md` 中 Dave 推荐 Calvin 在东京尝试 ramen 的原始对话。E5 在 3 rounds、2 次文件工具调用后完成，产生经复验的 EvidenceBundle，并从 `dave.md > Japan` 选出带 `[S24T20][S24T22]` 的整理事实。E3 记录 42,236 total tokens；E5 记录 88,349 total tokens。该单题结果只是连通性和成本预警，不能当作正式条件优劣结论；它提示 S3 的超长 frontmatter/root survey 可能造成较高单轮 prompt 成本，后续必须在 dev-6 上专门量化。
+
+E1 同样成功定位 `session-24.md` 并接受第一条正确 evidence，但第 6 次 provider response 在有效工具调用之外夹带了自由文本，原 v1 状态机按 fail-closed 规则发布了可验证的失败 artifact。该失败不是 S1 文件、locator 或四工具读取错误，而是 NUS served model `qwen3.8:27b` 的 wire-format 偏差。
+
+R1 agent 因此先升级为 `r1-evidence-agent-v2`，新增受限的 free-text correction：只有当 tool calls 除 assistant prose 外完全合法时才可纠正；污染响应的 prose 和 actions 均不执行、不进入 messages、observations 或 EvidenceBundle。每轮最多纠正一次、每 episode 最多三次；纠正 prompt 不回显污染文本，trace 只记 error code、usage、served model、计数和 prompt hash。第二次污染、纯自由文本答案、未知工具及其他非法 wrapper 仍然安全失败。纠正请求完整计入 model calls、provider attempts 和 token cost，但不计为已完成 retrieval round。真实 E1 重试尚未执行，因此目前只能确认离线纠正路径正确，不能把 E1 标为真实 API 已通过。
+
+## 2026-10-09：E5 论文式 R1 与统一 token 安全熔断决策
+
+正式 E5 保持 Filesystem 论文式 R1：使用 Prompt 5、最多 40 provider rounds，并保留论文“file views are never clipped”的读取口径。不会为 S3 单独缩短 frontmatter、截断目录 description、限制单文件读取，当前也不创建 `S3-short-description`。E1/E3/E5 的 evidence character budget 仍必须使用同一个后续冻结值；它只限制最终 EvidenceBundle 中被接受的证据文字，不限制 Search Agent 读到的工具输出。
+
+当前正式 store 的结构差异已记录为分析变量：S1/S2 各有 30 个文件，目录 description 总计约 1,461 字符，文件平均约 3.8 KB；S3 只有 2 个文件，但两个 frontmatter description 总计约 64,877 字符，文件平均约 152 KB。因此 E5 的 root survey 可能在很少的 rounds 内产生很高 token 成本。冒烟题中 E3 为 42,236 total tokens、E5 为 88,349 total tokens；这只是成本预警，不改写主实验条件，并将作为 “LLM-managed metadata bloat” 的候选 empirical finding 继续在 dev-6 验证。
+
+为防异常失控而不改变检索算法，R1 agent 升级为 `r1-evidence-agent-v3`，给 E1/E3/E5 统一冻结每题 `1,000,000 provider_reported_total_tokens` 的 emergency fuse。它累计正常检索、free-text correction 和 context compaction 的全部成功 API completions；每次调用的 prompt/completion/total tokens 写入 hash-bound trace，成功 bundle 或失败 artifact 同时保存聚合 totals。触发响应本身已计费并被记录，但其工具/actions 不执行，之后不再调用模型，运行以 `token_safety_fuse` failure artifact 结束；任何文件工具结果都不会因此被裁剪。该阈值约为现有 E5 单题 smoke 成本的 11 倍，定位仅为安全熔断，不是正常预算，也不允许 E5 使用不同阈值。新 agent-limits freeze 为 `0e58bdf9…abe2`；55 项聚焦测试全部通过，全仓标准库 discovery 实际执行的 212 项全部通过。唯一未由系统 `python3` 直接收集的 pytest prompt 模块受本机 pytest/Anaconda 启动环境影响，已用不修改项目文件的 environment-neutral runner 执行其中 9 个参数化 cases，全部通过。

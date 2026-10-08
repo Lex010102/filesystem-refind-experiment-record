@@ -36,6 +36,7 @@ from .evidence import (
 from .paper_config import SEARCH
 from .r1_agent import (
     R1_AGENT_PROTOCOL_VERSION,
+    R1_FREE_TEXT_CORRECTION_PROMPT,
     R1_AGENT_LIMITS,
     R1EpisodeOutcome,
     R1AgentError,
@@ -94,6 +95,9 @@ def r1_runtime_contract(
         "evidence_budget_limit": budget_limit,
         "agent_limits_sha256": r1_agent_limits_sha256(),
         "agent_limits": _plain(R1_AGENT_LIMITS),
+        "free_text_correction_prompt_sha256": sha256_bytes(
+            R1_FREE_TEXT_CORRECTION_PROMPT.encode("utf-8")
+        ),
         "compaction_system_prompt_sha256": sha256_bytes(
             COMPACTION_SYSTEM_PROMPT.encode("utf-8")
         ),
@@ -202,6 +206,8 @@ def _search_actions_from_trace(
             "finish_search_accepted",
             "host_round_limit",
             "context_compaction",
+            "protocol_correction_requested",
+            "token_safety_fuse_triggered",
         }:
             actions.append(event)
     return tuple(actions)
