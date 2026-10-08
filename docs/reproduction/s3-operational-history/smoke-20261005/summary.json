@@ -1,0 +1,39 @@
+{
+  "chunk": "session_01_chunk_01.txt",
+  "chunk_sha256": "4fa1be2a828dc3e99cee29bf306bee6918ac8c4973bb0df7cdceffef306927ec",
+  "files": [
+    "people/calvin.md",
+    "people/dave.md"
+  ],
+  "formal_targets_untouched": true,
+  "http_requests": 3,
+  "locator_mentions": 7,
+  "rounds": 3,
+  "run_dir": "/Users/wangwenqi/Desktop/memory bench/local-runs/s3-smoke-20261005T185937697619Z-eac18b90",
+  "scope": "one frozen S3 chunk; local-runs only",
+  "served_model": "qwen3.8:27b",
+  "source_turns": 8,
+  "status": "passed",
+  "store_sha256": "2a532c744b95325120227d4bafc3d5866bfebe8628b05ea11675407bfad2974e",
+  "tool_calls": 3,
+  "usage": [
+    {
+      "completion_tokens": 42,
+      "prompt_tokens": 5041,
+      "prompt_tokens_details": null,
+      "total_tokens": 5083
+    },
+    {
+      "completion_tokens": 787,
+      "prompt_tokens": 5088,
+      "prompt_tokens_details": null,
+      "total_tokens": 5875
+    },
+    {
+      "completion_tokens": 180,
+      "prompt_tokens": 5523,
+      "prompt_tokens_details": null,
+      "total_tokens": 5703
+    }
+  ]
+}

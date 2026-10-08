@@ -1,0 +1,11 @@
+{
+  "chunk_filename": "session_01_chunk_02.txt",
+  "current_chunk": 2,
+  "prompt_contract_sha256": "2b16c9041829666e3825d2d349c689b6cc1ce4b9de6e367f35a123c485918a20",
+  "run_id": "20261005T191027554957Z-2715bad3",
+  "runtime_contract_sha256": "ae480c40162e5262f74ef3fb5cb64314ad2507a744d59122c019039e8bb3017f",
+  "schema_version": 1,
+  "state": "EPISODE_RUNNING",
+  "stream_manifest_sha256": "6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5",
+  "updated_at": "2026-10-05T19:10:48.388509Z"
+}

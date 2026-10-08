@@ -1,0 +1,21 @@
+{
+  "checkpoints_retained": true,
+  "cleanup_errors": [],
+  "current_chunk": 2,
+  "error": {
+    "message": "Malformed source locator '[S15]' in people/calvin.md",
+    "type": "S3BuildError"
+  },
+  "failed_at": "2026-10-05T19:11:23.629543Z",
+  "formal_outputs_published": false,
+  "partial_episode": null,
+  "quarantine": {
+    "store": "quarantine/store",
+    "trace": "quarantine/trace"
+  },
+  "residual_formal_outputs": [],
+  "run_id": "20261005T191027554957Z-2715bad3",
+  "schema_version": 1,
+  "state": "EPISODE_RUNNING",
+  "status": "failed"
+}

@@ -476,16 +476,20 @@ S3 会受模型随机性影响。一个月内如果给 E5、E6 分别重建，�
 
 ### 8.3 S3 上的 R2（必须称 ReFind-inspired）
 
-原始 ReFind 的层级是 turn→session；S3 已经改写为 Markdown taxonomy，不能假装完全相同。固定适配如下：
+原始 ReFind 的层级是 turn→session；S3 已经改写为 Markdown taxonomy，不能假装完全相同。2026-10-08 在正式 S3 发布后重新检查实际结构：store 只有 `calvin.md`、`dave.md` 两个文件；每个文件只有一个人物 H1，真正主题位于 H2，且部分 H2 很长。此前草案的“leaf section→top-level H1”会把整个人物变成一个 group、让命中单元过大，并使 seen-group 去重过早排除该人物，现已废止。正式适配改为：
 
-- unit：最小 leaf Markdown section；若文件没有 heading，则整文件为一个 unit；
-- BM25 文本：frontmatter description + heading path + section body；文件系统 path 不直接进入打分；
-- group：该 unit 所属的 top-level heading region；没有 top-level heading 时退回文件；
+- unit：正文中一条完整、带 inline `[SxTy]` 的 Markdown fact bullet；连续行属于同一 bullet 时保持完整，不能截断；
+- BM25 文本：人物名 + H2 heading path + fact bullet 正文；极长的 frontmatter description 不复制到每个 unit，文件系统 path 不直接进入打分；
+- group：`relative file path + 最近的 H2 heading`，例如 `calvin.md::Tokyo trip (2023-04-20)`；无 H2 时退回文件；
 - group score：同 group 的 unit BM25 分数求和；
-- context：同 group 内按文件顺序相邻的前后各 2 个 sibling/leaf sections；
-- seen-group dedup：后续轮排除已返回 topic group，不能粗暴排除整个大型人物文件；
-- 时间：从 section 内 locator 映射到原始 session 日期，绝不能用文件 mtime；
-- source IDs：从 section 和返回上下文中的 locator 提取。
+- context：同一 H2 group 内按文件顺序返回中心 fact bullet 前后各 2 条，不能跨 H2 边界；
+- seen-group dedup：后续轮排除已返回的 H2 topic group，不排除整个人物文件；
+- 重叠：多个 Top-5 命中的 ±2 窗口做传递合并，相同 fact 只交给 Answerer、只计费一次；
+- 时间：从 fact bullet 的 locator 映射到 canonical source session 日期，绝不能用文件 mtime或总结文字猜日期；
+- source IDs：从中心和上下文 fact bullets 的 locator 提取，并映射回 `dia_id`；
+- fallback：无法解析为事实 bullet 的正文不进入正式 R2 index，而是作为构建质量问题记录；不得静默把整篇人物文件当一个检索 unit。
+
+该改动只影响尚未实现的 E6/R2-Curated adapter，不改变已经冻结的 S3 store，也不改变 E5/R1。实现前必须把 bullet parser、group ID、同分 tie-break、窗口合并和计费规则写入 manifest 并测试。
 
 ### 8.4 R2 的四轮决策
 

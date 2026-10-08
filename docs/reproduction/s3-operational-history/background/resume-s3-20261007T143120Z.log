@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/wangwenqi/Desktop/memory bench/fs_memory_lab/cli.py", line 403, in <module>
+    main()
+    ~~~~^^
+  File "/Users/wangwenqi/Desktop/memory bench/fs_memory_lab/cli.py", line 348, in main
+    report = build_s3_store(
+        s3_paths["stream_dir"],
+    ...<13 lines>...
+        resume_source_code_revision=args.source_code_revision,
+    )
+  File "/Users/wangwenqi/Desktop/memory bench/fs_memory_lab/s3_runner.py", line 2131, in build_s3_store
+    raise S3BuildError(
+        f"S3 build failed during {current_state}; diagnostics retained in {run_dir}"
+    ) from None
+fs_memory_lab.s3_runner.S3BuildError: S3 build failed during EPISODE_RUNNING; diagnostics retained in /Users/wangwenqi/Desktop/memory bench/local-runs/s3-management/20261006T022525914538Z-a1352213

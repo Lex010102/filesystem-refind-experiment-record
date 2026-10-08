@@ -677,7 +677,7 @@ RRF(c) = 1 / (60 + r1(c)) + 1 / (60 + r2(c))
 | --- | --- | --- |
 | R1 Filesystem/Center | S1、S2、S3 | LLM 使用只读文件工具自行路由和读取 |
 | R2-Raw ReFind-style | S1、S2 | 在 utterance→session 两级结构上运行 ReFind 核心机制 |
-| R2-Curated ReFind-inspired | S3 | 把同一核心机制适配为 section→topic-group 两级结构 |
+| R2-Curated ReFind-inspired | S3 | 把同一核心机制适配为 fact-bullet→H2-topic 两级结构 |
 
 因此，本地代码可以为了工程清晰把第三个适配器暂称 `R3`，但报告不能把它表述为与 R1、R2 并列的第三套独立检索算法。推荐实现为一个共享 `ReFindCore` 加 `RawChatAdapter` 和 `CuratedMarkdownAdapter`；报告使用 `R2-Raw` 与 `R2-Curated`，并明确后者是 ReFind-inspired。这样 BM25、RRF、多轮 controller、Top-K、时间过滤、去重和 note-taking 只实现一次，变化仅限 unit、group 和 context expansion 的定义。
 
@@ -690,7 +690,7 @@ ReFind 原文最终返回的是 **Top-5 turn-level hits，不是 Top-5 sessions*
 本项目的具体映射为：
 
 - R2-Raw：Top-5 是 utterance/source-turn units；每个中心命中扩展同一 session 内前后各 2 条 utterances；
-- R2-Curated：Top-5 是 leaf Markdown sections；每个中心命中扩展同一 top-level topic group 内前后各 2 个 sibling/leaf sections，不能跨 topic-group 边界。
+- R2-Curated：Top-5 是带 locator 的 Markdown fact bullets；每个中心命中扩展同一 H2 topic group 内前后各 2 条 facts，不能跨 H2 边界。该定义由 2026-10-08 正式 S3 结构复核取代早期 leaf-section 草案。
 
 若多个 Top-5 中心命中的 ±2 窗口重叠，重复文字会影响 EvidenceBundle 与 token 成本。正式 R2 runner 实现前必须冻结“重叠窗口合并、结果 ID、排序和 token 计数”规则，并用单元测试证明同一原文片段不会因重叠被重复计费或重复交给 Answerer；这一点不能在跑完结果后再决定。
 
@@ -765,13 +765,14 @@ Filesystem 论文原生 R1 是：Search Agent 使用 `view/grep/toc/section_read
 
 **S3（必须称 ReFind-inspired）**：
 
-- unit：最小 leaf Markdown section；无 heading 时整文件为一个 unit；
-- BM25 文本：frontmatter description + heading path + section body；文件系统 path 不直接参加打分；
-- group：unit 所属 top-level heading region；没有一级标题时退回文件；
+- 2026-10-08 正式 S3 发布后的结构复核废止了早期“leaf section→top-level H1”草案：真实 store 每个人物文件只有一个 H1，继续使用旧定义会让整个人物成为一个 group；
+- unit：一条完整、带 inline `[SxTy]` 的 Markdown fact bullet；
+- BM25 文本：人物名 + H2 heading path + fact bullet；极长 frontmatter description 与文件路径不重复加入每个 unit 的打分文本；
+- group：`relative file path + 最近的 H2 heading`；无 H2 时才退回文件；
 - group score：同 group 的 unit BM25 分数求和；
-- context：同 group 内相邻的前后各 2 个 sibling/leaf sections；
-- seen-group dedup：排除已经返回的 topic group，而不是整个大型人物文件；
-- 时间：通过 section 中的 source locators 映射回原始 session 日期，绝不用文件 mtime。
+- context：同 H2 内中心 fact bullet 前后各 2 条，重叠窗口合并且同一 fact 只计费一次；
+- seen-group dedup：排除已经返回的 H2 topic group，而不是整个人物文件；
+- 时间：通过 fact 中的 source locators 映射回原始 session 日期，绝不用文件 mtime。
 
 原始 ReFind 的层级是细粒度聊天记录→session；S3 已被 LLM 改写成 section→topic hierarchy，所以 E6 不能写成“复现 ReFind”，只能写成“把 ReFind 的多轮检索机制适配到 agent-curated filesystem”。
 
@@ -923,3 +924,13 @@ R1 的 context compaction 也在本阶段落地：只有 provider 报告的 prom
 S3 正式 run `20261006T022525914538Z-a1352213` 已完成全部 85 个 chunks 并发布。离线 `verify-s3` 重新验证结果为：2 个 Markdown 文件、85 episodes、837 management rounds、842 LLM calls、1350 tool calls；served model 为 `qwen3.8:27b`，记录的总 token 为 30,864,958。S3 manifest SHA-256 是 `70fb5ad5…6e00`，S3 runner 使用的 store-tree SHA-256 是 `60cb8dac…acd`，trace-tree SHA-256 是 `c1b7189c…139`。R1 使用自己包含目录节点的 snapshot 算法，因此 E5 snapshot tree SHA-256 是 `983238fd…cad2`；两个值来自不同、均已冻结的 canonicalization，不能混写成同一 hash。
 
 正式产物位置为 `experiments/locomo-conv50-v1/stores/s3-curated/`、`manifests/s3-curated.json`、`manifests/s3-curated.COMMITTED` 和 `traces/s3-management/`。R1 隔离分支的八个实现阶段已 fast-forward 合入主分支；主目录再次执行 R1 `preflight` 后，E1/S1、E3/S2、E5/S3、dev-6 和 main-40 全部通过。这里只完成本地提交与可复现性收口，没有推送 GitHub，也没有启动 R1 真实 API 请求。
+
+## 2026-10-08：S3 组成、查看方式与 E5/E6 检索口径
+
+正式 S3 不是 85 个记忆文件，而是 85 个固定输入 chunks 依次经过 Management Agent 后累积成的最终只读 store。输入位于 `experiments/locomo-conv50-v1/streams/s3-management-v1/`；最终 store 位于 `stores/s3-curated/`，只有 `calvin.md`（247 行、150572 bytes）和 `dave.md`（225 行、154068 bytes）。每个文件由 YAML frontmatter、人物 H1、主题 H2 和带 `[SxTy]` 的事实 bullets 构成。`manifests/s3-curated.json` 与 `s3-curated.COMMITTED` 负责绑定文件、来源和发布状态；`traces/s3-management/episode-001.json` 至 `episode-085.json`、`events.jsonl` 和 `index.json` 保存构建审计，不作为答题证据。
+
+查看时优先从 Markdown 正文 H1/H2 开始，frontmatter description 是文件级搜索面，不宜当作正式引用。常用只读命令为 `rg '^#{1,3} ' stores/s3-curated` 查看主题、`rg -n -i '关键词' stores/s3-curated` 查找事实，以及 `python3 -m fs_memory_lab.cli --project <repo> verify-s3` 验证整套正式产物。正式文件、manifest、marker 和 traces 已被 hash 绑定，不应直接编辑；需要人工标注时应复制到分析目录。
+
+E5/R1 使用论文 Prompt 5 的 hierarchical filesystem 路线：Search Agent 用 `view/grep/toc/section_read` 自行选择人物文件和主题，随后用本项目 controlled actions `take_note/finish_search` 只选择先前真实读到、带 locator 的正文事实行，最多 40 provider rounds，输出 EvidenceBundle 而不直接回答。frontmatter 可以帮助路由，但不能作为最终 evidence。
+
+E6/R2 必须称 ReFind-inspired。正式 S3 的实际形状证明早期“leaf section→H1”适配太粗，因此现改为“fact bullet→H2 topic”：确定性 parser 把每条带 locator 的事实 bullet 建成 unit，以 `file + H2` 为 group；BM25 使用人物名、heading 与事实文本，按 `k1=1.2,b=0.75` 排名；同 group 分数求和后，以 `1/(60+r_unit)+1/(60+r_group)` 融合，返回 Top-5 中心 facts并在同 H2 内扩展 ±2 facts。最多 4 轮，Controller 可改写关键词和时间范围；时间来自 locator 对应的 canonical session date，重叠窗口必须合并。R1 与 R2 最终使用同一 S3 snapshot、同一 evidence budget、同一 EvidenceBundle schema 和同一 Answerer，唯一主要差异是 LLM 文件导航与 ReFind-inspired 排名检索。
