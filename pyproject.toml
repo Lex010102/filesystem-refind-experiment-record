@@ -12,6 +12,7 @@ fs-stores = "fs_memory_lab.stores:main"
 fs-s3-chunks = "fs_memory_lab.s3_chunks:main"
 fs-question-sets = "fs_memory_lab.question_sets:main"
 fs-r1 = "fs_memory_lab.r1_cli:main"
+fs-r2 = "fs_memory_lab.r2_cli:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

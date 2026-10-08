@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "protocol_version": "r2-raw-refind-style-v1",
+  "source": {
+    "paper": "When Your Agent Opens the Chat App: A Benchmark for LLM Agent Memory Retrieval (ReFind)",
+    "paper_pdf_sha256": "a94658175d3ceb0c4790bdadd3955aa9acee367bddb5723a2b7306af58a9545c",
+    "paper_locations": [
+      "Appendix A",
+      "Section 3"
+    ],
+    "official_code_commit": "a80175ca0eeb52a938d7cab7a602bc780de8a577"
+  },
+  "prompts": {
+    "published_retrieval": {
+      "classification": "normalized-paper-transcription",
+      "sha256": "de7267ac2d1b927cb595715c2ff04b96f0eb07a9abf4e4a53ab3c69b9590a925"
+    },
+    "published_time_addendum": {
+      "classification": "normalized-paper-transcription",
+      "sha256": "66bce0aca04ec05300f7e302161fd9180dde0733c4adaef3235398a3657f979c"
+    },
+    "published_observation_template": {
+      "classification": "normalized-paper-transcription",
+      "sha256": "200d3c4d91e5a3dad05b1e40b5fcff29808addfcdeee8db733ea743aa59224a0"
+    },
+    "published_system": {
+      "classification": "normalized-paper-transcription-combined",
+      "sha256": "20422063cc471ee1de75c38e4250e1a141a731ea2970786a6c715dc3c83cf7de"
+    },
+    "local_protocol_addendum": {
+      "classification": "project-defined-control-text",
+      "sha256": "49927e18033cfe2649411e7bd5343acf889c93c791c5375ae323144077a1ef75"
+    },
+    "derived_system": {
+      "classification": "paper-text-plus-project-addendum",
+      "sha256": "6930d93099ac20b76e881b68cbb63b46e1a0a3e2ff43453db685551c3339a6dc"
+    },
+    "user_template": {
+      "classification": "project-defined",
+      "sha256": "bbf8e2059f1123e9b8ae90c1d31cf3217d0a427387450a31d93032bd3e8e690c"
+    }
+  }
+}

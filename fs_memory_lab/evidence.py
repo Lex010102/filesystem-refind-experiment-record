@@ -43,6 +43,7 @@ STORE_SOURCE_KINDS = MappingProxyType({"s1": "raw", "s2": "raw", "s3": "curated"
 RETRIEVAL_IDS = frozenset({"r1", "r2", "r3", "fusion"})
 STOP_REASONS = frozenset({
     "evidence_sufficient",
+    "no_relevant_evidence",
     "not_found_after_global_fallback",
     "no_progress_after_global_fallback",
     "evidence_budget_reached",
@@ -51,6 +52,7 @@ STOP_REASONS = frozenset({
 })
 COMPLETED_STOP_REASONS = frozenset({
     "evidence_sufficient",
+    "no_relevant_evidence",
     "not_found_after_global_fallback",
     "no_progress_after_global_fallback",
     "evidence_budget_reached",

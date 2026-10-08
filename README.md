@@ -17,8 +17,9 @@ GitHub：<https://github.com/Lex010102/filesystem-refind-experiment-record>
 - 已冻结 S3 Management Agent 的七工具顺序/schema、上下文压缩协议、论文目标参数与 NUS 本地实际请求配置，并实现 `s3-preflight`、`build-s3`、`verify-s3` 安全执行链；
 - S3 safe runner 已用隔离的 deterministic fake provider 完整走通 85 个连续 build episodes，覆盖恢复点、增量 trace、逐块 gate、失败隔离、发布回滚和离线复核；这不是一次真实 API 运行；
 - 已从 `conv-50` 的 154 道可靠非对抗题中确定性冻结 40 道正式题和 6 道独立开发题；正式题覆盖四类问题、全部 30 个 evidence sessions，以及 20 道 caption-evidence 与 18 道纯文本证据题；在线 question input 与离线 gold 文件物理分离；
-- 尚未完成 ReFind-style R2、统一 Answerer、批量评测与七条件实验；
-- 当前最准确的说法是：**正式数据底座、S1/S2 stores、S3 输入流、prompt/tool/runtime contracts、40题问题集与安全 runner v5 已固定；最近一次真实 S3 续跑保留了前 71 个成功 chunks，在 chunk 72 第18轮因普通请求三次超时而安全停止，失败 episode 已隔离，正式 S3 store 尚未发布。**
+- 已完成 E2/E4 的 exchange-level R2-Raw 离线 harness：292 exchanges、BM25/session RRF、Top-5、±2、seen-session、四动作 Agent、EvidenceBundle、批量 runner 与 verifier 均通过 fake-provider 测试；尚未调用 R2 真实 API；
+- 尚未完成统一 Answerer、E6/R2-Curated、E7 融合、正式批量评测与七条件实验；
+- 当前最准确的说法是：**正式数据底座、S1/S2/S3 stores、R1 与 E2/E4 R2-Raw harness、40题问题集均已固定；R2-Raw 目前只完成离线搭建，下一步是 dev-6 小规模真实 API smoke，而不是直接运行 main-40。**
 
 完整的一个月工作路线见 [实验地图](docs/plans/one-month-experiment-map.md)。历史进度见 [研究进度日志](docs/progress/2026-09-16-research-log.md)，最新数据与 S1/S2 准备状态见 [LoCoMo 数据准备记录](docs/progress/2026-10-05-locomo-data-preparation.md)。
 

@@ -450,17 +450,20 @@ S3 会受模型随机性影响。一个月内如果给 E5、E6 分别重建，�
 | 两级融合 | unit rank + group rank 的 RRF |
 | RRF 常数 | `k=60` |
 | 每轮返回 | Top-K = 5 |
-| 原始聊天上下文 | 命中 utterance 前后各 2 条，不跨 session |
-| 最大搜索次数 | 4 |
+| 原始聊天上下文 | 命中 exchange 前后各 2 个 exchange，不跨 session |
+| ReAct 运行预算 | 最多 4 个 planner iterations/actions；不等于固定执行 4 次 BM25 搜索 |
 | 时间 | Agent 可提供 date_from/date_to；打分前过滤 |
 | 去重 | 后续轮排除已返回 group |
 | 笔记 | 保存命中原文/文件原文片段，不让 LLM重新总结 |
 
 ### 8.2 S1/S2 上的 R2
 
-- 最小 unit：一条 LoCoMo utterance；
+- 最小 unit：一个 `exchange`，即同一 session 内按原始顺序相邻的两条 source turns；
+- 配对规则：`(T1,T2), (T3,T4), ...`，奇数长度 session 的最后一条 source turn 保留为 singleton exchange，不丢弃；
+- 固定规模：`conv-50` 的 568 条 source turns、30 个 sessions（其中 16 个为奇数长度）确定性生成 292 个 exchange units；
+- provenance：每个 exchange 保留内部每条 source turn 的 `[SxTy]`、`dia_id`、speaker、text 和可用 `blip_caption`，gold evidence 仍按 source-turn 粒度核对；
 - group：session；
-- 上下文：同一 session 前后 ±2 utterances；
+- 上下文：同一 session 前后 ±2 exchanges；
 - 时间：session date；
 - seen-group dedup：已返回 session 后续轮不再返回。
 
@@ -501,7 +504,7 @@ S3 会受模型随机性影响。一个月内如果给 E5、E6 分别重建，�
 4. 改写关键词、缩小时间或寻找另一个多跳事实；
 5. 证据充分时 `finish_search`。
 
-新搜索前必须保存上一轮有用结果，因为 observation 不应被当作永久记忆。最多 4 次 search，不要求跑满。
+新搜索前必须保存上一轮有用结果，因为 observation 不应被当作永久记忆。运行预算按论文 `max iterations = 4` 与作者公开实现解释为最多 4 个 planner actions：`search_chatrecord`、`take_note`、`finish_search` 每次各消耗一个 action；因此不能把它写成“最多 4 次 BM25 搜索”，也不要求跑满。
 
 ### 8.5 R2 单元测试
 

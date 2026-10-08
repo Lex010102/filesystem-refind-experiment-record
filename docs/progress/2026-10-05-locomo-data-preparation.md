@@ -67,7 +67,7 @@ D30:05 -> D30:5 -> [S30T5]
 
 `conv-50` 的一个 source turn 平均约 142 个字符、26 个英文词，中位数约 128 个字符、24 个词；每个 session 平均 18.9 个 source turns。正式构建必须使用全部 568 个 source turns，不能根据 gold evidence 预筛选。
 
-ReFind 原文对 `turn` 使用了不同定义：一个 user utterance 和对应 assistant response 合为一个 turn。为了避免歧义，本项目不直接沿用这个含混名称，而使用上表的 `source turn` 与 `exchange`。早期曾考虑派生 exchange-level retrieval units；该想法已被 2026-10-07 的正式实验地图取代。当前固定方案是：canonical records 始终保持 568 个 source turns；S1/S2 的 raw-chat ReFind-style 检索以一条 LoCoMo utterance/source turn 为最小 unit，以 session 为 group，并在同一 session 内返回命中 utterance 前后各 2 条。每个 unit 保留其 `dia_id` 和 source locator。报告必须把这项选择写成面向 LoCoMo 数据结构的适配，不能冒充 ReFind 原文的 paired-turn 定义。
+ReFind 原文对 `turn` 使用了不同定义：一个 user utterance 和对应 assistant response 合为一个 turn。为了避免歧义，本项目不直接沿用这个含混名称，而使用上表的 `source turn` 与 `exchange`。2026-10-09 在重新核对论文和作者公开实现后，正式 R2-Raw 协议改为 exchange-level：canonical records 仍完整保留 568 个 source turns；建索引时在每个 session 内按原始顺序确定性配对 `(T1,T2), (T3,T4), ...`，奇数长度 session 的最后一条保留为 singleton exchange。30 个 sessions 中有 16 个为奇数长度，因此固定生成 292 个 exchange units。每个 exchange 保留内部一至两条 source turns 的 `dia_id`、source locator、speaker、text 与可用 caption；group 仍为自然 session，命中后在同一 session 内扩展前后各 2 个 exchanges。该选择比先前的 utterance-level 草案更接近 ReFind 原文，并且不会改变 S1/S2 的存储文件或 source-turn 级 gold evidence。
 
 ## 图片 turn 的统一处理
 
@@ -254,7 +254,7 @@ PRECHECK → LOCKED → STAGED → AGENT_RUNNING → AGENT_SUCCEEDED
 
 ## S2 完成时记录的原下一步（已被 2026-10-06 决策调整）
 
-当时的顺序设想是：冻结并提交正式 S2 后先实现 ReFind-style R2，再实现 evidence-only R1；当时还准备设计 exchange 派生、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则。2026-10-06 决定先推进 S3 输入准备，因此实现顺序已调整；2026-10-07 的正式实验地图又以 utterance-level unit 取代了早期 exchange-level 设想，所以 singleton exchange 规则不再属于当前协议。“不应未经 prompt/runner 冻结就直接运行 S3 管理 LLM”和“不为六个条件分别切一次原始数据”两项约束继续有效。
+当时的顺序设想是：冻结并提交正式 S2 后先实现 ReFind-style R2，再实现 evidence-only R1；当时还准备设计 exchange 派生、奇数 session 的 singleton 处理及 gold `dia_id` 命中规则。2026-10-06 决定先推进 S3 输入准备，因此实现顺序已调整；2026-10-07 的实验地图曾以 utterance-level unit 取代早期 exchange-level 设想；2026-10-09 重新核对 ReFind 的 paired-turn 定义和作者公开实现后，正式协议恢复为 exchange-level，并固定保留奇数 session 的 singleton exchange。以上时间线用于解释设计变更；当前有效规则以 2026-10-09 决策为准。“不应未经 prompt/runner 冻结就直接运行 S3 管理 LLM”和“不为六个条件分别切一次原始数据”两项约束继续有效。
 
 ## 2026-10-06：S3 路线与确定性 chunk 输入流
 
@@ -610,7 +610,7 @@ Stage 1 Retrieval
   -> 返回 Top-5 命中，每个命中带同 session 内前后各 2 个单位
   -> LLM 用 take_note 保存可能有用的完整原文证据
   -> 根据结果更换关键词、补另一个多跳事实或缩小时间范围
-  -> 最多 4 次 search；证据充分则 finish_search
+  -> 最多 4 个 planner iterations/actions；search、take_note、finish_search 都占用 action，证据充分则提前结束
 
 Stage 2 Reasoning
 保存的 notes 按 session 分组并按时间排序
@@ -676,7 +676,7 @@ RRF(c) = 1 / (60 + r1(c)) + 1 / (60 + r2(c))
 | 固定名称 | 适用 store | 定位 |
 | --- | --- | --- |
 | R1 Filesystem/Center | S1、S2、S3 | LLM 使用只读文件工具自行路由和读取 |
-| R2-Raw ReFind-style | S1、S2 | 在 utterance→session 两级结构上运行 ReFind 核心机制 |
+| R2-Raw ReFind-style | S1、S2 | 在 exchange→session 两级结构上运行 ReFind 核心机制 |
 | R2-Curated ReFind-inspired | S3 | 把同一核心机制适配为 fact-bullet→H2-topic 两级结构 |
 
 因此，本地代码可以为了工程清晰把第三个适配器暂称 `R3`，但报告不能把它表述为与 R1、R2 并列的第三套独立检索算法。推荐实现为一个共享 `ReFindCore` 加 `RawChatAdapter` 和 `CuratedMarkdownAdapter`；报告使用 `R2-Raw` 与 `R2-Curated`，并明确后者是 ReFind-inspired。这样 BM25、RRF、多轮 controller、Top-K、时间过滤、去重和 note-taking 只实现一次，变化仅限 unit、group 和 context expansion 的定义。
@@ -689,7 +689,7 @@ ReFind 原文最终返回的是 **Top-5 turn-level hits，不是 Top-5 sessions*
 
 本项目的具体映射为：
 
-- R2-Raw：Top-5 是 utterance/source-turn units；每个中心命中扩展同一 session 内前后各 2 条 utterances；
+- R2-Raw：Top-5 是 exchange units；每个中心命中扩展同一 session 内前后各 2 个 exchanges；每个 exchange 内的一至两条 source turns 继续分别保留 locator 和 `dia_id`；
 - R2-Curated：Top-5 是带 locator 的 Markdown fact bullets；每个中心命中扩展同一 H2 topic group 内前后各 2 条 facts，不能跨 H2 边界。该定义由 2026-10-08 正式 S3 结构复核取代早期 leaf-section 草案。
 
 若多个 Top-5 中心命中的 ±2 窗口重叠，重复文字会影响 EvidenceBundle 与 token 成本。正式 R2 runner 实现前必须冻结“重叠窗口合并、结果 ID、排序和 token 计数”规则，并用单元测试证明同一原文片段不会因重叠被重复计费或重复交给 Answerer；这一点不能在跑完结果后再决定。
@@ -754,14 +754,15 @@ Filesystem 论文原生 R1 是：Search Agent 使用 `view/grep/toc/section_read
 
 **S1/S2（ReFind-style）**：
 
-- unit：一条 LoCoMo utterance/source turn；
+- unit：一个 LoCoMo exchange；同一 session 内按原始顺序配对 `(T1,T2), (T3,T4), ...`，奇数尾项形成 singleton exchange；
+- 固定规模：568 个 source turns 确定性形成 292 个 exchange units，source turns 本身一个不少；
 - group：自然 session；
-- 上下文：同 session 前后各 2 条 utterances；
+- 上下文：同 session 前后各 2 个 exchanges；
 - 时间：session date；
 - seen-group dedup：后续轮排除已返回 session；
 - BM25 不把 S2 文件夹路径加入打分，保证 E2/E4 第一轮排名相同；但结果 provenance 显示路径，controller 可在后续轮利用主题目录词。
 
-这与 ReFind 原文把一组 user utterance + assistant response 视为一个 turn 不完全相同，必须称为 LoCoMo 数据适配。
+这与 ReFind 原文的 paired-turn 检索粒度对齐；由于 LoCoMo 是两位人物对话而不是严格的 `user/assistant` role schema，并且奇数尾项需要 singleton 规则，报告仍需把角色映射与尾项处理写成 LoCoMo 数据适配。
 
 **S3（必须称 ReFind-inspired）**：
 
@@ -952,3 +953,31 @@ R1 agent 因此先升级为 `r1-evidence-agent-v2`，新增受限的 free-text c
 为防异常失控而不改变检索算法，R1 agent 升级为 `r1-evidence-agent-v3`，给 E1/E3/E5 统一冻结每题 `1,000,000 provider_reported_total_tokens` 的 emergency fuse。它累计正常检索、free-text correction 和 context compaction 的全部成功 API completions；每次调用的 prompt/completion/total tokens 写入 hash-bound trace，成功 bundle 或失败 artifact 同时保存聚合 totals。触发响应本身已计费并被记录，但其工具/actions 不执行，之后不再调用模型，运行以 `token_safety_fuse` failure artifact 结束；fuse 不会截断任何 `view` 内容，`grep max_results` 仍按论文工具的正常规则工作。该阈值约为现有 E5 单题 smoke 成本的 11 倍，定位仅为安全熔断，不是正常预算，也不允许 E5 使用不同阈值。新 agent-limits freeze 见 R1 总记录；55 项聚焦测试全部通过，全仓标准库 discovery 实际执行的 212 项全部通过。唯一未由系统 `python3` 直接收集的 pytest prompt 模块受本机 pytest/Anaconda 启动环境影响，已用不修改项目文件的 environment-neutral runner 执行其中 9 个参数化 cases，全部通过。
 
 R1 的论文来源、三条件映射、paper-direct/evidence-only 取舍、四工具与两动作、EvidenceBundle 防伪、状态机、compaction、NUS 格式纠正、token fuse、真实 smoke、代码索引、运行方法和下一步已集中整理到 `docs/progress/2026-10-09-r1-exploration-and-implementation.md`。后续关于 R1 的关键协议变化应同时更新该总记录和对应 reproduction contract，避免信息只散落在逐日记录中。
+
+## 2026-10-09：R2-Raw（S1/S2）正式方案确认
+
+本阶段只确认并记录 R2-Raw 方案，没有编写 R2 代码、调用学校 API 或生成实验结果。当前开发范围仅包含 E2（S1 + R2-Raw）和 E4（S2 + R2-Raw）；E6/S3 的 R2-Curated 暂停，不与本阶段混做。
+
+正式 R2-Raw 将 ReFind 的最小检索单位对齐为 exchange，而不是此前草案中的单条 utterance。每个 session 按原顺序配对 `(T1,T2), (T3,T4), ...`，奇数尾项形成 singleton exchange。`conv-50` 的 568 个 source turns、30 个 sessions（16 个奇数长度）固定形成 292 个 exchange units；每条 source turn 仍且只出现一次，内部 `[SxTy]`、`dia_id`、speaker、text 与 caption 全部保留，gold evidence 继续按 source-turn 粒度评测。Top-5 中心命中和同 session 内 ±2 上下文均改为 exchange 粒度。
+
+确定性后端固定使用 lowercase、冻结 stopword 表、作者公开 Porter-style 代码、BM25 `k1=1.2,b=0.75`、session 分数求和、1-based rank 的 RRF `k=60`、Top-5、inclusive 时间过滤和 seen-session 整组排除。过滤发生在打分/排名之前；同分按 canonical exchange 顺序。S2 路径不进入 BM25/RRF，但显示在 provenance header 中，因此 E2/E4 第一轮同 query 的 backend 排名必须一致，后续若不同必须能从 Agent trace 追溯到路径线索和 query 改写。
+
+Retrieval Agent 使用论文 Appendix A 的 evidence-only Prompt 和文本 `Thought / Action / Action Input` ReAct 接口，动作是 `search_chatrecord`、`take_note`、`finish_search`。运行上限解释为最多 4 个 planner actions，而不是 4 次搜索；Top-K 固定为 5。达到 action cap 时只使用已经明确保存的 notes，不采用竞赛代码的自动保存最后 hits，也不静默降级到 direct BM25。Agent 看到的 Top-5 blocks 保持独立编号；进入共享 EvidenceBundle 前由 host 重新读取冻结 store、验证 locator/`dia_id`、传递合并重叠窗口并让相同 source turn 只交付和计费一次。
+
+论文、作者代码和本项目补全的逐项来源、输入 hashes、模型替代、实现顺序和自动验收条件已单独冻结在 `docs/reproduction/r2-raw-protocol.md`。后续 R2-Raw 的任何关键变化必须同时更新该协议、一个月实验地图和本进度笔记，不能只改代码或在结果出来后回填规则。
+
+## 2026-10-09：R2-Raw（E2/E4）离线 harness 完成
+
+严格按照已确认的 exchange-level R2-Raw 协议，本地已经完成 E2/S1 与 E4/S2 的完整运行结构；本阶段没有读取学校 API key、没有发出模型请求，也没有生成 dev-6 或 main-40 的 R2 结果。
+
+输入层会先重新验证 S1/S2 的 manifest、store bytes、source map 和正式发布路径，再把每个 session 内相邻 source turns 确定性配成 exchanges。自动 preflight 证明：568 条 source turns 恰好形成 292 个 exchanges，覆盖 30 个 sessions 和 16 个 singleton tails；每条 source turn恰好出现一次。S1/S2 的检索正文完全一致，292/292 个 exchange 的 provenance path 不同，符合“路径只显示、不进入 BM25”的实验控制。
+
+确定性后端已经实现并测试作者固定 commit 的原 tokenizer、BM25 `k1=1.2,b=0.75`、session score 求和、1-based RRF `k=60`、Top-5、同 session ±2 exchanges、严格 `YYYY/MM/DD` inclusive 日期和 seen-session 整组排除。官方 tokenizer 文件逐字节 SHA-256 为 `111744ff…9b6`；S1/S2 exchange corpus hashes 分别为 `f6030205…c37` 与 `923d2792…05dc`。离线测试独立按公式复算了 BM25、session sum 与 RRF，并验证 E2/E4 相同首轮 query 的 backend 排名一致。
+
+Retrieval Agent 使用文本 `Thought / Action / Action Input`，不使用 native function calling；只允许 `search_chatrecord`、`take_note` 和 `finish_search`，最多 4 个 planner actions。host 不会自动保存最后一轮 hits，也不会在没有 note 时退回 direct BM25。参数错误作为结构化 observation 返回并消耗一个 action；timeout/指定 transient HTTP 只可在完整 response 返回前重试，已返回 response 的 action 绝不重放。论文目标配置冻结为 `temperature=0`、high reasoning、4096 completion cap；学校正式入口则是 `coding` alias + `portable` adapter，实际 wire 显式发送 temperature 0、但省略网关不接受的 reasoning/output-cap 字段。两套信息已经分开写入 runtime trace 并绑定不同 runtime hash，不能把本地请求误写成 backbone/config 完全一致的论文复现；尚未真实验证学校网关兼容性。
+
+`take_note` 只保存最近一次搜索的完整 context block。最终证据由 host 重读冻结 store 后生成，不接受模型自写 evidence；同一路径重叠/紧邻区间先传递合并，再按 E1–E6 共用的 character/byte evidence budget 整块接受或整块跳过。成功、四动作封顶和失败使用统一 EvidenceBundle/FailureArtifact，并原子发布 `trace + artifact + episode index + marker` 的 hash chain。单题、顺序批量、summary 和离线 verifier 均已接入 `python3 -m fs_memory_lab.r2_cli`。
+
+详细代码地图、固定 hashes、检查命令、未来 smoke 示例与产物结构见 `docs/reproduction/r2-raw-implementation.md`。下一步不是直接跑 40 题，而是先做 E2/dev-6 单题真实 API smoke，再用同题验证 E4；完成 dev-6 成本和证据完整性检查、并在看 main-40 结果前冻结共享 evidence budget 后，才允许正式批量运行。
+
+最终离线审计补充了 portable wire profile 的可追溯性：`R2EpisodeOutcome` 保存 `api_style`，每个 trace 首条 `runtime_start` 明确列出论文目标字段与实际发送字段，成功/失败 artifact 的 `runtime_sha256` 也随 API style 改变；正式 CLI 强制 `portable`，并拒绝 `FSMEM_MODEL` 与 `--model` 不一致。新增无网络 wire-payload 测试确认 portable 会发送 temperature 0，但不会发送 reasoning/output cap 或空 native-tools 字段。R2 专项离线回归最终为 33/33 通过；不含需要 `pytest` 收集器的 R1 prompt 文件时，全仓标准库回归为 245/245，另以等价参数展开执行 R1 prompt 8 个 cases 后也全部通过，因此本次有效总回归为 253/253。

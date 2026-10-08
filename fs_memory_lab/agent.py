@@ -141,6 +141,9 @@ class CompatibleChatProvider:
     def complete(self, messages: list[dict], tools: list[dict], config: RoleConfig) -> dict:
         payload = {"model": self.model or config.model, "messages": messages,
                    "stream": False}
+        temperature = getattr(config, "temperature", None)
+        if temperature is not None:
+            payload["temperature"] = temperature
         if tools or self.api_style == "paper":
             payload["tools"] = tools
         if self.api_style == "paper":
