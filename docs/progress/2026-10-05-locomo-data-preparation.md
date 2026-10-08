@@ -917,3 +917,9 @@ R1 的 context compaction 也在本阶段落地：只有 provider 报告的 prom
 证据预算没有在代码中暗设一个正式默认值。`run-one`/`run-batch` 都强制显式传入 `--budget-characters`；先用 dev-6 做预算敏感性冻结，再运行 main-40，避免看完正式答案后调整。API 配置仍只从既有 `FSMEM_*` 环境变量读取，不写 key 文件、不显示 key，也不在失败时清除 key。
 
 使用新代码对主项目执行的只读 `preflight` 已同时通过 E1/S1、E3/S2、E5/S3、dev-6 和 main-40，输出明确标记 `api_called=false`。预检期间发现 macOS 自动写入 S2 正式目录的 `.DS_Store`；该系统元数据被移到 `/private/tmp/locomo-s2-foldered.DS_Store.r1-preflight-backup` 后，S2 再次严格匹配冻结的 30 个 Markdown 文件、114456 bytes 与 manifest。包含 runner 成功、失败、批量、summary 篡改和 CLI gate 在内的 R1/evidence 聚焦回归为 114/114；与已有 S1/S2/S3、数据、题集等测试合并后的全仓离线回归为 216/216。至此离线 R1 harness 已具备真实 API smoke test 的前置条件，但本阶段仍未调用学校 API、未产生 dev-6/main-40 检索结果，也未决定正式 evidence budget。
+
+## 2026-10-08：S3 正式产物发布与 R1 主目录集成
+
+S3 正式 run `20261006T022525914538Z-a1352213` 已完成全部 85 个 chunks 并发布。离线 `verify-s3` 重新验证结果为：2 个 Markdown 文件、85 episodes、837 management rounds、842 LLM calls、1350 tool calls；served model 为 `qwen3.8:27b`，记录的总 token 为 30,864,958。S3 manifest SHA-256 是 `70fb5ad5…6e00`，S3 runner 使用的 store-tree SHA-256 是 `60cb8dac…acd`，trace-tree SHA-256 是 `c1b7189c…139`。R1 使用自己包含目录节点的 snapshot 算法，因此 E5 snapshot tree SHA-256 是 `983238fd…cad2`；两个值来自不同、均已冻结的 canonicalization，不能混写成同一 hash。
+
+正式产物位置为 `experiments/locomo-conv50-v1/stores/s3-curated/`、`manifests/s3-curated.json`、`manifests/s3-curated.COMMITTED` 和 `traces/s3-management/`。R1 隔离分支的八个实现阶段已 fast-forward 合入主分支；主目录再次执行 R1 `preflight` 后，E1/S1、E3/S2、E5/S3、dev-6 和 main-40 全部通过。这里只完成本地提交与可复现性收口，没有推送 GitHub，也没有启动 R1 真实 API 请求。

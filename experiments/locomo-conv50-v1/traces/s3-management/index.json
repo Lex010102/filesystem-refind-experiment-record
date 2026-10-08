@@ -1,0 +1,779 @@
+{
+  "build_cost": {
+    "episodes": 85,
+    "llm_calls": 842,
+    "rounds": 837,
+    "tool_calls": 1350,
+    "usage_totals": {
+      "completion_tokens": 1195395,
+      "prompt_tokens": 29669563,
+      "total_tokens": 30864958
+    }
+  },
+  "code_revision": "3ff7d7168f7a8ec6a91377b4ce26f6422920349a",
+  "episodes": [
+    {
+      "chunk_filename": "session_01_chunk_01.txt",
+      "filename": "episode-001.json",
+      "global_chunk_index": 1,
+      "sha256": "3eeb85b2bba8b7c5beee0aa2013fb930ba71f62c209b7c67fc9d658772421663",
+      "store_after_sha256": "a234574b9da3ddd81876d3081cafb8f2e2b05ef4e8e93b6e2115024e0afdb18a",
+      "store_before_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "chunk_filename": "session_01_chunk_02.txt",
+      "filename": "episode-002.json",
+      "global_chunk_index": 2,
+      "sha256": "87e50a88da5221c290b80ee6cb479867d51fa359cab70080840a13cde4bce625",
+      "store_after_sha256": "21f62d0247bba9c52953a6acdc80b17d2e8cbccaaae31b9fb54e44ec465ba63c",
+      "store_before_sha256": "a234574b9da3ddd81876d3081cafb8f2e2b05ef4e8e93b6e2115024e0afdb18a"
+    },
+    {
+      "chunk_filename": "session_01_chunk_03.txt",
+      "filename": "episode-003.json",
+      "global_chunk_index": 3,
+      "sha256": "8762363a9bc791d834e9c01f95953a8a25b74abdfa5a4e791f87bd06c522d0b6",
+      "store_after_sha256": "7e2c15d3d97bbd0a43ebddd4e2b32977ac965b121e086c7924e107561b726320",
+      "store_before_sha256": "21f62d0247bba9c52953a6acdc80b17d2e8cbccaaae31b9fb54e44ec465ba63c"
+    },
+    {
+      "chunk_filename": "session_02_chunk_01.txt",
+      "filename": "episode-004.json",
+      "global_chunk_index": 4,
+      "sha256": "13e7914a5fdd3c1ab0ee4b5d74bae0363d764b09d3580624816f5140fc088c68",
+      "store_after_sha256": "1b7668ae4828ca742e923b483f8d94cfdaaebf9e74c91b075f2f632973656da2",
+      "store_before_sha256": "7e2c15d3d97bbd0a43ebddd4e2b32977ac965b121e086c7924e107561b726320"
+    },
+    {
+      "chunk_filename": "session_02_chunk_02.txt",
+      "filename": "episode-005.json",
+      "global_chunk_index": 5,
+      "sha256": "ff5d728e411136da3303dd39975755a0ee775039c6111780639a4b7077bfa80c",
+      "store_after_sha256": "f1c2b1a83da595c4693a32acc3fa3a07225cc5dfdc2ccbc85d7e71bde88a3148",
+      "store_before_sha256": "1b7668ae4828ca742e923b483f8d94cfdaaebf9e74c91b075f2f632973656da2"
+    },
+    {
+      "chunk_filename": "session_02_chunk_03.txt",
+      "filename": "episode-006.json",
+      "global_chunk_index": 6,
+      "sha256": "34db660f4c40b94551028d9336aae7ddbac2a29472cd00462933a21051acb8fe",
+      "store_after_sha256": "608266e48e5e893266d38557824fe857aeefcd8606bd928d32468d84730f9119",
+      "store_before_sha256": "f1c2b1a83da595c4693a32acc3fa3a07225cc5dfdc2ccbc85d7e71bde88a3148"
+    },
+    {
+      "chunk_filename": "session_03_chunk_01.txt",
+      "filename": "episode-007.json",
+      "global_chunk_index": 7,
+      "sha256": "9c1bd070cfb0e0c0c9d20e72adaed3a89055c9ffaa8f8adc85bd85a45cdf1d73",
+      "store_after_sha256": "693e87579bb4ca1baa00848bff8787aa1a1ebded61c809cc708fb0cca69fe11d",
+      "store_before_sha256": "608266e48e5e893266d38557824fe857aeefcd8606bd928d32468d84730f9119"
+    },
+    {
+      "chunk_filename": "session_03_chunk_02.txt",
+      "filename": "episode-008.json",
+      "global_chunk_index": 8,
+      "sha256": "3853a81dc235d298342fc4d7e7e45eb865a7f434128b0b7b292026f6cf2ffa3a",
+      "store_after_sha256": "8e9d419ea5cb08379e9f799c5b4e6a4a61b323fc108bfe3a4b374de54e930529",
+      "store_before_sha256": "693e87579bb4ca1baa00848bff8787aa1a1ebded61c809cc708fb0cca69fe11d"
+    },
+    {
+      "chunk_filename": "session_03_chunk_03.txt",
+      "filename": "episode-009.json",
+      "global_chunk_index": 9,
+      "sha256": "02a85c27aa89c1c374597ea12535c5ed3aa659bdb5cce4bc4d6614328731c0bd",
+      "store_after_sha256": "77552c82267320b06fbe037d1e33ec424e878da8b1d877ffca6b8711fd426049",
+      "store_before_sha256": "8e9d419ea5cb08379e9f799c5b4e6a4a61b323fc108bfe3a4b374de54e930529"
+    },
+    {
+      "chunk_filename": "session_04_chunk_01.txt",
+      "filename": "episode-010.json",
+      "global_chunk_index": 10,
+      "sha256": "58381ea12d8e5fc992b09e00d24bb6e51e8c6aebaa973b93d7a9e861144c8467",
+      "store_after_sha256": "2a98500edd089dbbb23e702a7933b44a16d7bb8b1edd69e4e2235929f286050d",
+      "store_before_sha256": "77552c82267320b06fbe037d1e33ec424e878da8b1d877ffca6b8711fd426049"
+    },
+    {
+      "chunk_filename": "session_04_chunk_02.txt",
+      "filename": "episode-011.json",
+      "global_chunk_index": 11,
+      "sha256": "ec997049f05520f866608dff0492aa9f4e71a5d9e890591bd58e7d74d5bd95d8",
+      "store_after_sha256": "c0635cba1f9374d38431c65d2a75bc5647c0ba9e6855cb1b1f5826129f70c69d",
+      "store_before_sha256": "2a98500edd089dbbb23e702a7933b44a16d7bb8b1edd69e4e2235929f286050d"
+    },
+    {
+      "chunk_filename": "session_04_chunk_03.txt",
+      "filename": "episode-012.json",
+      "global_chunk_index": 12,
+      "sha256": "cb70927a706a90fc2cc072b39d554bbc4adffbd5ed1077059b7fa4fa08efe706",
+      "store_after_sha256": "39a3d48973f92b7610dbf02dc7a56938139c1974d5412fbfa5bcfecc45af12f7",
+      "store_before_sha256": "c0635cba1f9374d38431c65d2a75bc5647c0ba9e6855cb1b1f5826129f70c69d"
+    },
+    {
+      "chunk_filename": "session_04_chunk_04.txt",
+      "filename": "episode-013.json",
+      "global_chunk_index": 13,
+      "sha256": "7171325227c60e6a6db9ea841b730634f455b3d446b26c89b41521aa374703fe",
+      "store_after_sha256": "1b61ac3e56fdc7bf220195a61b57769c22f5800c7a550c3b84f10e7fb21bfca5",
+      "store_before_sha256": "39a3d48973f92b7610dbf02dc7a56938139c1974d5412fbfa5bcfecc45af12f7"
+    },
+    {
+      "chunk_filename": "session_05_chunk_01.txt",
+      "filename": "episode-014.json",
+      "global_chunk_index": 14,
+      "sha256": "e3648ed70b174b80631e3ba3a9043b2c89ed7bda81063da7cb78f59403bf30d2",
+      "store_after_sha256": "6ec8b515a860fdae3780242ecef71fd2efce023677173d913d98c2575240a0ae",
+      "store_before_sha256": "1b61ac3e56fdc7bf220195a61b57769c22f5800c7a550c3b84f10e7fb21bfca5"
+    },
+    {
+      "chunk_filename": "session_05_chunk_02.txt",
+      "filename": "episode-015.json",
+      "global_chunk_index": 15,
+      "sha256": "782d6a9471e6dea9a5aa2eeed471f294d23f5015b832432d9111c1169f0900ca",
+      "store_after_sha256": "6eb112930cee15ed4156e1717ab4120b7c30fe73012e09bafc4235a9613bccdd",
+      "store_before_sha256": "6ec8b515a860fdae3780242ecef71fd2efce023677173d913d98c2575240a0ae"
+    },
+    {
+      "chunk_filename": "session_06_chunk_01.txt",
+      "filename": "episode-016.json",
+      "global_chunk_index": 16,
+      "sha256": "c1829d17c1ca881d65f6c7479260031820212abff14d565da8493a5c16252189",
+      "store_after_sha256": "ea86e2730905a86af7c032adb53e5596211618fc4f5d6e608a7d7aa0aac6dcbc",
+      "store_before_sha256": "6eb112930cee15ed4156e1717ab4120b7c30fe73012e09bafc4235a9613bccdd"
+    },
+    {
+      "chunk_filename": "session_06_chunk_02.txt",
+      "filename": "episode-017.json",
+      "global_chunk_index": 17,
+      "sha256": "203ee451e0b029c7f5c2524bba32fc35d12d598f4995f5c15bbbf6e68c52b221",
+      "store_after_sha256": "330159b23ec2300b965e11ff1571bddc7c5dc91b8028c72235674712107b7304",
+      "store_before_sha256": "ea86e2730905a86af7c032adb53e5596211618fc4f5d6e608a7d7aa0aac6dcbc"
+    },
+    {
+      "chunk_filename": "session_06_chunk_03.txt",
+      "filename": "episode-018.json",
+      "global_chunk_index": 18,
+      "sha256": "86d1793fb31ea6c447840f00160e42f1936f11a81957fc80072f970ceb4658f8",
+      "store_after_sha256": "f76bcc543dd7a30beadd8b2cf13027bf0136cbd0ba3fd4f63a06e13ba587cca6",
+      "store_before_sha256": "330159b23ec2300b965e11ff1571bddc7c5dc91b8028c72235674712107b7304"
+    },
+    {
+      "chunk_filename": "session_07_chunk_01.txt",
+      "filename": "episode-019.json",
+      "global_chunk_index": 19,
+      "sha256": "f1df916ba755a18590a6523aa851fd35b4239284d94bdcdbfa8afc2d33f18c7d",
+      "store_after_sha256": "719f8e981a1d00bf830794fcaa28c3bf5f618d9f2acdd895e4fdb9dc91f7b971",
+      "store_before_sha256": "f76bcc543dd7a30beadd8b2cf13027bf0136cbd0ba3fd4f63a06e13ba587cca6"
+    },
+    {
+      "chunk_filename": "session_07_chunk_02.txt",
+      "filename": "episode-020.json",
+      "global_chunk_index": 20,
+      "sha256": "6d9adc70cb68319f63c31e07cc657a9405b8dbb6834a599b7d9f173a02e48253",
+      "store_after_sha256": "b25d0f270e5b10a5f9f2d0b5d9b9d1713ceaedc868b87d0e210439e3c1bf4b38",
+      "store_before_sha256": "719f8e981a1d00bf830794fcaa28c3bf5f618d9f2acdd895e4fdb9dc91f7b971"
+    },
+    {
+      "chunk_filename": "session_07_chunk_03.txt",
+      "filename": "episode-021.json",
+      "global_chunk_index": 21,
+      "sha256": "d6b944ce019e0ceaee6e326f43362868f2b053d54cb43756c479af5abf3deb90",
+      "store_after_sha256": "a25b3f48781afd3418e34e6b059be41ad0fdb2a305bfede2d2a8524ad21f9e1d",
+      "store_before_sha256": "b25d0f270e5b10a5f9f2d0b5d9b9d1713ceaedc868b87d0e210439e3c1bf4b38"
+    },
+    {
+      "chunk_filename": "session_08_chunk_01.txt",
+      "filename": "episode-022.json",
+      "global_chunk_index": 22,
+      "sha256": "7e49f17e366990c0440af9f44dc5c90b994eedcd205c48836d0824e2020dc3e3",
+      "store_after_sha256": "cc58a047cd03b4b61d33b1888b055274726dd87e38b7b8bdd5b2e38f7c1ad1b7",
+      "store_before_sha256": "a25b3f48781afd3418e34e6b059be41ad0fdb2a305bfede2d2a8524ad21f9e1d"
+    },
+    {
+      "chunk_filename": "session_08_chunk_02.txt",
+      "filename": "episode-023.json",
+      "global_chunk_index": 23,
+      "sha256": "2b4993551718ab9dc39b458cb814a0eb533be1c24edf068b61dc2f7839b11620",
+      "store_after_sha256": "4c72790979d4f28bf08f82a889570e4599bcff4bb8bbf7e26b59b495f1a7c002",
+      "store_before_sha256": "cc58a047cd03b4b61d33b1888b055274726dd87e38b7b8bdd5b2e38f7c1ad1b7"
+    },
+    {
+      "chunk_filename": "session_09_chunk_01.txt",
+      "filename": "episode-024.json",
+      "global_chunk_index": 24,
+      "sha256": "c6918bcdfb41c410e32062389a5f6b74d929a22429bbb8bd67416b2ddc24dbd5",
+      "store_after_sha256": "5148f7c8b54c388f4b307b63d54bd7b6317f699b76b6af2418627b9e9a13b5f3",
+      "store_before_sha256": "4c72790979d4f28bf08f82a889570e4599bcff4bb8bbf7e26b59b495f1a7c002"
+    },
+    {
+      "chunk_filename": "session_09_chunk_02.txt",
+      "filename": "episode-025.json",
+      "global_chunk_index": 25,
+      "sha256": "bb72f93f4fb1c66663d2f54db136c868a177a490363711c0a4e928a604433708",
+      "store_after_sha256": "ffabab7dbf1c2b112f0369c400b5fd1d97d9f913eaad9fed57f9a6977b22cac4",
+      "store_before_sha256": "5148f7c8b54c388f4b307b63d54bd7b6317f699b76b6af2418627b9e9a13b5f3"
+    },
+    {
+      "chunk_filename": "session_09_chunk_03.txt",
+      "filename": "episode-026.json",
+      "global_chunk_index": 26,
+      "sha256": "a3c3cd1199098def7fb2d23f090e72d31e473d6debbbc83b87679728e605dc83",
+      "store_after_sha256": "2e7361a941169c6d5472565f263e9ad5d46fab3302c8de8cdf10b311fbd14a24",
+      "store_before_sha256": "ffabab7dbf1c2b112f0369c400b5fd1d97d9f913eaad9fed57f9a6977b22cac4"
+    },
+    {
+      "chunk_filename": "session_10_chunk_01.txt",
+      "filename": "episode-027.json",
+      "global_chunk_index": 27,
+      "sha256": "f844d25f2067f09088a89001c40eb9d495cf50aceff05922c0b9c091b5c69808",
+      "store_after_sha256": "2e746a568115d9c21a9c5dc3b5dfe7aff4d876a8745eb80be981474e1d4ee6e2",
+      "store_before_sha256": "2e7361a941169c6d5472565f263e9ad5d46fab3302c8de8cdf10b311fbd14a24"
+    },
+    {
+      "chunk_filename": "session_10_chunk_02.txt",
+      "filename": "episode-028.json",
+      "global_chunk_index": 28,
+      "sha256": "adec7280c94db6a6d5df412a6f1a141793dc595466f76549914348150844dabf",
+      "store_after_sha256": "086625e4e629f808b3c1cb0f3e7f5f832aac01a2ceb3b57f4d70e73419f3c403",
+      "store_before_sha256": "2e746a568115d9c21a9c5dc3b5dfe7aff4d876a8745eb80be981474e1d4ee6e2"
+    },
+    {
+      "chunk_filename": "session_10_chunk_03.txt",
+      "filename": "episode-029.json",
+      "global_chunk_index": 29,
+      "sha256": "f0966a69332c6eeba39850ca213a67fe435a6451e45637d3ce721de7e4d95c16",
+      "store_after_sha256": "0175ec2c5cd5decb328a9bafbe899499b0e78d367ff8ec3816ea957df671c83c",
+      "store_before_sha256": "086625e4e629f808b3c1cb0f3e7f5f832aac01a2ceb3b57f4d70e73419f3c403"
+    },
+    {
+      "chunk_filename": "session_11_chunk_01.txt",
+      "filename": "episode-030.json",
+      "global_chunk_index": 30,
+      "sha256": "9b42893fef5f4d3b92744de28849b13f4f2fef2daefdbefe9f15d3adcd00a573",
+      "store_after_sha256": "eb536ca66f50a63f8d163f6800050524d5e9d4c1c1a80c0b117df44b7b78df04",
+      "store_before_sha256": "0175ec2c5cd5decb328a9bafbe899499b0e78d367ff8ec3816ea957df671c83c"
+    },
+    {
+      "chunk_filename": "session_11_chunk_02.txt",
+      "filename": "episode-031.json",
+      "global_chunk_index": 31,
+      "sha256": "833537049f0e26958e8f209b624ce6f053ce643e36e95922c89a3bae9bf5e4a5",
+      "store_after_sha256": "eafe12a24a763d1db16adf1f6a23242b73bb7f772fa3621dbc57e68cd742b7aa",
+      "store_before_sha256": "eb536ca66f50a63f8d163f6800050524d5e9d4c1c1a80c0b117df44b7b78df04"
+    },
+    {
+      "chunk_filename": "session_12_chunk_01.txt",
+      "filename": "episode-032.json",
+      "global_chunk_index": 32,
+      "sha256": "8f682ef11125f544d3b1a2c7db8c8ff32358c091447010c154f6b1c137bf4d97",
+      "store_after_sha256": "69b17f60ee17500972fe5e58185d80b384f0ab82c5bb33eda4d7b88cc1b91732",
+      "store_before_sha256": "eafe12a24a763d1db16adf1f6a23242b73bb7f772fa3621dbc57e68cd742b7aa"
+    },
+    {
+      "chunk_filename": "session_12_chunk_02.txt",
+      "filename": "episode-033.json",
+      "global_chunk_index": 33,
+      "sha256": "6027232790e08bc78d6d005c94150166df5e68f3b881bc9b8e8914fb2fd89861",
+      "store_after_sha256": "d5c1a4f4110518b2633c06adc2100d91ce2d97ea5e3f19ee720409f4d29d985d",
+      "store_before_sha256": "69b17f60ee17500972fe5e58185d80b384f0ab82c5bb33eda4d7b88cc1b91732"
+    },
+    {
+      "chunk_filename": "session_12_chunk_03.txt",
+      "filename": "episode-034.json",
+      "global_chunk_index": 34,
+      "sha256": "6141fc690cb63ed241820a2f79af0d367c77981a256f928ca9170f03f7f230b0",
+      "store_after_sha256": "90bb6378bcec5c27f3aca4d2240c42c36e079424730e197e3e6e5132fd4d26fe",
+      "store_before_sha256": "d5c1a4f4110518b2633c06adc2100d91ce2d97ea5e3f19ee720409f4d29d985d"
+    },
+    {
+      "chunk_filename": "session_13_chunk_01.txt",
+      "filename": "episode-035.json",
+      "global_chunk_index": 35,
+      "sha256": "210a04ab82573fc1eec5324f322b47918e58db3c40e870d07f85f770a3230a47",
+      "store_after_sha256": "5db72e58bc92959108000c0369d7945af4d5ecc6bccb54160e2f6e850867a8df",
+      "store_before_sha256": "90bb6378bcec5c27f3aca4d2240c42c36e079424730e197e3e6e5132fd4d26fe"
+    },
+    {
+      "chunk_filename": "session_13_chunk_02.txt",
+      "filename": "episode-036.json",
+      "global_chunk_index": 36,
+      "sha256": "cc5aea524c576c6a2568d7ee0163b307900266e6828b52c6c98d3e1ffb34418f",
+      "store_after_sha256": "7ccb96368fd0f95b42054501fc8f963bf0a09aac5563bd1210097b9458b26128",
+      "store_before_sha256": "5db72e58bc92959108000c0369d7945af4d5ecc6bccb54160e2f6e850867a8df"
+    },
+    {
+      "chunk_filename": "session_13_chunk_03.txt",
+      "filename": "episode-037.json",
+      "global_chunk_index": 37,
+      "sha256": "567d79e1ef5984bc092c1bc4256a27f16662f04bb97b44604725001f44a27201",
+      "store_after_sha256": "c5b7eb90bf3323663841b7d445d0a8a50ebb06c3520a75e56a3f44d88eb2084d",
+      "store_before_sha256": "7ccb96368fd0f95b42054501fc8f963bf0a09aac5563bd1210097b9458b26128"
+    },
+    {
+      "chunk_filename": "session_14_chunk_01.txt",
+      "filename": "episode-038.json",
+      "global_chunk_index": 38,
+      "sha256": "a05051b52a8f17681ab2afa584d995fecf784bb035f4097964f0724ec3373ff8",
+      "store_after_sha256": "3327f31038d807946d69a9a233da7a9e2a5f8788072becfe5d2662c4676f00f7",
+      "store_before_sha256": "c5b7eb90bf3323663841b7d445d0a8a50ebb06c3520a75e56a3f44d88eb2084d"
+    },
+    {
+      "chunk_filename": "session_14_chunk_02.txt",
+      "filename": "episode-039.json",
+      "global_chunk_index": 39,
+      "sha256": "b93644278732e1aba3871fdc7c72d01444832f54bfcbcae3acd803d160e7f487",
+      "store_after_sha256": "d50181e2f718013a0565eaea747037e2e8799d1cf7a09b4574ce108aa850c313",
+      "store_before_sha256": "3327f31038d807946d69a9a233da7a9e2a5f8788072becfe5d2662c4676f00f7"
+    },
+    {
+      "chunk_filename": "session_15_chunk_01.txt",
+      "filename": "episode-040.json",
+      "global_chunk_index": 40,
+      "sha256": "ec8c6cbf2053241b13c0cce4dc62d7f83838d0893643d8455db7e9d0f00ac4f1",
+      "store_after_sha256": "605112f6a388fe9484aee3f712e61c422f55700cadf0b776e70a0abf3b00681f",
+      "store_before_sha256": "d50181e2f718013a0565eaea747037e2e8799d1cf7a09b4574ce108aa850c313"
+    },
+    {
+      "chunk_filename": "session_15_chunk_02.txt",
+      "filename": "episode-041.json",
+      "global_chunk_index": 41,
+      "sha256": "6e816f98e25df69a109f87e861a787c2ffb4fbd6ed18330f6792b6425020eb24",
+      "store_after_sha256": "b62df68ed289ede29ec0ba727d0169abfcd135a12a8d15771c7b3f9a5dd9b243",
+      "store_before_sha256": "605112f6a388fe9484aee3f712e61c422f55700cadf0b776e70a0abf3b00681f"
+    },
+    {
+      "chunk_filename": "session_16_chunk_01.txt",
+      "filename": "episode-042.json",
+      "global_chunk_index": 42,
+      "sha256": "7bc13b66d3503cc427d42df4d73a7a33dd582976ca67d3ed7028521cbc34a40b",
+      "store_after_sha256": "c0df0e9c5e2ec58c055d362a0dd1bcadbd0e4b9398cdde083e02efcec1c17bc5",
+      "store_before_sha256": "b62df68ed289ede29ec0ba727d0169abfcd135a12a8d15771c7b3f9a5dd9b243"
+    },
+    {
+      "chunk_filename": "session_16_chunk_02.txt",
+      "filename": "episode-043.json",
+      "global_chunk_index": 43,
+      "sha256": "f24d1482d653fce79808cd01a978fd51533c3a4140ebc276eae4fe4a77214457",
+      "store_after_sha256": "2af303b1e8491e592f9c8af42e5903a2bc4ac5ee187761671211768df06b63fd",
+      "store_before_sha256": "c0df0e9c5e2ec58c055d362a0dd1bcadbd0e4b9398cdde083e02efcec1c17bc5"
+    },
+    {
+      "chunk_filename": "session_16_chunk_03.txt",
+      "filename": "episode-044.json",
+      "global_chunk_index": 44,
+      "sha256": "8177a36d2034710dd18c6d4c3eea1bc8a228d55f84ad1ed4c586e7e98e41cbb1",
+      "store_after_sha256": "c37a3995c4c934508c712c9d185784a3c1c6883ed5726d439325b68de4c7431b",
+      "store_before_sha256": "2af303b1e8491e592f9c8af42e5903a2bc4ac5ee187761671211768df06b63fd"
+    },
+    {
+      "chunk_filename": "session_16_chunk_04.txt",
+      "filename": "episode-045.json",
+      "global_chunk_index": 45,
+      "sha256": "3badb99f733a15989738844740a2b0ca7e2d4834a06fc8ea959d48c22fb323af",
+      "store_after_sha256": "be46f2f81e465a5306f3b7d05c29217ec5eb0578b4600088971cda4064d01355",
+      "store_before_sha256": "c37a3995c4c934508c712c9d185784a3c1c6883ed5726d439325b68de4c7431b"
+    },
+    {
+      "chunk_filename": "session_17_chunk_01.txt",
+      "filename": "episode-046.json",
+      "global_chunk_index": 46,
+      "sha256": "2c250387de303ac1a1413c61615fa9ee20272429a42f96e0cb24ce3ed2d5108e",
+      "store_after_sha256": "720e92f239eb6ca743f461629ae707df1d5578fa096f8f988b01745c0a41a44f",
+      "store_before_sha256": "be46f2f81e465a5306f3b7d05c29217ec5eb0578b4600088971cda4064d01355"
+    },
+    {
+      "chunk_filename": "session_17_chunk_02.txt",
+      "filename": "episode-047.json",
+      "global_chunk_index": 47,
+      "sha256": "4737311a53ecaf03db29782d05255d18d886a6e0e9bbf5247e26e81d2e25b174",
+      "store_after_sha256": "439d757bdb50659ea992be2c29f0824e1cf0f8227dd242d89361bec455fa00dc",
+      "store_before_sha256": "720e92f239eb6ca743f461629ae707df1d5578fa096f8f988b01745c0a41a44f"
+    },
+    {
+      "chunk_filename": "session_18_chunk_01.txt",
+      "filename": "episode-048.json",
+      "global_chunk_index": 48,
+      "sha256": "b4e2e26c04b3bd10b2038448adee030e707ae5145de50a9f57591815a6591458",
+      "store_after_sha256": "ea5adf0925311b8f9264d5ec9a6c4b33de2e6715f1f04135f36daed31295108f",
+      "store_before_sha256": "439d757bdb50659ea992be2c29f0824e1cf0f8227dd242d89361bec455fa00dc"
+    },
+    {
+      "chunk_filename": "session_18_chunk_02.txt",
+      "filename": "episode-049.json",
+      "global_chunk_index": 49,
+      "sha256": "aed43b4cb9e653f7bff7f353376ecc131fdf5fe3a2ec245da3a8781949d543ef",
+      "store_after_sha256": "db9add8c9f130ee2f24729ccb5cad4d2317c90ac9c8cb442e27e0b6ac3fdddf7",
+      "store_before_sha256": "ea5adf0925311b8f9264d5ec9a6c4b33de2e6715f1f04135f36daed31295108f"
+    },
+    {
+      "chunk_filename": "session_19_chunk_01.txt",
+      "filename": "episode-050.json",
+      "global_chunk_index": 50,
+      "sha256": "e8b062507f42d1665a43852ec31df4eaf236201930478cee707edc5b400365f2",
+      "store_after_sha256": "e59e3ac89072ac5f796689f7579f1e56966206a20c35ea5aa9591699351732f9",
+      "store_before_sha256": "db9add8c9f130ee2f24729ccb5cad4d2317c90ac9c8cb442e27e0b6ac3fdddf7"
+    },
+    {
+      "chunk_filename": "session_19_chunk_02.txt",
+      "filename": "episode-051.json",
+      "global_chunk_index": 51,
+      "sha256": "cfd9acf660456eca445b780fcf25b6ab1e2ec730561aefaafb6db75931429c7a",
+      "store_after_sha256": "62b844654ea5bb0cc08cca5c878beba5eb5a894fa49b263a9fb48f1477b0e7a2",
+      "store_before_sha256": "e59e3ac89072ac5f796689f7579f1e56966206a20c35ea5aa9591699351732f9"
+    },
+    {
+      "chunk_filename": "session_20_chunk_01.txt",
+      "filename": "episode-052.json",
+      "global_chunk_index": 52,
+      "sha256": "7ec8ec6954cd4a0ae3cf7bab118b798fe2ec7f272ea68dc3746e864c2a4d035d",
+      "store_after_sha256": "57b318123ca3c2cb7d0637d53358d676c4a51e597c80210b77dcd2786bd7c4e5",
+      "store_before_sha256": "62b844654ea5bb0cc08cca5c878beba5eb5a894fa49b263a9fb48f1477b0e7a2"
+    },
+    {
+      "chunk_filename": "session_20_chunk_02.txt",
+      "filename": "episode-053.json",
+      "global_chunk_index": 53,
+      "sha256": "b0364d196097def9a9cc37e646bd2ba9d075f7d19d6227e3ebdd5cece998d158",
+      "store_after_sha256": "468e96874c34fa22b93dd619228f7c21f06eaf8780eb969bb3b451054d979295",
+      "store_before_sha256": "57b318123ca3c2cb7d0637d53358d676c4a51e597c80210b77dcd2786bd7c4e5"
+    },
+    {
+      "chunk_filename": "session_20_chunk_03.txt",
+      "filename": "episode-054.json",
+      "global_chunk_index": 54,
+      "sha256": "53a94b9f4c47068e3fc9d84a4899619745b328ac61adf32861c7a257cdbca8f1",
+      "store_after_sha256": "fcfcb60b8288c45fa571b75d0e1112f50e1234ea047991f5abf58f3c4ac584ab",
+      "store_before_sha256": "468e96874c34fa22b93dd619228f7c21f06eaf8780eb969bb3b451054d979295"
+    },
+    {
+      "chunk_filename": "session_21_chunk_01.txt",
+      "filename": "episode-055.json",
+      "global_chunk_index": 55,
+      "sha256": "1ec7073a276a3244f6f98aef6bd11fddce0167235f6ef6ee0d0d72c3db1d63fa",
+      "store_after_sha256": "284d7196810b4a0afb15131a3296e6fd360027646668935dda8bea60a76f206b",
+      "store_before_sha256": "fcfcb60b8288c45fa571b75d0e1112f50e1234ea047991f5abf58f3c4ac584ab"
+    },
+    {
+      "chunk_filename": "session_21_chunk_02.txt",
+      "filename": "episode-056.json",
+      "global_chunk_index": 56,
+      "sha256": "054eae5aa8610a4e4cd5d156317f42e1a389c897af8650a51188059cbf30d561",
+      "store_after_sha256": "2db566b07430132d40ba27f62fc7b3c742542bf80550c6846b80826e4203b6be",
+      "store_before_sha256": "284d7196810b4a0afb15131a3296e6fd360027646668935dda8bea60a76f206b"
+    },
+    {
+      "chunk_filename": "session_21_chunk_03.txt",
+      "filename": "episode-057.json",
+      "global_chunk_index": 57,
+      "sha256": "df1a5299b79de770dfd1ee8b8363d9b24ec1542d0a0977763106a8cf93672e4b",
+      "store_after_sha256": "3d3fcbef164b8be303536fc70e06654414709d719ba392c0bec51a5b5808fc0d",
+      "store_before_sha256": "2db566b07430132d40ba27f62fc7b3c742542bf80550c6846b80826e4203b6be"
+    },
+    {
+      "chunk_filename": "session_22_chunk_01.txt",
+      "filename": "episode-058.json",
+      "global_chunk_index": 58,
+      "sha256": "f10f29df155c6774f4a252e4342457a1247b397b1a59d8835f52f1cda5fde8d8",
+      "store_after_sha256": "f05ca4610299ad99296303ad178b9482f1464788dd25e954397df41395e945b4",
+      "store_before_sha256": "3d3fcbef164b8be303536fc70e06654414709d719ba392c0bec51a5b5808fc0d"
+    },
+    {
+      "chunk_filename": "session_22_chunk_02.txt",
+      "filename": "episode-059.json",
+      "global_chunk_index": 59,
+      "sha256": "feb08b1ae7212563e2e05d11346218a7f7bad5d586b11f1ee2f6f05b2c603e84",
+      "store_after_sha256": "67707f262acaaf95a9064adf7fa3f7873d0a578859d35c4649a284aa48e27410",
+      "store_before_sha256": "f05ca4610299ad99296303ad178b9482f1464788dd25e954397df41395e945b4"
+    },
+    {
+      "chunk_filename": "session_23_chunk_01.txt",
+      "filename": "episode-060.json",
+      "global_chunk_index": 60,
+      "sha256": "6acc8f34f168f1a801f97d1f63dd6fbe6ab7154009eed83e59a12329b22a6d4b",
+      "store_after_sha256": "5ddf499a1f8c9465f5fbc7dca07cf737e28ff7bbfeea4f149651ac2ff3c8be21",
+      "store_before_sha256": "67707f262acaaf95a9064adf7fa3f7873d0a578859d35c4649a284aa48e27410"
+    },
+    {
+      "chunk_filename": "session_23_chunk_02.txt",
+      "filename": "episode-061.json",
+      "global_chunk_index": 61,
+      "sha256": "0a900ec3cf6fc7ac7c040619aa235b84cd38d95aea22c5aa01ee5ab45154b345",
+      "store_after_sha256": "9ed009f33c7c82fb43b46139dddf9e9272e5ea043637294b15969d73e8ec3434",
+      "store_before_sha256": "5ddf499a1f8c9465f5fbc7dca07cf737e28ff7bbfeea4f149651ac2ff3c8be21"
+    },
+    {
+      "chunk_filename": "session_23_chunk_03.txt",
+      "filename": "episode-062.json",
+      "global_chunk_index": 62,
+      "sha256": "81b7018b78d6812a6789756cb65b8dd95766597a2913ffce423d47e0d89f56c9",
+      "store_after_sha256": "690f6d71219a1d6669bf2a8a4656483d41218d5f43c17c1c6c520a289e8390f0",
+      "store_before_sha256": "9ed009f33c7c82fb43b46139dddf9e9272e5ea043637294b15969d73e8ec3434"
+    },
+    {
+      "chunk_filename": "session_24_chunk_01.txt",
+      "filename": "episode-063.json",
+      "global_chunk_index": 63,
+      "sha256": "643d104dc749400e7b26d609f6852c3101ba31d613d99a63cd3cb616fe1fc1b7",
+      "store_after_sha256": "fc15b414312cd00cd87402efb86ac33fa6fdbb3a59d84382768189d768cdf7eb",
+      "store_before_sha256": "690f6d71219a1d6669bf2a8a4656483d41218d5f43c17c1c6c520a289e8390f0"
+    },
+    {
+      "chunk_filename": "session_24_chunk_02.txt",
+      "filename": "episode-064.json",
+      "global_chunk_index": 64,
+      "sha256": "c6d7873959c2fae61488e7c4a9e0b1c097c205b7fb7096a47eb9497156a3d1ba",
+      "store_after_sha256": "feeb2159e181f3997ec2a391176311f47275579670a7278a5a128eed3641a486",
+      "store_before_sha256": "fc15b414312cd00cd87402efb86ac33fa6fdbb3a59d84382768189d768cdf7eb"
+    },
+    {
+      "chunk_filename": "session_24_chunk_03.txt",
+      "filename": "episode-065.json",
+      "global_chunk_index": 65,
+      "sha256": "bd9867281f440b67218386e011fcdece3a0a4956ae8d40bfe54220203812eb5d",
+      "store_after_sha256": "ce0d3a4a87a75147d332a96ec555ef4c6f6c0c8a831c6fbc5eeab7b7c73c8766",
+      "store_before_sha256": "feeb2159e181f3997ec2a391176311f47275579670a7278a5a128eed3641a486"
+    },
+    {
+      "chunk_filename": "session_25_chunk_01.txt",
+      "filename": "episode-066.json",
+      "global_chunk_index": 66,
+      "sha256": "e4b5a28749f9a375c0a0c1486be159c8cf559b8159b98afa33376b0db5bd2ba2",
+      "store_after_sha256": "6c69a8c70ef17d1c0b34a1923db31f7f417a71778ed55ac2b925fe125e8154a5",
+      "store_before_sha256": "ce0d3a4a87a75147d332a96ec555ef4c6f6c0c8a831c6fbc5eeab7b7c73c8766"
+    },
+    {
+      "chunk_filename": "session_25_chunk_02.txt",
+      "filename": "episode-067.json",
+      "global_chunk_index": 67,
+      "sha256": "fbc19025c9afed79913a59f952decf7ebf544dedeaa5d7920adebf7da5d1420e",
+      "store_after_sha256": "428783f51eeca8001c14be38587f81675713a38cc9858959ad9fdbdc18a0ded0",
+      "store_before_sha256": "6c69a8c70ef17d1c0b34a1923db31f7f417a71778ed55ac2b925fe125e8154a5"
+    },
+    {
+      "chunk_filename": "session_25_chunk_03.txt",
+      "filename": "episode-068.json",
+      "global_chunk_index": 68,
+      "sha256": "0d034154b2c619f00f8fdd3d68ce67e761c2349d77defa25988f8bbb7273f788",
+      "store_after_sha256": "dee37cf9647d508ebad7243c6d735fb038925aac2e6b685476e37c63adf6d52a",
+      "store_before_sha256": "428783f51eeca8001c14be38587f81675713a38cc9858959ad9fdbdc18a0ded0"
+    },
+    {
+      "chunk_filename": "session_25_chunk_04.txt",
+      "filename": "episode-069.json",
+      "global_chunk_index": 69,
+      "sha256": "c75317571563e8573831ce3c206e8d2005ee14232e1bc6b265eb55d22f2d3b08",
+      "store_after_sha256": "951c25e79c50fb6fe9a76bc4b3131eb0831d85d6767c8884031ee8a3c790de3d",
+      "store_before_sha256": "dee37cf9647d508ebad7243c6d735fb038925aac2e6b685476e37c63adf6d52a"
+    },
+    {
+      "chunk_filename": "session_26_chunk_01.txt",
+      "filename": "episode-070.json",
+      "global_chunk_index": 70,
+      "sha256": "bddac67d751a7974483e3f1f7a53f7d85d642acfecf271957cba3d0dd086ec3d",
+      "store_after_sha256": "75d97936c534989d2ca3d4f0b834fd17557ebe2b7df06de4e8294661df1f50a9",
+      "store_before_sha256": "951c25e79c50fb6fe9a76bc4b3131eb0831d85d6767c8884031ee8a3c790de3d"
+    },
+    {
+      "chunk_filename": "session_26_chunk_02.txt",
+      "filename": "episode-071.json",
+      "global_chunk_index": 71,
+      "sha256": "409ba536bb9941617175390bd9efb0f28a0818d16d0604ba4ceeb03686456a57",
+      "store_after_sha256": "76ced972535bad7b13fa91bdfb5108c0efa5ce83df56f3fc74eef89aec53402b",
+      "store_before_sha256": "75d97936c534989d2ca3d4f0b834fd17557ebe2b7df06de4e8294661df1f50a9"
+    },
+    {
+      "chunk_filename": "session_27_chunk_01.txt",
+      "filename": "episode-072.json",
+      "global_chunk_index": 72,
+      "sha256": "55d3761982e858c1109e566bb4e21866d3d7f77d02a0db689cacfc60951cc401",
+      "store_after_sha256": "bf38ac151b153831ea98efa217a03954db5800263507b068be4742b3af67f3fa",
+      "store_before_sha256": "76ced972535bad7b13fa91bdfb5108c0efa5ce83df56f3fc74eef89aec53402b"
+    },
+    {
+      "chunk_filename": "session_27_chunk_02.txt",
+      "filename": "episode-073.json",
+      "global_chunk_index": 73,
+      "sha256": "800b206c0d7fbdaf303e9d1c6cbad2d885cde2b5c07ab0071c93c68c549fe03c",
+      "store_after_sha256": "767b082a01efd0f37dda7bdb489a013efe85222cd031aaa6ba3544b7fceda0ea",
+      "store_before_sha256": "bf38ac151b153831ea98efa217a03954db5800263507b068be4742b3af67f3fa"
+    },
+    {
+      "chunk_filename": "session_28_chunk_01.txt",
+      "filename": "episode-074.json",
+      "global_chunk_index": 74,
+      "sha256": "608d3d6bc4bccc194468d0faeb2e4116694cf89fdee20f82243c36ebc0ba44a6",
+      "store_after_sha256": "00799774f3b741cfecaa557ee41f03307badf510caeea105f31d413ce12dd947",
+      "store_before_sha256": "767b082a01efd0f37dda7bdb489a013efe85222cd031aaa6ba3544b7fceda0ea"
+    },
+    {
+      "chunk_filename": "session_28_chunk_02.txt",
+      "filename": "episode-075.json",
+      "global_chunk_index": 75,
+      "sha256": "cb68513ab88f4d84b250c8bb934d819b8a09dc462d52d2c0d2a14b81ddca1114",
+      "store_after_sha256": "cb9966d7cd3832999af725857bd0dd5520885a6de1c3d609c064397029dcf4dd",
+      "store_before_sha256": "00799774f3b741cfecaa557ee41f03307badf510caeea105f31d413ce12dd947"
+    },
+    {
+      "chunk_filename": "session_28_chunk_03.txt",
+      "filename": "episode-076.json",
+      "global_chunk_index": 76,
+      "sha256": "1d80bf2a72643cadadaa2d79becc5ecec0f0d111aa57ea4bdb6bbe83ec65c470",
+      "store_after_sha256": "22a91b0343d54463c6fa1690e70da0ba9af3764d2d85baf3ecf475c7f793b66b",
+      "store_before_sha256": "cb9966d7cd3832999af725857bd0dd5520885a6de1c3d609c064397029dcf4dd"
+    },
+    {
+      "chunk_filename": "session_28_chunk_04.txt",
+      "filename": "episode-077.json",
+      "global_chunk_index": 77,
+      "sha256": "538a3d42ba20cf9e3baf604c2123d92dfe9be9d1fe1e3a81f5a331d7da445e4a",
+      "store_after_sha256": "9b7ef95d54f38cb0eae4fb01d4a39160dbeb36d1ca5ab8dca2335f2038dddacf",
+      "store_before_sha256": "22a91b0343d54463c6fa1690e70da0ba9af3764d2d85baf3ecf475c7f793b66b"
+    },
+    {
+      "chunk_filename": "session_28_chunk_05.txt",
+      "filename": "episode-078.json",
+      "global_chunk_index": 78,
+      "sha256": "d0e8649acf78827129a491cb332b652dd7a35e551be0691de8e3ebbb5b3456a8",
+      "store_after_sha256": "ac25c9d8beffd3cfe293716b5bf41ed6363884ccf2880696d52a8e16437fa912",
+      "store_before_sha256": "9b7ef95d54f38cb0eae4fb01d4a39160dbeb36d1ca5ab8dca2335f2038dddacf"
+    },
+    {
+      "chunk_filename": "session_28_chunk_06.txt",
+      "filename": "episode-079.json",
+      "global_chunk_index": 79,
+      "sha256": "bffc0df0a14d997610d5fdcc045814a490830098606a671872c75cae76cbf21f",
+      "store_after_sha256": "dcf1e1bec13868ca8045729a042a69b987a53ed0636f15c70d0ef9288922732d",
+      "store_before_sha256": "ac25c9d8beffd3cfe293716b5bf41ed6363884ccf2880696d52a8e16437fa912"
+    },
+    {
+      "chunk_filename": "session_29_chunk_01.txt",
+      "filename": "episode-080.json",
+      "global_chunk_index": 80,
+      "sha256": "067f1e1ecca319bd559fbfe61cf0345272b81a75ea756b58967e39bb34f497af",
+      "store_after_sha256": "5f4ae20de66075553dd187c372b51156576bf55cfc6da772cedd96af0f5ae211",
+      "store_before_sha256": "dcf1e1bec13868ca8045729a042a69b987a53ed0636f15c70d0ef9288922732d"
+    },
+    {
+      "chunk_filename": "session_29_chunk_02.txt",
+      "filename": "episode-081.json",
+      "global_chunk_index": 81,
+      "sha256": "2125ad6ac503252702cf4f3276903ac134f0b290188c54f4bd933ebaf9f44eee",
+      "store_after_sha256": "285383bf6d4f08bb2de797f54358cb29f93d2ea2f00a9936baa857d207c8671b",
+      "store_before_sha256": "5f4ae20de66075553dd187c372b51156576bf55cfc6da772cedd96af0f5ae211"
+    },
+    {
+      "chunk_filename": "session_29_chunk_03.txt",
+      "filename": "episode-082.json",
+      "global_chunk_index": 82,
+      "sha256": "28bc557a540dc26a2c5b9a249af95d3b95bd46ebf7a9e06a93a4fa61cfe2ba73",
+      "store_after_sha256": "6c90f1fc50c23c501a84dfa519af407ade77293aa83ae64f104f257ad1f15a73",
+      "store_before_sha256": "285383bf6d4f08bb2de797f54358cb29f93d2ea2f00a9936baa857d207c8671b"
+    },
+    {
+      "chunk_filename": "session_30_chunk_01.txt",
+      "filename": "episode-083.json",
+      "global_chunk_index": 83,
+      "sha256": "e9399a3260c38e05d55d003bfaa0fe5b4a82bede5fa156cda389c4275a09aa14",
+      "store_after_sha256": "f891b2e59a8b8d954adb415c5c7acf006868f2481860e0fcc31d70cacf9c3013",
+      "store_before_sha256": "6c90f1fc50c23c501a84dfa519af407ade77293aa83ae64f104f257ad1f15a73"
+    },
+    {
+      "chunk_filename": "session_30_chunk_02.txt",
+      "filename": "episode-084.json",
+      "global_chunk_index": 84,
+      "sha256": "828fabbb89501790a4ee021b940dab744e5a686793382f4cded80345d1331aeb",
+      "store_after_sha256": "9b9d3356faea3353cee6cc88d607938f318dfff020a3cde4d449c7af6f46a49a",
+      "store_before_sha256": "f891b2e59a8b8d954adb415c5c7acf006868f2481860e0fcc31d70cacf9c3013"
+    },
+    {
+      "chunk_filename": "session_30_chunk_03.txt",
+      "filename": "episode-085.json",
+      "global_chunk_index": 85,
+      "sha256": "835116d1f6985e5c6fb057ccfa32e11db40f537648220470019cf96a81eda610",
+      "store_after_sha256": "60cb8dac74bfb60de500d1721f385c13f5d0b5819420600e24ba40ba10f27acd",
+      "store_before_sha256": "9b9d3356faea3353cee6cc88d607938f318dfff020a3cde4d449c7af6f46a49a"
+    }
+  ],
+  "events": {
+    "filename": "events.jsonl",
+    "sha256": "c330445a481493b034c9d05110857dbeec5c17c6ff64449170114480dd58d89e"
+  },
+  "final_store_sha256": "60cb8dac74bfb60de500d1721f385c13f5d0b5819420600e24ba40ba10f27acd",
+  "finished_at": "2026-10-08T14:00:50.974133Z",
+  "model": {
+    "api_style": "portable",
+    "endpoint": "https://soclaas-api.comp.nus.edu.sg/v1/chat/completions",
+    "paper_configuration": {
+      "max_completion_tokens": 32768,
+      "max_rounds": 60,
+      "model": "gpt-5.4-mini",
+      "reasoning_effort": "high"
+    },
+    "requested_model": "coding",
+    "sampling": {
+      "configured_random_seed": 42,
+      "note": "The compatible API adapter does not send a seed parameter.",
+      "seed_sent_to_provider": false
+    },
+    "served_models": [
+      "qwen3.8:27b"
+    ],
+    "system_fingerprints": [
+      "vllm-0.26.0-b73e56ef"
+    ]
+  },
+  "protocol": {
+    "management_prompt_sha256": "2ceb39921adb3c5eb4da98964b4925b8886f8540f3663b8f64d1539137d6be26",
+    "prompt_contract_sha256": "2b16c9041829666e3825d2d349c689b6cc1ce4b9de6e367f35a123c485918a20",
+    "runtime_config_sha256": "ec9c97275f4ea8d353ea235f772c2893de6293a75a9d0bef843f4060d5663970",
+    "runtime_contract_sha256": "43e6317efddb3a3509b16d48feafb52317bf416c807e61326a45f0d214ec6819",
+    "stream_manifest_sha256": "6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5",
+    "system_prompt": "You are a Memory Management Agent responsible for organizing and maintaining a persistent memory filesystem. All memory files are markdown (.md) and live under /memories.\n\n## Your Role\n\nYou receive an instruction and context from an external agent. Your job is to modify the memory filesystem according to the instruction, using the context to inform your decisions.\n\n## Filesystem structure\n\nTreat the filesystem as a taxonomy over the content: folders are its nodes; file, folder, and heading names are its labels. These taxonomy properties make the structure work:\n\n- Siblings under one parent are clearly distinguishable by name alone; where a name cannot carry the difference, name plus description must suffice. If telling siblings apart requires opening their bodies, the labels have failed. This holds whether a sibling is a file or a folder.\n- Siblings belong together: items under one parent are related enough that sharing it is natural.\n- A parent covers its children: everything under a parent falls within what its name declares, and, as far as practical, everything in the memory that falls within that scope lives under it, so descending the tree narrows the search without losing the sought fact, and a reader who has exhausted a subtree can be reasonably confident of having seen what the store holds on that scope. Each child is more specific than its parent; a child as broad as its parent is a level without meaning.\n- Distance mirrors relatedness: the more closely related two pieces of content are, the nearer they sit to each other in the filesystem; unrelated content sits correspondingly farther apart.\n- Structure serves the search, not itself: the goal is that a future reader, traversing the hierarchy, finds any fact, and gathers all facts associated with a subject completely, with few traversal steps, few reads, and little irrelevant content along the way. Add depth only when it improves that; a level that does not help routing is overhead.\n\n### A workable shape\n\nThe example below is from a different area on purpose; mirror the shape, not the labels:\n\n```\n/memories/\n├── glossary.md                       # one subject, one file\n├── teams/                            # a folder whose children split the subject by member\n│   ├── engineering/                  #   a child with distinguishable parts of its own\n│   │   ├── backend.md\n│   │   ├── frontend.md\n│   │   └── infrastructure.md\n│   ├── design.md                     #   a member one file carries\n│   └── sales.md\n├── customers/                        # related subjects grouped under one parent\n│   ├── acme.md\n│   └── globex.md\n└── meetings/                         # a series ordered in time: date-plus-topic names keep the listing in order; entries cross-reference the teams and customers they involve\n    ├── 2024-02-14-q4-review.md\n    ├── 2024-05-09-roadmap.md\n    └── 2024-08-20-postmortem.md\n```\n\nA shape like this is grown into as content accumulates, not built up front: introduce a folder, a sub-folder, or a new file at whatever point the taxonomy properties are better served by it, and no earlier.\n\nInside files, headings continue the taxonomy: sections nest under sections the way files sit under folders, at whatever depth serves, and the taxonomy properties apply to them unchanged, so a heading is a label a future reader routes by, and a well-headed slice can be read without reading the whole file. Choose heading levels the way you choose folder depth: nest a subsection when its content is a more specific part of its parent section, and keep sibling headings distinguishable and coherent; for example `teams/engineering/backend.md` might hold `## Services` with `### Auth` and `### Billing` beneath it, alongside `## On-call` and `## Known issues`. A file remains the unit a reader may take in whole: keep each file readable as one coherent document, and when its internal hierarchy outgrows that, promote sections into files or folders rather than deepening the headings further.\n\n### Naming files and folders\n\nA name is the first thing a future reader sees. Choose names that:\n- make the right file or folder easy to find by name alone; and\n- bring out how the items in a folder relate to one another — their order in time, cause and effect, or sequence (such as steps or todos) — so the listing itself conveys the structure.\n\nNames that mirror how the input arrived (session / chunk / turn / numeric counters) rarely do either; names grounded in what the content is and how it connects work better. Pick whatever best serves these goals for the content at hand.\n\n## Strategy\n\nTreat each chunk as something to integrate into the existing memory, not to dump into it. The memory is a filesystem you build up and maintain across many chunks. For every chunk:\n\n1. **Survey first.** View /memories; the file names and descriptions usually reveal where related content already lives without opening every file. Locate the files and sections this chunk relates to — opening or searching only those — before writing. Names and descriptions can miss a subject whose facts were earlier filed inside a file about something else (an aside stored wherever the surrounding topic lived), so when this chunk adds to a subject that may already exist, `grep` the body for that subject — and the other names or terms it goes by — so you extend its home rather than starting a duplicate or stranding the new fact in an unrelated file.\n2. **Capture what matters, faithfully.** Store the information worth keeping (not small talk), digested into clear wording rather than copied raw, and preserve its source locators and original meaning — its conditions, uncertainty, and scope — without adding anything the source does not say.\n3. **File it where it belongs.** A chunk usually touches several subjects, so its content may go into several different files and sections, not one. Add the information about each subject to the file or section that already covers it, keeping everything about one subject together rather than scattered, and create a new file or folder when the taxonomy properties are better served by a new home than by any existing one. If the chunk changes or contradicts something already stored, reconcile it: replace what is simply corrected or outdated, but when a fact changed over time, record the change with its timing rather than overwrite the earlier version. If the same information is already stored elsewhere, do not copy it again; keep the full version in its home file and, where it is also relevant, leave a brief self-contained note that also cross-references the home file's path.\n4. **Then maintain — reshaping the memory is part of the job, not just appending to it.** Look at the filesystem as a whole, not only the files you just touched: is anything now duplicated, contradictory, scattered, badly named, or carrying a stale description? Fix it: merge what belongs together, split what a single label can no longer cover, delete a redundant copy, or rename or move what no longer fits. Check the structure itself against the taxonomy properties, not only individual files: siblings that can no longer be told apart, a parent whose name no longer covers what lives under it, related content that has drifted apart, or a grouping that made sense earlier but no longer does. A structure that has become unreasonable is itself a defect: correct it rather than continuing to file new content into it. Scattering hides from a names-and-descriptions scan, because a fact about one subject can sit inside a file about another, so check for it by grepping the body for the subjects you keep rather than trusting the listing. Two different fixes follow two different rules. Relocating a stray fact: when a fact turns up away from its subject's home, make sure the home carries the full version; remove it from where it strayed only when it is not part of what that file is about and removing it leaves that file coherent and complete, and when it is genuinely relevant in both places, keep the full version in the home and, in its place, leave a brief self-contained note that also cross-references the home file's path, rather than tearing it out and leaving a gap. Restructuring follows a different rule: splitting, merging, moving, and renaming reshape content wholesale by design, and are justified whenever the result serves the taxonomy properties better than what stood before, whatever prompted them. Make those fixes now, rather than leaving them to accumulate as debt.\n\n## Principles\n\n- **One topic per file**: Each file should focus on a single subject.\n- **Frontmatter maintenance**:\n  - Every file MUST open with a YAML frontmatter block — the opening `---` must be on line 1 (no blank lines or content before it) — carrying a `name` (a kebab-case slug that equals the filename stem, i.e. the filename without the `.md` extension) and a `description` (one short line naming what the file is about).\n  - Example: a file at `/memories/alice-preferences.md` opens with `---\\nname: alice-preferences\\ndescription: Alice's taste in music and food.\\n---\\n\\n# Music\\n...`. An optional `metadata:` key under the frontmatter accepts a free-form key/value map for any extra annotations.\n  - Keep the frontmatter true after every change: if an edit changes what a file is about, update its `description` (via `str_replace` on the `description:` line), keeping it one short line rather than a growing list of the file's contents; and when a file is renamed or moved, update its `name` to the new filename stem in the same operation. Frontmatter that contradicts the file's name or contents is a defect to fix on sight.\n  - The `description` is read alongside the name whenever a future reader surveys what exists, so it is the file's primary retrieval surface after the name itself: in one short line, name the file's salient specifics — the key people, things, or events it covers and the few distinctive facts that set it apart — rather than a generic topic word. Keep it to that one line; if naming what is inside would not fit, the file is covering too much and should be split.\n- **Cross-references**: when content in one file needs to point at another, write the reference as the target's full path from the root, for example `see /memories/people/alice.md`, or with a section, `see /memories/people/alice.md > ## Music`. Whenever you rename, move, or delete a file, search the store for references to its old path and update or remove them; a reference that points at nothing is a defect.\n- **Temporal awareness**: When something happened is part of the fact. When the conversation provides a date, anchor every time-dependent fact to an absolute date drawn from that date, rather than a reference that only makes sense relative to when it was said: if the source gives a precise relative reference (e.g., \"last week\", \"yesterday\", \"the day before\"), resolve it to the specific calendar date and store that resolved date alone (keeping the relative phrase beside it leaves the fact ambiguous, since the phrase can be re-applied to the resolved date instead of read as already settled); if the source is only loosely time-stamped (e.g., \"recently\", \"a while back\") or carries no relative phrase at all, still record the conversation's date as the reference point so the fact is not left floating. When the conversation carries no date, record where the fact appeared in the conversation (the chunk or turn it came from) so its order is still captured. When updating, preserve historical context, so a superseded fact like a former job becomes a past entry rather than vanishing, and note when things changed.\n- **Resolve references**: store each fact in literal, self-contained terms — replace the pronouns and shorthand the speakers used with the actual person, thing, or place they point to (\"their music\" becomes the specific music, \"he\" the named person, \"there\" the named place) — so the fact stands on its own and a later search finds it by the real term rather than a pronoun the source happened to use.\n- **Source attribution**: When the input contains source locators in brackets, preserve them inline after each stored fact. The exact bracket format (e.g., `[S{session}T{turn}]`, `[B{block}M{message}]`, or `[M{n}]`) varies by benchmark; the active benchmark's source-attribution extension appended below gives the format-specific examples.\n\n## Output\n\nWhen you are done, respond with a brief summary of what you changed. Your filesystem modifications ARE the primary output.\n## Source Attribution\n\nEach conversation turn in the input is tagged with a source locator `[S{session}T{turn}]` (e.g., `[S5T3]` means session 5, turn 3).\n\n**When storing facts, include the source locator inline:**\n\n- Favorite cuisine: Italian [S5T3]\n- Tried Thai food recently, thought it was \"pretty good\" [S12T2]\n\n**When a fact has multiple sources, use repeated brackets:**\n\n- Favorite cuisine: Italian [S5T3][S12T2]\n\n**When updating an existing fact with a new source, append the bracket:**\n\n```\nBefore: - Favorite cuisine: Italian [S5T3]\nAfter:  - Favorite cuisine: Italian [S5T3][S12T2]\n```\n\nSource locators live INLINE next to each fact — do not maintain a separate aggregate list. The bracket beside the fact is the canonical attribution.\n\nKeep contextual information (speaker, time, conditions) as natural language in the memory content, not inside the brackets.",
+    "tool_profile": [
+      "view",
+      "create",
+      "str_replace",
+      "insert",
+      "delete",
+      "rename",
+      "grep"
+    ],
+    "tool_profile_sha256": "e4541dedafbd645e6e11f8847c95283b8738c668915b006f06dd0dea57c0945e",
+    "tool_schema_sha256": "3f4b2edc2045348743961231bc174c973e9c8a5147225bb9caece1fc7a254b56"
+  },
+  "resume": {
+    "prefix_runtime_config_segments": [
+      {
+        "end_chunk": 65,
+        "runtime_config_sha256": "434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183",
+        "start_chunk": 1
+      },
+      {
+        "end_chunk": 67,
+        "runtime_config_sha256": "612fa89e9212ebec6c1cd78d44ad88388c53f5d801bd751fd78a6c3308a37005",
+        "start_chunk": 66
+      },
+      {
+        "end_chunk": 72,
+        "runtime_config_sha256": "2f866df6ce35c40c14c19aa1014771bd45cbbb901085898d73c7fde204a32128",
+        "start_chunk": 68
+      },
+      {
+        "end_chunk": 84,
+        "runtime_config_sha256": "ec9c97275f4ea8d353ea235f772c2893de6293a75a9d0bef843f4060d5663970",
+        "start_chunk": 73
+      }
+    ],
+    "resume_runtime_contract_sha256": "43e6317efddb3a3509b16d48feafb52317bf416c807e61326a45f0d214ec6819",
+    "resumed": true,
+    "resumed_at": "2026-10-08T13:48:33.095673Z",
+    "reused_completed_chunks": 84,
+    "source_code_revision": "b41971f049501c286ad55017bdc1157e1bbdbc59",
+    "source_failed_run_id": "20261006T022525914538Z-a1352213",
+    "source_runtime_contract_sha256": "43e6317efddb3a3509b16d48feafb52317bf416c807e61326a45f0d214ec6819",
+    "start_chunk": 85
+  },
+  "run_id": "20261006T022525914538Z-a1352213",
+  "schema_version": 1,
+  "started_at": "2026-10-06T02:25:25.915835Z",
+  "status": "completed"
+}

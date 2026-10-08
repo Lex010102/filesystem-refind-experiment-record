@@ -1,0 +1,12 @@
+{
+  "artifact_id": "locomo/conv-50/s3-curated/v1",
+  "committed_at": "2026-10-08T14:00:50.974133Z",
+  "manifest_sha256": "70fb5ad56ff11bb849ce60b193cd6db29be601e613ca3afb76aac336e3b36e00",
+  "prompt_contract_sha256": "2b16c9041829666e3825d2d349c689b6cc1ce4b9de6e367f35a123c485918a20",
+  "run_id": "20261006T022525914538Z-a1352213",
+  "runtime_contract_sha256": "43e6317efddb3a3509b16d48feafb52317bf416c807e61326a45f0d214ec6819",
+  "schema_version": 1,
+  "store_tree_sha256": "60cb8dac74bfb60de500d1721f385c13f5d0b5819420600e24ba40ba10f27acd",
+  "stream_manifest_sha256": "6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5",
+  "trace_tree_sha256": "c1b7189c2c412371a2f90876951aa6c12fa5454d44d9b32d944f484715d96139"
+}

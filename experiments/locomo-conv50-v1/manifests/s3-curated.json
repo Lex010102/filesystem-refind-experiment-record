@@ -1,0 +1,8169 @@
+{
+  "artifact_id": "locomo/conv-50/s3-curated/v1",
+  "build": {
+    "chunks_completed": 85,
+    "finished_at": "2026-10-08T14:00:50.974133Z",
+    "mode": "formal",
+    "pruned_empty_directories": [],
+    "resume": {
+      "prefix_runtime_config_segments": [
+        {
+          "end_chunk": 65,
+          "runtime_config_sha256": "434d4dccd181668e2a2d0e4f1c13136c3611d6188b7acbf25d0df4af04864183",
+          "start_chunk": 1
+        },
+        {
+          "end_chunk": 67,
+          "runtime_config_sha256": "612fa89e9212ebec6c1cd78d44ad88388c53f5d801bd751fd78a6c3308a37005",
+          "start_chunk": 66
+        },
+        {
+          "end_chunk": 72,
+          "runtime_config_sha256": "2f866df6ce35c40c14c19aa1014771bd45cbbb901085898d73c7fde204a32128",
+          "start_chunk": 68
+        },
+        {
+          "end_chunk": 84,
+          "runtime_config_sha256": "ec9c97275f4ea8d353ea235f772c2893de6293a75a9d0bef843f4060d5663970",
+          "start_chunk": 73
+        }
+      ],
+      "resume_runtime_contract_sha256": "43e6317efddb3a3509b16d48feafb52317bf416c807e61326a45f0d214ec6819",
+      "resumed": true,
+      "resumed_at": "2026-10-08T13:48:33.095673Z",
+      "reused_completed_chunks": 84,
+      "source_code_revision": "b41971f049501c286ad55017bdc1157e1bbdbc59",
+      "source_failed_run_id": "20261006T022525914538Z-a1352213",
+      "source_runtime_contract_sha256": "43e6317efddb3a3509b16d48feafb52317bf416c807e61326a45f0d214ec6819",
+      "start_chunk": 85
+    },
+    "run_id": "20261006T022525914538Z-a1352213",
+    "started_at": "2026-10-06T02:25:25.915835Z"
+  },
+  "build_cost": {
+    "episodes": 85,
+    "llm_calls": 842,
+    "rounds": 837,
+    "tool_calls": 1350,
+    "usage_totals": {
+      "completion_tokens": 1195395,
+      "prompt_tokens": 29669563,
+      "total_tokens": 30864958
+    }
+  },
+  "counts": {
+    "bytes": 304640,
+    "cross_references": 3,
+    "directories": 0,
+    "files": 2,
+    "headings": 37,
+    "lines": 472,
+    "locator_mentions": 1465,
+    "max_file_depth": 0,
+    "source_locators_available": 568,
+    "unique_locators_referenced": 555
+  },
+  "directories": [],
+  "files": {
+    "calvin.md": {
+      "bytes": 150572,
+      "cross_references": [
+        "/memories/dave.md"
+      ],
+      "headings": 19,
+      "lines": 247,
+      "locator_mentions": 710,
+      "section_cross_references": [
+        "/memories/dave.md > ## Boston",
+        "/memories/dave.md > ## Car maintenance shop",
+        "/memories/dave.md > ## Car mod workshop (2023-08-11)",
+        "/memories/dave.md > ## Card night (2023-08-18)",
+        "/memories/dave.md > ## Hobbies and sense of purpose",
+        "/memories/dave.md > ## Japan",
+        "/memories/dave.md > ## Mountain trip (July 2023)",
+        "/memories/dave.md > ## Parks",
+        "/memories/dave.md > ## Relationships"
+      ],
+      "sha256": "d4a8c1002bf88e165d83473b0ccac4751d4121e10857c75aa3a880a06e84edd9",
+      "unique_locators": [
+        "[S10T10]",
+        "[S10T11]",
+        "[S10T12]",
+        "[S10T13]",
+        "[S10T14]",
+        "[S10T15]",
+        "[S10T16]",
+        "[S10T17]",
+        "[S10T1]",
+        "[S10T2]",
+        "[S10T3]",
+        "[S10T5]",
+        "[S10T6]",
+        "[S10T7]",
+        "[S10T8]",
+        "[S10T9]",
+        "[S11T10]",
+        "[S11T12]",
+        "[S11T13]",
+        "[S11T14]",
+        "[S11T1]",
+        "[S11T4]",
+        "[S11T6]",
+        "[S11T8]",
+        "[S12T10]",
+        "[S12T11]",
+        "[S12T12]",
+        "[S12T13]",
+        "[S12T14]",
+        "[S12T15]",
+        "[S12T16]",
+        "[S12T17]",
+        "[S12T1]",
+        "[S12T2]",
+        "[S12T3]",
+        "[S12T4]",
+        "[S12T5]",
+        "[S12T6]",
+        "[S12T7]",
+        "[S12T8]",
+        "[S12T9]",
+        "[S13T10]",
+        "[S13T12]",
+        "[S13T14]",
+        "[S13T15]",
+        "[S13T16]",
+        "[S13T17]",
+        "[S13T18]",
+        "[S13T19]",
+        "[S14T10]",
+        "[S14T11]",
+        "[S14T12]",
+        "[S14T16]",
+        "[S14T1]",
+        "[S14T2]",
+        "[S14T3]",
+        "[S14T4]",
+        "[S14T5]",
+        "[S14T6]",
+        "[S14T7]",
+        "[S14T8]",
+        "[S14T9]",
+        "[S15T10]",
+        "[S15T11]",
+        "[S15T12]",
+        "[S15T13]",
+        "[S15T14]",
+        "[S15T15]",
+        "[S15T1]",
+        "[S15T2]",
+        "[S15T3]",
+        "[S15T4]",
+        "[S15T5]",
+        "[S15T6]",
+        "[S15T7]",
+        "[S15T8]",
+        "[S15T9]",
+        "[S16T10]",
+        "[S16T11]",
+        "[S16T12]",
+        "[S16T13]",
+        "[S16T14]",
+        "[S16T15]",
+        "[S16T16]",
+        "[S16T17]",
+        "[S16T18]",
+        "[S16T19]",
+        "[S16T1]",
+        "[S16T20]",
+        "[S16T21]",
+        "[S16T22]",
+        "[S16T23]",
+        "[S16T24]",
+        "[S16T25]",
+        "[S16T2]",
+        "[S16T3]",
+        "[S16T4]",
+        "[S16T5]",
+        "[S16T6]",
+        "[S16T7]",
+        "[S16T8]",
+        "[S16T9]",
+        "[S17T10]",
+        "[S17T1]",
+        "[S17T2]",
+        "[S17T3]",
+        "[S17T4]",
+        "[S17T5]",
+        "[S17T6]",
+        "[S17T7]",
+        "[S17T8]",
+        "[S17T9]",
+        "[S18T10]",
+        "[S18T11]",
+        "[S18T12]",
+        "[S18T13]",
+        "[S18T14]",
+        "[S18T15]",
+        "[S18T16]",
+        "[S18T1]",
+        "[S18T2]",
+        "[S18T3]",
+        "[S18T4]",
+        "[S18T5]",
+        "[S18T6]",
+        "[S18T7]",
+        "[S18T8]",
+        "[S18T9]",
+        "[S19T10]",
+        "[S19T11]",
+        "[S19T12]",
+        "[S19T1]",
+        "[S19T2]",
+        "[S19T3]",
+        "[S19T4]",
+        "[S19T5]",
+        "[S19T6]",
+        "[S19T7]",
+        "[S19T8]",
+        "[S19T9]",
+        "[S1T11]",
+        "[S1T13]",
+        "[S1T15]",
+        "[S1T17]",
+        "[S1T1]",
+        "[S1T3]",
+        "[S1T5]",
+        "[S1T7]",
+        "[S1T8]",
+        "[S1T9]",
+        "[S20T10]",
+        "[S20T11]",
+        "[S20T12]",
+        "[S20T13]",
+        "[S20T14]",
+        "[S20T15]",
+        "[S20T16]",
+        "[S20T17]",
+        "[S20T1]",
+        "[S20T2]",
+        "[S20T3]",
+        "[S20T4]",
+        "[S20T5]",
+        "[S20T6]",
+        "[S20T7]",
+        "[S20T8]",
+        "[S20T9]",
+        "[S21T10]",
+        "[S21T11]",
+        "[S21T12]",
+        "[S21T13]",
+        "[S21T14]",
+        "[S21T15]",
+        "[S21T16]",
+        "[S21T17]",
+        "[S21T18]",
+        "[S21T1]",
+        "[S21T2]",
+        "[S21T3]",
+        "[S21T4]",
+        "[S21T5]",
+        "[S21T6]",
+        "[S21T7]",
+        "[S21T8]",
+        "[S21T9]",
+        "[S22T10]",
+        "[S22T11]",
+        "[S22T12]",
+        "[S22T13]",
+        "[S22T14]",
+        "[S22T1]",
+        "[S22T2]",
+        "[S22T3]",
+        "[S22T4]",
+        "[S22T5]",
+        "[S22T6]",
+        "[S22T7]",
+        "[S22T8]",
+        "[S22T9]",
+        "[S23T10]",
+        "[S23T11]",
+        "[S23T12]",
+        "[S23T13]",
+        "[S23T14]",
+        "[S23T15]",
+        "[S23T16]",
+        "[S23T17]",
+        "[S23T18]",
+        "[S23T1]",
+        "[S23T2]",
+        "[S23T3]",
+        "[S23T4]",
+        "[S23T5]",
+        "[S23T6]",
+        "[S23T7]",
+        "[S23T8]",
+        "[S23T9]",
+        "[S24T10]",
+        "[S24T11]",
+        "[S24T17]",
+        "[S24T18]",
+        "[S24T19]",
+        "[S24T1]",
+        "[S24T20]",
+        "[S24T21]",
+        "[S24T22]",
+        "[S24T23]",
+        "[S24T2]",
+        "[S24T3]",
+        "[S24T4]",
+        "[S24T5]",
+        "[S24T6]",
+        "[S24T7]",
+        "[S24T8]",
+        "[S24T9]",
+        "[S25T10]",
+        "[S25T11]",
+        "[S25T12]",
+        "[S25T13]",
+        "[S25T14]",
+        "[S25T15]",
+        "[S25T16]",
+        "[S25T17]",
+        "[S25T18]",
+        "[S25T19]",
+        "[S25T1]",
+        "[S25T20]",
+        "[S25T21]",
+        "[S25T22]",
+        "[S25T23]",
+        "[S25T24]",
+        "[S25T25]",
+        "[S25T26]",
+        "[S25T27]",
+        "[S25T28]",
+        "[S25T29]",
+        "[S25T2]",
+        "[S25T30]",
+        "[S25T31]",
+        "[S25T3]",
+        "[S25T4]",
+        "[S25T5]",
+        "[S25T6]",
+        "[S25T7]",
+        "[S25T8]",
+        "[S25T9]",
+        "[S26T10]",
+        "[S26T11]",
+        "[S26T12]",
+        "[S26T13]",
+        "[S26T14]",
+        "[S26T15]",
+        "[S26T1]",
+        "[S26T2]",
+        "[S26T3]",
+        "[S26T4]",
+        "[S26T5]",
+        "[S26T6]",
+        "[S26T7]",
+        "[S26T8]",
+        "[S26T9]",
+        "[S27T10]",
+        "[S27T11]",
+        "[S27T12]",
+        "[S27T13]",
+        "[S27T1]",
+        "[S27T2]",
+        "[S27T3]",
+        "[S27T4]",
+        "[S27T5]",
+        "[S27T6]",
+        "[S27T7]",
+        "[S27T8]",
+        "[S27T9]",
+        "[S28T10]",
+        "[S28T11]",
+        "[S28T12]",
+        "[S28T13]",
+        "[S28T14]",
+        "[S28T15]",
+        "[S28T16]",
+        "[S28T17]",
+        "[S28T18]",
+        "[S28T19]",
+        "[S28T1]",
+        "[S28T20]",
+        "[S28T21]",
+        "[S28T22]",
+        "[S28T23]",
+        "[S28T24]",
+        "[S28T25]",
+        "[S28T26]",
+        "[S28T27]",
+        "[S28T28]",
+        "[S28T29]",
+        "[S28T2]",
+        "[S28T30]",
+        "[S28T31]",
+        "[S28T32]",
+        "[S28T33]",
+        "[S28T34]",
+        "[S28T35]",
+        "[S28T36]",
+        "[S28T37]",
+        "[S28T38]",
+        "[S28T39]",
+        "[S28T3]",
+        "[S28T40]",
+        "[S28T41]",
+        "[S28T42]",
+        "[S28T43]",
+        "[S28T4]",
+        "[S28T5]",
+        "[S28T6]",
+        "[S28T7]",
+        "[S28T8]",
+        "[S28T9]",
+        "[S29T10]",
+        "[S29T11]",
+        "[S29T12]",
+        "[S29T13]",
+        "[S29T14]",
+        "[S29T15]",
+        "[S29T16]",
+        "[S29T17]",
+        "[S29T18]",
+        "[S29T1]",
+        "[S29T2]",
+        "[S29T3]",
+        "[S29T4]",
+        "[S29T5]",
+        "[S29T6]",
+        "[S29T7]",
+        "[S29T8]",
+        "[S29T9]",
+        "[S2T11]",
+        "[S2T17]",
+        "[S2T19]",
+        "[S2T1]",
+        "[S2T2]",
+        "[S2T3]",
+        "[S2T4]",
+        "[S2T5]",
+        "[S2T6]",
+        "[S2T7]",
+        "[S30T10]",
+        "[S30T11]",
+        "[S30T12]",
+        "[S30T13]",
+        "[S30T14]",
+        "[S30T15]",
+        "[S30T16]",
+        "[S30T17]",
+        "[S30T18]",
+        "[S30T19]",
+        "[S30T1]",
+        "[S30T20]",
+        "[S30T21]",
+        "[S30T22]",
+        "[S30T23]",
+        "[S30T24]",
+        "[S30T2]",
+        "[S30T3]",
+        "[S30T4]",
+        "[S30T5]",
+        "[S30T6]",
+        "[S30T7]",
+        "[S30T8]",
+        "[S30T9]",
+        "[S3T10]",
+        "[S3T13]",
+        "[S3T14]",
+        "[S3T15]",
+        "[S3T16]",
+        "[S3T17]",
+        "[S3T18]",
+        "[S3T1]",
+        "[S3T2]",
+        "[S3T3]",
+        "[S3T5]",
+        "[S3T7]",
+        "[S3T8]",
+        "[S3T9]",
+        "[S4T10]",
+        "[S4T12]",
+        "[S4T17]",
+        "[S4T18]",
+        "[S4T19]",
+        "[S4T22]",
+        "[S4T23]",
+        "[S4T24]",
+        "[S4T25]",
+        "[S4T26]",
+        "[S4T2]",
+        "[S4T4]",
+        "[S4T6]",
+        "[S4T8]",
+        "[S5T10]",
+        "[S5T11]",
+        "[S5T12]",
+        "[S5T13]",
+        "[S5T14]",
+        "[S5T15]",
+        "[S5T1]",
+        "[S5T2]",
+        "[S5T3]",
+        "[S5T4]",
+        "[S5T6]",
+        "[S5T7]",
+        "[S5T8]",
+        "[S6T10]",
+        "[S6T11]",
+        "[S6T12]",
+        "[S6T13]",
+        "[S6T14]",
+        "[S6T15]",
+        "[S6T16]",
+        "[S6T17]",
+        "[S6T1]",
+        "[S6T3]",
+        "[S6T4]",
+        "[S6T5]",
+        "[S6T6]",
+        "[S6T7]",
+        "[S6T8]",
+        "[S6T9]",
+        "[S7T10]",
+        "[S7T11]",
+        "[S7T12]",
+        "[S7T13]",
+        "[S7T14]",
+        "[S7T15]",
+        "[S7T16]",
+        "[S7T17]",
+        "[S7T18]",
+        "[S7T19]",
+        "[S7T1]",
+        "[S7T2]",
+        "[S7T3]",
+        "[S7T4]",
+        "[S7T5]",
+        "[S7T6]",
+        "[S7T9]",
+        "[S8T10]",
+        "[S8T11]",
+        "[S8T12]",
+        "[S8T13]",
+        "[S8T14]",
+        "[S8T1]",
+        "[S8T2]",
+        "[S8T3]",
+        "[S8T4]",
+        "[S8T5]",
+        "[S8T6]",
+        "[S8T7]",
+        "[S8T8]",
+        "[S8T9]",
+        "[S9T11]",
+        "[S9T13]",
+        "[S9T14]",
+        "[S9T15]",
+        "[S9T16]",
+        "[S9T17]",
+        "[S9T18]",
+        "[S9T19]",
+        "[S9T1]",
+        "[S9T20]",
+        "[S9T21]",
+        "[S9T2]",
+        "[S9T3]",
+        "[S9T4]",
+        "[S9T5]",
+        "[S9T6]",
+        "[S9T7]",
+        "[S9T8]",
+        "[S9T9]"
+      ]
+    },
+    "dave.md": {
+      "bytes": 154068,
+      "cross_references": [
+        "/memories/calvin.md",
+        "/memories/dave.md"
+      ],
+      "headings": 18,
+      "lines": 225,
+      "locator_mentions": 755,
+      "section_cross_references": [
+        "/memories/calvin.md > ## Car accident (2023-06-16)",
+        "/memories/calvin.md > ## Japan plan",
+        "/memories/calvin.md > ## Mountains and hiking",
+        "/memories/calvin.md > ## Music",
+        "/memories/calvin.md > ## New home (2023-03-23)",
+        "/memories/calvin.md > ## New luxury car (Ferrari, 2023-03-26)",
+        "/memories/calvin.md > ## Recording studio (2023-07-21)",
+        "/memories/calvin.md > ## Tokyo trip (2023-04-20)"
+      ],
+      "sha256": "16ebce6292f417184ee777a804b13f8812620d574e5758d0dff3bbe2404b88dd",
+      "unique_locators": [
+        "[S10T10]",
+        "[S10T11]",
+        "[S10T12]",
+        "[S10T13]",
+        "[S10T14]",
+        "[S10T15]",
+        "[S10T16]",
+        "[S10T17]",
+        "[S10T1]",
+        "[S10T2]",
+        "[S10T3]",
+        "[S10T5]",
+        "[S10T6]",
+        "[S10T7]",
+        "[S10T8]",
+        "[S10T9]",
+        "[S11T10]",
+        "[S11T11]",
+        "[S11T12]",
+        "[S11T13]",
+        "[S11T14]",
+        "[S11T1]",
+        "[S11T3]",
+        "[S11T4]",
+        "[S11T5]",
+        "[S11T7]",
+        "[S11T9]",
+        "[S12T10]",
+        "[S12T11]",
+        "[S12T12]",
+        "[S12T13]",
+        "[S12T14]",
+        "[S12T15]",
+        "[S12T16]",
+        "[S12T1]",
+        "[S12T2]",
+        "[S12T4]",
+        "[S12T5]",
+        "[S12T6]",
+        "[S12T7]",
+        "[S12T8]",
+        "[S13T10]",
+        "[S13T11]",
+        "[S13T12]",
+        "[S13T13]",
+        "[S13T14]",
+        "[S13T15]",
+        "[S13T16]",
+        "[S13T17]",
+        "[S13T18]",
+        "[S13T19]",
+        "[S13T1]",
+        "[S13T2]",
+        "[S13T3]",
+        "[S13T5]",
+        "[S13T6]",
+        "[S13T7]",
+        "[S13T8]",
+        "[S13T9]",
+        "[S14T11]",
+        "[S14T12]",
+        "[S14T13]",
+        "[S14T14]",
+        "[S14T15]",
+        "[S14T16]",
+        "[S14T1]",
+        "[S14T2]",
+        "[S14T4]",
+        "[S14T5]",
+        "[S14T6]",
+        "[S14T7]",
+        "[S14T8]",
+        "[S14T9]",
+        "[S15T10]",
+        "[S15T11]",
+        "[S15T12]",
+        "[S15T13]",
+        "[S15T14]",
+        "[S15T15]",
+        "[S15T1]",
+        "[S15T2]",
+        "[S15T3]",
+        "[S15T4]",
+        "[S15T5]",
+        "[S15T6]",
+        "[S15T7]",
+        "[S15T8]",
+        "[S15T9]",
+        "[S16T10]",
+        "[S16T11]",
+        "[S16T12]",
+        "[S16T13]",
+        "[S16T14]",
+        "[S16T15]",
+        "[S16T16]",
+        "[S16T17]",
+        "[S16T18]",
+        "[S16T19]",
+        "[S16T1]",
+        "[S16T20]",
+        "[S16T21]",
+        "[S16T22]",
+        "[S16T23]",
+        "[S16T24]",
+        "[S16T25]",
+        "[S16T2]",
+        "[S16T3]",
+        "[S16T4]",
+        "[S16T5]",
+        "[S16T6]",
+        "[S16T7]",
+        "[S16T8]",
+        "[S16T9]",
+        "[S17T10]",
+        "[S17T1]",
+        "[S17T2]",
+        "[S17T3]",
+        "[S17T4]",
+        "[S17T5]",
+        "[S17T6]",
+        "[S17T7]",
+        "[S17T8]",
+        "[S17T9]",
+        "[S18T10]",
+        "[S18T11]",
+        "[S18T12]",
+        "[S18T13]",
+        "[S18T14]",
+        "[S18T15]",
+        "[S18T16]",
+        "[S18T1]",
+        "[S18T2]",
+        "[S18T3]",
+        "[S18T4]",
+        "[S18T5]",
+        "[S18T6]",
+        "[S18T7]",
+        "[S18T8]",
+        "[S18T9]",
+        "[S19T10]",
+        "[S19T11]",
+        "[S19T12]",
+        "[S19T1]",
+        "[S19T2]",
+        "[S19T3]",
+        "[S19T4]",
+        "[S19T5]",
+        "[S19T6]",
+        "[S19T7]",
+        "[S19T8]",
+        "[S19T9]",
+        "[S1T14]",
+        "[S1T16]",
+        "[S1T17]",
+        "[S1T2]",
+        "[S1T4]",
+        "[S1T8]",
+        "[S20T10]",
+        "[S20T11]",
+        "[S20T12]",
+        "[S20T13]",
+        "[S20T14]",
+        "[S20T15]",
+        "[S20T16]",
+        "[S20T17]",
+        "[S20T1]",
+        "[S20T2]",
+        "[S20T3]",
+        "[S20T4]",
+        "[S20T5]",
+        "[S20T6]",
+        "[S20T7]",
+        "[S20T8]",
+        "[S20T9]",
+        "[S21T10]",
+        "[S21T11]",
+        "[S21T12]",
+        "[S21T13]",
+        "[S21T14]",
+        "[S21T15]",
+        "[S21T16]",
+        "[S21T17]",
+        "[S21T18]",
+        "[S21T1]",
+        "[S21T2]",
+        "[S21T3]",
+        "[S21T4]",
+        "[S21T5]",
+        "[S21T6]",
+        "[S21T7]",
+        "[S21T8]",
+        "[S21T9]",
+        "[S22T10]",
+        "[S22T11]",
+        "[S22T12]",
+        "[S22T13]",
+        "[S22T14]",
+        "[S22T1]",
+        "[S22T2]",
+        "[S22T3]",
+        "[S22T4]",
+        "[S22T5]",
+        "[S22T6]",
+        "[S22T7]",
+        "[S22T8]",
+        "[S22T9]",
+        "[S23T10]",
+        "[S23T11]",
+        "[S23T12]",
+        "[S23T13]",
+        "[S23T14]",
+        "[S23T15]",
+        "[S23T16]",
+        "[S23T17]",
+        "[S23T18]",
+        "[S23T1]",
+        "[S23T2]",
+        "[S23T3]",
+        "[S23T4]",
+        "[S23T5]",
+        "[S23T6]",
+        "[S23T7]",
+        "[S23T8]",
+        "[S23T9]",
+        "[S24T10]",
+        "[S24T11]",
+        "[S24T12]",
+        "[S24T13]",
+        "[S24T14]",
+        "[S24T15]",
+        "[S24T16]",
+        "[S24T17]",
+        "[S24T18]",
+        "[S24T19]",
+        "[S24T1]",
+        "[S24T20]",
+        "[S24T21]",
+        "[S24T22]",
+        "[S24T23]",
+        "[S24T2]",
+        "[S24T3]",
+        "[S24T4]",
+        "[S24T5]",
+        "[S24T6]",
+        "[S24T7]",
+        "[S24T8]",
+        "[S25T10]",
+        "[S25T11]",
+        "[S25T12]",
+        "[S25T13]",
+        "[S25T14]",
+        "[S25T15]",
+        "[S25T16]",
+        "[S25T17]",
+        "[S25T18]",
+        "[S25T19]",
+        "[S25T1]",
+        "[S25T20]",
+        "[S25T21]",
+        "[S25T22]",
+        "[S25T23]",
+        "[S25T24]",
+        "[S25T25]",
+        "[S25T26]",
+        "[S25T27]",
+        "[S25T28]",
+        "[S25T29]",
+        "[S25T2]",
+        "[S25T30]",
+        "[S25T31]",
+        "[S25T3]",
+        "[S25T4]",
+        "[S25T5]",
+        "[S25T6]",
+        "[S25T7]",
+        "[S25T8]",
+        "[S25T9]",
+        "[S26T10]",
+        "[S26T11]",
+        "[S26T12]",
+        "[S26T13]",
+        "[S26T14]",
+        "[S26T15]",
+        "[S26T1]",
+        "[S26T2]",
+        "[S26T3]",
+        "[S26T4]",
+        "[S26T5]",
+        "[S26T6]",
+        "[S26T7]",
+        "[S26T8]",
+        "[S26T9]",
+        "[S27T10]",
+        "[S27T11]",
+        "[S27T12]",
+        "[S27T13]",
+        "[S27T1]",
+        "[S27T2]",
+        "[S27T3]",
+        "[S27T4]",
+        "[S27T5]",
+        "[S27T6]",
+        "[S27T7]",
+        "[S27T8]",
+        "[S27T9]",
+        "[S28T10]",
+        "[S28T11]",
+        "[S28T12]",
+        "[S28T13]",
+        "[S28T14]",
+        "[S28T15]",
+        "[S28T16]",
+        "[S28T17]",
+        "[S28T18]",
+        "[S28T19]",
+        "[S28T1]",
+        "[S28T20]",
+        "[S28T21]",
+        "[S28T22]",
+        "[S28T23]",
+        "[S28T24]",
+        "[S28T25]",
+        "[S28T26]",
+        "[S28T27]",
+        "[S28T28]",
+        "[S28T29]",
+        "[S28T2]",
+        "[S28T30]",
+        "[S28T31]",
+        "[S28T32]",
+        "[S28T33]",
+        "[S28T34]",
+        "[S28T35]",
+        "[S28T36]",
+        "[S28T37]",
+        "[S28T38]",
+        "[S28T39]",
+        "[S28T3]",
+        "[S28T40]",
+        "[S28T41]",
+        "[S28T42]",
+        "[S28T43]",
+        "[S28T4]",
+        "[S28T5]",
+        "[S28T6]",
+        "[S28T7]",
+        "[S28T8]",
+        "[S28T9]",
+        "[S29T10]",
+        "[S29T11]",
+        "[S29T12]",
+        "[S29T13]",
+        "[S29T14]",
+        "[S29T15]",
+        "[S29T16]",
+        "[S29T17]",
+        "[S29T18]",
+        "[S29T1]",
+        "[S29T2]",
+        "[S29T3]",
+        "[S29T4]",
+        "[S29T5]",
+        "[S29T6]",
+        "[S29T7]",
+        "[S29T8]",
+        "[S29T9]",
+        "[S2T10]",
+        "[S2T12]",
+        "[S2T13]",
+        "[S2T14]",
+        "[S2T16]",
+        "[S2T18]",
+        "[S2T20]",
+        "[S2T2]",
+        "[S2T6]",
+        "[S2T8]",
+        "[S30T10]",
+        "[S30T11]",
+        "[S30T12]",
+        "[S30T13]",
+        "[S30T14]",
+        "[S30T15]",
+        "[S30T16]",
+        "[S30T17]",
+        "[S30T18]",
+        "[S30T19]",
+        "[S30T1]",
+        "[S30T20]",
+        "[S30T21]",
+        "[S30T22]",
+        "[S30T23]",
+        "[S30T24]",
+        "[S30T2]",
+        "[S30T3]",
+        "[S30T4]",
+        "[S30T5]",
+        "[S30T6]",
+        "[S30T7]",
+        "[S30T8]",
+        "[S30T9]",
+        "[S3T10]",
+        "[S3T11]",
+        "[S3T12]",
+        "[S3T13]",
+        "[S3T14]",
+        "[S3T15]",
+        "[S3T16]",
+        "[S3T18]",
+        "[S3T1]",
+        "[S3T2]",
+        "[S3T4]",
+        "[S3T6]",
+        "[S3T8]",
+        "[S4T11]",
+        "[S4T13]",
+        "[S4T14]",
+        "[S4T15]",
+        "[S4T16]",
+        "[S4T17]",
+        "[S4T18]",
+        "[S4T19]",
+        "[S4T1]",
+        "[S4T21]",
+        "[S4T22]",
+        "[S4T23]",
+        "[S4T24]",
+        "[S4T25]",
+        "[S4T26]",
+        "[S4T27]",
+        "[S4T28]",
+        "[S4T2]",
+        "[S4T3]",
+        "[S4T4]",
+        "[S4T5]",
+        "[S4T7]",
+        "[S4T9]",
+        "[S5T10]",
+        "[S5T11]",
+        "[S5T13]",
+        "[S5T14]",
+        "[S5T15]",
+        "[S5T1]",
+        "[S5T2]",
+        "[S5T3]",
+        "[S5T4]",
+        "[S5T5]",
+        "[S5T6]",
+        "[S5T7]",
+        "[S5T8]",
+        "[S5T9]",
+        "[S6T10]",
+        "[S6T11]",
+        "[S6T12]",
+        "[S6T13]",
+        "[S6T14]",
+        "[S6T15]",
+        "[S6T16]",
+        "[S6T17]",
+        "[S6T18]",
+        "[S6T3]",
+        "[S6T4]",
+        "[S6T5]",
+        "[S6T6]",
+        "[S6T7]",
+        "[S6T8]",
+        "[S6T9]",
+        "[S7T10]",
+        "[S7T11]",
+        "[S7T12]",
+        "[S7T13]",
+        "[S7T14]",
+        "[S7T15]",
+        "[S7T16]",
+        "[S7T17]",
+        "[S7T18]",
+        "[S7T19]",
+        "[S7T1]",
+        "[S7T2]",
+        "[S7T3]",
+        "[S7T4]",
+        "[S7T5]",
+        "[S7T6]",
+        "[S7T7]",
+        "[S7T8]",
+        "[S7T9]",
+        "[S8T10]",
+        "[S8T11]",
+        "[S8T12]",
+        "[S8T13]",
+        "[S8T14]",
+        "[S8T2]",
+        "[S8T4]",
+        "[S8T6]",
+        "[S8T8]",
+        "[S8T9]",
+        "[S9T10]",
+        "[S9T11]",
+        "[S9T12]",
+        "[S9T13]",
+        "[S9T14]",
+        "[S9T15]",
+        "[S9T16]",
+        "[S9T17]",
+        "[S9T18]",
+        "[S9T19]",
+        "[S9T20]",
+        "[S9T21]",
+        "[S9T2]",
+        "[S9T4]",
+        "[S9T6]",
+        "[S9T8]"
+      ]
+    }
+  },
+  "generator": {
+    "git_commit": "3ff7d7168f7a8ec6a91377b4ce26f6422920349a",
+    "module": "fs_memory_lab.s3_runner",
+    "version": "s3-safe-runner-v7"
+  },
+  "model": {
+    "api_style": "portable",
+    "endpoint": "https://soclaas-api.comp.nus.edu.sg/v1/chat/completions",
+    "paper_configuration": {
+      "max_completion_tokens": 32768,
+      "max_rounds": 60,
+      "model": "gpt-5.4-mini",
+      "reasoning_effort": "high"
+    },
+    "requested_model": "coding",
+    "sampling": {
+      "configured_random_seed": 42,
+      "note": "The compatible API adapter does not send a seed parameter.",
+      "seed_sent_to_provider": false
+    },
+    "served_models": [
+      "qwen3.8:27b"
+    ],
+    "system_fingerprints": [
+      "vllm-0.26.0-b73e56ef"
+    ]
+  },
+  "protocol": {
+    "formal_store_started_empty": true,
+    "gold_inputs_exposed_to_agent_messages_or_tools": false,
+    "management_prompt_sha256": "2ceb39921adb3c5eb4da98964b4925b8886f8540f3663b8f64d1539137d6be26",
+    "one_fresh_agent_context_per_chunk": true,
+    "persistent_filesystem_across_chunks": true,
+    "runtime_config_sha256": "ec9c97275f4ea8d353ea235f772c2893de6293a75a9d0bef843f4060d5663970",
+    "tool_profile": [
+      "view",
+      "create",
+      "str_replace",
+      "insert",
+      "delete",
+      "rename",
+      "grep"
+    ],
+    "tool_profile_sha256": "e4541dedafbd645e6e11f8847c95283b8738c668915b006f06dd0dea57c0945e",
+    "tool_schema_sha256": "3f4b2edc2045348743961231bc174c973e9c8a5147225bb9caece1fc7a254b56"
+  },
+  "schema_version": 1,
+  "source": {
+    "artifact_id": "locomo/conv-50/s3-management-stream/v1",
+    "prompt_contract_sha256": "2b16c9041829666e3825d2d349c689b6cc1ce4b9de6e367f35a123c485918a20",
+    "runtime_contract_sha256": "43e6317efddb3a3509b16d48feafb52317bf416c807e61326a45f0d214ec6819",
+    "stream_manifest_sha256": "6323382879ddafdb21c1207bf22a3d11c277d323faabfa28d1ae3144e78025d5",
+    "stream_sha256": "f599b8d35f55ac08b68595f728aaa7a20f30e14a529c7dcb0f1631857b6594ec"
+  },
+  "source_index": {
+    "[S10T10]": [
+      {
+        "file": "calvin.md",
+        "line": 24
+      },
+      {
+        "file": "calvin.md",
+        "line": 216
+      },
+      {
+        "file": "dave.md",
+        "line": 192
+      }
+    ],
+    "[S10T11]": [
+      {
+        "file": "calvin.md",
+        "line": 216
+      },
+      {
+        "file": "dave.md",
+        "line": 106
+      },
+      {
+        "file": "dave.md",
+        "line": 192
+      }
+    ],
+    "[S10T12]": [
+      {
+        "file": "calvin.md",
+        "line": 25
+      },
+      {
+        "file": "calvin.md",
+        "line": 121
+      },
+      {
+        "file": "calvin.md",
+        "line": 216
+      },
+      {
+        "file": "dave.md",
+        "line": 192
+      }
+    ],
+    "[S10T13]": [
+      {
+        "file": "calvin.md",
+        "line": 216
+      },
+      {
+        "file": "dave.md",
+        "line": 192
+      }
+    ],
+    "[S10T14]": [
+      {
+        "file": "calvin.md",
+        "line": 25
+      },
+      {
+        "file": "calvin.md",
+        "line": 121
+      },
+      {
+        "file": "calvin.md",
+        "line": 216
+      },
+      {
+        "file": "dave.md",
+        "line": 192
+      }
+    ],
+    "[S10T15]": [
+      {
+        "file": "calvin.md",
+        "line": 216
+      },
+      {
+        "file": "dave.md",
+        "line": 192
+      }
+    ],
+    "[S10T16]": [
+      {
+        "file": "calvin.md",
+        "line": 216
+      },
+      {
+        "file": "dave.md",
+        "line": 192
+      }
+    ],
+    "[S10T17]": [
+      {
+        "file": "calvin.md",
+        "line": 216
+      },
+      {
+        "file": "dave.md",
+        "line": 192
+      }
+    ],
+    "[S10T1]": [
+      {
+        "file": "calvin.md",
+        "line": 215
+      },
+      {
+        "file": "dave.md",
+        "line": 191
+      }
+    ],
+    "[S10T2]": [
+      {
+        "file": "calvin.md",
+        "line": 49
+      },
+      {
+        "file": "calvin.md",
+        "line": 215
+      },
+      {
+        "file": "dave.md",
+        "line": 191
+      }
+    ],
+    "[S10T3]": [
+      {
+        "file": "calvin.md",
+        "line": 215
+      },
+      {
+        "file": "dave.md",
+        "line": 98
+      },
+      {
+        "file": "dave.md",
+        "line": 191
+      }
+    ],
+    "[S10T5]": [
+      {
+        "file": "calvin.md",
+        "line": 215
+      },
+      {
+        "file": "dave.md",
+        "line": 98
+      },
+      {
+        "file": "dave.md",
+        "line": 191
+      }
+    ],
+    "[S10T6]": [
+      {
+        "file": "calvin.md",
+        "line": 10
+      },
+      {
+        "file": "calvin.md",
+        "line": 23
+      },
+      {
+        "file": "calvin.md",
+        "line": 215
+      },
+      {
+        "file": "dave.md",
+        "line": 191
+      }
+    ],
+    "[S10T7]": [
+      {
+        "file": "calvin.md",
+        "line": 215
+      },
+      {
+        "file": "dave.md",
+        "line": 98
+      },
+      {
+        "file": "dave.md",
+        "line": 191
+      }
+    ],
+    "[S10T8]": [
+      {
+        "file": "calvin.md",
+        "line": 10
+      },
+      {
+        "file": "calvin.md",
+        "line": 215
+      },
+      {
+        "file": "dave.md",
+        "line": 191
+      }
+    ],
+    "[S10T9]": [
+      {
+        "file": "calvin.md",
+        "line": 216
+      },
+      {
+        "file": "dave.md",
+        "line": 192
+      }
+    ],
+    "[S11T10]": [
+      {
+        "file": "calvin.md",
+        "line": 122
+      },
+      {
+        "file": "calvin.md",
+        "line": 123
+      },
+      {
+        "file": "dave.md",
+        "line": 197
+      }
+    ],
+    "[S11T11]": [
+      {
+        "file": "dave.md",
+        "line": 197
+      }
+    ],
+    "[S11T12]": [
+      {
+        "file": "calvin.md",
+        "line": 220
+      },
+      {
+        "file": "dave.md",
+        "line": 198
+      }
+    ],
+    "[S11T13]": [
+      {
+        "file": "calvin.md",
+        "line": 220
+      },
+      {
+        "file": "dave.md",
+        "line": 198
+      }
+    ],
+    "[S11T14]": [
+      {
+        "file": "calvin.md",
+        "line": 220
+      },
+      {
+        "file": "dave.md",
+        "line": 198
+      }
+    ],
+    "[S11T1]": [
+      {
+        "file": "calvin.md",
+        "line": 219
+      },
+      {
+        "file": "dave.md",
+        "line": 17
+      },
+      {
+        "file": "dave.md",
+        "line": 28
+      },
+      {
+        "file": "dave.md",
+        "line": 196
+      }
+    ],
+    "[S11T3]": [
+      {
+        "file": "dave.md",
+        "line": 17
+      },
+      {
+        "file": "dave.md",
+        "line": 29
+      },
+      {
+        "file": "dave.md",
+        "line": 196
+      }
+    ],
+    "[S11T4]": [
+      {
+        "file": "calvin.md",
+        "line": 101
+      },
+      {
+        "file": "calvin.md",
+        "line": 219
+      },
+      {
+        "file": "dave.md",
+        "line": 196
+      }
+    ],
+    "[S11T5]": [
+      {
+        "file": "dave.md",
+        "line": 196
+      }
+    ],
+    "[S11T6]": [
+      {
+        "file": "calvin.md",
+        "line": 102
+      },
+      {
+        "file": "calvin.md",
+        "line": 219
+      }
+    ],
+    "[S11T7]": [
+      {
+        "file": "dave.md",
+        "line": 196
+      }
+    ],
+    "[S11T8]": [
+      {
+        "file": "calvin.md",
+        "line": 103
+      },
+      {
+        "file": "calvin.md",
+        "line": 219
+      }
+    ],
+    "[S11T9]": [
+      {
+        "file": "dave.md",
+        "line": 197
+      }
+    ],
+    "[S12T10]": [
+      {
+        "file": "calvin.md",
+        "line": 221
+      },
+      {
+        "file": "dave.md",
+        "line": 195
+      }
+    ],
+    "[S12T11]": [
+      {
+        "file": "calvin.md",
+        "line": 124
+      },
+      {
+        "file": "calvin.md",
+        "line": 125
+      },
+      {
+        "file": "calvin.md",
+        "line": 221
+      },
+      {
+        "file": "dave.md",
+        "line": 195
+      }
+    ],
+    "[S12T12]": [
+      {
+        "file": "calvin.md",
+        "line": 221
+      },
+      {
+        "file": "dave.md",
+        "line": 195
+      }
+    ],
+    "[S12T13]": [
+      {
+        "file": "calvin.md",
+        "line": 221
+      },
+      {
+        "file": "dave.md",
+        "line": 195
+      }
+    ],
+    "[S12T14]": [
+      {
+        "file": "calvin.md",
+        "line": 221
+      },
+      {
+        "file": "dave.md",
+        "line": 195
+      }
+    ],
+    "[S12T15]": [
+      {
+        "file": "calvin.md",
+        "line": 221
+      },
+      {
+        "file": "dave.md",
+        "line": 195
+      }
+    ],
+    "[S12T16]": [
+      {
+        "file": "calvin.md",
+        "line": 221
+      },
+      {
+        "file": "dave.md",
+        "line": 195
+      }
+    ],
+    "[S12T17]": [
+      {
+        "file": "calvin.md",
+        "line": 221
+      }
+    ],
+    "[S12T1]": [
+      {
+        "file": "calvin.md",
+        "line": 35
+      },
+      {
+        "file": "calvin.md",
+        "line": 217
+      },
+      {
+        "file": "dave.md",
+        "line": 193
+      }
+    ],
+    "[S12T2]": [
+      {
+        "file": "calvin.md",
+        "line": 217
+      },
+      {
+        "file": "dave.md",
+        "line": 77
+      },
+      {
+        "file": "dave.md",
+        "line": 193
+      }
+    ],
+    "[S12T3]": [
+      {
+        "file": "calvin.md",
+        "line": 217
+      }
+    ],
+    "[S12T4]": [
+      {
+        "file": "calvin.md",
+        "line": 218
+      },
+      {
+        "file": "dave.md",
+        "line": 79
+      },
+      {
+        "file": "dave.md",
+        "line": 193
+      }
+    ],
+    "[S12T5]": [
+      {
+        "file": "calvin.md",
+        "line": 218
+      },
+      {
+        "file": "dave.md",
+        "line": 194
+      }
+    ],
+    "[S12T6]": [
+      {
+        "file": "calvin.md",
+        "line": 218
+      },
+      {
+        "file": "dave.md",
+        "line": 80
+      },
+      {
+        "file": "dave.md",
+        "line": 194
+      }
+    ],
+    "[S12T7]": [
+      {
+        "file": "calvin.md",
+        "line": 36
+      },
+      {
+        "file": "calvin.md",
+        "line": 218
+      },
+      {
+        "file": "dave.md",
+        "line": 194
+      }
+    ],
+    "[S12T8]": [
+      {
+        "file": "calvin.md",
+        "line": 218
+      },
+      {
+        "file": "dave.md",
+        "line": 194
+      }
+    ],
+    "[S12T9]": [
+      {
+        "file": "calvin.md",
+        "line": 37
+      }
+    ],
+    "[S13T10]": [
+      {
+        "file": "calvin.md",
+        "line": 222
+      },
+      {
+        "file": "dave.md",
+        "line": 56
+      },
+      {
+        "file": "dave.md",
+        "line": 200
+      }
+    ],
+    "[S13T11]": [
+      {
+        "file": "dave.md",
+        "line": 56
+      },
+      {
+        "file": "dave.md",
+        "line": 200
+      }
+    ],
+    "[S13T12]": [
+      {
+        "file": "calvin.md",
+        "line": 222
+      },
+      {
+        "file": "dave.md",
+        "line": 56
+      },
+      {
+        "file": "dave.md",
+        "line": 200
+      }
+    ],
+    "[S13T13]": [
+      {
+        "file": "dave.md",
+        "line": 56
+      },
+      {
+        "file": "dave.md",
+        "line": 200
+      }
+    ],
+    "[S13T14]": [
+      {
+        "file": "calvin.md",
+        "line": 222
+      },
+      {
+        "file": "dave.md",
+        "line": 56
+      },
+      {
+        "file": "dave.md",
+        "line": 200
+      }
+    ],
+    "[S13T15]": [
+      {
+        "file": "calvin.md",
+        "line": 222
+      },
+      {
+        "file": "dave.md",
+        "line": 118
+      },
+      {
+        "file": "dave.md",
+        "line": 200
+      }
+    ],
+    "[S13T16]": [
+      {
+        "file": "calvin.md",
+        "line": 222
+      },
+      {
+        "file": "dave.md",
+        "line": 118
+      },
+      {
+        "file": "dave.md",
+        "line": 200
+      }
+    ],
+    "[S13T17]": [
+      {
+        "file": "calvin.md",
+        "line": 223
+      },
+      {
+        "file": "dave.md",
+        "line": 201
+      }
+    ],
+    "[S13T18]": [
+      {
+        "file": "calvin.md",
+        "line": 223
+      },
+      {
+        "file": "dave.md",
+        "line": 201
+      }
+    ],
+    "[S13T19]": [
+      {
+        "file": "calvin.md",
+        "line": 223
+      },
+      {
+        "file": "dave.md",
+        "line": 201
+      }
+    ],
+    "[S13T1]": [
+      {
+        "file": "dave.md",
+        "line": 52
+      },
+      {
+        "file": "dave.md",
+        "line": 53
+      },
+      {
+        "file": "dave.md",
+        "line": 199
+      }
+    ],
+    "[S13T2]": [
+      {
+        "file": "dave.md",
+        "line": 199
+      }
+    ],
+    "[S13T3]": [
+      {
+        "file": "dave.md",
+        "line": 52
+      },
+      {
+        "file": "dave.md",
+        "line": 199
+      }
+    ],
+    "[S13T5]": [
+      {
+        "file": "dave.md",
+        "line": 54
+      },
+      {
+        "file": "dave.md",
+        "line": 199
+      }
+    ],
+    "[S13T6]": [
+      {
+        "file": "dave.md",
+        "line": 199
+      }
+    ],
+    "[S13T7]": [
+      {
+        "file": "dave.md",
+        "line": 55
+      },
+      {
+        "file": "dave.md",
+        "line": 199
+      }
+    ],
+    "[S13T8]": [
+      {
+        "file": "dave.md",
+        "line": 55
+      },
+      {
+        "file": "dave.md",
+        "line": 199
+      }
+    ],
+    "[S13T9]": [
+      {
+        "file": "dave.md",
+        "line": 56
+      },
+      {
+        "file": "dave.md",
+        "line": 200
+      }
+    ],
+    "[S14T10]": [
+      {
+        "file": "calvin.md",
+        "line": 127
+      },
+      {
+        "file": "calvin.md",
+        "line": 225
+      }
+    ],
+    "[S14T11]": [
+      {
+        "file": "calvin.md",
+        "line": 225
+      },
+      {
+        "file": "dave.md",
+        "line": 57
+      },
+      {
+        "file": "dave.md",
+        "line": 203
+      }
+    ],
+    "[S14T12]": [
+      {
+        "file": "calvin.md",
+        "line": 225
+      },
+      {
+        "file": "dave.md",
+        "line": 57
+      },
+      {
+        "file": "dave.md",
+        "line": 203
+      }
+    ],
+    "[S14T13]": [
+      {
+        "file": "dave.md",
+        "line": 57
+      },
+      {
+        "file": "dave.md",
+        "line": 203
+      }
+    ],
+    "[S14T14]": [
+      {
+        "file": "dave.md",
+        "line": 204
+      }
+    ],
+    "[S14T15]": [
+      {
+        "file": "dave.md",
+        "line": 203
+      }
+    ],
+    "[S14T16]": [
+      {
+        "file": "calvin.md",
+        "line": 226
+      },
+      {
+        "file": "dave.md",
+        "line": 204
+      }
+    ],
+    "[S14T1]": [
+      {
+        "file": "calvin.md",
+        "line": 224
+      },
+      {
+        "file": "dave.md",
+        "line": 66
+      },
+      {
+        "file": "dave.md",
+        "line": 202
+      }
+    ],
+    "[S14T2]": [
+      {
+        "file": "calvin.md",
+        "line": 224
+      },
+      {
+        "file": "dave.md",
+        "line": 202
+      }
+    ],
+    "[S14T3]": [
+      {
+        "file": "calvin.md",
+        "line": 224
+      }
+    ],
+    "[S14T4]": [
+      {
+        "file": "calvin.md",
+        "line": 58
+      },
+      {
+        "file": "calvin.md",
+        "line": 224
+      },
+      {
+        "file": "dave.md",
+        "line": 202
+      }
+    ],
+    "[S14T5]": [
+      {
+        "file": "calvin.md",
+        "line": 224
+      },
+      {
+        "file": "dave.md",
+        "line": 202
+      }
+    ],
+    "[S14T6]": [
+      {
+        "file": "calvin.md",
+        "line": 58
+      },
+      {
+        "file": "calvin.md",
+        "line": 224
+      },
+      {
+        "file": "dave.md",
+        "line": 202
+      }
+    ],
+    "[S14T7]": [
+      {
+        "file": "calvin.md",
+        "line": 224
+      },
+      {
+        "file": "dave.md",
+        "line": 202
+      }
+    ],
+    "[S14T8]": [
+      {
+        "file": "calvin.md",
+        "line": 126
+      },
+      {
+        "file": "calvin.md",
+        "line": 224
+      },
+      {
+        "file": "dave.md",
+        "line": 202
+      }
+    ],
+    "[S14T9]": [
+      {
+        "file": "calvin.md",
+        "line": 224
+      },
+      {
+        "file": "dave.md",
+        "line": 202
+      }
+    ],
+    "[S15T10]": [
+      {
+        "file": "calvin.md",
+        "line": 79
+      },
+      {
+        "file": "calvin.md",
+        "line": 129
+      },
+      {
+        "file": "calvin.md",
+        "line": 228
+      },
+      {
+        "file": "dave.md",
+        "line": 152
+      },
+      {
+        "file": "dave.md",
+        "line": 206
+      }
+    ],
+    "[S15T11]": [
+      {
+        "file": "calvin.md",
+        "line": 79
+      },
+      {
+        "file": "calvin.md",
+        "line": 228
+      },
+      {
+        "file": "dave.md",
+        "line": 152
+      },
+      {
+        "file": "dave.md",
+        "line": 206
+      }
+    ],
+    "[S15T12]": [
+      {
+        "file": "calvin.md",
+        "line": 165
+      },
+      {
+        "file": "calvin.md",
+        "line": 228
+      },
+      {
+        "file": "dave.md",
+        "line": 206
+      }
+    ],
+    "[S15T13]": [
+      {
+        "file": "calvin.md",
+        "line": 228
+      },
+      {
+        "file": "dave.md",
+        "line": 206
+      }
+    ],
+    "[S15T14]": [
+      {
+        "file": "calvin.md",
+        "line": 166
+      },
+      {
+        "file": "calvin.md",
+        "line": 228
+      },
+      {
+        "file": "dave.md",
+        "line": 206
+      }
+    ],
+    "[S15T15]": [
+      {
+        "file": "calvin.md",
+        "line": 228
+      },
+      {
+        "file": "dave.md",
+        "line": 206
+      }
+    ],
+    "[S15T1]": [
+      {
+        "file": "calvin.md",
+        "line": 227
+      },
+      {
+        "file": "dave.md",
+        "line": 70
+      },
+      {
+        "file": "dave.md",
+        "line": 205
+      }
+    ],
+    "[S15T2]": [
+      {
+        "file": "calvin.md",
+        "line": 65
+      },
+      {
+        "file": "calvin.md",
+        "line": 128
+      },
+      {
+        "file": "calvin.md",
+        "line": 227
+      },
+      {
+        "file": "dave.md",
+        "line": 205
+      }
+    ],
+    "[S15T3]": [
+      {
+        "file": "calvin.md",
+        "line": 227
+      },
+      {
+        "file": "dave.md",
+        "line": 205
+      }
+    ],
+    "[S15T4]": [
+      {
+        "file": "calvin.md",
+        "line": 66
+      },
+      {
+        "file": "calvin.md",
+        "line": 128
+      },
+      {
+        "file": "calvin.md",
+        "line": 227
+      },
+      {
+        "file": "dave.md",
+        "line": 205
+      }
+    ],
+    "[S15T5]": [
+      {
+        "file": "calvin.md",
+        "line": 227
+      },
+      {
+        "file": "dave.md",
+        "line": 205
+      }
+    ],
+    "[S15T6]": [
+      {
+        "file": "calvin.md",
+        "line": 67
+      },
+      {
+        "file": "calvin.md",
+        "line": 227
+      },
+      {
+        "file": "dave.md",
+        "line": 205
+      }
+    ],
+    "[S15T7]": [
+      {
+        "file": "calvin.md",
+        "line": 227
+      },
+      {
+        "file": "dave.md",
+        "line": 205
+      }
+    ],
+    "[S15T8]": [
+      {
+        "file": "calvin.md",
+        "line": 67
+      },
+      {
+        "file": "calvin.md",
+        "line": 227
+      },
+      {
+        "file": "dave.md",
+        "line": 205
+      }
+    ],
+    "[S15T9]": [
+      {
+        "file": "calvin.md",
+        "line": 228
+      },
+      {
+        "file": "dave.md",
+        "line": 206
+      }
+    ],
+    "[S16T10]": [
+      {
+        "file": "calvin.md",
+        "line": 171
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T11]": [
+      {
+        "file": "calvin.md",
+        "line": 172
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T12]": [
+      {
+        "file": "calvin.md",
+        "line": 172
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T13]": [
+      {
+        "file": "calvin.md",
+        "line": 173
+      },
+      {
+        "file": "calvin.md",
+        "line": 178
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T14]": [
+      {
+        "file": "calvin.md",
+        "line": 176
+      },
+      {
+        "file": "calvin.md",
+        "line": 177
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T15]": [
+      {
+        "file": "calvin.md",
+        "line": 179
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T16]": [
+      {
+        "file": "calvin.md",
+        "line": 173
+      },
+      {
+        "file": "calvin.md",
+        "line": 177
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T17]": [
+      {
+        "file": "calvin.md",
+        "line": 180
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T18]": [
+      {
+        "file": "calvin.md",
+        "line": 180
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T19]": [
+      {
+        "file": "calvin.md",
+        "line": 181
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T1]": [
+      {
+        "file": "calvin.md",
+        "line": 229
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T20]": [
+      {
+        "file": "calvin.md",
+        "line": 181
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T21]": [
+      {
+        "file": "calvin.md",
+        "line": 181
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T22]": [
+      {
+        "file": "calvin.md",
+        "line": 182
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T23]": [
+      {
+        "file": "calvin.md",
+        "line": 182
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T24]": [
+      {
+        "file": "calvin.md",
+        "line": 130
+      },
+      {
+        "file": "calvin.md",
+        "line": 182
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T25]": [
+      {
+        "file": "calvin.md",
+        "line": 182
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T2]": [
+      {
+        "file": "calvin.md",
+        "line": 59
+      },
+      {
+        "file": "calvin.md",
+        "line": 229
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T3]": [
+      {
+        "file": "calvin.md",
+        "line": 59
+      },
+      {
+        "file": "calvin.md",
+        "line": 229
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T4]": [
+      {
+        "file": "calvin.md",
+        "line": 59
+      },
+      {
+        "file": "calvin.md",
+        "line": 229
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T5]": [
+      {
+        "file": "calvin.md",
+        "line": 229
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T6]": [
+      {
+        "file": "calvin.md",
+        "line": 169
+      },
+      {
+        "file": "calvin.md",
+        "line": 229
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T7]": [
+      {
+        "file": "calvin.md",
+        "line": 169
+      },
+      {
+        "file": "calvin.md",
+        "line": 229
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T8]": [
+      {
+        "file": "calvin.md",
+        "line": 170
+      },
+      {
+        "file": "calvin.md",
+        "line": 229
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S16T9]": [
+      {
+        "file": "calvin.md",
+        "line": 171
+      },
+      {
+        "file": "dave.md",
+        "line": 207
+      }
+    ],
+    "[S17T10]": [
+      {
+        "file": "calvin.md",
+        "line": 80
+      },
+      {
+        "file": "calvin.md",
+        "line": 230
+      },
+      {
+        "file": "dave.md",
+        "line": 208
+      }
+    ],
+    "[S17T1]": [
+      {
+        "file": "calvin.md",
+        "line": 230
+      },
+      {
+        "file": "dave.md",
+        "line": 67
+      },
+      {
+        "file": "dave.md",
+        "line": 208
+      }
+    ],
+    "[S17T2]": [
+      {
+        "file": "calvin.md",
+        "line": 230
+      },
+      {
+        "file": "dave.md",
+        "line": 208
+      }
+    ],
+    "[S17T3]": [
+      {
+        "file": "calvin.md",
+        "line": 230
+      },
+      {
+        "file": "dave.md",
+        "line": 78
+      },
+      {
+        "file": "dave.md",
+        "line": 208
+      }
+    ],
+    "[S17T4]": [
+      {
+        "file": "calvin.md",
+        "line": 230
+      },
+      {
+        "file": "dave.md",
+        "line": 208
+      }
+    ],
+    "[S17T5]": [
+      {
+        "file": "calvin.md",
+        "line": 230
+      },
+      {
+        "file": "dave.md",
+        "line": 78
+      },
+      {
+        "file": "dave.md",
+        "line": 208
+      }
+    ],
+    "[S17T6]": [
+      {
+        "file": "calvin.md",
+        "line": 80
+      },
+      {
+        "file": "calvin.md",
+        "line": 230
+      },
+      {
+        "file": "dave.md",
+        "line": 208
+      }
+    ],
+    "[S17T7]": [
+      {
+        "file": "calvin.md",
+        "line": 80
+      },
+      {
+        "file": "calvin.md",
+        "line": 230
+      },
+      {
+        "file": "dave.md",
+        "line": 208
+      }
+    ],
+    "[S17T8]": [
+      {
+        "file": "calvin.md",
+        "line": 80
+      },
+      {
+        "file": "calvin.md",
+        "line": 230
+      },
+      {
+        "file": "dave.md",
+        "line": 208
+      }
+    ],
+    "[S17T9]": [
+      {
+        "file": "calvin.md",
+        "line": 80
+      },
+      {
+        "file": "calvin.md",
+        "line": 230
+      },
+      {
+        "file": "dave.md",
+        "line": 208
+      }
+    ],
+    "[S18T10]": [
+      {
+        "file": "calvin.md",
+        "line": 232
+      },
+      {
+        "file": "dave.md",
+        "line": 153
+      },
+      {
+        "file": "dave.md",
+        "line": 210
+      }
+    ],
+    "[S18T11]": [
+      {
+        "file": "calvin.md",
+        "line": 81
+      },
+      {
+        "file": "calvin.md",
+        "line": 232
+      },
+      {
+        "file": "dave.md",
+        "line": 153
+      },
+      {
+        "file": "dave.md",
+        "line": 210
+      }
+    ],
+    "[S18T12]": [
+      {
+        "file": "calvin.md",
+        "line": 81
+      },
+      {
+        "file": "calvin.md",
+        "line": 232
+      },
+      {
+        "file": "dave.md",
+        "line": 153
+      },
+      {
+        "file": "dave.md",
+        "line": 210
+      }
+    ],
+    "[S18T13]": [
+      {
+        "file": "calvin.md",
+        "line": 232
+      },
+      {
+        "file": "dave.md",
+        "line": 210
+      }
+    ],
+    "[S18T14]": [
+      {
+        "file": "calvin.md",
+        "line": 232
+      },
+      {
+        "file": "dave.md",
+        "line": 210
+      }
+    ],
+    "[S18T15]": [
+      {
+        "file": "calvin.md",
+        "line": 232
+      },
+      {
+        "file": "dave.md",
+        "line": 210
+      }
+    ],
+    "[S18T16]": [
+      {
+        "file": "calvin.md",
+        "line": 232
+      },
+      {
+        "file": "dave.md",
+        "line": 210
+      }
+    ],
+    "[S18T1]": [
+      {
+        "file": "calvin.md",
+        "line": 131
+      },
+      {
+        "file": "calvin.md",
+        "line": 231
+      },
+      {
+        "file": "dave.md",
+        "line": 209
+      }
+    ],
+    "[S18T2]": [
+      {
+        "file": "calvin.md",
+        "line": 231
+      },
+      {
+        "file": "dave.md",
+        "line": 209
+      }
+    ],
+    "[S18T3]": [
+      {
+        "file": "calvin.md",
+        "line": 132
+      },
+      {
+        "file": "calvin.md",
+        "line": 231
+      },
+      {
+        "file": "dave.md",
+        "line": 209
+      }
+    ],
+    "[S18T4]": [
+      {
+        "file": "calvin.md",
+        "line": 231
+      },
+      {
+        "file": "dave.md",
+        "line": 209
+      }
+    ],
+    "[S18T5]": [
+      {
+        "file": "calvin.md",
+        "line": 132
+      },
+      {
+        "file": "calvin.md",
+        "line": 231
+      },
+      {
+        "file": "dave.md",
+        "line": 209
+      }
+    ],
+    "[S18T6]": [
+      {
+        "file": "calvin.md",
+        "line": 231
+      },
+      {
+        "file": "dave.md",
+        "line": 209
+      }
+    ],
+    "[S18T7]": [
+      {
+        "file": "calvin.md",
+        "line": 133
+      },
+      {
+        "file": "calvin.md",
+        "line": 231
+      },
+      {
+        "file": "dave.md",
+        "line": 209
+      }
+    ],
+    "[S18T8]": [
+      {
+        "file": "calvin.md",
+        "line": 133
+      },
+      {
+        "file": "calvin.md",
+        "line": 231
+      },
+      {
+        "file": "dave.md",
+        "line": 209
+      }
+    ],
+    "[S18T9]": [
+      {
+        "file": "calvin.md",
+        "line": 134
+      },
+      {
+        "file": "calvin.md",
+        "line": 232
+      },
+      {
+        "file": "dave.md",
+        "line": 210
+      }
+    ],
+    "[S19T10]": [
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "dave.md",
+        "line": 211
+      }
+    ],
+    "[S19T11]": [
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "dave.md",
+        "line": 211
+      }
+    ],
+    "[S19T12]": [
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "dave.md",
+        "line": 211
+      }
+    ],
+    "[S19T1]": [
+      {
+        "file": "calvin.md",
+        "line": 135
+      },
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "dave.md",
+        "line": 119
+      },
+      {
+        "file": "dave.md",
+        "line": 137
+      },
+      {
+        "file": "dave.md",
+        "line": 211
+      }
+    ],
+    "[S19T2]": [
+      {
+        "file": "calvin.md",
+        "line": 135
+      },
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "dave.md",
+        "line": 211
+      }
+    ],
+    "[S19T3]": [
+      {
+        "file": "calvin.md",
+        "line": 135
+      },
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "dave.md",
+        "line": 137
+      },
+      {
+        "file": "dave.md",
+        "line": 211
+      }
+    ],
+    "[S19T4]": [
+      {
+        "file": "calvin.md",
+        "line": 135
+      },
+      {
+        "file": "calvin.md",
+        "line": 190
+      },
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "dave.md",
+        "line": 211
+      }
+    ],
+    "[S19T5]": [
+      {
+        "file": "calvin.md",
+        "line": 190
+      },
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "dave.md",
+        "line": 141
+      },
+      {
+        "file": "dave.md",
+        "line": 211
+      }
+    ],
+    "[S19T6]": [
+      {
+        "file": "calvin.md",
+        "line": 189
+      },
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "dave.md",
+        "line": 211
+      }
+    ],
+    "[S19T7]": [
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "dave.md",
+        "line": 58
+      },
+      {
+        "file": "dave.md",
+        "line": 211
+      }
+    ],
+    "[S19T8]": [
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "dave.md",
+        "line": 58
+      },
+      {
+        "file": "dave.md",
+        "line": 211
+      }
+    ],
+    "[S19T9]": [
+      {
+        "file": "calvin.md",
+        "line": 233
+      },
+      {
+        "file": "dave.md",
+        "line": 58
+      },
+      {
+        "file": "dave.md",
+        "line": 81
+      },
+      {
+        "file": "dave.md",
+        "line": 211
+      }
+    ],
+    "[S1T11]": [
+      {
+        "file": "calvin.md",
+        "line": 17
+      }
+    ],
+    "[S1T13]": [
+      {
+        "file": "calvin.md",
+        "line": 18
+      }
+    ],
+    "[S1T14]": [
+      {
+        "file": "dave.md",
+        "line": 173
+      }
+    ],
+    "[S1T15]": [
+      {
+        "file": "calvin.md",
+        "line": 19
+      }
+    ],
+    "[S1T16]": [
+      {
+        "file": "dave.md",
+        "line": 92
+      },
+      {
+        "file": "dave.md",
+        "line": 93
+      },
+      {
+        "file": "dave.md",
+        "line": 173
+      }
+    ],
+    "[S1T17]": [
+      {
+        "file": "calvin.md",
+        "line": 20
+      },
+      {
+        "file": "dave.md",
+        "line": 93
+      }
+    ],
+    "[S1T1]": [
+      {
+        "file": "calvin.md",
+        "line": 198
+      }
+    ],
+    "[S1T2]": [
+      {
+        "file": "dave.md",
+        "line": 9
+      }
+    ],
+    "[S1T3]": [
+      {
+        "file": "calvin.md",
+        "line": 9
+      }
+    ],
+    "[S1T4]": [
+      {
+        "file": "dave.md",
+        "line": 173
+      }
+    ],
+    "[S1T5]": [
+      {
+        "file": "calvin.md",
+        "line": 13
+      }
+    ],
+    "[S1T7]": [
+      {
+        "file": "calvin.md",
+        "line": 14
+      }
+    ],
+    "[S1T8]": [
+      {
+        "file": "calvin.md",
+        "line": 15
+      },
+      {
+        "file": "dave.md",
+        "line": 173
+      }
+    ],
+    "[S1T9]": [
+      {
+        "file": "calvin.md",
+        "line": 16
+      },
+      {
+        "file": "calvin.md",
+        "line": 17
+      }
+    ],
+    "[S20T10]": [
+      {
+        "file": "calvin.md",
+        "line": 136
+      },
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 120
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T11]": [
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 120
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T12]": [
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T13]": [
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T14]": [
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T15]": [
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T16]": [
+      {
+        "file": "calvin.md",
+        "line": 136
+      },
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 120
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T17]": [
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T1]": [
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 59
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T2]": [
+      {
+        "file": "calvin.md",
+        "line": 38
+      },
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T3]": [
+      {
+        "file": "calvin.md",
+        "line": 38
+      },
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T4]": [
+      {
+        "file": "calvin.md",
+        "line": 26
+      },
+      {
+        "file": "calvin.md",
+        "line": 38
+      },
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T5]": [
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T6]": [
+      {
+        "file": "calvin.md",
+        "line": 136
+      },
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T7]": [
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T8]": [
+      {
+        "file": "calvin.md",
+        "line": 136
+      },
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S20T9]": [
+      {
+        "file": "calvin.md",
+        "line": 136
+      },
+      {
+        "file": "calvin.md",
+        "line": 234
+      },
+      {
+        "file": "dave.md",
+        "line": 120
+      },
+      {
+        "file": "dave.md",
+        "line": 212
+      }
+    ],
+    "[S21T10]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 82
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T11]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T12]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T13]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T14]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T15]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T16]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T17]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T18]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T1]": [
+      {
+        "file": "calvin.md",
+        "line": 82
+      },
+      {
+        "file": "calvin.md",
+        "line": 137
+      },
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T2]": [
+      {
+        "file": "calvin.md",
+        "line": 137
+      },
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T3]": [
+      {
+        "file": "calvin.md",
+        "line": 137
+      },
+      {
+        "file": "calvin.md",
+        "line": 138
+      },
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T4]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 60
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T5]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 61
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T6]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 61
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T7]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T8]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 62
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S21T9]": [
+      {
+        "file": "calvin.md",
+        "line": 235
+      },
+      {
+        "file": "dave.md",
+        "line": 213
+      }
+    ],
+    "[S22T10]": [
+      {
+        "file": "calvin.md",
+        "line": 237
+      },
+      {
+        "file": "dave.md",
+        "line": 215
+      }
+    ],
+    "[S22T11]": [
+      {
+        "file": "calvin.md",
+        "line": 237
+      },
+      {
+        "file": "dave.md",
+        "line": 215
+      }
+    ],
+    "[S22T12]": [
+      {
+        "file": "calvin.md",
+        "line": 237
+      },
+      {
+        "file": "dave.md",
+        "line": 215
+      }
+    ],
+    "[S22T13]": [
+      {
+        "file": "calvin.md",
+        "line": 237
+      },
+      {
+        "file": "dave.md",
+        "line": 215
+      }
+    ],
+    "[S22T14]": [
+      {
+        "file": "calvin.md",
+        "line": 237
+      },
+      {
+        "file": "dave.md",
+        "line": 215
+      }
+    ],
+    "[S22T1]": [
+      {
+        "file": "calvin.md",
+        "line": 236
+      },
+      {
+        "file": "dave.md",
+        "line": 18
+      },
+      {
+        "file": "dave.md",
+        "line": 214
+      }
+    ],
+    "[S22T2]": [
+      {
+        "file": "calvin.md",
+        "line": 39
+      },
+      {
+        "file": "calvin.md",
+        "line": 236
+      },
+      {
+        "file": "dave.md",
+        "line": 18
+      },
+      {
+        "file": "dave.md",
+        "line": 214
+      }
+    ],
+    "[S22T3]": [
+      {
+        "file": "calvin.md",
+        "line": 236
+      },
+      {
+        "file": "dave.md",
+        "line": 19
+      },
+      {
+        "file": "dave.md",
+        "line": 214
+      }
+    ],
+    "[S22T4]": [
+      {
+        "file": "calvin.md",
+        "line": 236
+      },
+      {
+        "file": "dave.md",
+        "line": 19
+      },
+      {
+        "file": "dave.md",
+        "line": 214
+      }
+    ],
+    "[S22T5]": [
+      {
+        "file": "calvin.md",
+        "line": 236
+      },
+      {
+        "file": "dave.md",
+        "line": 83
+      },
+      {
+        "file": "dave.md",
+        "line": 84
+      },
+      {
+        "file": "dave.md",
+        "line": 214
+      }
+    ],
+    "[S22T6]": [
+      {
+        "file": "calvin.md",
+        "line": 236
+      },
+      {
+        "file": "dave.md",
+        "line": 84
+      },
+      {
+        "file": "dave.md",
+        "line": 214
+      }
+    ],
+    "[S22T7]": [
+      {
+        "file": "calvin.md",
+        "line": 236
+      },
+      {
+        "file": "dave.md",
+        "line": 84
+      },
+      {
+        "file": "dave.md",
+        "line": 214
+      }
+    ],
+    "[S22T8]": [
+      {
+        "file": "calvin.md",
+        "line": 236
+      },
+      {
+        "file": "dave.md",
+        "line": 214
+      }
+    ],
+    "[S22T9]": [
+      {
+        "file": "calvin.md",
+        "line": 237
+      },
+      {
+        "file": "dave.md",
+        "line": 215
+      }
+    ],
+    "[S23T10]": [
+      {
+        "file": "calvin.md",
+        "line": 140
+      },
+      {
+        "file": "calvin.md",
+        "line": 239
+      },
+      {
+        "file": "dave.md",
+        "line": 217
+      }
+    ],
+    "[S23T11]": [
+      {
+        "file": "calvin.md",
+        "line": 239
+      },
+      {
+        "file": "dave.md",
+        "line": 217
+      }
+    ],
+    "[S23T12]": [
+      {
+        "file": "calvin.md",
+        "line": 239
+      },
+      {
+        "file": "dave.md",
+        "line": 217
+      }
+    ],
+    "[S23T13]": [
+      {
+        "file": "calvin.md",
+        "line": 239
+      },
+      {
+        "file": "dave.md",
+        "line": 217
+      }
+    ],
+    "[S23T14]": [
+      {
+        "file": "calvin.md",
+        "line": 239
+      },
+      {
+        "file": "dave.md",
+        "line": 217
+      }
+    ],
+    "[S23T15]": [
+      {
+        "file": "calvin.md",
+        "line": 239
+      },
+      {
+        "file": "dave.md",
+        "line": 217
+      }
+    ],
+    "[S23T16]": [
+      {
+        "file": "calvin.md",
+        "line": 40
+      },
+      {
+        "file": "calvin.md",
+        "line": 239
+      },
+      {
+        "file": "dave.md",
+        "line": 217
+      }
+    ],
+    "[S23T17]": [
+      {
+        "file": "calvin.md",
+        "line": 40
+      },
+      {
+        "file": "calvin.md",
+        "line": 239
+      },
+      {
+        "file": "dave.md",
+        "line": 217
+      }
+    ],
+    "[S23T18]": [
+      {
+        "file": "calvin.md",
+        "line": 40
+      },
+      {
+        "file": "calvin.md",
+        "line": 239
+      },
+      {
+        "file": "dave.md",
+        "line": 217
+      }
+    ],
+    "[S23T1]": [
+      {
+        "file": "calvin.md",
+        "line": 238
+      },
+      {
+        "file": "dave.md",
+        "line": 48
+      },
+      {
+        "file": "dave.md",
+        "line": 216
+      }
+    ],
+    "[S23T2]": [
+      {
+        "file": "calvin.md",
+        "line": 238
+      },
+      {
+        "file": "dave.md",
+        "line": 48
+      },
+      {
+        "file": "dave.md",
+        "line": 216
+      }
+    ],
+    "[S23T3]": [
+      {
+        "file": "calvin.md",
+        "line": 139
+      },
+      {
+        "file": "calvin.md",
+        "line": 238
+      },
+      {
+        "file": "dave.md",
+        "line": 48
+      },
+      {
+        "file": "dave.md",
+        "line": 216
+      }
+    ],
+    "[S23T4]": [
+      {
+        "file": "calvin.md",
+        "line": 139
+      },
+      {
+        "file": "calvin.md",
+        "line": 238
+      },
+      {
+        "file": "dave.md",
+        "line": 216
+      }
+    ],
+    "[S23T5]": [
+      {
+        "file": "calvin.md",
+        "line": 238
+      },
+      {
+        "file": "dave.md",
+        "line": 121
+      },
+      {
+        "file": "dave.md",
+        "line": 216
+      }
+    ],
+    "[S23T6]": [
+      {
+        "file": "calvin.md",
+        "line": 238
+      },
+      {
+        "file": "dave.md",
+        "line": 121
+      },
+      {
+        "file": "dave.md",
+        "line": 216
+      }
+    ],
+    "[S23T7]": [
+      {
+        "file": "calvin.md",
+        "line": 238
+      },
+      {
+        "file": "dave.md",
+        "line": 121
+      },
+      {
+        "file": "dave.md",
+        "line": 216
+      }
+    ],
+    "[S23T8]": [
+      {
+        "file": "calvin.md",
+        "line": 238
+      },
+      {
+        "file": "dave.md",
+        "line": 121
+      },
+      {
+        "file": "dave.md",
+        "line": 216
+      }
+    ],
+    "[S23T9]": [
+      {
+        "file": "calvin.md",
+        "line": 239
+      },
+      {
+        "file": "dave.md",
+        "line": 121
+      },
+      {
+        "file": "dave.md",
+        "line": 121
+      },
+      {
+        "file": "dave.md",
+        "line": 217
+      }
+    ],
+    "[S24T10]": [
+      {
+        "file": "calvin.md",
+        "line": 61
+      },
+      {
+        "file": "dave.md",
+        "line": 108
+      }
+    ],
+    "[S24T11]": [
+      {
+        "file": "calvin.md",
+        "line": 61
+      },
+      {
+        "file": "dave.md",
+        "line": 108
+      }
+    ],
+    "[S24T12]": [
+      {
+        "file": "dave.md",
+        "line": 108
+      }
+    ],
+    "[S24T13]": [
+      {
+        "file": "dave.md",
+        "line": 108
+      }
+    ],
+    "[S24T14]": [
+      {
+        "file": "dave.md",
+        "line": 108
+      }
+    ],
+    "[S24T15]": [
+      {
+        "file": "dave.md",
+        "line": 108
+      }
+    ],
+    "[S24T16]": [
+      {
+        "file": "dave.md",
+        "line": 108
+      }
+    ],
+    "[S24T17]": [
+      {
+        "file": "calvin.md",
+        "line": 62
+      },
+      {
+        "file": "calvin.md",
+        "line": 241
+      },
+      {
+        "file": "dave.md",
+        "line": 219
+      }
+    ],
+    "[S24T18]": [
+      {
+        "file": "calvin.md",
+        "line": 241
+      },
+      {
+        "file": "dave.md",
+        "line": 219
+      }
+    ],
+    "[S24T19]": [
+      {
+        "file": "calvin.md",
+        "line": 62
+      },
+      {
+        "file": "calvin.md",
+        "line": 241
+      },
+      {
+        "file": "dave.md",
+        "line": 219
+      }
+    ],
+    "[S24T1]": [
+      {
+        "file": "calvin.md",
+        "line": 60
+      },
+      {
+        "file": "calvin.md",
+        "line": 69
+      },
+      {
+        "file": "calvin.md",
+        "line": 240
+      },
+      {
+        "file": "dave.md",
+        "line": 218
+      }
+    ],
+    "[S24T20]": [
+      {
+        "file": "calvin.md",
+        "line": 241
+      },
+      {
+        "file": "dave.md",
+        "line": 109
+      },
+      {
+        "file": "dave.md",
+        "line": 219
+      }
+    ],
+    "[S24T21]": [
+      {
+        "file": "calvin.md",
+        "line": 62
+      },
+      {
+        "file": "calvin.md",
+        "line": 241
+      },
+      {
+        "file": "dave.md",
+        "line": 219
+      }
+    ],
+    "[S24T22]": [
+      {
+        "file": "calvin.md",
+        "line": 241
+      },
+      {
+        "file": "dave.md",
+        "line": 109
+      },
+      {
+        "file": "dave.md",
+        "line": 219
+      }
+    ],
+    "[S24T23]": [
+      {
+        "file": "calvin.md",
+        "line": 241
+      },
+      {
+        "file": "dave.md",
+        "line": 219
+      }
+    ],
+    "[S24T2]": [
+      {
+        "file": "calvin.md",
+        "line": 240
+      },
+      {
+        "file": "dave.md",
+        "line": 218
+      }
+    ],
+    "[S24T3]": [
+      {
+        "file": "calvin.md",
+        "line": 60
+      },
+      {
+        "file": "calvin.md",
+        "line": 240
+      },
+      {
+        "file": "dave.md",
+        "line": 218
+      }
+    ],
+    "[S24T4]": [
+      {
+        "file": "calvin.md",
+        "line": 240
+      },
+      {
+        "file": "dave.md",
+        "line": 218
+      }
+    ],
+    "[S24T5]": [
+      {
+        "file": "calvin.md",
+        "line": 68
+      },
+      {
+        "file": "calvin.md",
+        "line": 69
+      },
+      {
+        "file": "calvin.md",
+        "line": 240
+      },
+      {
+        "file": "dave.md",
+        "line": 218
+      }
+    ],
+    "[S24T6]": [
+      {
+        "file": "calvin.md",
+        "line": 240
+      },
+      {
+        "file": "dave.md",
+        "line": 218
+      }
+    ],
+    "[S24T7]": [
+      {
+        "file": "calvin.md",
+        "line": 69
+      },
+      {
+        "file": "calvin.md",
+        "line": 240
+      },
+      {
+        "file": "dave.md",
+        "line": 218
+      }
+    ],
+    "[S24T8]": [
+      {
+        "file": "calvin.md",
+        "line": 240
+      },
+      {
+        "file": "dave.md",
+        "line": 218
+      }
+    ],
+    "[S24T9]": [
+      {
+        "file": "calvin.md",
+        "line": 61
+      }
+    ],
+    "[S25T10]": [
+      {
+        "file": "calvin.md",
+        "line": 143
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T11]": [
+      {
+        "file": "calvin.md",
+        "line": 143
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T12]": [
+      {
+        "file": "calvin.md",
+        "line": 143
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T13]": [
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 49
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T14]": [
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 86
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T15]": [
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 86
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T16]": [
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 86
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T17]": [
+      {
+        "file": "calvin.md",
+        "line": 3
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 3
+      },
+      {
+        "file": "dave.md",
+        "line": 86
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T18]": [
+      {
+        "file": "calvin.md",
+        "line": 3
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 3
+      },
+      {
+        "file": "dave.md",
+        "line": 87
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T19]": [
+      {
+        "file": "calvin.md",
+        "line": 3
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 3
+      },
+      {
+        "file": "dave.md",
+        "line": 87
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T1]": [
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T20]": [
+      {
+        "file": "calvin.md",
+        "line": 144
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T21]": [
+      {
+        "file": "calvin.md",
+        "line": 144
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T22]": [
+      {
+        "file": "calvin.md",
+        "line": 144
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T23]": [
+      {
+        "file": "calvin.md",
+        "line": 144
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 122
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T24]": [
+      {
+        "file": "calvin.md",
+        "line": 145
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T25]": [
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 123
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T26]": [
+      {
+        "file": "calvin.md",
+        "line": 146
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T27]": [
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 123
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T28]": [
+      {
+        "file": "calvin.md",
+        "line": 146
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T29]": [
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 123
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T2]": [
+      {
+        "file": "calvin.md",
+        "line": 141
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T30]": [
+      {
+        "file": "calvin.md",
+        "line": 146
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T31]": [
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 123
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T3]": [
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T4]": [
+      {
+        "file": "calvin.md",
+        "line": 141
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T5]": [
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T6]": [
+      {
+        "file": "calvin.md",
+        "line": 141
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T7]": [
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 85
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T8]": [
+      {
+        "file": "calvin.md",
+        "line": 142
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S25T9]": [
+      {
+        "file": "calvin.md",
+        "line": 143
+      },
+      {
+        "file": "calvin.md",
+        "line": 242
+      },
+      {
+        "file": "dave.md",
+        "line": 220
+      }
+    ],
+    "[S26T10]": [
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T11]": [
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T12]": [
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T13]": [
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T14]": [
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T15]": [
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T1]": [
+      {
+        "file": "calvin.md",
+        "line": 83
+      },
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T2]": [
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 63
+      },
+      {
+        "file": "dave.md",
+        "line": 165
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T3]": [
+      {
+        "file": "calvin.md",
+        "line": 83
+      },
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 63
+      },
+      {
+        "file": "dave.md",
+        "line": 165
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T4]": [
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 20
+      },
+      {
+        "file": "dave.md",
+        "line": 88
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T5]": [
+      {
+        "file": "calvin.md",
+        "line": 147
+      },
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 20
+      },
+      {
+        "file": "dave.md",
+        "line": 22
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T6]": [
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 21
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T7]": [
+      {
+        "file": "calvin.md",
+        "line": 148
+      },
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 21
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T8]": [
+      {
+        "file": "calvin.md",
+        "line": 148
+      },
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S26T9]": [
+      {
+        "file": "calvin.md",
+        "line": 148
+      },
+      {
+        "file": "calvin.md",
+        "line": 243
+      },
+      {
+        "file": "dave.md",
+        "line": 221
+      }
+    ],
+    "[S27T10]": [
+      {
+        "file": "calvin.md",
+        "line": 150
+      },
+      {
+        "file": "calvin.md",
+        "line": 244
+      },
+      {
+        "file": "dave.md",
+        "line": 23
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      }
+    ],
+    "[S27T11]": [
+      {
+        "file": "calvin.md",
+        "line": 150
+      },
+      {
+        "file": "calvin.md",
+        "line": 244
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      }
+    ],
+    "[S27T12]": [
+      {
+        "file": "calvin.md",
+        "line": 150
+      },
+      {
+        "file": "calvin.md",
+        "line": 244
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      }
+    ],
+    "[S27T13]": [
+      {
+        "file": "calvin.md",
+        "line": 244
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      }
+    ],
+    "[S27T1]": [
+      {
+        "file": "calvin.md",
+        "line": 149
+      },
+      {
+        "file": "calvin.md",
+        "line": 244
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      }
+    ],
+    "[S27T2]": [
+      {
+        "file": "calvin.md",
+        "line": 244
+      },
+      {
+        "file": "dave.md",
+        "line": 89
+      },
+      {
+        "file": "dave.md",
+        "line": 161
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      }
+    ],
+    "[S27T3]": [
+      {
+        "file": "calvin.md",
+        "line": 244
+      },
+      {
+        "file": "dave.md",
+        "line": 161
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      }
+    ],
+    "[S27T4]": [
+      {
+        "file": "calvin.md",
+        "line": 244
+      },
+      {
+        "file": "dave.md",
+        "line": 162
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      }
+    ],
+    "[S27T5]": [
+      {
+        "file": "calvin.md",
+        "line": 84
+      },
+      {
+        "file": "calvin.md",
+        "line": 244
+      },
+      {
+        "file": "dave.md",
+        "line": 162
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      }
+    ],
+    "[S27T6]": [
+      {
+        "file": "calvin.md",
+        "line": 244
+      },
+      {
+        "file": "dave.md",
+        "line": 162
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      }
+    ],
+    "[S27T7]": [
+      {
+        "file": "calvin.md",
+        "line": 84
+      },
+      {
+        "file": "calvin.md",
+        "line": 244
+      },
+      {
+        "file": "dave.md",
+        "line": 163
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      }
+    ],
+    "[S27T8]": [
+      {
+        "file": "calvin.md",
+        "line": 244
+      },
+      {
+        "file": "dave.md",
+        "line": 89
+      },
+      {
+        "file": "dave.md",
+        "line": 163
+      },
+      {
+        "file": "dave.md",
+        "line": 164
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      }
+    ],
+    "[S27T9]": [
+      {
+        "file": "calvin.md",
+        "line": 244
+      },
+      {
+        "file": "dave.md",
+        "line": 23
+      },
+      {
+        "file": "dave.md",
+        "line": 222
+      }
+    ],
+    "[S28T10]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 24
+      },
+      {
+        "file": "dave.md",
+        "line": 169
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T11]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 170
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T12]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 170
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T13]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 170
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T14]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 24
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T15]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 24
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T16]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 24
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T17]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 24
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T18]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 24
+      },
+      {
+        "file": "dave.md",
+        "line": 25
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T19]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 25
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T1]": [
+      {
+        "file": "calvin.md",
+        "line": 151
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T20]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 25
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T21]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 25
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T22]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 25
+      },
+      {
+        "file": "dave.md",
+        "line": 138
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T23]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 138
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T24]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 138
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T25]": [
+      {
+        "file": "calvin.md",
+        "line": 154
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 124
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T26]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 124
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T27]": [
+      {
+        "file": "calvin.md",
+        "line": 104
+      },
+      {
+        "file": "calvin.md",
+        "line": 105
+      },
+      {
+        "file": "calvin.md",
+        "line": 154
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T28]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 124
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T29]": [
+      {
+        "file": "calvin.md",
+        "line": 106
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T2]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T30]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 124
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T31]": [
+      {
+        "file": "calvin.md",
+        "line": 107
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 124
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T32]": [
+      {
+        "file": "calvin.md",
+        "line": 155
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 124
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T33]": [
+      {
+        "file": "calvin.md",
+        "line": 155
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 125
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T34]": [
+      {
+        "file": "calvin.md",
+        "line": 155
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 125
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T35]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 126
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T36]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 126
+      },
+      {
+        "file": "dave.md",
+        "line": 126
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T37]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T38]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 126
+      },
+      {
+        "file": "dave.md",
+        "line": 126
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T39]": [
+      {
+        "file": "calvin.md",
+        "line": 155
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 127
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T3]": [
+      {
+        "file": "calvin.md",
+        "line": 151
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T40]": [
+      {
+        "file": "calvin.md",
+        "line": 155
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 127
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T41]": [
+      {
+        "file": "calvin.md",
+        "line": 156
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 127
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T42]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 127
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T43]": [
+      {
+        "file": "calvin.md",
+        "line": 156
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T4]": [
+      {
+        "file": "calvin.md",
+        "line": 152
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T5]": [
+      {
+        "file": "calvin.md",
+        "line": 151
+      },
+      {
+        "file": "calvin.md",
+        "line": 152
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T6]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T7]": [
+      {
+        "file": "calvin.md",
+        "line": 153
+      },
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T8]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 168
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S28T9]": [
+      {
+        "file": "calvin.md",
+        "line": 245
+      },
+      {
+        "file": "dave.md",
+        "line": 169
+      },
+      {
+        "file": "dave.md",
+        "line": 223
+      }
+    ],
+    "[S29T10]": [
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 129
+      }
+    ],
+    "[S29T11]": [
+      {
+        "file": "calvin.md",
+        "line": 159
+      },
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 129
+      }
+    ],
+    "[S29T12]": [
+      {
+        "file": "calvin.md",
+        "line": 159
+      },
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 129
+      }
+    ],
+    "[S29T13]": [
+      {
+        "file": "calvin.md",
+        "line": 160
+      },
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 129
+      }
+    ],
+    "[S29T14]": [
+      {
+        "file": "calvin.md",
+        "line": 108
+      },
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 129
+      }
+    ],
+    "[S29T15]": [
+      {
+        "file": "calvin.md",
+        "line": 108
+      },
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 129
+      }
+    ],
+    "[S29T16]": [
+      {
+        "file": "calvin.md",
+        "line": 108
+      },
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 129
+      }
+    ],
+    "[S29T17]": [
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 129
+      }
+    ],
+    "[S29T18]": [
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 129
+      }
+    ],
+    "[S29T1]": [
+      {
+        "file": "calvin.md",
+        "line": 85
+      },
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 224
+      }
+    ],
+    "[S29T2]": [
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 224
+      }
+    ],
+    "[S29T3]": [
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 224
+      }
+    ],
+    "[S29T4]": [
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 224
+      }
+    ],
+    "[S29T5]": [
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 224
+      }
+    ],
+    "[S29T6]": [
+      {
+        "file": "calvin.md",
+        "line": 157
+      },
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 128
+      },
+      {
+        "file": "dave.md",
+        "line": 224
+      }
+    ],
+    "[S29T7]": [
+      {
+        "file": "calvin.md",
+        "line": 157
+      },
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 128
+      },
+      {
+        "file": "dave.md",
+        "line": 128
+      },
+      {
+        "file": "dave.md",
+        "line": 224
+      }
+    ],
+    "[S29T8]": [
+      {
+        "file": "calvin.md",
+        "line": 157
+      },
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 128
+      },
+      {
+        "file": "dave.md",
+        "line": 224
+      }
+    ],
+    "[S29T9]": [
+      {
+        "file": "calvin.md",
+        "line": 158
+      },
+      {
+        "file": "calvin.md",
+        "line": 246
+      },
+      {
+        "file": "dave.md",
+        "line": 129
+      }
+    ],
+    "[S2T10]": [
+      {
+        "file": "dave.md",
+        "line": 114
+      }
+    ],
+    "[S2T11]": [
+      {
+        "file": "calvin.md",
+        "line": 111
+      }
+    ],
+    "[S2T12]": [
+      {
+        "file": "dave.md",
+        "line": 115
+      }
+    ],
+    "[S2T13]": [
+      {
+        "file": "dave.md",
+        "line": 116
+      }
+    ],
+    "[S2T14]": [
+      {
+        "file": "dave.md",
+        "line": 115
+      },
+      {
+        "file": "dave.md",
+        "line": 116
+      }
+    ],
+    "[S2T16]": [
+      {
+        "file": "dave.md",
+        "line": 174
+      }
+    ],
+    "[S2T17]": [
+      {
+        "file": "calvin.md",
+        "line": 112
+      }
+    ],
+    "[S2T18]": [
+      {
+        "file": "dave.md",
+        "line": 175
+      }
+    ],
+    "[S2T19]": [
+      {
+        "file": "calvin.md",
+        "line": 113
+      }
+    ],
+    "[S2T1]": [
+      {
+        "file": "calvin.md",
+        "line": 29
+      }
+    ],
+    "[S2T20]": [
+      {
+        "file": "dave.md",
+        "line": 175
+      }
+    ],
+    "[S2T2]": [
+      {
+        "file": "calvin.md",
+        "line": 199
+      },
+      {
+        "file": "dave.md",
+        "line": 174
+      }
+    ],
+    "[S2T3]": [
+      {
+        "file": "calvin.md",
+        "line": 29
+      },
+      {
+        "file": "calvin.md",
+        "line": 30
+      }
+    ],
+    "[S2T4]": [
+      {
+        "file": "calvin.md",
+        "line": 32
+      }
+    ],
+    "[S2T5]": [
+      {
+        "file": "calvin.md",
+        "line": 29
+      },
+      {
+        "file": "calvin.md",
+        "line": 31
+      }
+    ],
+    "[S2T6]": [
+      {
+        "file": "calvin.md",
+        "line": 199
+      },
+      {
+        "file": "dave.md",
+        "line": 174
+      }
+    ],
+    "[S2T7]": [
+      {
+        "file": "calvin.md",
+        "line": 30
+      }
+    ],
+    "[S2T8]": [
+      {
+        "file": "dave.md",
+        "line": 112
+      },
+      {
+        "file": "dave.md",
+        "line": 113
+      }
+    ],
+    "[S30T10]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 159
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T11]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 159
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T12]": [
+      {
+        "file": "calvin.md",
+        "line": 193
+      },
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T13]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 99
+      },
+      {
+        "file": "dave.md",
+        "line": 159
+      },
+      {
+        "file": "dave.md",
+        "line": 159
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T14]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 159
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T15]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 99
+      },
+      {
+        "file": "dave.md",
+        "line": 159
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T16]": [
+      {
+        "file": "calvin.md",
+        "line": 194
+      },
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T17]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 160
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T18]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 160
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T19]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 160
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T1]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 157
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T20]": [
+      {
+        "file": "calvin.md",
+        "line": 87
+      },
+      {
+        "file": "calvin.md",
+        "line": 162
+      },
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 131
+      },
+      {
+        "file": "dave.md",
+        "line": 154
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T21]": [
+      {
+        "file": "calvin.md",
+        "line": 87
+      },
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 131
+      },
+      {
+        "file": "dave.md",
+        "line": 154
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T22]": [
+      {
+        "file": "calvin.md",
+        "line": 87
+      },
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 131
+      },
+      {
+        "file": "dave.md",
+        "line": 154
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T23]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 131
+      },
+      {
+        "file": "dave.md",
+        "line": 154
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T24]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 131
+      },
+      {
+        "file": "dave.md",
+        "line": 154
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T2]": [
+      {
+        "file": "calvin.md",
+        "line": 86
+      },
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T3]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 158
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T4]": [
+      {
+        "file": "calvin.md",
+        "line": 161
+      },
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T5]": [
+      {
+        "file": "calvin.md",
+        "line": 161
+      },
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 130
+      },
+      {
+        "file": "dave.md",
+        "line": 158
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T6]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 158
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T7]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 158
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T8]": [
+      {
+        "file": "calvin.md",
+        "line": 195
+      },
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 158
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S30T9]": [
+      {
+        "file": "calvin.md",
+        "line": 247
+      },
+      {
+        "file": "dave.md",
+        "line": 158
+      },
+      {
+        "file": "dave.md",
+        "line": 159
+      },
+      {
+        "file": "dave.md",
+        "line": 225
+      }
+    ],
+    "[S3T10]": [
+      {
+        "file": "calvin.md",
+        "line": 75
+      },
+      {
+        "file": "calvin.md",
+        "line": 201
+      },
+      {
+        "file": "dave.md",
+        "line": 144
+      },
+      {
+        "file": "dave.md",
+        "line": 145
+      },
+      {
+        "file": "dave.md",
+        "line": 146
+      },
+      {
+        "file": "dave.md",
+        "line": 178
+      }
+    ],
+    "[S3T11]": [
+      {
+        "file": "dave.md",
+        "line": 146
+      }
+    ],
+    "[S3T12]": [
+      {
+        "file": "dave.md",
+        "line": 10
+      },
+      {
+        "file": "dave.md",
+        "line": 11
+      },
+      {
+        "file": "dave.md",
+        "line": 12
+      },
+      {
+        "file": "dave.md",
+        "line": 13
+      },
+      {
+        "file": "dave.md",
+        "line": 149
+      }
+    ],
+    "[S3T13]": [
+      {
+        "file": "calvin.md",
+        "line": 33
+      },
+      {
+        "file": "dave.md",
+        "line": 12
+      },
+      {
+        "file": "dave.md",
+        "line": 178
+      }
+    ],
+    "[S3T14]": [
+      {
+        "file": "calvin.md",
+        "line": 33
+      },
+      {
+        "file": "calvin.md",
+        "line": 73
+      },
+      {
+        "file": "dave.md",
+        "line": 178
+      }
+    ],
+    "[S3T15]": [
+      {
+        "file": "calvin.md",
+        "line": 73
+      },
+      {
+        "file": "calvin.md",
+        "line": 74
+      },
+      {
+        "file": "calvin.md",
+        "line": 75
+      },
+      {
+        "file": "calvin.md",
+        "line": 201
+      },
+      {
+        "file": "dave.md",
+        "line": 147
+      },
+      {
+        "file": "dave.md",
+        "line": 178
+      }
+    ],
+    "[S3T16]": [
+      {
+        "file": "calvin.md",
+        "line": 75
+      },
+      {
+        "file": "calvin.md",
+        "line": 201
+      },
+      {
+        "file": "dave.md",
+        "line": 147
+      },
+      {
+        "file": "dave.md",
+        "line": 178
+      }
+    ],
+    "[S3T17]": [
+      {
+        "file": "calvin.md",
+        "line": 76
+      },
+      {
+        "file": "calvin.md",
+        "line": 202
+      }
+    ],
+    "[S3T18]": [
+      {
+        "file": "calvin.md",
+        "line": 202
+      },
+      {
+        "file": "dave.md",
+        "line": 148
+      }
+    ],
+    "[S3T1]": [
+      {
+        "file": "calvin.md",
+        "line": 52
+      },
+      {
+        "file": "calvin.md",
+        "line": 200
+      },
+      {
+        "file": "dave.md",
+        "line": 176
+      }
+    ],
+    "[S3T2]": [
+      {
+        "file": "calvin.md",
+        "line": 200
+      },
+      {
+        "file": "dave.md",
+        "line": 176
+      }
+    ],
+    "[S3T3]": [
+      {
+        "file": "calvin.md",
+        "line": 52
+      }
+    ],
+    "[S3T4]": [
+      {
+        "file": "dave.md",
+        "line": 176
+      }
+    ],
+    "[S3T5]": [
+      {
+        "file": "calvin.md",
+        "line": 53
+      }
+    ],
+    "[S3T6]": [
+      {
+        "file": "dave.md",
+        "line": 176
+      }
+    ],
+    "[S3T7]": [
+      {
+        "file": "calvin.md",
+        "line": 54
+      }
+    ],
+    "[S3T8]": [
+      {
+        "file": "calvin.md",
+        "line": 200
+      },
+      {
+        "file": "dave.md",
+        "line": 176
+      }
+    ],
+    "[S3T9]": [
+      {
+        "file": "calvin.md",
+        "line": 72
+      },
+      {
+        "file": "calvin.md",
+        "line": 114
+      }
+    ],
+    "[S4T10]": [
+      {
+        "file": "calvin.md",
+        "line": 115
+      }
+    ],
+    "[S4T11]": [
+      {
+        "file": "dave.md",
+        "line": 36
+      }
+    ],
+    "[S4T12]": [
+      {
+        "file": "calvin.md",
+        "line": 115
+      }
+    ],
+    "[S4T13]": [
+      {
+        "file": "dave.md",
+        "line": 36
+      }
+    ],
+    "[S4T14]": [
+      {
+        "file": "dave.md",
+        "line": 37
+      }
+    ],
+    "[S4T15]": [
+      {
+        "file": "dave.md",
+        "line": 37
+      },
+      {
+        "file": "dave.md",
+        "line": 179
+      }
+    ],
+    "[S4T16]": [
+      {
+        "file": "dave.md",
+        "line": 37
+      },
+      {
+        "file": "dave.md",
+        "line": 179
+      }
+    ],
+    "[S4T17]": [
+      {
+        "file": "calvin.md",
+        "line": 204
+      },
+      {
+        "file": "dave.md",
+        "line": 38
+      },
+      {
+        "file": "dave.md",
+        "line": 179
+      }
+    ],
+    "[S4T18]": [
+      {
+        "file": "calvin.md",
+        "line": 204
+      },
+      {
+        "file": "dave.md",
+        "line": 39
+      }
+    ],
+    "[S4T19]": [
+      {
+        "file": "calvin.md",
+        "line": 204
+      },
+      {
+        "file": "dave.md",
+        "line": 39
+      }
+    ],
+    "[S4T1]": [
+      {
+        "file": "dave.md",
+        "line": 32
+      },
+      {
+        "file": "dave.md",
+        "line": 33
+      },
+      {
+        "file": "dave.md",
+        "line": 179
+      }
+    ],
+    "[S4T21]": [
+      {
+        "file": "dave.md",
+        "line": 40
+      }
+    ],
+    "[S4T22]": [
+      {
+        "file": "calvin.md",
+        "line": 205
+      },
+      {
+        "file": "dave.md",
+        "line": 179
+      }
+    ],
+    "[S4T23]": [
+      {
+        "file": "calvin.md",
+        "line": 205
+      },
+      {
+        "file": "dave.md",
+        "line": 41
+      },
+      {
+        "file": "dave.md",
+        "line": 179
+      }
+    ],
+    "[S4T24]": [
+      {
+        "file": "calvin.md",
+        "line": 185
+      },
+      {
+        "file": "calvin.md",
+        "line": 205
+      },
+      {
+        "file": "dave.md",
+        "line": 179
+      }
+    ],
+    "[S4T25]": [
+      {
+        "file": "calvin.md",
+        "line": 186
+      },
+      {
+        "file": "dave.md",
+        "line": 180
+      }
+    ],
+    "[S4T26]": [
+      {
+        "file": "calvin.md",
+        "line": 186
+      },
+      {
+        "file": "dave.md",
+        "line": 180
+      }
+    ],
+    "[S4T27]": [
+      {
+        "file": "dave.md",
+        "line": 180
+      }
+    ],
+    "[S4T28]": [
+      {
+        "file": "dave.md",
+        "line": 180
+      }
+    ],
+    "[S4T2]": [
+      {
+        "file": "calvin.md",
+        "line": 203
+      },
+      {
+        "file": "dave.md",
+        "line": 35
+      }
+    ],
+    "[S4T3]": [
+      {
+        "file": "dave.md",
+        "line": 32
+      },
+      {
+        "file": "dave.md",
+        "line": 34
+      }
+    ],
+    "[S4T4]": [
+      {
+        "file": "calvin.md",
+        "line": 203
+      },
+      {
+        "file": "dave.md",
+        "line": 35
+      }
+    ],
+    "[S4T5]": [
+      {
+        "file": "dave.md",
+        "line": 14
+      },
+      {
+        "file": "dave.md",
+        "line": 34
+      },
+      {
+        "file": "dave.md",
+        "line": 179
+      }
+    ],
+    "[S4T6]": [
+      {
+        "file": "calvin.md",
+        "line": 203
+      }
+    ],
+    "[S4T7]": [
+      {
+        "file": "dave.md",
+        "line": 14
+      },
+      {
+        "file": "dave.md",
+        "line": 15
+      },
+      {
+        "file": "dave.md",
+        "line": 179
+      }
+    ],
+    "[S4T8]": [
+      {
+        "file": "calvin.md",
+        "line": 203
+      }
+    ],
+    "[S4T9]": [
+      {
+        "file": "dave.md",
+        "line": 36
+      }
+    ],
+    "[S5T10]": [
+      {
+        "file": "calvin.md",
+        "line": 21
+      },
+      {
+        "file": "calvin.md",
+        "line": 117
+      },
+      {
+        "file": "dave.md",
+        "line": 182
+      }
+    ],
+    "[S5T11]": [
+      {
+        "file": "calvin.md",
+        "line": 117
+      },
+      {
+        "file": "dave.md",
+        "line": 117
+      },
+      {
+        "file": "dave.md",
+        "line": 182
+      }
+    ],
+    "[S5T12]": [
+      {
+        "file": "calvin.md",
+        "line": 117
+      },
+      {
+        "file": "calvin.md",
+        "line": 207
+      }
+    ],
+    "[S5T13]": [
+      {
+        "file": "calvin.md",
+        "line": 207
+      },
+      {
+        "file": "dave.md",
+        "line": 182
+      }
+    ],
+    "[S5T14]": [
+      {
+        "file": "calvin.md",
+        "line": 117
+      },
+      {
+        "file": "calvin.md",
+        "line": 207
+      },
+      {
+        "file": "dave.md",
+        "line": 182
+      }
+    ],
+    "[S5T15]": [
+      {
+        "file": "calvin.md",
+        "line": 207
+      },
+      {
+        "file": "dave.md",
+        "line": 182
+      }
+    ],
+    "[S5T1]": [
+      {
+        "file": "calvin.md",
+        "line": 206
+      },
+      {
+        "file": "dave.md",
+        "line": 42
+      },
+      {
+        "file": "dave.md",
+        "line": 181
+      }
+    ],
+    "[S5T2]": [
+      {
+        "file": "calvin.md",
+        "line": 206
+      },
+      {
+        "file": "dave.md",
+        "line": 42
+      },
+      {
+        "file": "dave.md",
+        "line": 181
+      }
+    ],
+    "[S5T3]": [
+      {
+        "file": "calvin.md",
+        "line": 206
+      },
+      {
+        "file": "dave.md",
+        "line": 43
+      },
+      {
+        "file": "dave.md",
+        "line": 181
+      }
+    ],
+    "[S5T4]": [
+      {
+        "file": "calvin.md",
+        "line": 206
+      },
+      {
+        "file": "dave.md",
+        "line": 181
+      }
+    ],
+    "[S5T5]": [
+      {
+        "file": "dave.md",
+        "line": 16
+      },
+      {
+        "file": "dave.md",
+        "line": 44
+      }
+    ],
+    "[S5T6]": [
+      {
+        "file": "calvin.md",
+        "line": 206
+      },
+      {
+        "file": "dave.md",
+        "line": 181
+      }
+    ],
+    "[S5T7]": [
+      {
+        "file": "calvin.md",
+        "line": 206
+      },
+      {
+        "file": "dave.md",
+        "line": 181
+      }
+    ],
+    "[S5T8]": [
+      {
+        "file": "calvin.md",
+        "line": 34
+      },
+      {
+        "file": "calvin.md",
+        "line": 206
+      },
+      {
+        "file": "dave.md",
+        "line": 181
+      }
+    ],
+    "[S5T9]": [
+      {
+        "file": "dave.md",
+        "line": 182
+      }
+    ],
+    "[S6T10]": [
+      {
+        "file": "calvin.md",
+        "line": 209
+      },
+      {
+        "file": "dave.md",
+        "line": 46
+      },
+      {
+        "file": "dave.md",
+        "line": 184
+      }
+    ],
+    "[S6T11]": [
+      {
+        "file": "calvin.md",
+        "line": 56
+      },
+      {
+        "file": "calvin.md",
+        "line": 118
+      },
+      {
+        "file": "calvin.md",
+        "line": 209
+      },
+      {
+        "file": "dave.md",
+        "line": 184
+      }
+    ],
+    "[S6T12]": [
+      {
+        "file": "calvin.md",
+        "line": 209
+      },
+      {
+        "file": "dave.md",
+        "line": 184
+      }
+    ],
+    "[S6T13]": [
+      {
+        "file": "calvin.md",
+        "line": 55
+      },
+      {
+        "file": "calvin.md",
+        "line": 209
+      },
+      {
+        "file": "calvin.md",
+        "line": 209
+      },
+      {
+        "file": "dave.md",
+        "line": 184
+      }
+    ],
+    "[S6T14]": [
+      {
+        "file": "calvin.md",
+        "line": 55
+      },
+      {
+        "file": "dave.md",
+        "line": 184
+      }
+    ],
+    "[S6T15]": [
+      {
+        "file": "calvin.md",
+        "line": 55
+      },
+      {
+        "file": "calvin.md",
+        "line": 209
+      },
+      {
+        "file": "dave.md",
+        "line": 184
+      }
+    ],
+    "[S6T16]": [
+      {
+        "file": "calvin.md",
+        "line": 55
+      },
+      {
+        "file": "dave.md",
+        "line": 107
+      },
+      {
+        "file": "dave.md",
+        "line": 184
+      }
+    ],
+    "[S6T17]": [
+      {
+        "file": "calvin.md",
+        "line": 55
+      },
+      {
+        "file": "dave.md",
+        "line": 184
+      }
+    ],
+    "[S6T18]": [
+      {
+        "file": "dave.md",
+        "line": 107
+      },
+      {
+        "file": "dave.md",
+        "line": 184
+      }
+    ],
+    "[S6T1]": [
+      {
+        "file": "calvin.md",
+        "line": 208
+      }
+    ],
+    "[S6T3]": [
+      {
+        "file": "calvin.md",
+        "line": 94
+      },
+      {
+        "file": "calvin.md",
+        "line": 95
+      },
+      {
+        "file": "calvin.md",
+        "line": 208
+      },
+      {
+        "file": "dave.md",
+        "line": 183
+      }
+    ],
+    "[S6T4]": [
+      {
+        "file": "calvin.md",
+        "line": 98
+      },
+      {
+        "file": "dave.md",
+        "line": 183
+      }
+    ],
+    "[S6T5]": [
+      {
+        "file": "calvin.md",
+        "line": 96
+      },
+      {
+        "file": "calvin.md",
+        "line": 97
+      },
+      {
+        "file": "calvin.md",
+        "line": 116
+      },
+      {
+        "file": "calvin.md",
+        "line": 208
+      },
+      {
+        "file": "dave.md",
+        "line": 183
+      }
+    ],
+    "[S6T6]": [
+      {
+        "file": "calvin.md",
+        "line": 208
+      },
+      {
+        "file": "dave.md",
+        "line": 183
+      }
+    ],
+    "[S6T7]": [
+      {
+        "file": "calvin.md",
+        "line": 208
+      },
+      {
+        "file": "dave.md",
+        "line": 183
+      }
+    ],
+    "[S6T8]": [
+      {
+        "file": "calvin.md",
+        "line": 208
+      },
+      {
+        "file": "dave.md",
+        "line": 45
+      },
+      {
+        "file": "dave.md",
+        "line": 183
+      }
+    ],
+    "[S6T9]": [
+      {
+        "file": "calvin.md",
+        "line": 209
+      },
+      {
+        "file": "dave.md",
+        "line": 46
+      }
+    ],
+    "[S7T10]": [
+      {
+        "file": "calvin.md",
+        "line": 120
+      },
+      {
+        "file": "calvin.md",
+        "line": 211
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T11]": [
+      {
+        "file": "calvin.md",
+        "line": 120
+      },
+      {
+        "file": "calvin.md",
+        "line": 211
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T12]": [
+      {
+        "file": "calvin.md",
+        "line": 120
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T13]": [
+      {
+        "file": "calvin.md",
+        "line": 120
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T14]": [
+      {
+        "file": "calvin.md",
+        "line": 120
+      },
+      {
+        "file": "calvin.md",
+        "line": 211
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T15]": [
+      {
+        "file": "calvin.md",
+        "line": 77
+      },
+      {
+        "file": "calvin.md",
+        "line": 211
+      },
+      {
+        "file": "dave.md",
+        "line": 150
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T16]": [
+      {
+        "file": "calvin.md",
+        "line": 77
+      },
+      {
+        "file": "calvin.md",
+        "line": 211
+      },
+      {
+        "file": "dave.md",
+        "line": 150
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T17]": [
+      {
+        "file": "calvin.md",
+        "line": 211
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T18]": [
+      {
+        "file": "calvin.md",
+        "line": 211
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T19]": [
+      {
+        "file": "calvin.md",
+        "line": 211
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T1]": [
+      {
+        "file": "calvin.md",
+        "line": 57
+      },
+      {
+        "file": "calvin.md",
+        "line": 118
+      },
+      {
+        "file": "calvin.md",
+        "line": 210
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T2]": [
+      {
+        "file": "calvin.md",
+        "line": 210
+      },
+      {
+        "file": "dave.md",
+        "line": 47
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T3]": [
+      {
+        "file": "calvin.md",
+        "line": 57
+      },
+      {
+        "file": "calvin.md",
+        "line": 210
+      },
+      {
+        "file": "dave.md",
+        "line": 47
+      }
+    ],
+    "[S7T4]": [
+      {
+        "file": "calvin.md",
+        "line": 210
+      },
+      {
+        "file": "dave.md",
+        "line": 73
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T5]": [
+      {
+        "file": "calvin.md",
+        "line": 210
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T6]": [
+      {
+        "file": "calvin.md",
+        "line": 210
+      },
+      {
+        "file": "dave.md",
+        "line": 74
+      },
+      {
+        "file": "dave.md",
+        "line": 75
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T7]": [
+      {
+        "file": "dave.md",
+        "line": 76
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T8]": [
+      {
+        "file": "dave.md",
+        "line": 76
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S7T9]": [
+      {
+        "file": "calvin.md",
+        "line": 211
+      },
+      {
+        "file": "dave.md",
+        "line": 177
+      }
+    ],
+    "[S8T10]": [
+      {
+        "file": "calvin.md",
+        "line": 212
+      },
+      {
+        "file": "dave.md",
+        "line": 102
+      },
+      {
+        "file": "dave.md",
+        "line": 185
+      }
+    ],
+    "[S8T11]": [
+      {
+        "file": "calvin.md",
+        "line": 212
+      },
+      {
+        "file": "dave.md",
+        "line": 103
+      },
+      {
+        "file": "dave.md",
+        "line": 185
+      }
+    ],
+    "[S8T12]": [
+      {
+        "file": "calvin.md",
+        "line": 212
+      },
+      {
+        "file": "dave.md",
+        "line": 103
+      },
+      {
+        "file": "dave.md",
+        "line": 185
+      }
+    ],
+    "[S8T13]": [
+      {
+        "file": "calvin.md",
+        "line": 212
+      },
+      {
+        "file": "dave.md",
+        "line": 103
+      },
+      {
+        "file": "dave.md",
+        "line": 185
+      }
+    ],
+    "[S8T14]": [
+      {
+        "file": "calvin.md",
+        "line": 212
+      },
+      {
+        "file": "dave.md",
+        "line": 103
+      },
+      {
+        "file": "dave.md",
+        "line": 185
+      }
+    ],
+    "[S8T1]": [
+      {
+        "file": "calvin.md",
+        "line": 119
+      },
+      {
+        "file": "calvin.md",
+        "line": 212
+      }
+    ],
+    "[S8T2]": [
+      {
+        "file": "calvin.md",
+        "line": 212
+      },
+      {
+        "file": "dave.md",
+        "line": 96
+      }
+    ],
+    "[S8T3]": [
+      {
+        "file": "calvin.md",
+        "line": 119
+      },
+      {
+        "file": "calvin.md",
+        "line": 212
+      }
+    ],
+    "[S8T4]": [
+      {
+        "file": "calvin.md",
+        "line": 212
+      },
+      {
+        "file": "dave.md",
+        "line": 94
+      }
+    ],
+    "[S8T5]": [
+      {
+        "file": "calvin.md",
+        "line": 78
+      },
+      {
+        "file": "calvin.md",
+        "line": 212
+      },
+      {
+        "file": "calvin.md",
+        "line": 212
+      }
+    ],
+    "[S8T6]": [
+      {
+        "file": "calvin.md",
+        "line": 212
+      },
+      {
+        "file": "dave.md",
+        "line": 95
+      },
+      {
+        "file": "dave.md",
+        "line": 151
+      }
+    ],
+    "[S8T7]": [
+      {
+        "file": "calvin.md",
+        "line": 78
+      },
+      {
+        "file": "calvin.md",
+        "line": 212
+      }
+    ],
+    "[S8T8]": [
+      {
+        "file": "calvin.md",
+        "line": 212
+      },
+      {
+        "file": "dave.md",
+        "line": 97
+      }
+    ],
+    "[S8T9]": [
+      {
+        "file": "calvin.md",
+        "line": 90
+      },
+      {
+        "file": "calvin.md",
+        "line": 212
+      },
+      {
+        "file": "dave.md",
+        "line": 185
+      }
+    ],
+    "[S9T10]": [
+      {
+        "file": "dave.md",
+        "line": 187
+      }
+    ],
+    "[S9T11]": [
+      {
+        "file": "calvin.md",
+        "line": 22
+      },
+      {
+        "file": "calvin.md",
+        "line": 48
+      },
+      {
+        "file": "dave.md",
+        "line": 188
+      }
+    ],
+    "[S9T12]": [
+      {
+        "file": "dave.md",
+        "line": 188
+      }
+    ],
+    "[S9T13]": [
+      {
+        "file": "calvin.md",
+        "line": 22
+      },
+      {
+        "file": "dave.md",
+        "line": 188
+      }
+    ],
+    "[S9T14]": [
+      {
+        "file": "calvin.md",
+        "line": 22
+      },
+      {
+        "file": "dave.md",
+        "line": 188
+      }
+    ],
+    "[S9T15]": [
+      {
+        "file": "calvin.md",
+        "line": 22
+      },
+      {
+        "file": "calvin.md",
+        "line": 91
+      },
+      {
+        "file": "dave.md",
+        "line": 188
+      },
+      {
+        "file": "dave.md",
+        "line": 189
+      }
+    ],
+    "[S9T16]": [
+      {
+        "file": "calvin.md",
+        "line": 91
+      },
+      {
+        "file": "dave.md",
+        "line": 189
+      }
+    ],
+    "[S9T17]": [
+      {
+        "file": "calvin.md",
+        "line": 91
+      },
+      {
+        "file": "calvin.md",
+        "line": 214
+      },
+      {
+        "file": "dave.md",
+        "line": 189
+      },
+      {
+        "file": "dave.md",
+        "line": 190
+      }
+    ],
+    "[S9T18]": [
+      {
+        "file": "calvin.md",
+        "line": 214
+      },
+      {
+        "file": "dave.md",
+        "line": 134
+      },
+      {
+        "file": "dave.md",
+        "line": 190
+      }
+    ],
+    "[S9T19]": [
+      {
+        "file": "calvin.md",
+        "line": 214
+      },
+      {
+        "file": "dave.md",
+        "line": 136
+      },
+      {
+        "file": "dave.md",
+        "line": 190
+      }
+    ],
+    "[S9T1]": [
+      {
+        "file": "calvin.md",
+        "line": 43
+      },
+      {
+        "file": "calvin.md",
+        "line": 44
+      }
+    ],
+    "[S9T20]": [
+      {
+        "file": "calvin.md",
+        "line": 214
+      },
+      {
+        "file": "dave.md",
+        "line": 135
+      },
+      {
+        "file": "dave.md",
+        "line": 190
+      }
+    ],
+    "[S9T21]": [
+      {
+        "file": "calvin.md",
+        "line": 214
+      },
+      {
+        "file": "dave.md",
+        "line": 190
+      }
+    ],
+    "[S9T2]": [
+      {
+        "file": "calvin.md",
+        "line": 213
+      },
+      {
+        "file": "dave.md",
+        "line": 186
+      }
+    ],
+    "[S9T3]": [
+      {
+        "file": "calvin.md",
+        "line": 45
+      },
+      {
+        "file": "calvin.md",
+        "line": 46
+      }
+    ],
+    "[S9T4]": [
+      {
+        "file": "calvin.md",
+        "line": 213
+      },
+      {
+        "file": "dave.md",
+        "line": 186
+      }
+    ],
+    "[S9T5]": [
+      {
+        "file": "calvin.md",
+        "line": 45
+      },
+      {
+        "file": "calvin.md",
+        "line": 47
+      }
+    ],
+    "[S9T6]": [
+      {
+        "file": "calvin.md",
+        "line": 213
+      },
+      {
+        "file": "dave.md",
+        "line": 186
+      }
+    ],
+    "[S9T7]": [
+      {
+        "file": "calvin.md",
+        "line": 47
+      }
+    ],
+    "[S9T8]": [
+      {
+        "file": "calvin.md",
+        "line": 213
+      },
+      {
+        "file": "dave.md",
+        "line": 186
+      }
+    ],
+    "[S9T9]": [
+      {
+        "file": "calvin.md",
+        "line": 48
+      }
+    ]
+  },
+  "store": {
+    "directory_name": "s3-curated",
+    "tree_sha256": "60cb8dac74bfb60de500d1721f385c13f5d0b5819420600e24ba40ba10f27acd"
+  },
+  "trace": {
+    "directory_name": "s3-management",
+    "index_filename": "index.json",
+    "tree_sha256": "c1b7189c2c412371a2f90876951aa6c12fa5454d44d9b32d944f484715d96139"
+  },
+  "verification": {
+    "all_85_chunks_completed_in_order": true,
+    "all_cross_references_resolve": true,
+    "all_list_or_table_fact_candidates_have_inline_locator": true,
+    "all_memory_files_valid_markdown_with_frontmatter": true,
+    "all_stored_locators_exist_in_seen_source": true,
+    "contracts_revalidated_after_build": true,
+    "formal_outputs_published_from_staging": true,
+    "gold_inputs_exposed_to_agent_messages_or_tools": false,
+    "image_urls_fetched": false,
+    "input_stream_revalidated_after_build": true
+  }
+}
