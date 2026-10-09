@@ -1,6 +1,6 @@
 # R3 / R2-Curated 详细设计与溯源记录
 
-状态：**设计协议 v1；尚未实现代码；尚未调用 R3 API；尚未产生 E6 实验结果**
+状态：**设计协议 v1 已实现为独立离线 harness；尚未调用 R3 API；尚未产生 E6 实验结果**
 
 记录日期：2026-10-09（Asia/Shanghai）
 
@@ -623,13 +623,11 @@ Set-overlap 是为不可拆分 curated fact 做的工程适配。它可能让区
 - fact/H2 adapter规则；
 - 时间、排名、上下文、去重、预算与溯源设计；
 - 实现步骤、测试 gate 和报告措辞。
+- machine-readable protocol、确定性 parser/index、三动作四步 Agent、EvidenceBundle、runner、CLI 与 fake-provider 回归。
 
 当前尚未完成：
 
-- R3 machine-readable protocol 和 hashes；
-- R3 parser/index/Agent/runner代码；
-- fake-provider测试；
 - 真实 API smoke；
 - dev-6 或 main-40 的 E6 结果。
 
-建议下一步只做第一项工程工作：实现确定性的 `r3_inputs.py`，把正式 S3 可靠解析成 390 个 fact units 和 35 个 H2 groups，并建立严格完整性测试。在 parser 通过之前，不开始 Agent 或 API 调用。
+实现状态、代码地图、冻结 hashes、离线命令和未来 smoke 入口见 `r3-curated-implementation.md`。下一步先运行一题 E6/dev-6 真实 API smoke；验证 wire compatibility、artifact、成本与 evidence 完整性后，再决定是否运行完整 dev-6，不能直接跳到 main-40。

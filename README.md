@@ -18,9 +18,9 @@ GitHub：<https://github.com/Lex010102/filesystem-refind-experiment-record>
 - S3 safe runner 已用隔离的 deterministic fake provider 完整走通 85 个连续 build episodes，覆盖恢复点、增量 trace、逐块 gate、失败隔离、发布回滚和离线复核；这不是一次真实 API 运行；
 - 已从 `conv-50` 的 154 道可靠非对抗题中确定性冻结 40 道正式题和 6 道独立开发题；正式题覆盖四类问题、全部 30 个 evidence sessions，以及 20 道 caption-evidence 与 18 道纯文本证据题；在线 question input 与离线 gold 文件物理分离；
 - 已完成 E2/E4 的 exchange-level R2-Raw 离线 harness：292 exchanges、BM25/session RRF、Top-5、±2、seen-session、四动作 Agent、EvidenceBundle、批量 runner 与 verifier 均通过 fake-provider 测试；尚未调用 R2 真实 API；
-- 已完成 E6/R3（R2-Curated）的详细设计与溯源合同：以 S3 的 390 个 locator-bearing facts 为 units、35 个 H2 topics 为 groups，明确 adapter、时间语义、成本、错误归因和验收 gate；尚未实现 R3 代码或运行 API；
-- 尚未完成统一 Answerer、E6/R2-Curated 代码实现、E7 融合、正式批量评测与七条件实验；
-- 当前最准确的说法是：**正式数据底座、S1/S2/S3 stores、R1 与 E2/E4 R2-Raw harness、40题问题集均已固定；R2-Raw 目前只完成离线搭建，下一步是 dev-6 小规模真实 API smoke，而不是直接运行 main-40。**
+- 已完成 E6/R3（R2-Curated）的独立离线 harness：S3 的 390 个 locator-bearing facts、35 个 H2 topics、BM25/H2-RRF、Top-5、同 H2 ±2、multi-date、seen-group、四动作 evidence-only Agent、EvidenceBundle、批量 runner 与 verifier 已固定；尚未调用 R3 真实 API；
+- 尚未完成统一 Answerer、E7 融合、R2/R3 真实 dev-6、正式批量评测与七条件实验；
+- 当前最准确的说法是：**正式数据底座、S1/S2/S3 stores、R1、E2/E4 R2-Raw 与 E6/R3 离线 harness、40题问题集均已固定；R2/R3 下一步都是 dev-6 小规模真实 API smoke，而不是直接运行 main-40。**
 
 完整的一个月工作路线见 [实验地图](docs/plans/one-month-experiment-map.md)。历史进度见 [研究进度日志](docs/progress/2026-09-16-research-log.md)，最新数据与 S1/S2 准备状态见 [LoCoMo 数据准备记录](docs/progress/2026-10-05-locomo-data-preparation.md)。
 
@@ -90,6 +90,8 @@ python3 -m fs_memory_lab.locomo prepare
 python3 -m fs_memory_lab.stores build-s1
 python3 -m fs_memory_lab.s3_chunks
 python3 -m fs_memory_lab.question_sets --verify-only
+python3 -m fs_memory_lab.r2_cli preflight
+python3 -m fs_memory_lab.r3_cli preflight
 python3 -m unittest discover -s tests -v
 ```
 

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "protocol_version": "r3-curated-refind-inspired-v1",
+  "status": "offline-implementation-complete-no-api-results",
+  "condition": {
+    "condition_id": "E6",
+    "store_id": "s3",
+    "retrieval_id": "r3"
+  },
+  "design_document": "docs/reproduction/r3-curated-design-and-provenance.md",
+  "implementation_document": "docs/reproduction/r3-curated-implementation.md",
+  "code_module": "fs_memory_lab/r3_protocol.py",
+  "protocol_sha256": "0535a229b856dd73be89f4b617dfb9c046e9bde178e9e6689f3ac062397b0878",
+  "primary_sources": {
+    "filesystem_memory": "S3 Management Agent method and published store",
+    "refind": "BM25/group-RRF/Top-5/context/iterative retrieval core",
+    "curated_adapter": "project-defined fact-bullet to H2-topic adaptation"
+  },
+  "api_called": false,
+  "experimental_results_created": false
+}

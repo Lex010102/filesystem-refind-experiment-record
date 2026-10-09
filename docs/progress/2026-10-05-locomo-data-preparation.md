@@ -993,3 +993,17 @@ R3 主协议把完整 locator-bearing Markdown list item 作为 unit，以 `rela
 E5 与 E6 必须使用相同 S3 snapshot、问题集、模型记录、EvidenceBundle、证据预算、Answerer 和评分器；唯一主要差异是 E5 的 LLM 文件导航与 E6 的 ReFind-inspired 排名检索。Group sum 对 50+ facts 的 Music/Relationships 大 topic可能有偏置，超长事实可能提高 observation cost，整理遗漏/污染也可能限制或误导检索，这些均已列为正式误差分析项。
 
 完整输入身份、parser规则、unit schema、时间语义、数学公式、Prompt来源、产物合同、R2/E5 对照、评测指标、错误归因、代码路线、验收 gate 和推荐论文措辞，见 `docs/reproduction/r3-curated-design-and-provenance.md`。建议下一工程步骤仅实现确定性的 `r3_inputs.py` 与完整性测试，先证明能够稳定得到 390 facts / 35 groups，再进入 index、Agent 或 API 阶段。
+
+## 2026-10-09：R3 / R2-Curated 独立离线 harness 完成
+
+按照先前冻结的 R3 设计，本阶段分六步完成 E6 的独立程序结构；没有读取或清除学校 API key，没有发出 API 请求，也没有产生 dev-6/main-40 实验结果。
+
+第一步冻结 `r3_protocol.py` 与 machine-readable manifest。正式条件固定为 E6/S3；protocol SHA-256 为 `0535a229…0878`。第二步实现只读 `r3_inputs.py`：每次加载都先通过共享 S3 manifest、COMMITTED marker、source map 与正式挂载路径校验，再排除 YAML frontmatter，把两个 Markdown 文件解析为 390 个 fact units 和 35 个 H2 groups。Parser 复核 304,640 bytes、472 行、3 个 nested facts、正文 1,459 次 locator mentions、555 个 unique locators、13 个 source locators 缺失和 frontmatter 排除 6 次 mentions；稳定 parsed-corpus SHA-256 为 `9f968d78…f086`。
+
+第三步实现 `r3_index.py`：复用已冻结的 ReFind tokenizer，按 fact BM25、H2 正分 facts 求和、`1/(60+r_unit)+1/(60+r_group)` 排名；固定 Top-5、同 H2 ±2、日期 set-overlap 和 seen-H2 排除，全部过滤都发生在打分/排名前。第四步实现 R3 derived Prompt、三动作文本协议和最多四个 planner actions 的 evidence-only Agent。历史动作名 `search_chatrecord` 保留 wire compatibility，但 prompt 明确其 backend 是 curated facts；达到 cap 时不自动保存最后 hits，也不 direct-BM25 fallback。Prompt 与 action contract 分别独立 hash 冻结。
+
+第五步接入共享 EvidenceBundle。`take_note` 只能选择最近一次 observation 的编号；host 根据 line range 重读冻结 S3、验证每条事实的 `[SxTy]` 与 `dia_id`，然后传递合并同一路径重叠/紧邻窗口。Evidence budget 整项接受或跳过，绝不截断。单题和顺序批量 runner 会原子发布 trace、bundle/failure、episode index 和 marker；任一字节篡改都由 verifier 拒绝。独立 CLI 为 `python3 -m fs_memory_lab.r3_cli`，提供完全离线的 `config/preflight/verify` 与未来 API-backed `run-one/run-batch`。
+
+最后执行了 R3 专项离线回归：协议 3、输入 7、index 7、tools 4、Agent 6、artifacts 3、runner 4，共 34 项全部通过；`config` 与 `preflight` 也成功构建 390-document/35-group index。全仓 standard-library discovery 中 278 项通过；唯一 collection error 是既有 `tests/test_r1_prompts.py` 依赖当前系统 Python 未安装的 `pytest`，与 R3 改动无关。完整实现说明、模块地图、固定 hashes、离线命令、未来 smoke 入口和 artifact 查看方法见 `docs/reproduction/r3-curated-implementation.md`。
+
+当前只能表述为“E6/R3 离线 harness 完成并通过 fake-provider/离线验证”。下一步应先跑一题 E6/dev-6 真实学校 API smoke，确认 portable wire、served model、成本、Top-5 observation、bundle 与离线 verifier；通过后再运行完整 dev-6，并在看 main-40 结果前冻结 E1–E6 共用 evidence budget。不能把本阶段写成 E6 已得到实验效果，也不能把 R3 归为 ReFind 论文原方法。

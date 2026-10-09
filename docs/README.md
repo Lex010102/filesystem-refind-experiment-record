@@ -25,7 +25,8 @@
 - [Filesystem 论文配置对齐记录](reproduction/filesystem-paper-parity.md)：公开 prompt、工具 schema、论文目标配置、NUS portable 实际配置、S3 safe runner 与仍未对齐部分的逐项边界。
 - [R2-Raw（S1/S2）正式检索协议](reproduction/r2-raw-protocol.md)：exchange-level 输入、BM25/session RRF、Top-5、±2、seen-session、三动作、EvidenceBundle、论文/作者代码/本项目补全的来源边界和实现验收门槛。
 - [R2-Raw 本地实现说明](reproduction/r2-raw-implementation.md)：已完成模块、冻结 hashes、离线检查命令、未来真实 smoke 入口、产物结构和当前边界。
-- [R3 / R2-Curated 详细设计与溯源记录](reproduction/r3-curated-design-and-provenance.md)：E6 的 fact-bullet→H2-topic 适配、真实 S3 统计、BM25/RRF、multi-date、EvidenceBundle、公平比较、风险和实施验收标准；当前仅为设计合同，尚未实现或运行。
+- [R3 / R2-Curated 详细设计与溯源记录](reproduction/r3-curated-design-and-provenance.md)：E6 的 fact-bullet→H2-topic 适配、真实 S3 统计、BM25/RRF、multi-date、EvidenceBundle、公平比较、风险和验收标准。
+- [R3 / R2-Curated 本地实现说明](reproduction/r3-curated-implementation.md)：已完成模块、冻结 hashes、离线检查命令、未来真实 smoke 入口、产物结构和当前边界。
 
 ## Source papers
 
