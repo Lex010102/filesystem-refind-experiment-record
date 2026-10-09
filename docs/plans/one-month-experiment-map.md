@@ -479,6 +479,8 @@ S3 会受模型随机性影响。一个月内如果给 E5、E6 分别重建，�
 
 ### 8.3 S3 上的 R2（必须称 ReFind-inspired）
 
+详细、可实现和可审计的 E6 设计已经集中记录在 `docs/reproduction/r3-curated-design-and-provenance.md`；本节保留实验地图级摘要，若两处发生冲突，应先停止实现并显式更新两份文档，不能静默选择其中一份。
+
 原始 ReFind 的层级是 turn→session；S3 已经改写为 Markdown taxonomy，不能假装完全相同。2026-10-08 在正式 S3 发布后重新检查实际结构：store 只有 `calvin.md`、`dave.md` 两个文件；每个文件只有一个人物 H1，真正主题位于 H2，且部分 H2 很长。此前草案的“leaf section→top-level H1”会把整个人物变成一个 group、让命中单元过大，并使 seen-group 去重过早排除该人物，现已废止。正式适配改为：
 
 - unit：正文中一条完整、带 inline `[SxTy]` 的 Markdown fact bullet；连续行属于同一 bullet 时保持完整，不能截断；

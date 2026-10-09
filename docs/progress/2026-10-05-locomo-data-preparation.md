@@ -981,3 +981,15 @@ Retrieval Agent 使用文本 `Thought / Action / Action Input`，不使用 nativ
 详细代码地图、固定 hashes、检查命令、未来 smoke 示例与产物结构见 `docs/reproduction/r2-raw-implementation.md`。下一步不是直接跑 40 题，而是先做 E2/dev-6 单题真实 API smoke，再用同题验证 E4；完成 dev-6 成本和证据完整性检查、并在看 main-40 结果前冻结共享 evidence budget 后，才允许正式批量运行。
 
 最终离线审计补充了 portable wire profile 的可追溯性：`R2EpisodeOutcome` 保存 `api_style`，每个 trace 首条 `runtime_start` 明确列出论文目标字段与实际发送字段，成功/失败 artifact 的 `runtime_sha256` 也随 API style 改变；正式 CLI 强制 `portable`，并拒绝 `FSMEM_MODEL` 与 `--model` 不一致。新增无网络 wire-payload 测试确认 portable 会发送 temperature 0，但不会发送 reasoning/output cap 或空 native-tools 字段。R2 专项离线回归最终为 33/33 通过；不含需要 `pytest` 收集器的 R1 prompt 文件时，全仓标准库回归为 245/245，另以等价参数展开执行 R1 prompt 8 个 cases 后也全部通过，因此本次有效总回归为 253/253。
+
+## 2026-10-09：R3 / R2-Curated 设计与溯源文档
+
+在 R2-Raw 离线 harness 完成后，本阶段只固化 E6 的详细设计，没有编写 R3 程序、调用学校 API 或生成结果。正式报告名称固定为 `R2-Curated` 或 `ReFind-inspired retrieval over agent-curated filesystem`；`R3` 只作为本地工程简称，不能写成 ReFind 原文提出的第三套算法。
+
+设计前重新读取并盘点正式 S3：2 个文件、304,640 bytes、472 行、35 个 H2 topic groups 和 390 个正文 fact list items；390/390 facts 均带 locator，其中有 3 个 nested facts，共 1,459 次正文 locator mentions、555 个 unique locators。S3 manifest 的 1,465 次总 mentions 还包括 YAML frontmatter 的 6 次，R3 正式 index 排除 frontmatter。相较 568 个 canonical source locators，S3 缺少 13 个，因此这些事实无法被 R3 检索恢复，后续必须归为 write loss。事实长度中位数 346、P95 2,262、最大 7,740 字符；同 H2 的 ±2 窗口最大 23,480 字符，说明 curated store 并不天然等于短上下文。
+
+R3 主协议把完整 locator-bearing Markdown list item 作为 unit，以 `relative file + H2 ordinal` 作为 group；BM25 文本为人物名 + H2 heading + 去 locator 的事实正文；frontmatter 与绝对路径不打分。继续使用 ReFind tokenizer、BM25 `k1=1.2,b=0.75`、group score求和、1-based RRF `k=60`、Top-5、同 H2 ±2、seen-H2 去重和最多四个 planner actions。多 locator fact 的日期从 source map 得到 date set，建议使用 inclusive set-overlap过滤；这是项目定义的时间适配，必须在代码前冻结。多个窗口只在 EvidenceBundle阶段传递合并，模型只能选择 observation result，最终文字由 host 重读 S3。
+
+E5 与 E6 必须使用相同 S3 snapshot、问题集、模型记录、EvidenceBundle、证据预算、Answerer 和评分器；唯一主要差异是 E5 的 LLM 文件导航与 E6 的 ReFind-inspired 排名检索。Group sum 对 50+ facts 的 Music/Relationships 大 topic可能有偏置，超长事实可能提高 observation cost，整理遗漏/污染也可能限制或误导检索，这些均已列为正式误差分析项。
+
+完整输入身份、parser规则、unit schema、时间语义、数学公式、Prompt来源、产物合同、R2/E5 对照、评测指标、错误归因、代码路线、验收 gate 和推荐论文措辞，见 `docs/reproduction/r3-curated-design-and-provenance.md`。建议下一工程步骤仅实现确定性的 `r3_inputs.py` 与完整性测试，先证明能够稳定得到 390 facts / 35 groups，再进入 index、Agent 或 API 阶段。
