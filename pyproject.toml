@@ -14,6 +14,7 @@ fs-question-sets = "fs_memory_lab.question_sets:main"
 fs-r1 = "fs_memory_lab.r1_cli:main"
 fs-r2 = "fs_memory_lab.r2_cli:main"
 fs-r3 = "fs_memory_lab.r3_cli:main"
+fs-eval = "fs_memory_lab.evaluation_cli:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

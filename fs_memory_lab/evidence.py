@@ -3018,3 +3018,84 @@ def validate_r1_evidence_bundle_profile(bundle: EvidenceBundle) -> None:
         raise EvidenceValidationError("R1 bundle retrieval_id must be r1")
     if any(item.rank is not None or item.score is not None for item in bundle.evidence_items):
         raise EvidenceValidationError("R1 evidence must not carry rank or score")
+
+
+def source_record_ref_from_mapping(value: Mapping[str, Any]) -> SourceRecordRef:
+    """Recreate a source reference from canonical artifact JSON."""
+    if not isinstance(value, Mapping):
+        raise EvidenceValidationError("Serialized source record must be an object")
+    return SourceRecordRef(**dict(value))
+
+
+def attribution_unit_from_mapping(value: Mapping[str, Any]) -> AttributionUnit:
+    """Recreate one attribution unit from canonical artifact JSON."""
+    if not isinstance(value, Mapping):
+        raise EvidenceValidationError("Serialized attribution unit must be an object")
+    data = dict(value)
+    data["source_locators"] = tuple(data.get("source_locators", ()))
+    data["dia_ids"] = tuple(data.get("dia_ids", ()))
+    return AttributionUnit(**data)
+
+
+def evidence_item_from_mapping(value: Mapping[str, Any]) -> EvidenceItem:
+    """Recreate a shared EvidenceItem without assuming one retriever family."""
+    if not isinstance(value, Mapping):
+        raise EvidenceValidationError("Serialized evidence item must be an object")
+    data = dict(value)
+    for key in ("source_locators", "dia_ids", "query_terms", "observation_ids"):
+        data[key] = tuple(data.get(key, ()))
+    data["source_records"] = tuple(
+        source_record_ref_from_mapping(item) for item in data.get("source_records", ())
+    )
+    data["attribution_units"] = tuple(
+        attribution_unit_from_mapping(item)
+        for item in data.get("attribution_units", ())
+    )
+    return EvidenceItem(**data)
+
+
+def evidence_bundle_from_mapping(value: Mapping[str, Any]) -> EvidenceBundle:
+    """Recreate a retrieval-neutral EvidenceBundle from canonical JSON.
+
+    Store-backed verification remains the responsibility of the retriever artifact
+    verifier.  This loader verifies the complete content-addressed bundle identity.
+    """
+    required = {
+        "bundle_id", "schema_version", "protocol_version", "status", "question",
+        "question_sha256", "condition", "store_snapshot", "prompt_contract",
+        "runtime_contract", "search_actions", "evidence_items", "stop", "budget",
+        "metrics", "model", "integrity", "errors",
+    }
+    if not isinstance(value, Mapping) or set(value) != required:
+        raise EvidenceValidationError("Serialized evidence bundle fields are invalid")
+    stop_data = dict(value["stop"])
+    stop_data.pop("global_fallback_done", None)
+    proof = stop_data.pop("fallback_proof")
+    stop = StopRecord(
+        fallback_proof=GlobalFallbackProof(**proof) if proof is not None else None,
+        **stop_data,
+    )
+    budget_data = dict(value["budget"])
+    tokenizer = budget_data.get("tokenizer")
+    budget_data["tokenizer"] = TokenizerRef(**tokenizer) if tokenizer else None
+    recreated = EvidenceBundle.create(
+        status=value["status"],
+        question=QuestionInput.from_mapping(value["question"]),
+        condition=value["condition"],
+        store_snapshot=StoreSnapshotRef(**dict(value["store_snapshot"])),
+        prompt_contract=value["prompt_contract"],
+        runtime_contract=value["runtime_contract"],
+        search_actions=value["search_actions"],
+        evidence_items=tuple(
+            evidence_item_from_mapping(item) for item in value["evidence_items"]
+        ),
+        stop=stop,
+        budget=BudgetRecord(**budget_data),
+        metrics=value["metrics"],
+        model=value["model"],
+        integrity=value["integrity"],
+        errors=value["errors"],
+    )
+    if recreated.bundle_id != value["bundle_id"]:
+        raise EvidenceValidationError("Serialized evidence bundle ID is invalid")
+    return recreated

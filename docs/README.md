@@ -11,6 +11,7 @@
 - [2026-09-16 研究进度](progress/2026-09-16-research-log.md)：本地 harness、Alice 两批增量写入、ReFind 学习和组合思路。
 - [2026-09-22 仓库整理与 GitHub 备份](progress/2026-09-22-repository-setup.md)：本次目录重组、保留内容与安全规则。
 - [2026-10-05/06 LoCoMo 与 S1–S3 准备](progress/2026-10-05-locomo-data-preparation.md)：官方数据、canonical records、S1/S2、85-chunk S3 stream、Management prompt、七工具/runtime contract、smoke、第一次安全失败及 runner v2 修复；正式 S3 store 尚未发布。
+- [2026-10-09 阶段 1 共同基础设施](progress/2026-10-09-stage1-common-infrastructure.md)：共享 Answerer、E7 确定性融合、统一 RunRecord/续跑及自动评测器的完成与验证记录。
 
 ## Data
 
@@ -27,6 +28,7 @@
 - [R2-Raw 本地实现说明](reproduction/r2-raw-implementation.md)：已完成模块、冻结 hashes、离线检查命令、未来真实 smoke 入口、产物结构和当前边界。
 - [R3 / R2-Curated 详细设计与溯源记录](reproduction/r3-curated-design-and-provenance.md)：E6 的 fact-bullet→H2-topic 适配、真实 S3 统计、BM25/RRF、multi-date、EvidenceBundle、公平比较、风险和验收标准。
 - [R3 / R2-Curated 本地实现说明](reproduction/r3-curated-implementation.md)：已完成模块、冻结 hashes、离线检查命令、未来真实 smoke 入口、产物结构和当前边界。
+- [E1–E7 共同实验基础设施](reproduction/common-experiment-infrastructure.md)：共享 Answerer、E7 双源融合、统一 RunRecord/续跑及官方 LoCoMo 自动评测器。
 
 ## Source papers
 
