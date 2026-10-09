@@ -1,9 +1,9 @@
 # R2-Raw（S1/S2）正式检索协议
 
-状态：**协议与离线运行结构已实现并通过测试；尚未调用 R2 API，尚未产生 R2 实验结果**
+状态：**协议与离线结构已实现；E2/E4 单题真实 API smoke 已通过；尚未运行完整 dev-6/main-40**
 确认日期：2026-10-09（Asia/Shanghai）
 适用条件：E2（S1 + R2-Raw）、E4（S2 + R2-Raw）
-明确排除：E6/S3 的 R2-Curated（ReFind-inspired）暂不设计、不实现、不运行
+明确排除：E6/S3 的 R2-Curated（ReFind-inspired）由独立 R3 文档与实现覆盖，不属于本协议
 
 ## 1. 文档目的
 
@@ -12,7 +12,7 @@
 1. 哪些规则来自 ReFind 论文；
 2. 哪些细节可参考作者公开代码；
 3. 哪些是为了适配 LoCoMo、S1/S2 与统一 EvidenceBundle 而增加的本项目规则；
-4. 什么条件全部通过以后，R2-Raw 才能进入真实 API smoke 和 main-40。
+4. 什么条件全部通过以后，R2-Raw 才能从单题 smoke 进入完整 dev-6 和 main-40。
 
 本文取代此前“单条 utterance/source turn 作为 R2-Raw 最小检索 unit”的草案。当前正式单位是 `exchange`。
 
@@ -369,7 +369,7 @@ BM25、session aggregate、RRF 与 context expansion 集中在 `r2_index.py`，�
 6. ✅ 实现三动作 parser、Agent 状态机与 fake-provider 测试；
 7. ✅ 接入共享 EvidenceBundle、预算、原子 artifact 与 verifier；
 8. ✅ 执行不调用 API 的完整离线回归；
-9. ⏳ 用 dev-6 做小规模真实 API smoke 与 evidence budget 冻结；
+9. ◐ E2/E4 同题真实 API smoke 已通过；完整 dev-6 与 evidence budget 冻结待完成；
 10. ⏳ 所有真实运行参数确认后，才允许 main-40。
 
 ## 14. 必须通过的自动测试
@@ -435,4 +435,13 @@ BM25、session aggregate、RRF 与 context expansion 集中在 `r2_index.py`，�
 
 ## 16. 当前结论
 
-截至 2026-10-09，E2/E4 的 R2-Raw 离线 harness 已经搭建完成。固定输入预检得到 S1/S2 各 292 个 exchange units；两者检索正文完全一致，路径差异为 292/292。离线 fake-provider 可以完整走通 search→take_note→finish、EvidenceBundle、原子发布、失败产物和批量 summary；这只证明代码与协议连通，**不代表学校 API smoke 已通过，也不代表 dev-6/main-40 已经运行**。实现、命令和产物结构见 `r2-raw-implementation.md`。
+截至 2026-10-09，E2/E4 的 R2-Raw harness 已经搭建完成。固定输入预检得到 S1/S2
+各 292 个 exchange units；两者检索正文完全一致，路径差异为 292/292。离线 fake-provider
+完整走通 search→take_note→finish、EvidenceBundle、原子发布、失败产物和批量 summary。
+
+真实学校 API smoke 随后在同一道 `conv-50-q129` 上通过：E2 与 E4 均由
+`qwen3.8:27b` 在 4 actions 内主动 `finish_search`，状态为 `completed`，分别记录
+14,924 与 15,072 total tokens；二者都找到了 session 24 中 Dave 推荐 ramen 的同一原始证据，
+artifact 经离线 verifier 复验无错误。该结果只证明单题 API、检索、note、bundle 与 verifier
+连通，不代表完整 dev-6/main-40 已运行，也没有冻结正式 evidence budget。实现、命令和产物结构见
+`r2-raw-implementation.md`。

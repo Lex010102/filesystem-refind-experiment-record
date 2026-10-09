@@ -1,11 +1,11 @@
 # R2-Raw（E2/E4）本地实现说明
 
-状态：**离线搭建完成；未调用学校 API；未生成正式检索成绩**
+状态：**离线搭建完成；E2/E4 单题学校 API smoke 已通过；未生成正式 dev-6/main-40 成绩**
 实现日期：2026-10-09（Asia/Shanghai）
 
 ## 1. 现在已经有什么
 
-本地已具备一条完整但尚未真实调用 API 的 R2-Raw 运行链：
+本地已具备并真实连通过一条完整的 R2-Raw 运行链：
 
 ```text
 冻结的 S1/S2 store
@@ -69,9 +69,14 @@ python3 -m unittest discover -s tests -p 'test_r2*.py' -v
 
 当前验收结果：R2 专项 33/33；全仓标准库测试（排除需要外部 `pytest` 收集器的 R1 prompt 文件）245/245；R1 prompt 的 8 个参数展开 cases 另行等价执行并全部通过，总计 253/253。`compileall` 和 `git diff --check` 同样通过。
 
-## 5. 后续真实运行入口（本阶段没有执行）
+## 5. 真实 smoke 结果与后续运行入口
 
-真实 smoke 应先从 dev-6 的一题开始，不能直接跑 main-40：
+2026-10-09 已在 `conv-50-q129` 上完成 E2 与 E4 真实 smoke。两者均使用
+`coding` alias、实际 served model `qwen3.8:27b`、4 个 planner actions 和 6000-character
+smoke budget；E2/E4 分别记录 14,924/15,072 total tokens，均主动 `finish_search`，并找到
+session 24 中相同的 ramen 原始证据。两份 artifact 通过离线 verifier，store 未改变。
+
+以下命令仍可用于新的独立 smoke；不能覆盖既有 run，也不能直接跳到 main-40：
 
 ```bash
 python3 -m fs_memory_lab.r2_cli run-one \
@@ -82,10 +87,11 @@ python3 -m fs_memory_lab.r2_cli run-one \
   --output-root '/Users/wangwenqi/Desktop/memory bench/local-runs/r2-raw' \
   --model coding \
   --budget-unit characters \
-  --budget-limit 20000
+  --budget-limit 6000
 ```
 
-这里的 `20000` 只是工程 smoke 示例，不是正式冻结预算。必须先在 dev-6 观察 evidence completeness 和成本，再在看 main-40 结果之前冻结 E1–E6 共用预算。
+这里的 `6000` 是已经使用的工程 smoke 参数，不是正式冻结预算。必须先在完整 dev-6 观察
+evidence completeness 和成本，再在看 main-40 结果之前冻结 E1–E6 共用预算。
 
 学校 API key 仍只通过 `FSMEM_API_KEY` 环境变量提供。runner 不显示、不保存、不清除 key。正式 CLI 强制 `FSMEM_API_STYLE=portable`；请求显式发送 `temperature=0`，但按既有学校适配器省略 `reasoning_effort` 和 `max_completion_tokens`。代码同时保留论文目标 high / 4096，并在 trace 与 runtime hash 中把“论文目标”和“实际 wire”分开绑定。若学校网关不支持 temperature 0，请求应失败并留下 failure artifact，不能静默删参后冒充同一配置。`FSMEM_MODEL` 若已设置，还必须与 `--model` 一致，避免产物记录的 requested alias 与真实请求不一致。
 
@@ -113,10 +119,9 @@ python3 -m fs_memory_lab.r2_cli run-one \
 
 ## 8. 下一道门槛
 
-1. E2/dev-6 单题真实 API smoke；
-2. E4 同题 smoke，确认第一轮 deterministic backend 一致并观察路径是否改变后续 query；
-3. dev-6 全部题的成本与 evidence completeness 检查；
-4. 在不看 main-40 结果前冻结 evidence budget；
-5. 才能启动 E2/E4 main-40。
+1. dev-6 全部题的成本、hit-cap 与 evidence completeness 检查；
+2. 在不看 main-40 结果前冻结 evidence budget；
+3. 接入并验证统一 Answerer；
+4. 才能启动 E2/E4 main-40。
 
-因此当前准确表述是“R2-Raw harness 离线搭建完成”，不是“R2 实验已经跑完”。
+因此当前准确表述是“R2-Raw harness 已完成并通过单题真实 API smoke”，不是“R2 正式实验已经跑完”。

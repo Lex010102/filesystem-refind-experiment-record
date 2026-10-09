@@ -1007,3 +1007,49 @@ E5 与 E6 必须使用相同 S3 snapshot、问题集、模型记录、EvidenceBu
 最后执行了 R3 专项离线回归：协议 3、输入 7、index 7、tools 4、Agent 6、artifacts 3、runner 4，共 34 项全部通过；`config` 与 `preflight` 也成功构建 390-document/35-group index。全仓 standard-library discovery 中 278 项通过；唯一 collection error 是既有 `tests/test_r1_prompts.py` 依赖当前系统 Python 未安装的 `pytest`，与 R3 改动无关。完整实现说明、模块地图、固定 hashes、离线命令、未来 smoke 入口和 artifact 查看方法见 `docs/reproduction/r3-curated-implementation.md`。
 
 当前只能表述为“E6/R3 离线 harness 完成并通过 fake-provider/离线验证”。下一步应先跑一题 E6/dev-6 真实学校 API smoke，确认 portable wire、served model、成本、Top-5 observation、bundle 与离线 verifier；通过后再运行完整 dev-6，并在看 main-40 结果前冻结 E1–E6 共用 evidence budget。不能把本阶段写成 E6 已得到实验效果，也不能把 R3 归为 ReFind 论文原方法。
+
+## 2026-10-09：R2/R3 真实 smoke、四动作语义与后续扩展决策
+
+使用同一道开发题 `conv-50-q129`、学校 NUS SoCLaas `coding` alias 和 6000-character
+smoke evidence budget，依次完成 E2/S1+R2-Raw、E4/S2+R2-Raw 与
+E6/S3+R3-Curated 的真实 API 连通性检查。E2、E4 均以 `completed` 结束，分别记录
+14,924 与 15,072 total tokens，并从 S1/S2 的 session 24 找到 Dave 推荐 Calvin 在东京尝试
+ramen 的原始证据。E6 记录 35,828 total tokens，以两个验证后的 curated evidence items
+覆盖 `calvin.md > Japan plan` 和 `dave.md > Japan`，同样找到正确事实；三项 artifact 均通过
+离线 verifier，`errors=[]`，检索前后 store hash 不变。本次只验证 retrieval，没有运行统一
+Answerer，不能写成已产生或评分最终答案；6000 characters 也不是正式冻结预算。
+
+E6 的动作序列为 `search -> take_note -> search -> take_note`。第四个 action 后由 host 按上限
+停止，结果记录为 `status=capped, stop.reason=round_limit, hit_cap=true`。讨论后重新核对：
+ReFind 正文 §4（PDF 第 6 页）明确 retrieval 最多 4 iterations，Appendix B Table 5（PDF
+第 16 页）写 `Max iterations=4`，Appendix A 每个回复只允许一个 Action；作者公开 competition
+adaptation 也把 `AGENT_MAX_ITERATIONS=4` 定义成 maximum planner actions，并在每个 loop
+iteration 只解析一个 action。因此一次 search 与一次 take_note 是两个 iterations/actions，
+而不是一个“大轮”。如果口语上把 `search+note` 叫一轮检索循环，那么四个论文 iterations
+通常只容纳两个这样的循环。
+
+`capped` 是本项目的审计标签，不是论文术语，也不是 failure。它只说明模型没有在上限前主动
+调用 `finish_search`；已经保存且通过真实性验证的 notes 仍应交给独立 Answerer。作者公开实现
+同样会在四步结束后使用已保存 notes，论文 Appendix G 的示例也是 Search、Save、Search、Save
+后进入 Stage 2。故本次 E6 应记为“真实 retrieval smoke 连通成功、按 action cap 停止”，不能记为
+API/检索失败；后续统计必须单独报告 hit-cap rate，而不是把 capped 混入 failure rate。
+
+正式主实验决策如下：
+
+1. E2、E4、E6 继续使用 ReFind 对齐的 4 planner actions，不因一题 capped 修改主协议；
+2. capped bundle 照常进入统一 Answerer，并同时保留 stop reason、actions、searches、notes、
+   calls、tokens 与 latency；
+3. 先用完整 dev-6 判断 capped 是否只是“证据完整但未主动 finish”，还是造成 evidence 缺失；
+4. 6 actions、8 actions 保留为独立的 action-budget sensitivity 方向，不能冒充 ReFind 原配置，
+   也不能在看 main-40 分数后静默替换四动作条件；
+5. 若执行 4/6/8 对照，必须在相同的预先冻结题集上配对比较，只改变 action cap，固定 store、
+   model、temperature、Top-K、BM25/RRF、上下文、evidence budget、Answerer 和评分器；
+6. 扩展实验重点分析 answer score、evidence recall、hit-cap rate、额外 calls/tokens/latency，判断
+   更多预算是在修复 curated retrieval 的不足，还是只增加重复确认与噪声。
+
+这一扩展可形成报告中的候选新贡献：研究 `agent-curated representation × controller action
+budget` 的交互，而不是简单声称“把轮数调大效果更好”。资源有限时可以先在完整 dev-6 做
+工程性敏感度检查；只对主实验 capped 题追加 6/8 actions 可用于错误诊断，但因选择条件依赖
+四动作结果，不能直接当作无偏总体性能对照。详细协议和当前实现边界已同步写入
+`docs/reproduction/r3-curated-design-and-provenance.md` 与
+`docs/reproduction/r3-curated-implementation.md`。

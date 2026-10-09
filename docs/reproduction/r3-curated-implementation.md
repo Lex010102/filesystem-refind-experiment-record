@@ -1,7 +1,7 @@
 # R3 / R2-Curated 本地实现说明
 
 日期：2026-10-09
-状态：**独立离线 harness 已完成；未调用 R3 真实 API；未产生 dev-6/main-40 的 E6 结果**
+状态：**独立 harness 已完成；E6 单题真实 API smoke 已通过；未产生完整 dev-6/main-40 结果**
 
 ## 1. 这套代码是什么
 
@@ -109,9 +109,36 @@ python3 -m unittest \
 
 `config` 和 `preflight` 不读取 API key、不创建实验结果、不发网络请求。
 
-## 7. 以后真实 smoke 的命令
+## 7. 真实 API smoke 与复现命令
 
-只有在学校 VPN 已连接、当前终端已经隐藏输入并 export 过 `FSMEM_API_KEY`，且以下变量与正式合同一致时才运行：
+2026-10-09 已使用同一道开发题 `conv-50-q129` 完成 E2、E4、E6 的真实学校 API
+连通性检查。E6/R3 的结果如下：
+
+| 项目 | 结果 |
+| --- | --- |
+| requested / served model | `coding` / `qwen3.8:27b` |
+| planner actions | 4 |
+| action sequence | search → take_note → search → take_note |
+| stop | `status=capped`, `reason=round_limit`, `hit_cap=true` |
+| evidence | 2 个验证后 curated items，覆盖 `calvin.md > Japan plan` 与 `dave.md > Japan` |
+| provider-reported tokens | 35,828 |
+| smoke evidence budget | 6000 characters，使用 2697，`skipped_items=1` |
+| verifier | 通过，`errors=[]`，store hash 前后一致 |
+
+该题在第二个 action 已保存直接支持 ramen 的证据，第三、四个 action用于二次搜索和确认。
+到达四动作上限后没有调用 `finish_search`，但这符合 ReFind 的 max-iteration budget：host 使用
+已经保存的 notes 发布可审计 bundle，后续 Answerer 可以继续作答。`capped` 不是 API failure，
+也不表示证据为空。本次只测试 retrieval，没有调用统一 Answerer，不能把结果写成 E6 已完成
+答案准确率实验。6000 characters 只是三条件共享的 smoke budget，不是正式冻结预算。
+
+结果位于 gitignored 本地目录：
+
+```text
+local-runs/retrieval-smoke/results/
+  r2-r3-smoke-20261009T143822Z/E6/conv-50-q129/
+```
+
+只有在学校 VPN 已连接、当前终端已经隐藏输入并 export 过 `FSMEM_API_KEY`，且以下变量与正式合同一致时才可再次运行：
 
 ```bash
 export FSMEM_API_BASE_URL='https://soclaas-api.comp.nus.edu.sg/v1'
@@ -125,14 +152,19 @@ python3 -m fs_memory_lab.r3_cli run-one \
   --output-root '/Users/wangwenqi/Desktop/memory bench/local-runs/r3-retrieval' \
   --model coding \
   --budget-unit characters \
-  --budget-limit 20000
+  --budget-limit 6000
 ```
 
-这只是未来入口。本次实现没有执行这条命令。正式 budget 数值应与 E1–E6 统一，并在查看 main-40 结果前冻结。
+再次运行会产生新的随机服务轨迹，不能覆盖或伪装成既有 smoke。正式 budget 数值仍应与
+E1–E6 统一，并在查看 main-40 结果前冻结。
+
+主协议继续保持 `agent_action_cap=4`。6/8-action 版本只作为未来独立的 action-budget
+sensitivity experiment；若实现，必须产生新的 protocol/runtime hash 和不同 condition label，
+并在相同题目上与四动作版本配对比较，不能静默改变 E6。
 
 ## 8. 单题产物怎么看
 
-成功 episode：
+主动完成或 action-cap 完成的 episode：
 
 ```text
 local-runs/r3-retrieval/<run-id>/E6/<question-id>/
@@ -142,7 +174,10 @@ local-runs/r3-retrieval/<run-id>/E6/<question-id>/
 └── COMPLETED
 ```
 
-失败 episode 的目录名含 `.failed-<hash>`，内部是 `failure.json` 和 `FAILED`，不会伪装成成功 bundle。批量运行还会在 run 根目录生成 `batch-summary.json`。
+`bundle.json` 内的 `status` 可以是 `completed` 或 `capped`；二者均使用 `COMPLETED`
+marker 并必须通过 verifier。失败 episode 的目录名含 `.failed-<hash>`，内部是
+`failure.json` 和 `FAILED`，不会伪装成成功 bundle。批量运行还会在 run 根目录生成
+`batch-summary.json`。
 
 - `trace.jsonl`：模型调用、搜索关键词、返回 groups、take-note 和 retry；
 - `bundle.json`：交给统一 Answerer 的最终证据、来源、rank、score、成本与 stop reason；
@@ -157,6 +192,9 @@ python3 -m fs_memory_lab.r3_cli verify --path '<episode-directory>'
 
 ## 9. 当前完成边界
 
-已经完成：协议、parser、index、prompt/action、evidence-only Agent、EvidenceBundle、failure artifact、runner、CLI、fake-provider E2E 和离线 verifier。
+已经完成：协议、parser、index、prompt/action、evidence-only Agent、EvidenceBundle、failure
+artifact、runner、CLI、fake-provider E2E、离线 verifier，以及一题 E6 真实学校 API smoke。
 
-尚未完成：学校 API smoke、dev-6、main-40、统一 Answerer、自动评分、E7 双源融合。当前只能说“R3 离线 harness 已搭好并通过测试”，不能说“E6 实验已经跑完”或“R3 效果优于 R1/R2”。
+尚未完成：完整 dev-6、main-40、统一 Answerer、自动评分、E7 双源融合，以及可选的
+6/8-action sensitivity experiment。当前可以说“R3 retrieval harness 已真实连通并通过单题
+smoke”，但不能说“E6 正式实验已经跑完”或“R3 效果优于 R1/R2”。

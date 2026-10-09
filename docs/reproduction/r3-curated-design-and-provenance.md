@@ -1,6 +1,6 @@
 # R3 / R2-Curated 详细设计与溯源记录
 
-状态：**设计协议 v1 已实现为独立离线 harness；尚未调用 R3 API；尚未产生 E6 实验结果**
+状态：**设计协议 v1 已实现；E6 单题真实 API smoke 已通过；尚未运行完整 dev-6/main-40**
 
 记录日期：2026-10-09（Asia/Shanghai）
 
@@ -339,6 +339,26 @@ Action Input: {...}
 - 不退回 direct BM25；
 - 没有 notes 时仍生成可审计的 capped bundle，而不是让 host 偷选证据。
 
+这里的“4 actions”不是把论文的“4 iterations”擅自缩短。ReFind 正文 §4
+Implementation Details（本地 PDF 第 6 页）写明 retrieval 最多 4 iterations，
+Appendix B Table 5（本地 PDF 第 16 页）再次给出 `Max iterations = 4`；Appendix A
+又规定每次回复只能输出一个 `Thought + Action + Action Input`。作者公开的 competition
+adaptation 进一步把 `AGENT_MAX_ITERATIONS=4` 解释为每个 Search request 最多四个
+planner actions，并在每个 loop iteration 中只调用一次 planner、解析一个 action。因此正式口径是：
+
+```text
+1 provider completion = 1 ReAct iteration = 1 planner action
+```
+
+一次 `search_chatrecord` 和随后一次 `take_note` 共消耗两个 iterations/actions；如果前四步是
+`search -> take_note -> search -> take_note`，host 在第四步后按上限结束，并把已经保存的 notes
+交给独立 Answerer。`finish_search` 是提前停止工具，不是进入 Stage 2 的唯一通道。
+
+本项目的 `capped` 是审计标签，不是 ReFind 论文术语，也不表示 API failure。它只表示 Agent
+没有在上限前主动调用 `finish_search`；只要 bundle 通过真实性验证，后续 Answerer 仍应正常读取
+已经保存的 evidence。正式分析必须分别记录 `status`、`stop.reason` 和 `hit_cap`，不能把
+`capped` 混入 provider/protocol failure。
+
 ### 12.4 Prompt 来源
 
 R3 Prompt 应从已冻结的 R2 published Retrieval Prompt 和 temporal addendum派生，并对以下内容做受控 redline：
@@ -351,6 +371,26 @@ R3 Prompt 应从已冻结的 R2 published Retrieval Prompt 和 temporal addendum
 - 三动作格式和四动作上限保持不变。
 
 该 Prompt 必须标为 `paper-text-plus-project-curated-adaptation`，不能标成 ReFind 作者原 Prompt。实现阶段要同时保存 normalized source、redline、derived prompt 和 SHA-256 manifest。
+
+### 12.5 Action-budget 扩展（后续实验方向，不属于主协议）
+
+E6 主实验继续固定 4 actions，与 ReFind 的在线工作预算和 E2/E4 保持一致。暂不因单题
+`capped` 就修改正式协议或重新运行主条件。
+
+后续可把 6 actions、8 actions 设计成明确命名的 budget-sensitivity 条件，例如
+`R3-6A`、`R3-8A`。它们属于本项目的扩展实验，不能称为 ReFind 原配置，也不能与 4-action
+主结果混在同一条件中。扩展实验要回答的是：
+
+1. curated filesystem 是否比 raw chat 更需要额外的查询改写和交叉确认；
+2. 增加 actions 能否降低 hit-cap、补齐多跳/时间更新证据并改善最终回答；
+3. 收益是否足以抵消额外 model calls、tokens 和 latency；
+4. 额外预算是在修复检索不足，还是只产生重复确认和噪声。
+
+若执行，必须在看对应正式答案分数前冻结题集，并在同一批问题上配对比较 4/6/8；除了
+`agent_action_cap` 外，store snapshot、问题、模型、temperature、Top-K、BM25/RRF、上下文窗口、
+evidence budget、Answerer 和评分器全部保持不变。最低报告项为 answer score、evidence recall、
+hit-cap rate、search/note counts、总 calls、tokens 和 latency。资源不足时可先在完整 dev-6
+做工程性敏感度检查；只重跑主实验中 capped 的题可用于诊断，但不能直接当作无偏的总体效果比较。
 
 ## 13. EvidenceBundle 与真实性
 
@@ -394,6 +434,10 @@ COMPLETED OR FAILED
 ```
 
 Trace 必须记录 query、时间范围、seen groups、候选数、Top-5 IDs、scores、notes、停止原因、requested/served model、usage、API style 和 runtime hashes。API key 永不进入任何产物。
+
+`completed` 与 `capped` 都可以发布 `COMPLETED` marker：前者由 Agent 主动
+`finish_search`，后者由 host 在 action cap 处结束。两者都必须通过离线 verifier，也都可以进入
+统一 Answerer。只有 provider、协议、预算熔断或真实性错误等才产生 `failure.json + FAILED`。
 
 ## 14. 与 R2-Raw 的异同
 
@@ -614,6 +658,14 @@ Set-overlap 是为不可拆分 curated fact 做的工程适配。它可能让区
 
 不要写成“ReFind 原文提出 R3”，也不要把 H2 adapter、multi-date 和 EvidenceBundle归给 ReFind 作者。
 
+### 21.7 四动作预算可能与 curated store 发生交互
+
+四动作上限是论文对齐的主配置，但在 R3 中一次搜索可能返回更长的 H2/fact context，Controller
+也可能更倾向于二次确认。若 `search -> note -> search -> note` 用满四步，证据可能已经完整，
+此时 capped 不代表失败；若复杂问题仍缺少必要证据，则属于 action-budget bottleneck。两者必须靠
+evidence recall 与最终 answer score 区分，不能仅凭 `capped` 标签判断。6/8-action 扩展可作为
+storage representation × controller budget 的交互分析，但应与主实验分开报告。
+
 ## 22. 当前结论与下一步
 
 当前已经完成：
@@ -627,7 +679,15 @@ Set-overlap 是为不可拆分 curated fact 做的工程适配。它可能让区
 
 当前尚未完成：
 
-- 真实 API smoke；
 - dev-6 或 main-40 的 E6 结果。
+- 统一 Answerer 与最终答案评测。
 
-实现状态、代码地图、冻结 hashes、离线命令和未来 smoke 入口见 `r3-curated-implementation.md`。下一步先运行一题 E6/dev-6 真实 API smoke；验证 wire compatibility、artifact、成本与 evidence 完整性后，再决定是否运行完整 dev-6，不能直接跳到 main-40。
+真实 API 单题 smoke 已在 2026-10-09 完成：E6 对 `conv-50-q129` 使用正式四动作上限，
+以 `search -> take_note -> search -> take_note` 收集到支持 ramen 的正确 curated evidence，
+随后以 `status=capped, stop.reason=round_limit` 发布并通过离线 verifier。该结果证明 API、
+R3 index、Agent、artifact 与 verifier 连通，不是答案效果实验；本次没有运行统一 Answerer，
+6000-character evidence budget 也只是 smoke 参数，尚未冻结为正式预算。
+
+实现状态、代码地图、冻结 hashes、离线命令和 smoke 结果见 `r3-curated-implementation.md`。
+下一步应先完成 dev-6 与统一 Answerer 的工程验证，再在看 main-40 结果前冻结共享 evidence
+budget。主 E6 保持 4 actions；6/8 actions 只作为独立、预注册的后续敏感性实验。
