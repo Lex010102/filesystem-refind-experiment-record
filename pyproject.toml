@@ -15,6 +15,9 @@ fs-r1 = "fs_memory_lab.r1_cli:main"
 fs-r2 = "fs_memory_lab.r2_cli:main"
 fs-r3 = "fs_memory_lab.r3_cli:main"
 fs-eval = "fs_memory_lab.evaluation_cli:main"
+fs-dev-retrieval = "fs_memory_lab.dev_retrieval_cli:main"
+fs-dev-pilot = "fs_memory_lab.pilot_cli:main"
+fs-formal-v1 = "fs_memory_lab.formal_v1_cli:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

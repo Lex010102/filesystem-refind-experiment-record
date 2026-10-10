@@ -33,7 +33,7 @@ from .r2_tools import (
 )
 
 
-R2_AGENT_PROTOCOL_VERSION = "r2-raw-agent-v1"
+R2_AGENT_PROTOCOL_VERSION = "r2-raw-agent-v2-empty-content-repair"
 
 
 @dataclass(frozen=True)
@@ -327,8 +327,8 @@ class R2RetrievalAgent:
                 if message.get("tool_calls") not in (None, []):
                     raise ValueError("R2 uses textual ReAct, not native tool calls")
                 content = message.get("content")
-                if not isinstance(content, str) or not content.strip():
-                    raise ValueError("R2 planner must return textual ReAct content")
+                if content is not None and not isinstance(content, str):
+                    raise ValueError("R2 planner content must be text or null")
             except (TypeError, ValueError) as exc:
                 raise R2AgentError(
                     f"R2 provider response is invalid: {exc}",
@@ -337,6 +337,26 @@ class R2RetrievalAgent:
                     provider_request_attempts=provider_attempts,
                     trace=trace,
                 ) from exc
+            content = content or ""
+            if not content.strip():
+                invalid_actions += 1
+                observation = (
+                    "Error [empty_content]: the previous response contained no textual "
+                    "ReAct action. Return exactly Thought, Action, and Action Input."
+                )
+                self._emit(
+                    trace,
+                    {
+                        "event": "invalid_action",
+                        "provider_round": provider_round,
+                        "code": "empty_content",
+                        "assistant_content": "",
+                    },
+                )
+                messages.append(
+                    {"role": "user", "content": render_r2_observation(observation)}
+                )
+                continue
             messages.append({"role": "assistant", "content": content})
 
             action: R2Action | None = None

@@ -108,7 +108,7 @@ class R3RunnerTests(unittest.TestCase):
         provider = Provider(
             [
                 {
-                    "message": {"role": "assistant", "content": None},
+                    "message": {"role": "assistant", "content": 123},
                     "usage": {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2},
                     "served_model": "fake-r3",
                 }

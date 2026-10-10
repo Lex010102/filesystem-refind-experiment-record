@@ -129,6 +129,22 @@ class R2AgentTests(unittest.TestCase):
         self.assertEqual(outcome.provider_rounds, 2)
         self.assertIn("Error [invalid_format]", provider.calls[1]["messages"][-1]["content"])
 
+    def test_empty_content_consumes_one_action_and_is_recoverable(self) -> None:
+        provider = ScriptedProvider(
+            [
+                {
+                    "message": {"role": "assistant", "content": None},
+                    "usage": {"prompt_tokens": 2, "completion_tokens": 1, "total_tokens": 3},
+                    "served_model": "fake-r2",
+                },
+                action("Stop.", "finish_search", {}),
+            ]
+        )
+        outcome = self.agent(provider).run(cell_id="E2", question=self.question)
+        self.assertEqual(outcome.invalid_actions, 1)
+        self.assertEqual(outcome.provider_rounds, 2)
+        self.assertIn("Error [empty_content]", provider.calls[1]["messages"][-1]["content"])
+
     def test_transient_failure_retries_before_response(self) -> None:
         provider = ScriptedProvider(
             [

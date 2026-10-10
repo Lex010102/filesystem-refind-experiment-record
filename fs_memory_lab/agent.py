@@ -6,9 +6,12 @@ import json
 import hashlib
 import os
 import re
+import signal
+import threading
 import time
 import urllib.error
 import urllib.request
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Callable, Protocol
@@ -38,6 +41,52 @@ ORDINARY_REQUEST_RETRY_BACKOFF_SECONDS = (2, 4)
 RETRYABLE_HTTP_STATUS_CODES = frozenset({408, 429, 500, 502, 503, 504})
 TRANSIENT_HTTP_MAX_ATTEMPTS = 5
 TRANSIENT_HTTP_RETRY_BACKOFF_SECONDS = (5, 15, 30, 60)
+
+
+@contextmanager
+def _request_wall_clock_deadline(seconds: float):
+    """Enforce a total POSIX request deadline, not only socket-idle time.
+
+    ``urllib`` passes its timeout to the socket, where intermittent bytes can
+    keep a non-streaming request alive indefinitely.  Formal runs are
+    single-threaded on macOS, so an interval timer gives the configured timeout
+    its intended whole-request meaning.  Non-main-thread/non-POSIX callers keep
+    urllib's ordinary socket timeout as a portable fallback.
+    """
+
+    supported = (
+        seconds > 0
+        and threading.current_thread() is threading.main_thread()
+        and hasattr(signal, "SIGALRM")
+        and hasattr(signal, "setitimer")
+        and hasattr(signal, "ITIMER_REAL")
+    )
+    if not supported:
+        yield
+        return
+
+    started = time.monotonic()
+    previous_handler = signal.getsignal(signal.SIGALRM)
+
+    def expire(_signum, _frame):
+        raise TimeoutError("API request exceeded its wall-clock deadline")
+
+    signal.signal(signal.SIGALRM, expire)
+    previous_delay, previous_interval = signal.setitimer(
+        signal.ITIMER_REAL, float(seconds)
+    )
+    try:
+        yield
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous_handler)
+        if previous_delay > 0:
+            elapsed = time.monotonic() - started
+            signal.setitimer(
+                signal.ITIMER_REAL,
+                max(1e-6, previous_delay - elapsed),
+                previous_interval,
+            )
 
 
 class TransientProviderError(RuntimeError):
@@ -158,13 +207,14 @@ class CompatibleChatProvider:
             method="POST",
         )
         try:
-            with urllib.request.urlopen(request, timeout=self.timeout) as response:
-                raw = response.read(self.max_response_bytes + 1)
-                if len(raw) > self.max_response_bytes:
-                    raise RuntimeError(
-                        f"API response exceeded {self.max_response_bytes} bytes"
-                    )
-                data = json.loads(raw.decode("utf-8"))
+            with _request_wall_clock_deadline(self.timeout):
+                with urllib.request.urlopen(request, timeout=self.timeout) as response:
+                    raw = response.read(self.max_response_bytes + 1)
+                    if len(raw) > self.max_response_bytes:
+                        raise RuntimeError(
+                            f"API response exceeded {self.max_response_bytes} bytes"
+                        )
+                    data = json.loads(raw.decode("utf-8"))
         except urllib.error.HTTPError as exc:
             detail = self._safe_http_error(exc)
             if exc.code in RETRYABLE_HTTP_STATUS_CODES:

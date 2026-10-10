@@ -451,6 +451,8 @@ class SharedAnswerer:
         if tool_calls not in (None, []):
             raise ValueError("Answerer must not return tool calls")
         content = message.get("content")
+        if content is None:
+            content = ""
         if not isinstance(content, str):
             raise ValueError("Answerer response content is invalid")
         usage = _safe_usage(response.get("usage"))

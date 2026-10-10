@@ -13,6 +13,8 @@
 - [2026-10-05/06 LoCoMo 与 S1–S3 准备](progress/2026-10-05-locomo-data-preparation.md)：官方数据、canonical records、S1/S2、85-chunk S3 stream、Management prompt、七工具/runtime contract、smoke、第一次安全失败及 runner v2 修复；正式 S3 store 尚未发布。
 - [2026-10-09 阶段 1 共同基础设施](progress/2026-10-09-stage1-common-infrastructure.md)：共享 Answerer、E7 确定性融合、统一 RunRecord/续跑及自动评测器的完成与验证记录。
 - [2026-10-10 阶段 2 E1 真实单题测试](progress/2026-10-10-stage2-e1-real-smoke.md)：E1 检索、共享 Answerer、RunRecord 与离线评测的真实端到端结果。
+- [2026-10-10 阶段 3 dev-6 检索预算校准](progress/2026-10-10-stage3-dev6-retrieval.md)：36/36 检索验收、空响应修复、6000 预算门槛结果与 B=10000 重跑依据。
+- [2026-10-10 阶段 4 dev-6 × E1–E7 pilot](progress/2026-10-10-stage4-dev6-e1-e7-pilot.md)：42 条 Answerer/E7/评分/审计的正式协议和当前实现状态。
 
 ## Data
 

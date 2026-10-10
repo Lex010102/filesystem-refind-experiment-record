@@ -2,6 +2,7 @@ import io
 import hashlib
 import json
 import tempfile
+import time
 import unittest
 import urllib.error
 from contextlib import redirect_stdout
@@ -387,6 +388,27 @@ class FilesystemTest(unittest.TestCase):
         with patch("urllib.request.urlopen", side_effect=TimeoutError("read timed out")):
             with self.assertRaisesRegex(TransientProviderError, "timed out"):
                 provider.complete([{"role": "user", "content": "hello"}], [], SEARCH)
+
+    def test_compatible_api_adapter_enforces_total_wall_clock_deadline(self):
+        provider = CompatibleChatProvider(
+            "https://api.example.test/v1",
+            "coding",
+            "test-key",
+            timeout=0.05,
+            api_style="portable",
+        )
+
+        def never_finishes_before_deadline(*_args, **_kwargs):
+            time.sleep(1)
+            raise AssertionError("wall-clock deadline did not interrupt the request")
+
+        started = time.monotonic()
+        with patch(
+            "urllib.request.urlopen", side_effect=never_finishes_before_deadline
+        ):
+            with self.assertRaisesRegex(TransientProviderError, "timed out"):
+                provider.complete([{"role": "user", "content": "hello"}], [], SEARCH)
+        self.assertLess(time.monotonic() - started, 0.5)
 
     def test_compatible_api_adapter_marks_http_503_as_transient(self):
         provider = CompatibleChatProvider(

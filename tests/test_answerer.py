@@ -153,6 +153,35 @@ class SharedAnswererTests(unittest.TestCase):
             self.assertEqual(result.model_calls, 2)
             self.assertNotIn(bundle.evidence_items[0].text, provider.calls[1][0][-1]["content"])
 
+    def test_null_content_uses_the_existing_single_format_repair(self):
+        with tempfile.TemporaryDirectory(dir="/private/tmp") as temporary:
+            bundle = self.build_bundle(temporary)
+            evidence_id = bundle.evidence_items[0].evidence_id
+            empty = answer_reply("")
+            empty["message"]["content"] = None
+            provider = Provider(
+                [
+                    empty,
+                    answer_reply(
+                        json.dumps(
+                            {
+                                "answer": "Japan",
+                                "citations": [evidence_id],
+                                "insufficient_evidence": False,
+                            }
+                        )
+                    ),
+                ]
+            )
+            result = SharedAnswerer(
+                provider=provider,
+                requested_model="fake-answerer",
+                sleeper=lambda _: None,
+            ).run(bundle)
+            self.assertEqual(result.answer, "Japan")
+            self.assertEqual(result.format_repairs, 1)
+            self.assertEqual(result.model_calls, 2)
+
     def test_unknown_citation_fails_after_one_repair(self):
         with tempfile.TemporaryDirectory(dir="/private/tmp") as temporary:
             bundle = self.build_bundle(temporary)
