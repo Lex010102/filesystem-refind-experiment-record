@@ -1,5 +1,7 @@
 import tempfile
 import unittest
+from contextlib import redirect_stderr
+from io import StringIO
 from pathlib import Path
 
 from fs_memory_lab.evidence import EvidenceValidationError
@@ -9,6 +11,7 @@ from fs_memory_lab.formal_batch import (
     prepare_formal_run,
     write_formal_status,
 )
+from fs_memory_lab.formal_batch_cli import _parser
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -58,6 +61,20 @@ class FormalBatchTests(unittest.TestCase):
                     run_id="safe-run",
                     orchestrator_commit="short",
                 )
+
+    def test_run_requires_an_explicit_batch_boundary(self):
+        parser = _parser()
+        base = [
+            "--output-root", "/private/tmp/formal-test",
+            "--run-id", "formal-test",
+            "run",
+        ]
+        with redirect_stderr(StringIO()), self.assertRaises(SystemExit):
+            parser.parse_args(base)
+        args = parser.parse_args([*base, "--through-block", "4"])
+        self.assertEqual(args.through_block, 4)
+        with redirect_stderr(StringIO()), self.assertRaises(SystemExit):
+            parser.parse_args([*base, "--through-block", "9"])
 
 
 if __name__ == "__main__":

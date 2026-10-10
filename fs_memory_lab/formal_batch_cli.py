@@ -55,7 +55,14 @@ def _parser() -> argparse.ArgumentParser:
     sub.add_parser("prepare", help="freeze the 280-key plan; no API")
     sub.add_parser("dry-run", help="verify inputs and schedule; no API")
     sub.add_parser("status", help="verify checkpoint without API or gold")
-    sub.add_parser("run", help="run or explicitly resume pending records via API")
+    run = sub.add_parser("run", help="run or explicitly resume through one batch boundary")
+    run.add_argument(
+        "--through-block",
+        type=int,
+        choices=range(1, 9),
+        required=True,
+        help="stop cleanly after the selected 5-question block (1-8)",
+    )
     sub.add_parser("verify", help="require 280/280 and perform pre-gold audit")
     sub.add_parser("finalize", help="after verify, load gold and score; no judge")
     return parser
@@ -77,7 +84,9 @@ def main(argv: list[str] | None = None) -> None:
         result = write_formal_status(**common)
     elif args.command == "run":
         result = run_formal(
-            **common, provider=CompatibleChatProvider.from_environment()
+            **common,
+            provider=CompatibleChatProvider.from_environment(),
+            through_block=args.through_block,
         )
     elif args.command == "verify":
         result = verify_formal_run(**common)

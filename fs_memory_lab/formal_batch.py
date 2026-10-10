@@ -65,6 +65,7 @@ FORMAL_EVALUATION_NAME = "evaluation.json"
 FORMAL_FINAL_AUDIT_NAME = "final-audit.json"
 FORMAL_QUESTION_BLOCK_SIZE = 5
 FORMAL_PLANNED_RECORDS = 280
+FORMAL_QUESTION_BLOCKS = 8
 
 CONDITION_METHODS: Mapping[str, tuple[str, str]] = {
     "E1": ("r1", "s1"),
@@ -203,6 +204,14 @@ def _manifest_body(
         },
         "question_blocks": blocks,
         "block_size": FORMAL_QUESTION_BLOCK_SIZE,
+        "execution_control": {
+            "through_block_required_per_run_invocation": True,
+            "allowed_blocks": list(range(1, FORMAL_QUESTION_BLOCKS + 1)),
+            "semantics": (
+                "scheduling-only upper boundary; does not change questions, order, "
+                "retrieval, answerer, evidence budget, caps, model, or scoring"
+            ),
+        },
         "stop_on_failure": True,
         "resume_policy": "explicit-new-run-invocation-revalidates-and-skips-only-completed-records",
         "gold_access_policy": (
@@ -563,8 +572,16 @@ def _exclusive_run_lock(run_root: Path):
 
 def run_formal(
     *, repo_root: Path, output_root: Path, run_id: str, provider: ChatProvider,
+    through_block: int,
 ) -> dict[str, Any]:
-    """Run or explicitly resume formal-v1 in its frozen 280-key order."""
+    """Run or resume through one frozen question-block boundary."""
+    if (
+        not isinstance(through_block, int)
+        or isinstance(through_block, bool)
+        or not 1 <= through_block <= FORMAL_QUESTION_BLOCKS
+    ):
+        raise EvidenceValidationError("through_block must be an integer from 1 to 8")
+    target_records = through_block * FORMAL_QUESTION_BLOCK_SIZE * len(CONDITION_IDS)
     root = Path(repo_root).resolve()
     output = Path(output_root).resolve()
     store, manifest, _ = _open_formal_run(repo_root=root, output_root=output, run_id=run_id)
@@ -582,9 +599,17 @@ def run_formal(
         status = _status_body(store, manifest)
         _append_event(
             events,
-            {"event": "formal_run_started", "at": _now(), "completed_before": status["completed_records"]},
+            {
+                "event": "formal_run_started",
+                "at": _now(),
+                "completed_before": status["completed_records"],
+                "through_block": through_block,
+                "target_records": target_records,
+            },
         )
         for sequence, key in enumerate(store.plan.execution_order, start=1):
+            if sequence > target_records:
+                break
             if store.load_completed(key) is not None:
                 continue
             _append_event(events, {"event": "record_started", "at": _now(), "sequence": sequence, **key.to_dict()})
@@ -706,8 +731,28 @@ def run_formal(
                 )
 
         final_status = write_formal_status(repo_root=root, output_root=output, run_id=run_id)
-        _append_event(events, {"event": "formal_api_phase_completed", "at": _now(), "completed_records": final_status["completed_records"]})
-        return final_status
+        if final_status["completed_records"] == FORMAL_PLANNED_RECORDS:
+            event = "formal_api_phase_completed"
+        else:
+            event = "formal_batch_target_reached"
+        _append_event(
+            events,
+            {
+                "event": event,
+                "at": _now(),
+                "completed_records": final_status["completed_records"],
+                "through_block": through_block,
+                "target_records": target_records,
+            },
+        )
+        return {
+            **final_status,
+            "execution_control": {
+                "through_block": through_block,
+                "target_records": target_records,
+                "target_reached": final_status["completed_records"] >= target_records,
+            },
+        }
 
 
 def _verify_completed_run(
