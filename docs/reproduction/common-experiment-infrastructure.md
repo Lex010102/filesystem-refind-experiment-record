@@ -2,7 +2,7 @@
 
 更新时间：2026-10-10
 
-状态：四个环节均已完成；2026-10-10 已由 E1 单题真实端到端 smoke 验证共享 Answerer、RunRecord 与自动评测。尚未启动完整 dev-6 或 main-40。
+状态：四个环节均已完成；B=16000 的完整 dev-6 × E1–E7 pilot 已 42/42 通过并冻结为 `formal-v1`。尚未启动 main-40。
 
 ## 1. 为什么需要这一层
 
@@ -88,7 +88,8 @@ python3 -m fs_memory_lab.evaluation_cli offline \
   --output '<新的 report.json 路径>'
 ```
 
-命令不调用 API，且拒绝覆盖已有报告。正式跑 main-40 前仍需完成 dev-6 的端到端预算冻结；阶段 1 只补齐共同基础设施，不代表已开始 E1–E7 正式批量实验。
+命令不调用 API，且拒绝覆盖已有报告。dev-6 已完成并把正式预算冻结为
+16,000 characters；main-40 必须遵守 `formal-v1` manifest，不得依据正式分数调参。
 
 ## 7. 验证范围
 
