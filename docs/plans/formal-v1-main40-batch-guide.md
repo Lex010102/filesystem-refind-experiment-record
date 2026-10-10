@@ -182,10 +182,77 @@ python3 -m fs_memory_lab.formal_batch_cli \
 会把 E1–E6 的起点向后轮换，以减轻固定条件总是在最前或最后的顺序偏差。E7 永远在
 本题 E2、E6 之后。
 
-40 题被标记成 8 个逻辑块，每块 5 题、35 条记录。逻辑块只用于检查点和进度报告，
-不是重新切题，也不会改变题目顺序。程序仍是串行的一条正式运行。
+40 题被固定成 8 个 batch，每个 batch 有 5 道题、35 条最终记录。一个 batch 内包含：
 
-### 7.2 每条记录的流程
+- 30 个单源 retrieval episode：5 题 × E1–E6；
+- 35 次统一 Answerer 作答：5 题 × E1–E7；
+- 5 个 E7 确定性融合操作；E7 不增加 retrieval episode。
+
+这里的 batch 是**预注册的检查点与分析单位**，不是重新抽样或重新切题。当前
+`formal-v1` runner 会串行越过 batch 边界继续执行，而不是在每 35 条后自动退出；这样
+可以减少 VPN、模型部署和环境重启造成的批间差异。每到边界都会写入
+`question_block_verified` 事件。不要为了人工分批而在一条记录执行到一半时强制终止。
+
+### 7.2 Batch 1–8 的固定划分
+
+括号中的 E 编号表示该题 E1–E6 轮换顺序的起点；轮换完整规则见下一小节。
+
+| Batch | 题目位置与 question ID | RunRecord 序号 | 完成后累计记录 | 下一题 |
+| --- | --- | ---: | ---: | --- |
+| B01 | 01 `conv-50-q023` (E1)；02 `conv-50-q081` (E2)；03 `conv-50-q051` (E3)；04 `conv-50-q027` (E4)；05 `conv-50-q022` (E5) | 001–035 | 35/280 | `conv-50-q151` (E6) |
+| B02 | 06 `conv-50-q151` (E6)；07 `conv-50-q152` (E1)；08 `conv-50-q016` (E2)；09 `conv-50-q024` (E3)；10 `conv-50-q043` (E4) | 036–070 | 70/280 | `conv-50-q052` (E5) |
+| B03 | 11 `conv-50-q052` (E5)；12 `conv-50-q008` (E6)；13 `conv-50-q002` (E1)；14 `conv-50-q054` (E2)；15 `conv-50-q090` (E3) | 071–105 | 105/280 | `conv-50-q037` (E4) |
+| B04 | 16 `conv-50-q037` (E4)；17 `conv-50-q069` (E5)；18 `conv-50-q145` (E6)；19 `conv-50-q038` (E1)；20 `conv-50-q013` (E2) | 106–140 | 140/280 | `conv-50-q010` (E3) |
+| B05 | 21 `conv-50-q010` (E3)；22 `conv-50-q014` (E4)；23 `conv-50-q154` (E5)；24 `conv-50-q103` (E6)；25 `conv-50-q128` (E1) | 141–175 | 175/280 | `conv-50-q068` (E2) |
+| B06 | 26 `conv-50-q068` (E2)；27 `conv-50-q046` (E3)；28 `conv-50-q040` (E4)；29 `conv-50-q033` (E5)；30 `conv-50-q087` (E6) | 176–210 | 210/280 | `conv-50-q070` (E1) |
+| B07 | 31 `conv-50-q070` (E1)；32 `conv-50-q088` (E2)；33 `conv-50-q125` (E3)；34 `conv-50-q032` (E4)；35 `conv-50-q005` (E5) | 211–245 | 245/280 | `conv-50-q117` (E6) |
+| B08 | 36 `conv-50-q117` (E6)；37 `conv-50-q143` (E1)；38 `conv-50-q042` (E2)；39 `conv-50-q021` (E3)；40 `conv-50-q047` (E4) | 246–280 | 280/280 | 无；进入 pre-gold verify |
+
+这个表不是手工制定的第二份题序；它逐项抄录自已通过 Stage 5B 校验的
+`formal-run-manifest.json → question_blocks` 和 `plan.json → execution_order`。
+
+### 7.3 每道题内部的条件轮换
+
+第 1–6 种轮换依次为：
+
+```text
+起点 E1：E1 → E2 → E3 → E4 → E5 → E6 → E7
+起点 E2：E2 → E3 → E4 → E5 → E6 → E1 → E7
+起点 E3：E3 → E4 → E5 → E6 → E1 → E2 → E7
+起点 E4：E4 → E5 → E6 → E1 → E2 → E3 → E7
+起点 E5：E5 → E6 → E1 → E2 → E3 → E4 → E7
+起点 E6：E6 → E1 → E2 → E3 → E4 → E5 → E7
+```
+
+之后每 6 题循环一次。这样 E1–E6 不会总有某一个条件固定最先运行；E7 仍保持最后，
+因为它必须复用同一道题的 E2 和 E6。
+
+### 7.4 每个 Batch 的验收点
+
+完成第 `b` 个 batch 后，`status` 应满足：
+
+| 字段 | 预期值 |
+| --- | --- |
+| `completed_records` | `35 × b` |
+| `pending_records` | `280 - 35 × b` |
+| `finished_questions` | `5 × b` |
+| `completed_blocks` | `b` |
+| `completed_by_condition.E1...E7` | 每个条件均为 `5 × b` |
+| `active_failed_keys` | `0` |
+
+同时核对：
+
+1. `events.jsonl` 已出现对应累计数的 `question_block_verified`；
+2. `next_key` 与上表“下一题”一致；B08 后应为 `null`；
+3. 若 `failure_attempts > 0`，必须保留并记录恢复原因，不能删除历史；
+4. runner 没有因 served model、store hash、citation 或 artifact 校验失败而停止；
+5. 不在 batch 之间修改环境中的 model alias、API style 或任何正式参数。
+
+若进程在 batch 中间因临时 API/VPN 问题停止，当前已完成且验证过的记录仍然有效。
+修复外部问题后使用同一条 `run` 命令恢复；不要等到凑齐 35 条才保存，因为每一条
+`RunRecord` 本身就是原子检查点。
+
+### 7.5 每条记录的流程
 
 对于 E1–E6：
 
@@ -210,7 +277,7 @@ python3 -m fs_memory_lab.formal_batch_cli \
   → 原子发布 E7 RunRecord
 ```
 
-### 7.3 进度查看
+### 7.6 进度查看
 
 随时可在另一个终端运行：
 
