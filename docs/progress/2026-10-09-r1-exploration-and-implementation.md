@@ -150,11 +150,11 @@ Agent v3 的 limits hash 为 `ed5f6b5077da7406b5fa2919a3c8100f4379cde23939e661f4
 
 | Cell | 状态 | Rounds | 文件工具调用 | Provider total tokens | 说明 |
 | --- | --- | ---: | ---: | ---: | --- |
-| E1/S1 | 找到并接受正确证据，但旧 v1 后续响应格式失败 | 失败前6次 completion | 已定位 session-24 | 已写 failure artifact | v3纠正机制完成后尚未重新调用真实 API |
+| E1/S1 | 成功并离线复验 | 12 | 4 | 85,117 | 找到 `D24:20–21`；2026-10-10 端到端 smoke 的共享 Answerer 另用 823 tokens |
 | E3/S2 | 成功并离线复验 | 6 | 5 | 42,236 | 找到原始 session-24 对话 |
 | E5/S3 | 成功并离线复验 | 3 | 2 | 88,349 | 找到 `dave.md > Japan` 整理事实 |
 
-这只是连通性测试，不能据此判断哪种存储效果更好。它能支持两个工程结论：R1 已能跨 S2/S3 真实运行；S3 的目录元数据可能显著增加单轮输入成本。E1 的真实 API 重试仍需在正式 dev-6 前完成。
+这只是连通性测试，不能据此判断哪种存储效果更好。三个 R1 条件现在都至少通过一题真实检索；E1 还进一步通过共享 Answerer、RunRecord 和自动评测。单题结果仍提示 S3 的目录元数据可能显著增加单轮输入成本，但必须在完整 dev-6 上验证。
 
 ## 10. 文件结构与各文件职责
 
@@ -205,6 +205,6 @@ python3 -m fs_memory_lab.r1_cli run-one \
 
 ## 12. 当前状态与下一步
 
-当前 R1 离线 harness 已完成，三种正式 store 和两套问题集均通过 preflight；E3、E5 真实 API smoke 已通过，E1 修复后的真实重试尚未执行。下一步应先完成 E1 单题重试，再用 dev-6 同时检查三 cells 的正确性、token 分布、最大值和 fuse 是否不触发。只有在 dev-6 完成后才冻结正式 main-40 的 evidence budget 和运行配置，不能根据 main-40 结果回头调参。
+当前 R1 harness 已完成，三种正式 store 和两套问题集均通过 preflight；E1、E3、E5 的真实 API smoke 均已通过，其中 E1 于 2026-10-10 完成共享 Answerer、RunRecord 与自动评测的完整链路。下一步应用完整 dev-6 同时检查三 cells 的正确性、token 分布、最大值和 fuse 是否不触发。只有在 dev-6 工程检查完成后才冻结正式 main-40 的 evidence budget 和运行配置，不能根据 main-40 结果回头调参。
 
 本轮验证：55项 R1/evidence 聚焦测试通过；标准库全仓 discovery 中实际执行的212项测试通过；受本机 pytest/Anaconda 启动环境影响的 Prompt 模块已用 environment-neutral runner 执行其中9个 cases，全部通过。未调用学校 API。
