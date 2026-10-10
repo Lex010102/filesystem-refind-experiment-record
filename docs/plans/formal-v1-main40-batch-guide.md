@@ -66,8 +66,8 @@
 ```text
 repository  /Users/wangwenqi/Desktop/memory bench
 output root /Users/wangwenqi/Desktop/memory bench/local-runs/formal-v1-main40
-run id      formal-v1-main40-run-01
-run root    /Users/wangwenqi/Desktop/memory bench/local-runs/formal-v1-main40/formal-v1-main40-run-01
+run id      formal-v1-main40-run-02
+run root    /Users/wangwenqi/Desktop/memory bench/local-runs/formal-v1-main40/formal-v1-main40-run-02
 ```
 
 不要用同一个 `run id` 做 smoke test，也不要同时启动两个正式进程。`run id` 一旦 prepare，
@@ -83,7 +83,7 @@ cd '/Users/wangwenqi/Desktop/memory bench'
 python3 -m fs_memory_lab.formal_batch_cli \
   --repo-root '/Users/wangwenqi/Desktop/memory bench' \
   --output-root '/Users/wangwenqi/Desktop/memory bench/local-runs/formal-v1-main40' \
-  --run-id 'formal-v1-main40-run-01' \
+  --run-id 'formal-v1-main40-run-02' \
   prepare
 ```
 
@@ -98,7 +98,7 @@ python3 -m fs_memory_lab.formal_batch_cli \
 关键产物：
 
 ```text
-formal-v1-main40-run-01/
+formal-v1-main40-run-02/
 ├── plan.json                 # 280 项固定顺序
 ├── formal-run-manifest.json  # formal-v1 与本调度器的绑定
 ├── status.json               # 当前进度
@@ -118,7 +118,7 @@ formal-v1-main40-run-01/
 python3 -m fs_memory_lab.formal_batch_cli \
   --repo-root '/Users/wangwenqi/Desktop/memory bench' \
   --output-root '/Users/wangwenqi/Desktop/memory bench/local-runs/formal-v1-main40' \
-  --run-id 'formal-v1-main40-run-01' \
+  --run-id 'formal-v1-main40-run-02' \
   dry-run
 ```
 
@@ -140,9 +140,12 @@ python3 -m fs_memory_lab.formal_batch_cli \
 通过后会生成 `dry-run.json`。真实 `run` 命令会再次验证该报告；缺失、被修改或失败的
 dry-run 都会阻止 API 跑批。
 
-本项目已在 2026-10-10 对正式 `formal-v1-main40-run-01` 执行这一命令。结果为 18/18
+本项目已在 2026-10-10 对正式 `formal-v1-main40-run-02` 执行这一命令。结果为 18/18
 检查通过、`0/280` 完成、`0` 次失败；具体机器身份和输出见
 `docs/progress/2026-10-10-stage5a-stage5b-formal-preparation.md`。
+
+`run-01` 没有执行任何 API 记录；在加入可验证的 batch 安全停止边界后由 `run-02`
+取代。旧空运行保留在本地作为审计历史，不删除、不与正式结果混用。
 
 ## 6. 正式开跑前的一次人工检查
 
@@ -172,8 +175,8 @@ python3 -c 'import os; print({k: bool(os.getenv(k)) for k in ("FSMEM_API_KEY", "
 python3 -m fs_memory_lab.formal_batch_cli \
   --repo-root '/Users/wangwenqi/Desktop/memory bench' \
   --output-root '/Users/wangwenqi/Desktop/memory bench/local-runs/formal-v1-main40' \
-  --run-id 'formal-v1-main40-run-01' \
-  run
+  --run-id 'formal-v1-main40-run-02' \
+  run --through-block 1
 ```
 
 ### 7.1 顺序
@@ -189,9 +192,10 @@ python3 -m fs_memory_lab.formal_batch_cli \
 - 5 个 E7 确定性融合操作；E7 不增加 retrieval episode。
 
 这里的 batch 是**预注册的检查点与分析单位**，不是重新抽样或重新切题。当前
-`formal-v1` runner 会串行越过 batch 边界继续执行，而不是在每 35 条后自动退出；这样
-可以减少 VPN、模型部署和环境重启造成的批间差异。每到边界都会写入
-`question_block_verified` 事件。不要为了人工分批而在一条记录执行到一半时强制终止。
+`formal-v1` runner 必须显式指定 `--through-block N`，并在目标 batch 的最后一条记录
+完成后干净退出。每到边界都会写入 `question_block_verified` 和
+`formal_batch_target_reached` 事件。下一批仍使用同一个 run ID，程序只跳过已经通过
+内容校验的完成记录。不要在一条记录执行到一半时强制终止。
 
 ### 7.2 Batch 1–8 的固定划分
 
@@ -210,6 +214,22 @@ python3 -m fs_memory_lab.formal_batch_cli \
 
 这个表不是手工制定的第二份题序；它逐项抄录自已通过 Stage 5B 校验的
 `formal-run-manifest.json → question_blocks` 和 `plan.json → execution_order`。
+
+每批使用相同基础命令，只改变目标边界：
+
+| Batch | 命令尾部 | 行为 |
+| --- | --- | --- |
+| B01 | `run --through-block 1` | 从 0 运行到 35/280 后退出 |
+| B02 | `run --through-block 2` | 验证并跳过 B01，运行到 70/280 后退出 |
+| B03 | `run --through-block 3` | 验证并跳过 B01–B02，运行到 105/280 后退出 |
+| B04 | `run --through-block 4` | 验证并跳过 B01–B03，运行到 140/280 后退出 |
+| B05 | `run --through-block 5` | 运行到 175/280 后退出 |
+| B06 | `run --through-block 6` | 运行到 210/280 后退出 |
+| B07 | `run --through-block 7` | 运行到 245/280 后退出 |
+| B08 | `run --through-block 8` | 运行到 280/280 后退出 |
+
+`--through-block` 只限定本次 invocation 的停止位置，不改变题目、顺序、检索、Answerer、
+B、cap、模型或评分。省略该参数会直接报错，避免误跑超过计划批次。
 
 ### 7.3 每道题内部的条件轮换
 
@@ -285,7 +305,7 @@ python3 -m fs_memory_lab.formal_batch_cli \
 python3 -m fs_memory_lab.formal_batch_cli \
   --repo-root '/Users/wangwenqi/Desktop/memory bench' \
   --output-root '/Users/wangwenqi/Desktop/memory bench/local-runs/formal-v1-main40' \
-  --run-id 'formal-v1-main40-run-01' \
+  --run-id 'formal-v1-main40-run-02' \
   status
 ```
 
@@ -321,7 +341,7 @@ API 阶段完成后先运行：
 python3 -m fs_memory_lab.formal_batch_cli \
   --repo-root '/Users/wangwenqi/Desktop/memory bench' \
   --output-root '/Users/wangwenqi/Desktop/memory bench/local-runs/formal-v1-main40' \
-  --run-id 'formal-v1-main40-run-01' \
+  --run-id 'formal-v1-main40-run-02' \
   verify
 ```
 
@@ -347,7 +367,7 @@ python3 -m fs_memory_lab.formal_batch_cli \
 python3 -m fs_memory_lab.formal_batch_cli \
   --repo-root '/Users/wangwenqi/Desktop/memory bench' \
   --output-root '/Users/wangwenqi/Desktop/memory bench/local-runs/formal-v1-main40' \
-  --run-id 'formal-v1-main40-run-01' \
+  --run-id 'formal-v1-main40-run-02' \
   finalize
 ```
 

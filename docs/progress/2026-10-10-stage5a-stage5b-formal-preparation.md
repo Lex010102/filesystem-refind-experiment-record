@@ -163,3 +163,33 @@ fault。这个问题与 Stage 5 代码逻辑无关，因此没有临时安装依
 5. 失败时保留记录并用相同命令显式恢复；
 6. 280/280 后先 `verify`，最后才 `finalize`。
 
+## 8. Batch 安全停止边界与 `run-02`
+
+正式 API 尚未开始时，发现最初调度器虽然记录 8 个逻辑 block，却会连续越过边界，
+不能可靠满足“每完成一个 batch 就停止、自查、再继续”的运行要求。没有采用监控进程后
+强杀或在 API 调用中途发送中断信号，因为那会产生竞态和不完整请求。
+
+解决方案是在调度层加入必填的 `run --through-block N`：它只限定本次 invocation 的
+最大计划序号，在第 `35 × N` 条原子 RunRecord 发布并核验后退出；不改变任何被冻结的
+检索、Answerer、B、cap、模型、题序或评分规则。18/18 相关测试通过，调度更新 commit
+为：
+
+```text
+d856224
+```
+
+由于正式运行 manifest 会绑定调度器文件 SHA 和 Git commit，原 `run-01` 不能在代码
+变化后继续使用。它仍是 `0/280`、零 API 结果，保留为历史记录；不删除，也不与正式
+结果混用。新的活动运行是：
+
+| 项目 | 值 |
+| --- | --- |
+| run ID | `formal-v1-main40-run-02` |
+| plan ID | `plan-f3ff203e4356dcdaa98ea21ef1d12b1e69dd8ff93912eb3c03ba1df52adaa81a` |
+| formal run manifest ID | `formal-run-dcc281d3380749f8e0a88a82d78b754850decb3a476f9cd4cbb66ebea452ae57` |
+| dry-run ID | `dry-run-9a7f8e9ab924fea3dae0b579c6d9b5d0c65782b21b2daef301c9c862e6584e34` |
+| dry-run checks | 18/18 passed |
+| initial status | 0/280、0 failures、next E1/`conv-50-q023` |
+
+后续 B01–B08 分别使用 `--through-block 1` 至 `--through-block 8`。每次退出后先核对
+累计记录、每条件计数、完成题数、block 数、失败历史和下一题，再开始下一批。
