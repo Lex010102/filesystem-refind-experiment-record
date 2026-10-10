@@ -11,6 +11,7 @@
 - `experiments/locomo-conv50-v1/formal-v1/manifest.json`
 - manifest ID：`formal-337ebb2061b34493a2e81cad19453eb85481d82a646ce4c40a750e2222d08925`
 - 实现快照 Git commit：`e2633826614fad8fdece74bc66150127f3a33082`
+- 冻结声明 Git commit：`a4094a73e2ac7341910e474bb1df009e434f43d7`
 - Git release tag：`formal-v1`
 
 manifest 保存了完整 40 题顺序和 280 个执行键，并逐项固定 store、prompt、
@@ -18,6 +19,19 @@ manifest 保存了完整 40 题顺序和 280 个执行键，并逐项固定 stor
 仓库重新计算这些值；任一文件、题目或协议漂移都会 fail closed。
 
 本次操作没有调用 API，也没有运行任何 main-40 题目。
+
+这里使用两个 Git commit 是有意设计的：第一个 commit 固定实际运行实现；第二个
+commit 保存引用第一个 commit 的 manifest 和说明文档。这样避免“一个文件既要写入
+自己的 commit SHA、又要参与生成该 SHA”的自引用问题。`formal-v1` tag 指向第二个
+冻结声明 commit，而 manifest 中的 `implementation_git_commit` 指向第一个实现快照。
+
+## 1.1 文档与 manifest 的职责
+
+- 本文用于人类阅读、报告撰写和后续溯源；
+- `manifest.json` 是机器可读的唯一权威配置；
+- 若本文与 manifest 出现不一致，以已通过 verifier 的 manifest 为准，并只能通过
+  新的文档更正提交解释，不能原地修改 formal-v1 的实验配置；
+- 本文不保存 API key、VPN 配置或 main-40 结果。
 
 ## 2. Pilot 通过依据
 

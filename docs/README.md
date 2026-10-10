@@ -15,6 +15,7 @@
 - [2026-10-10 阶段 2 E1 真实单题测试](progress/2026-10-10-stage2-e1-real-smoke.md)：E1 检索、共享 Answerer、RunRecord 与离线评测的真实端到端结果。
 - [2026-10-10 阶段 3 dev-6 检索预算校准](progress/2026-10-10-stage3-dev6-retrieval.md)：从 B=6000/10000 的失败门槛到 B=16000 的 36/36 最终冻结依据。
 - [2026-10-10 阶段 4 dev-6 × E1–E7 pilot](progress/2026-10-10-stage4-dev6-e1-e7-pilot.md)：B=16000 下 42/42 Answerer、E7、评分和结构审计全部通过。
+- [2026-10-10 formal-v1 冻结过程](progress/2026-10-10-formal-v1-freeze-process.md)：记录 B=6000→10000→16000、空证据 gate、审计口径、超时、模型/并发/评分取舍、双 Git commit 及问题解决过程。
 
 ## Data
 
