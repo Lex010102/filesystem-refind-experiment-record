@@ -7,6 +7,7 @@
 - [一个月实验地图](plans/one-month-experiment-map.md)：七个实验条件、数据预处理、检索、评测、错误归因、逐日安排和完成标准。
 - [`formal-v1` main-40 正式跑批指南](plans/formal-v1-main40-batch-guide.md)：Stage 5A/5B、280 条正式运行、检查点/恢复、pre-gold 审计、评分和结果分析的完整操作地图。
 - [B3 Full Context 独立实验操作方案](plans/full-context-baseline-v1-operation-plan.md)：30 个 S1 会话正文（含 BLIP captions）的确定性包装、context-window 预检、独立 runner、main-40 跑批、评分、成本和失败恢复规则。
+- [LLM-as-Judge v1 评分协议](plans/llm-as-judge-v1-protocol.md)：E1–E7 匿名三档语义 Judge、strict/partial/soft 指标与断点跑批规则。
 
 ## Progress
 
