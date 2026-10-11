@@ -24,6 +24,7 @@
 - [2026-10-11 formal-v1 main-40 评分结果](progress/2026-10-11-formal-v1-scoring-results.md)：280 条官方 LoCoMo token/stem F1、分类结果、证据命中、token/call 效率、运行诊断和初步发现。
 - [2026-10-11 B3 Full Context 准备记录](progress/2026-10-11-full-context-preparation.md)：无检索完整上下文 baseline 的确定性源包、runner、容量估计、安全修正、测试与正式开跑门槛。
 - [2026-10-12 LLM-as-Judge v1 完成记录](progress/2026-10-12-llm-judge-v1-completion.md)：280/280 三档匿名语义评分、8 批审计、Strict/Partial/Soft 汇总和公开结果归档。
+- [2026-10-11 至 2026-10-12 两日工作总记录](progress/2026-10-11-to-12-two-day-work-summary.md)：正式 280 条跑批、LoCoMo 评分、Full Context 离线准备、LLM Judge、分析与报告规划的“做了什么—怎么做—为什么做”总索引。
 
 ## Analysis
 

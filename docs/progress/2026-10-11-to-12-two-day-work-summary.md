@@ -1,0 +1,475 @@
+# 2026-10-11 至 2026-10-12 两日工作总记录
+
+本文汇总 2026-10-11 至 2026-10-12 的研究与工程工作，集中回答三件事：**做了什么、怎么做、为什么做**。详细运行日志、逐题结果和协议仍以各专项文档与结果目录为准；本文是以后写报告、向师兄汇报和追溯实验版本时使用的总入口。
+
+这两天项目从“正式实验已经冻结、准备开始跑批”推进到：
+
+- E1–E7 的 40 道正式题全部完成，共 280 条最终回答；
+- LoCoMo 官方离线评分、证据指标和效率指标全部生成；
+- B3 Full Context baseline 的源包、程序和离线门禁全部完成，但尚未真实联网运行；
+- 280 条回答的匿名 LLM-as-Judge 补充评分全部完成；
+- 形成了面向四个研究问题的数据分析框架和 25–30 页报告写作思路；
+- 代码、文档、正式结果与校验文件均已归档到 GitHub，凭据和本机运行临时文件未上传。
+
+## 1. 实验对象与条件回顾
+
+本轮实验使用 LoCoMo `conv-50` 的冻结 main-40 问题集。40 道题由 category 1–4 的 10、10、7、13 题组成。七个条件共享同一 Answerer、问题顺序、模型和证据预算，差异只来自存储与检索方案。
+
+| 条件 | 存储 | 检索/融合 | 主要研究作用 |
+|---|---|---|---|
+| E1 | S1：平铺原始 session 文件 | R1：Filesystem 风格 agentic 文件检索 | 原始文件基线 |
+| E2 | S1：平铺原始 session 文件 | R2：ReFind-style 原始聊天检索 | 原始聊天增强检索 |
+| E3 | S2：文件夹化原始 session 文件 | R1 | 检验目录组织是否帮助文件检索 |
+| E4 | S2：文件夹化原始 session 文件 | R2 | 检验目录与增强检索的组合 |
+| E5 | S3：LLM 整理的文件系统 | R1 | Filesystem 主条件 |
+| E6 | S3：LLM 整理的文件系统 | R3：面向 curated memory 的 R2 变体 | 检验整理记忆上的增强检索 |
+| E7 | E2 原始证据 + E6 整理证据 | 确定性双源融合，不重新检索 | 检验原始聊天能否补回整理损失 |
+
+正式版本继续遵守 `formal-v1` 的冻结配置：证据预算为每路 16,000 characters；E1/E3 的 R1 上限为 20 rounds，E5 为 40 rounds；R2/R3 上限为 4 actions；requested model 为 `coding`，实际 served model 必须是 `qwen3.8:27b`；并发为 1。正式结果出现好坏都不反向修改这些参数。
+
+## 2. 10 月 11 日：完成正式主实验
+
+### 2.1 做了什么
+
+完成 `formal-v1-main40-run-02`：
+
+- 40 道问题 × E1–E7，共 280/280 条最终 RunRecord；
+- E1–E7 各 40 条；
+- B01–B08 共 8 个批次全部通过，每批为 5 题 × 7 条件 = 35 条；
+- 40/40 个问题块完整；
+- 活动失败键为 0；
+- requested/served model 全程一致；
+- 最终 citation validity 为 1.0，所有存储查询前后 hash 不变。
+
+### 2.2 怎么做
+
+正式运行采用“冻结协议 + 小批次 + 检查点恢复”的方式：
+
+1. 按固定题目顺序串行运行，每条记录独立保存；
+2. 每完成 5 道题，对累计 35 条结果做 batch audit；
+3. 每个通过的批次生成 `batch-XX.PASSED`，再进入下一批；
+4. API 超时或模型工具协议不合规时，只保存该失败尝试；
+5. 恢复前重新验证已有 RunRecord，已完成项直接跳过，只重跑失败项；
+6. 通过唯一 `run.lock` 保证任何时刻只有一个 runner，防止重复计数；
+7. 280 条完成后执行 pre-gold audit，再执行纯离线评分和最终审计。
+
+运行期间保留了 7 次失败尝试，主要是 API/超时和模型工具协议违规。例如 E5 `conv-50-q005` 曾在 R1 provider round 6 输出不兼容动作，触发 `EvidenceValidationError`。处理时没有改变 prompt、预算、cap、模型或题目，只重试当前记录并从检查点继续。最终所有失败均被恢复，没有遗留活动失败。
+
+### 2.3 为什么这样做
+
+正式实验必须同时满足“结果完整”和“条件公平”。如果失败后从头重跑，容易重复计费、覆盖已完成结果或混入不同版本；如果临时放宽 cap 或改 prompt，则七个条件无法公平比较。检查点、不可变记录、单 runner 和逐批审计让 280 条结果既能在不稳定网络下完成，又保持冻结版本不变。
+
+### 2.4 完成后怎样核验
+
+`formal-pre-gold-verify.json` 检查并通过了以下内容：
+
+- 280 条记录和七个条件的数量完整；
+- requested/served model 一致；
+- citation 均指向对应 EvidenceBundle 的真实 evidence ID；
+- 查询前后 store hash 不变；
+- RunRecord 与已发布 retrieval artifact 一致；
+- E7 只复用 E2 和 E6 的 EvidenceBundle，没有暗中重新检索；
+- E7 没有重复计算 E2/E6 的 Answerer 成本；
+- API 阶段没有加载 gold 语义内容。
+
+详细记录见：
+
+- [formal-v1 main-40 完成记录](2026-10-11-formal-v1-main40-completion.md)
+- [formal-v1 main-40 评分结果](2026-10-11-formal-v1-scoring-results.md)
+
+正式结果位置：
+
+- 本地权威运行：`local-runs/formal-v1-main40/formal-v1-main40-run-02/`
+- GitHub 归档：`experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/`
+
+## 3. 10 月 11 日：完成 LoCoMo 官方评分与效率统计
+
+### 3.1 做了什么
+
+对 280 条冻结回答完成纯离线评分，并生成：
+
+- LoCoMo 官方 category-aware token/stem Precision、Recall 和 F1；
+- C1–C4 分类结果；
+- Evidence Recall、Any-hit、All-hit 和 citation validity；
+- retrieval/answer tokens、总 tokens、model calls；
+- rounds/actions、cap、空证据、budget-skip 和 insufficient answer；
+- `evaluation.json` 与 `final-audit.json`，最终审计状态为 `passed`。
+
+主结果如下：
+
+| 条件 | Token Precision | Token Recall | 官方 Token F1 | Evidence Recall | 总 tokens |
+|---|---:|---:|---:|---:|---:|
+| E1 | 0.3074 | 0.6464 | 0.3646 | 0.8092 | 6,072,586 |
+| E2 | 0.3661 | 0.6342 | 0.3972 | 0.7325 | 737,484 |
+| E3 | **0.3483** | 0.6973 | **0.4146** | 0.8202 | 6,008,177 |
+| E4 | 0.3456 | 0.6456 | 0.3971 | 0.7303 | **736,746** |
+| E5 | 0.2907 | **0.7310** | 0.3488 | **0.9254** | 11,764,087 |
+| E6 | 0.3020 | 0.6592 | 0.3594 | 0.8158 | 1,575,125 |
+| E7 | 0.2948 | 0.6548 | 0.3380 | 0.8860 | 2,259,475 |
+
+七个条件总计使用 29,153,680 个 provider-reported deployment tokens。其中 retrieval 为 28,076,209，Answerer 为 1,077,471。
+
+### 3.2 怎么做
+
+评分使用冻结的 LoCoMo 官方 evaluator：
+
+- 官方仓库 commit：`cbfbc1dba6bc53d00625212a0f22d55ffee7c1fc`；
+- `task_eval/evaluation.py` SHA-256：`8e3be5d57ff2ff9ec5cd05939592f468c5f3f1fd95d13e431932bdf6bf0fd6fd`；
+- NLTK 版本：`3.8.1`。
+
+Token 指标先执行小写化、去标点/冠词和 Porter stemming，再对候选答案与参考答案计算 token 重合。C1 多答案和 C3 分号答案遵守官方 category-aware 规则。表中的 Precision/Recall 是逐题诊断值的平均；F1 是官方逐题 F1 的平均，不能使用表中聚合后的 P/R 再反算。
+
+该阶段完全离线，不重新调用学校 API，也不重新生成任何答案。
+
+### 3.3 为什么做
+
+官方 F1 是与 LoCoMo 及已有论文最容易复核的主指标；Evidence Recall 和 token/call 数据则用于区分：
+
+- 是没有找到证据；
+- 找到了证据但 Answerer 没用好；
+- 还是方法虽然有效，却付出了过高的运行成本。
+
+当前最重要的描述性观察是：
+
+1. E3 的官方 F1 最高，说明文件夹目录对 R1 在这组题上可能有帮助；
+2. E2 相对 E1 节省 87.86% token，同时 F1 上升；
+3. E6 相对 E5 节省 86.61% token，同时 F1 略升；
+4. E5 的 Evidence Recall 最高，但成本最高且最终 F1 并不高；
+5. E7 提高了相对 E2/E6 的证据覆盖，却没有提高官方 F1。
+
+这些结果说明“找到更多证据”不等于“最终回答更好”，效果和成本必须一起报告。
+
+## 4. 10 月 11 日：明确评分、论文和新增 baseline 的方向
+
+### 4.1 评分口径的决定
+
+确定论文采用两层评分：
+
+1. **主评分**：LoCoMo 官方 token/stem F1；
+2. **补充评分**：匿名 LLM-as-Judge 的语义 Strict/Partial/Soft。
+
+这样安排的原因是：token F1 可重复、便于与论文对照，但会低估同义改写；LLM Judge 更接近“意思是否正确”，但自身存在模型偏差，不能替代官方主指标。
+
+### 4.2 与两篇论文的对照
+
+重新梳理了 Filesystem Memory 与 ReFind 的实验和分析方式，并把可借鉴内容写入后续分析框架。当前结果与论文方向较一致的部分包括：
+
+- 结构化目录在 agentic 文件检索下可能有帮助；
+- 证据召回更高不保证答案更好；
+- 受控检索能显著减少 token；
+- 不存在一个在所有效果与成本指标上都占优的方法。
+
+当前不完全一致或尚未复现的部分包括：
+
+- 本项目的 ReFind-style 检索没有在所有语义指标上稳定超过 R1；
+- 双源融合没有带来稳定的 Strict 提升；
+- 尚未做 one-shot 与 iterative、4/6/8 actions 的严格消融，因此不能声称完整复现 ReFind 的多轮收益。
+
+具体原文章节、页码和可借鉴分析见 [E1–E7 结果分析框架与论文写作地图](../analysis/e1-e7-results-analysis-framework.md)。
+
+### 4.3 报告结构与向师兄汇报
+
+参考根目录的 `sample report.pdf`，形成了正文约 28 页的报告框架：Introduction 3 页、Background/Related Work 4 页、System Design/Methodology 7 页、Experimental Design 4 页、Results/Analysis 7 页、Discussion/Limitations 2 页、Conclusion 1 页，参考文献约 2 页。
+
+报告不按 E1、E2……逐个写章节，而按四个研究问题组织结果。这样做是为了让论文主线从“跑了七组实验”提升为“存储组织、LLM 整理、检索增强和双源融合分别在何时有效、为何失效、付出多少成本”。同时整理了包含 E1–E7 条件、核心分数和初步结论的师兄汇报口径。
+
+`sample report.pdf` 是第三方参考材料，只用于观察结构和篇幅，不是本项目产物，因此没有上传 GitHub。
+
+### 4.4 新 baseline 的取舍
+
+师兄建议加入 A-MEM、Mem0 和 Full Context 三个 baseline。综合一个月工期、实现成本和比较价值后，当前只实施 **B3 Full Context**：
+
+- A-MEM 和 Mem0 涉及外部框架适配、图/记忆写入流程、模型与检索配置对齐，暂缓；
+- Full Context 无需新增记忆算法，能够直接回答“如果把所有原始信息都给模型，结果和成本如何”；
+- Full Context 可作为诊断信息不可见、检索失败和长上下文注意力问题的参照。
+
+“只做 Full Context”是当前范围决定，不代表 A-MEM/Mem0 已经实现或运行。
+
+## 5. 10 月 11 日：完成 B3 Full Context 的离线实现
+
+### 5.1 做了什么
+
+新增独立 `B3-FullContext` baseline：
+
+- 从冻结 S1 确定性构造完整上下文源包；
+- 保留 30 sessions、568 source turns 和 125 个 BLIP captions；
+- 实现独立 EvidenceBundle、runner、CLI、检查点、run lock、失败记录、批次审计和评分；
+- 准备 dev-6 和 main-40 两套运行 manifest；
+- 完成离线 prepare/dry-run 和故障注入测试。
+
+固定源包位于：
+
+`experiments/locomo-conv50-v1/baselines/b3-full-context-v1/`
+
+| 项目 | 固定结果 |
+|---|---:|
+| sessions | 30 |
+| source turns | 568 |
+| BLIP caption turns | 125 |
+| evidence characters | 108,960 |
+| evidence text SHA-256 | `12c3041b32cd7ff32bf6c913b95992cebf48ed3bd1d28ff9f1cdd29c8e927738` |
+
+### 5.2 怎么做
+
+Full Context 的每道题采用以下流程：
+
+```text
+当前问题 + 30 个 S1 原始 session 正文
+                 ↓
+       同一个共享 Answerer
+                 ↓
+          回答 + ev-* citations
+```
+
+它不先搜索，不使用 R1/R2/R3、BM25、Top-K、reranking、上下文扩展或检索 Agent；`tools=[]`。每道题都重新发送同一份完整聊天，只替换问题。
+
+为保证公平，模型只读取经过 source attribution 验证的聊天正文，不读取 S1 的 YAML frontmatter 和纯路由标题；不总结、不改写、不去重、不截断。正式 citation 继续使用共享 Answerer 支持的内容寻址 `ev-*`，`FC-S01` 至 `FC-S30` 只作为人工别名保存于 metadata。
+
+离线检查发现：dev-6 最长请求约 118,939 characters，估计为 33,983–41,013 input tokens；加 2,048-token 回答预留后约为 36,031–43,061 tokens。因此 32k context 可能不足，64k 更安全，但学校部署的真实窗口必须通过 API 返回确认。
+
+### 5.3 为什么做
+
+Full Context 是“没有记忆、没有检索、全部信息可见”的参照。它用于回答：
+
+- E1–E7 的错误是否主要来自检索不到信息；
+- 即使所有信息可见，长上下文噪声是否仍会让 Answerer 出错；
+- 省去检索是否值得每题重复发送完整上下文的巨大成本。
+
+### 5.4 工程问题与解决
+
+构建过程中处理了以下关键问题：
+
+- `FC-Sxx` 不符合共享 Answerer 的引用 schema，改用正式 `ev-*`；
+- audit 中动态时间会破坏重复验证的幂等性，改为纯确定性身份；
+- portable adapter 实际不发送 `max_completion_tokens` 和 `reasoning_effort`，manifest 按 wire 真实值记录；
+- immutable record/failure 使用临时文件、`fsync` 和同目录 hard link 原子发布；
+- events 使用文件锁和短写循环，避免崩溃或并发交错；
+- batch 完成必须是题目顺序上的连续 block，不能只看任意完成数量；
+- main-40 之前增加机器强制的 q079 preflight 与 dev-6 pilot 门禁。
+
+测试结果：
+
+- `tests.test_full_context`：8/8 通过；
+- 全仓库 `unittest discover`：325 项通过；
+- 既有 R1 prompt 的 8 个额外断言 case 全部通过；
+- `formal-v1` verify 通过，证明新增 baseline 没有改变原 E1–E7 冻结实验。
+
+### 5.5 当前边界
+
+Full Context **尚未真实联网运行**：
+
+- dev-6 为 0/6，仅完成离线准备；
+- main-40 为 0/40，仅完成离线准备；
+- q079 真实 API context preflight 尚未执行；
+- 当前没有 Full Context 的真实分数或 provider token。
+
+详细说明见：
+
+- [B3 Full Context 准备记录](2026-10-11-full-context-preparation.md)
+- [B3 Full Context 操作与跑批指南](../plans/full-context-baseline-v1-operation-plan.md)
+
+## 6. 10 月 11–12 日：构建并完成 LLM-as-Judge v1
+
+### 6.1 为什么增加 Judge
+
+官方 token F1 要求候选回答与参考答案在词面上重合。正确同义改写可能被低估，带有部分正确事实的答案也难以区分“完全错误”和“部分正确”。因此增加一个补充语义 Judge，但不修改 280 条原答案，也不替代官方 F1。
+
+### 6.2 评分方案
+
+每条答案只由**同一个匿名 Judge 判断一次**。Judge 只看到问题、参考答案和候选答案，不看到 E1–E7、存储方法、检索方法、EvidenceBundle 或 token F1。
+
+Judge 输出一个标签，再派生两个评分：
+
+| 标签 | 含义 | Strict | Soft |
+|---|---|---:|---:|
+| `correct` | 语义完整正确、无实质矛盾 | 1 | 1.0 |
+| `partial` | 有必要事实正确，但存在遗漏或实质问题 | 0 | 0.5 |
+| `incorrect` | 核心答案错误、拒答或未覆盖必要信息 | 0 | 0.0 |
+
+因此不是两个 LLM，也不是先打 partial 再进行第二次评分：
+
+- `Strict Accuracy = correct / 40`；
+- `Partial Rate = partial / 40`；
+- `Soft Semantic Score = (correct + 0.5 × partial) / 40`。
+
+### 6.3 怎么实现与运行
+
+新增：
+
+- `fs_memory_lab/judge_v1.py`；
+- `fs_memory_lab/judge_v1_cli.py`；
+- `tests/test_judge_v1.py`；
+- [LLM-as-Judge v1 评分协议](../plans/llm-as-judge-v1-protocol.md)。
+
+运行仍采用 8 batches × 35 条：固定输入顺序、串行、temperature=0、精确 JSON schema、最多一次仅修格式的 repair、有限 API retry、逐条内容寻址和原子发布、逐批 audit/PASSED、最后 verification 与 final audit。served model 不等于 `qwen3.8:27b` 时直接失败。
+
+实现时发现 initial validator 错把 Git implementation commit 当成 64 位 SHA-256；Git commit 实际是 40 位十六进制。随后增加独立 `_COMMIT` 规则并加入回归测试。修复没有改变 Judge prompt、标签、输入、模型或得分映射。
+
+学校 API key 只进入评分进程环境，不显示、不写入项目文件，也不进入公开归档。
+
+### 6.4 完成结果
+
+`llm-judge-v1-main40-run-01` 已完成：
+
+- 280/280 judgments；
+- E1–E7 各 40 条；
+- 8/8 batches passed；
+- 活动失败为 0；
+- format repair 为 0；
+- verification 和 final audit 均为 `passed`；
+- correct 168、partial 57、incorrect 55；
+- Judge 总 tokens 为 182,951。
+
+| 条件 | correct | partial | incorrect | Strict Accuracy | Partial Rate | Soft Semantic Score | Judge tokens |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| E1 | 24 | 9 | 7 | 0.6000 | 0.2250 | 0.7125 | 26,052 |
+| E2 | 20 | 11 | 9 | 0.5000 | 0.2750 | 0.6375 | 23,668 |
+| E3 | 25 | 9 | 6 | **0.6250** | 0.2250 | **0.7375** | 23,889 |
+| E4 | 25 | 6 | 9 | **0.6250** | 0.1500 | 0.7000 | 24,337 |
+| E5 | 25 | 8 | 7 | **0.6250** | 0.2000 | 0.7250 | 29,249 |
+| E6 | 25 | 5 | 10 | **0.6250** | **0.1250** | 0.6875 | 26,931 |
+| E7 | 24 | 9 | 7 | 0.6000 | 0.2250 | 0.7125 | 28,825 |
+
+本地与公开位置：
+
+- 本地权威运行：`local-runs/llm-judge-v1/llm-judge-v1-main40-run-01/`
+- GitHub 归档：`experiments/locomo-conv50-v1/results/llm-judge-v1-main40-run-01/`
+- 详细记录：[LLM-as-Judge v1 完成记录](2026-10-12-llm-judge-v1-completion.md)
+
+Judge 结果归档包含 280 个逐题 JSON、8 组 audit/PASSED/log、manifest、events、status、results、verification、final-audit 和逐文件 `SHA256SUMS`。313 个归档文件的 SHA-256 已复验通过，凭据扫描未发现 API key。
+
+## 7. 10 月 12 日：建立结果分析与论文写作地图
+
+### 7.1 做了什么
+
+新增独立文档 [E1–E7 结果分析框架与论文写作地图](../analysis/e1-e7-results-analysis-framework.md)，统一记录：
+
+- 七个实验条件和两套评分；
+- 四个核心研究问题；
+- 逐题、分类别、证据、成本和可靠性分析；
+- 与 Filesystem Memory、ReFind 论文的对应位置；
+- 推荐表格、图和案例选择方式；
+- 哪些结论现在可以写，哪些需要进一步实验。
+
+### 7.2 为什么做
+
+主实验已经看到结果，如果此时只挑有利数字，容易形成 post-hoc 解释。分析框架先固定“要比较什么、如何验证、结论边界是什么”，让报告不仅给出排名，还能回答机制问题。
+
+四个核心研究问题确定为：
+
+1. 文件组织方式何时有用？
+2. 增强检索能否修复 Filesystem 的检索错误？
+3. 错误发生在写入、检索还是回答阶段？
+4. 保留原始聊天作为第二检索源是否值得？
+
+### 7.3 准备采用的分析方法
+
+- 关键条件的逐题配对差值与 win/tie/loss；
+- correct/partial/incorrect 标签转移矩阵；
+- C1–C4 分类别分析；
+- token F1 与 Judge Strict/Soft 的一致性和冲突案例；
+- retrieval bottleneck 与 utilization bottleneck 分解；
+- Evidence Recall 与最终答案质量的关系；
+- tokens–F1 和 tokens–Soft Pareto 图；
+- cap、空证据、budget-skip、重试和 store hash 的工程可靠性分析；
+- paired bootstrap confidence interval 与 McNemar exact test；
+- 按固定规则人工复查 12–16 个代表性 trace。
+
+### 7.4 当前尚未完成的分析
+
+- P0：逐题合并表、bootstrap、转移矩阵和正式图表尚未生成；
+- P1：12–16 个案例的人工 trace 复查尚未执行；
+- P2：R2/R3 action cap 4/6/8、one-shot/iterative、更多 conversation 与 Judge 重复性属于可选扩展。
+
+这些工作属于下一阶段，不能把分析计划写成已经得到的实验结论。
+
+## 8. 当前结果可以支持的初步结论
+
+两套评分合起来看，当前可以谨慎写出以下描述性结论：
+
+1. **E3 最稳定**：官方 F1 最高，Judge Soft 也最高；S2 的目录结构对 R1 可能有实际帮助。
+2. **目录收益依赖检索器**：E2 与 E4 的官方 F1 几乎一致，说明 R2 下目录本身没有明显词面收益；但 E4 的语义 Strict/Soft 好于 E2。
+3. **增强检索的主要优势目前是成本**：E2/E4/E6 的 token 明显低于各自 R1 对照，但质量收益随存储和评分口径变化，并非总是提升。
+4. **高证据召回不等于高答案质量**：E5 的 Evidence Recall 最高，官方 F1 和 Judge Soft 却都不是最高，说明瓶颈可能在噪声、整理质量或证据利用。
+5. **双源融合是部分互补而非全面胜利**：E7 的 Evidence Recall 与 Soft 较高，但官方 F1 没有超过 E2/E6，Strict 也没有稳定提升；它可能同时恢复信息和引入干扰。
+6. **单一指标不足以解释结果**：例如 E2 的 token F1 高于 E1，但 Strict/Soft 低于 E1；E7 的 token F1 较低，却有高于 E2/E6 的 Soft。论文必须同时报告词面、语义、证据和成本。
+
+当前样本只有一个 conversation、40 道题和一次 Judge 运行，因此这些都是 empirical/descriptive findings，不能直接声称具有普遍因果性。
+
+## 9. 两天内解决的主要问题
+
+| 问题 | 处理方式 | 为什么这样处理 |
+|---|---|---|
+| API 超时、偶发协议违规导致正式跑批中断 | 只重试失败记录，检查点续跑，已完成记录复验后跳过 | 保持 formal-v1 冻结协议并避免重复计数 |
+| 长时间运行可能启动重复进程 | 唯一 run lock、单进程、逐批 PASSED 门禁 | 防止相同问题被并发重复调用 |
+| 只看 F1 无法识别语义等价 | 新增匿名三档 Judge，但保留 F1 为主指标 | 同时保留可复现性与语义解释力 |
+| Judge 容易看到方法身份而产生偏差 | 输入只含 question/reference/candidate | 让七个条件接受同一匿名标准 |
+| Judge implementation commit 校验错误 | 64-hex SHA-256 与 40-hex Git commit 分开校验 | 修复程序错误而不改评分协议 |
+| Full Context 的 `FC-Sxx` 与共享引用 schema 不兼容 | 正式使用 `ev-*`，人工别名只放 metadata | 复用统一 Answerer 与 citation validator |
+| Full Context 可能超过模型上下文窗口 | 固定 q079 近最坏情况 preflight，再完成 dev-6 gate | 在消耗 main-40 前先验证部署能力 |
+| 动态 audit 字段破坏可复现性 | audit 身份改为确定性内容 | 同一输入重复验证必须得到同一结果 |
+| 运行结果可能包含凭据或本机临时状态 | key 只进进程环境；归档排除 secret、PID、lock，并做扫描 | GitHub 只保存科学结果和可公开证据 |
+| 看到结果后容易选择性分析 | 单独冻结分析框架、RQ 和统计方法 | 限制 post-hoc 叙事，便于论文复核 |
+
+## 10. 两天形成的主要文件
+
+### 10.1 正式 E1–E7
+
+- `experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/`
+- [formal-v1 main-40 完成记录](2026-10-11-formal-v1-main40-completion.md)
+- [formal-v1 main-40 评分结果](2026-10-11-formal-v1-scoring-results.md)
+
+### 10.2 Full Context
+
+- `experiments/locomo-conv50-v1/baselines/b3-full-context-v1/`
+- `fs_memory_lab/full_context.py`
+- `fs_memory_lab/full_context_runner.py`
+- `fs_memory_lab/full_context_cli.py`
+- `tests/test_full_context.py`
+- [B3 Full Context 准备记录](2026-10-11-full-context-preparation.md)
+- [B3 Full Context 操作指南](../plans/full-context-baseline-v1-operation-plan.md)
+
+### 10.3 LLM-as-Judge
+
+- `fs_memory_lab/judge_v1.py`
+- `fs_memory_lab/judge_v1_cli.py`
+- `tests/test_judge_v1.py`
+- [LLM-as-Judge v1 协议](../plans/llm-as-judge-v1-protocol.md)
+- [LLM-as-Judge 完成记录](2026-10-12-llm-judge-v1-completion.md)
+- `experiments/locomo-conv50-v1/results/llm-judge-v1-main40-run-01/`
+
+### 10.4 数据分析
+
+- [E1–E7 结果分析框架与论文写作地图](../analysis/e1-e7-results-analysis-framework.md)
+
+## 11. GitHub 提交与归档状态
+
+两天内已经形成并推送的提交：
+
+| Commit | 内容 |
+|---|---|
+| `ddb9155` | 归档 formal-v1 main-40 的 280 条完整结果 |
+| `3ed4234` | 加入 LoCoMo 离线评分与结果说明 |
+| `78d5d88` | 加入 Full Context baseline、源包、runner 和测试 |
+| `e9d00d3` | 记录 Full Context 离线冻结状态 |
+| `58ee659` | 加入可断点恢复的 LLM Judge pipeline |
+| `5bbc0c5` | 修复 Judge 的 Git commit 身份校验 |
+| `a2b59db` | 归档 280 条 Judge 结果并加入分析框架 |
+
+公开归档遵守以下边界：
+
+- 上传代码、文档、manifest、逐题结果、audit、日志和 SHA-256；
+- 不上传 API key、Authorization/Bearer 内容、shell 历史、本地 secret、PID 或 run lock；
+- 第三方 `sample report.pdf` 保持本地未跟踪，不作为项目结果上传。
+
+## 12. 下一步工作地图
+
+按当前状态，建议下一步依次进行：
+
+1. **完成 P0 离线分析**：生成逐题合并表、关键配对统计、类别表、转移矩阵和 Pareto 图；
+2. **完成 P1 机制复查**：按固定规则抽取 12–16 个 trace，区分写入、检索、预算、利用与融合错误；
+3. **开始报告写作**：先完成 Methodology、Experimental Design 和 Overall Results，再写 RQ1–RQ4；
+4. **单独运行 Full Context**：先 q079 preflight，再 dev-6 pilot；只有门禁通过后才运行 main-40；
+5. **可选扩展**：根据时间决定是否做 action cap 4/6/8、one-shot/iterative、更多 conversation 或 Judge 重复性，不回头改 formal-v1。
+
+截至本记录完成时，E1–E7 主实验和两套评分已经完成；Full Context 是唯一已经完整搭好但尚未真实 API 跑批的新增 baseline；A-MEM 与 Mem0 保留为未来工作。
