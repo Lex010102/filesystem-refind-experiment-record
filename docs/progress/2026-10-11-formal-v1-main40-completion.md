@@ -75,9 +75,13 @@ pre-gold 运行快照如下：
 `episode-secret.json` 保存读取回执使用的本地 MAC secret，不是科学结果，也不应发布。
 归档已扫描，未发现 `clsk_`、`FSMEM_API_KEY`、Authorization 或 Bearer 凭据。
 
-## 5. 评分边界
+## 5. 评分状态
 
-本记录完成时只做了 pre-gold 结构与完整性审计，尚未加载固定的
-`main-40-gold.jsonl` 计算语义得分。下一步由 `formal_batch_cli finalize` 进行纯离线评分，
-生成 `evaluation.json` 与 `final-audit.json`，包括 LoCoMo category-aware token F1、证据命中、
-citation validity、模型调用和 token 成本。formal-v1 的主评分不使用 LLM-as-Judge。
+280 条结果已由 `formal_batch_cli finalize` 完成纯离线评分，并生成
+`evaluation.json` 和 `final-audit.json`。最终审计状态为 `passed`，已评分记录为
+280/280，anonymous LLM judge 为关闭状态。
+
+主指标 micro F1 中，E3 最高（0.4146），其次是 E2（0.3972）和 E4（0.3971）。
+E5 的 Evidence Recall 最高（0.9254），但 token 成本也最高（11,764,087）。
+完整的分类 F1、证据、token、calls、cap 和解读见
+[`2026-10-11-formal-v1-scoring-results.md`](2026-10-11-formal-v1-scoring-results.md)。

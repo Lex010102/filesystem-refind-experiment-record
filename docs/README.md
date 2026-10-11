@@ -19,6 +19,7 @@
 - [2026-10-10 formal-v1 冻结过程](progress/2026-10-10-formal-v1-freeze-process.md)：记录 B=6000→10000→16000、空证据 gate、审计口径、超时、模型/并发/评分取舍、双 Git commit 及问题解决过程。
 - [2026-10-10 Stage 5A/5B 正式跑批准备](progress/2026-10-10-stage5a-stage5b-formal-preparation.md)：正式 280 项调度层、运行身份、无 API dry-run 的 18 项检查、测试与恢复边界。
 - [2026-10-11 formal-v1 main-40 完成记录](progress/2026-10-11-formal-v1-main40-completion.md)：B01–B08、280/280 RunRecords、失败恢复、pre-gold 审计、成本快照与公开归档说明。
+- [2026-10-11 formal-v1 main-40 评分结果](progress/2026-10-11-formal-v1-scoring-results.md)：280 条官方 LoCoMo token/stem F1、分类结果、证据命中、token/call 效率、运行诊断和初步发现。
 
 ## Data
 

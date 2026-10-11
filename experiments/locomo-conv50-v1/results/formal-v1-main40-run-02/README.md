@@ -11,6 +11,8 @@ This directory is the public, credential-free archive of the completed
 - 40 final records per condition
 - 8/8 batch audits passed
 - pre-gold audit passed
+- offline evaluation completed for 280/280 records
+- final audit passed
 - no active failed keys
 - requested model alias: `coding`
 - served model: `qwen3.8:27b`
@@ -37,6 +39,8 @@ are not scientific inputs or outputs, and are intentionally excluded from the
 public archive. Runtime lock files, PID files, and unpublished `.in-progress-*`
 directories are also excluded. No API key or authorization header is included.
 
+`run/evaluation.json` contains the 280 per-record official LoCoMo token/stem F1
+results and condition summaries. `run/final-audit.json` records the passed
+post-evaluation audit. See `SCORING.md` for the compact result table.
+
 `SHA256SUMS` records the SHA-256 digest of every archived file except itself.
-The deterministic post-run evaluation will add `evaluation.json` and
-`final-audit.json` after the pre-gold archive commit.

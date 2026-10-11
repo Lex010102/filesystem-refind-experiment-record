@@ -1,4 +1,5 @@
-e664f322450e4c04a0f25bdeced3249f3b3da07f6e398c173ddb76b394f3ae8f  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/README.md
+1ef76c906d5bec258057876c43fdb0dee89ccd171f4440e2830c617d4e15f2a8  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/README.md
+e94d9d393a6ac984bab78c710f6dce54962cb719d4f72031e1d13d4d2cf1b4eb  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/SCORING.md
 8b9a565dcd054032b34b4dedd22c70101234733fe2696758c3463e5e8acaa4d1  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/control/batch-01-audit.json
 b06a5aa062a089a4c9e3f4f00054e31d2c15694da54bd792d038461393800cad  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/control/batch-01-status.json
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/control/batch-01.PASSED
@@ -1024,7 +1025,8 @@ b19971af97081ee2c4118ac1a3dabdb3381bfacf879a2fac3371f51118a83d09  experiments/lo
 998e19de13addf30b14c4af54d3da15378e4e3daca76657735c3e11f6ad8a5ea  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/E6/conv-50-q154/episode.json
 7ebf55ac68f7c0ef2083d9f059ff16228374243ff921d43f5f5095e22da684ae  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/E6/conv-50-q154/trace.jsonl
 6cfa4326ed6b727c15e7fdbd8ccdc7fb8da8734eea6f9f2b644d7ecd8ad6a4b7  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/dry-run.json
-3a30350302267475ff040c025044294d34152c285362cbacb7f005e5d7a1fc6e  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/events.jsonl
+84e843ba73ba3930f60c2652947c95b9aa888c27effa1ff81666a594e02df13e  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/evaluation.json
+e539bb28f13ae0e7d638145ee595ea3c0b84fc4c7d3537f1ddb64c8578436f68  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/events.jsonl
 7dd8b904b78b8c05f3d8874e9b6cacb6a588b816272998f83e2dc58f34fcda25  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/failures/E1/conv-50-q024/attempt-0001.json
 0a66cee21f53288a15100355bafe5ca235da6b9794bc1e625dda55ffc8448a1b  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/failures/E3/conv-50-q038/attempt-0001.json
 442419a08135ec56333cef1080ca68c82b3cdee1d2c95f57a997db815c5223b9  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/failures/E3/conv-50-q043/attempt-0001.json
@@ -1032,6 +1034,7 @@ b19971af97081ee2c4118ac1a3dabdb3381bfacf879a2fac3371f51118a83d09  experiments/lo
 343622b20f51c22bd78502c5a4acc71a9d0bf4797bc704fc4400618b9565f106  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/failures/E5/conv-50-q043/attempt-0001.json
 3f2f8557d3f707c22f785ff1b01a18517c48dc8736d1aa285fb882a36f028234  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/failures/E5/conv-50-q152/attempt-0001.json
 143b2d0575bd9fccbd84eaff6fc6b62f40cac6183a7404e62aed107940ef8172  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/failures/E5/conv-50-q152/attempt-0002.json
+174a3bfe28049eff235e92767e4664e419e0b731561590be798420255b7f8c1a  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/final-audit.json
 ad6755cb7ac3efe2c9e3806819c231c56fb3dab3e27023becfadd8d158865617  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/formal-run-manifest.json
 b928117377e303b34354c6db2a9b6b2c6f5affed8d148ecee84da028029c2227  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/plan.json
 b5f67f54e6ea6d047bd4a4bf332376d3554007dc3c72371b60143e3c4ee8827b  experiments/locomo-conv50-v1/results/formal-v1-main40-run-02/run/pre-gold-audit.json

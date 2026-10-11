@@ -609,3 +609,4 @@
 {"at":"2026-10-11T06:05:24.363081Z","condition_id":"E7","event":"record_verified","evidence_items":10,"question_id":"conv-50-q047","record_id":"record-477994e75de33b8fc7bdefece3ee2a5cd97739de06adad326d78d8e0d5071e75","sequence":280,"served_models":["qwen3.8:27b"],"total_tokens":57160}
 {"at":"2026-10-11T06:05:41.952393Z","completed_blocks":8,"completed_records":280,"event":"question_block_verified"}
 {"at":"2026-10-11T06:05:59.514494Z","completed_records":280,"event":"formal_api_phase_completed","target_records":280,"through_block":8}
+{"at":"2026-10-11T10:35:02.244275Z","event":"formal_run_finalized","final_audit_id":"formal-final-c22663189e616a687994a22d7fa1a7ab2f0a4099a4d3b24bcb0e3465f5a90aa1"}
