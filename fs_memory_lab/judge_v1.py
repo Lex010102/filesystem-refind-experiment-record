@@ -42,6 +42,7 @@ JUDGE_BATCH_SIZE_QUESTIONS = 5
 JUDGE_BATCH_COUNT = 8
 JUDGE_CONDITIONS = ("E1", "E2", "E3", "E4", "E5", "E6", "E7")
 _SHA = re.compile(r"[0-9a-f]{64}\Z")
+_COMMIT = re.compile(r"[0-9a-f]{40}\Z")
 _SAFE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}\Z")
 
 JUDGE_SYSTEM_PROMPT = """You are an impartial evaluator of a question-answering system.
@@ -496,7 +497,7 @@ def prepare_judge_run(
     *, repo_root: Path, source_output_root: Path, source_run_id: str,
     output_root: Path, judge_run_id: str, implementation_commit: str,
 ) -> Path:
-    if _SAFE.fullmatch(judge_run_id) is None or _SHA.fullmatch(implementation_commit) is None:
+    if _SAFE.fullmatch(judge_run_id) is None or _COMMIT.fullmatch(implementation_commit) is None:
         raise EvidenceValidationError("Judge run ID or implementation commit is invalid")
     root = Path(repo_root).resolve()
     source_store, source_run_root, source_formal = _open_source(

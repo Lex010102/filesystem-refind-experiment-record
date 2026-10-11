@@ -2,6 +2,7 @@ import json
 import unittest
 
 from fs_memory_lab.judge_v1 import (
+    _COMMIT,
     JUDGE_PROMPT_SHA256,
     JUDGE_REQUIRED_SERVED_MODEL,
     SemanticJudge,
@@ -30,6 +31,10 @@ def reply(content):
 
 
 class JudgeV1Tests(unittest.TestCase):
+    def test_git_commit_identity_is_40_hex(self):
+        self.assertIsNotNone(_COMMIT.fullmatch("a" * 40))
+        self.assertIsNone(_COMMIT.fullmatch("a" * 64))
+
     def test_prompt_is_anonymous_and_semantic(self):
         prompt = render_judge_user_prompt(
             question="Where did Alice go?",
