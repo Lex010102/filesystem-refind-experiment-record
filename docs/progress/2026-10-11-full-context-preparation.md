@@ -152,3 +152,20 @@ q079 是 dev-6 最长题（118,939 characters），也略长于 main Batch 1 最
 ```text
 docs/plans/full-context-baseline-v1-operation-plan.md
 ```
+
+## 离线冻结完成状态
+
+同日完成上述离线步骤：
+
+- 实现冻结 commit：`78d5d88076dc43f14a5ee2e353b28991455b66d4`；
+- dev run：`b3-full-context-v1-dev6-run-01`，manifest
+  `full-context-run-manifest-1a7ad8e747a5a16e673975c301ad0f525bc3ec7b03e52e64c2c8368a4e3da3da`；
+- main run：`b3-full-context-v1-main40-run-01`，manifest
+  `full-context-run-manifest-8af39c115f4e956ca95d611399f31242a4cff041c24de6e76d608f5f654f129c`；
+- 两套 dry-run 均通过全部 9 项检查；状态分别为 0/6 与 0/40，active failures 均为 0；
+- 离线 prepare/dry-run 明确记录 `api_provider_not_constructed=true` 与
+  `semantic_gold_not_loaded=true`，没有读取 API key、调用学校 API 或查看 gold；
+- main manifest 已绑定固定 dev pilot 机器门禁。
+
+因此，剩余工作不是继续写 runner，而是联网运行 q079 preflight、完成 dev-6 pilot 并通过
+审计；随后才能启动已经准备好的 main Batch 1。
