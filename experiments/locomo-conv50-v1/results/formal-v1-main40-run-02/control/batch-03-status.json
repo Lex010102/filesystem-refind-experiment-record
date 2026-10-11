@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v1-main40-orchestrator-v1",
+  "run_id": "formal-v1-main40-run-02",
+  "plan_id": "plan-f3ff203e4356dcdaa98ea21ef1d12b1e69dd8ff93912eb3c03ba1df52adaa81a",
+  "formal_run_manifest_id": "formal-run-dcc281d3380749f8e0a88a82d78b754850decb3a476f9cd4cbb66ebea452ae57",
+  "status": "pending",
+  "planned_records": 280,
+  "completed_records": 105,
+  "pending_records": 175,
+  "failure_attempts": 5,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 15,
+    "E2": 15,
+    "E3": 15,
+    "E4": 15,
+    "E5": 15,
+    "E6": 15,
+    "E7": 15
+  },
+  "finished_questions": 15,
+  "completed_blocks": 3,
+  "next_key": {
+    "condition_id": "E4",
+    "question_id": "conv-50-q037"
+  },
+  "updated_at": "2026-10-10T19:32:04.138717Z"
+}

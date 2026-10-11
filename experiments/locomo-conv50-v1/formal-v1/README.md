@@ -12,3 +12,8 @@ python3 -m fs_memory_lab.formal_v1_cli --repo-root . verify
 The freeze does not contain API credentials or main-40 outputs. Any substantive
 method correction requires a new formal version and a complete rerun of affected
 conditions; records from different versions must never be mixed.
+
+The completed credential-free archive for `formal-v1-main40-run-02` is stored at
+`../results/formal-v1-main40-run-02/`. It contains 280 final RunRecords, retrieval
+artifacts, failure/recovery traces, all eight batch audits, and the passed pre-gold
+verification report.

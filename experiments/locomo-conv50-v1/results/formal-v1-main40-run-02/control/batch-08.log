@@ -1,0 +1,103 @@
+===== START BATCH 08 =====
+[246/280] START E6 conv-50-q117
+[246/280] VERIFIED records=246/280
+[247/280] START E1 conv-50-q117
+[247/280] VERIFIED records=247/280
+[248/280] START E2 conv-50-q117
+[248/280] VERIFIED records=248/280
+[249/280] START E3 conv-50-q117
+[249/280] VERIFIED records=249/280
+[250/280] START E4 conv-50-q117
+[250/280] VERIFIED records=250/280
+[251/280] START E5 conv-50-q117
+[251/280] VERIFIED records=251/280
+[252/280] START E7 conv-50-q117
+[252/280] VERIFIED records=252/280
+[253/280] START E1 conv-50-q143
+[253/280] VERIFIED records=253/280
+[254/280] START E2 conv-50-q143
+[254/280] VERIFIED records=254/280
+[255/280] START E3 conv-50-q143
+[255/280] VERIFIED records=255/280
+[256/280] START E4 conv-50-q143
+[256/280] VERIFIED records=256/280
+[257/280] START E5 conv-50-q143
+[257/280] VERIFIED records=257/280
+[258/280] START E6 conv-50-q143
+[258/280] VERIFIED records=258/280
+[259/280] START E7 conv-50-q143
+[259/280] VERIFIED records=259/280
+[260/280] START E2 conv-50-q042
+[260/280] VERIFIED records=260/280
+[261/280] START E3 conv-50-q042
+[261/280] VERIFIED records=261/280
+[262/280] START E4 conv-50-q042
+[262/280] VERIFIED records=262/280
+[263/280] START E5 conv-50-q042
+[263/280] VERIFIED records=263/280
+[264/280] START E6 conv-50-q042
+[264/280] VERIFIED records=264/280
+[265/280] START E1 conv-50-q042
+[265/280] VERIFIED records=265/280
+[266/280] START E7 conv-50-q042
+[266/280] VERIFIED records=266/280
+[267/280] START E3 conv-50-q021
+[267/280] VERIFIED records=267/280
+[268/280] START E4 conv-50-q021
+[268/280] VERIFIED records=268/280
+[269/280] START E5 conv-50-q021
+[269/280] VERIFIED records=269/280
+[270/280] START E6 conv-50-q021
+[270/280] VERIFIED records=270/280
+[271/280] START E1 conv-50-q021
+[271/280] VERIFIED records=271/280
+[272/280] START E2 conv-50-q021
+[272/280] VERIFIED records=272/280
+[273/280] START E7 conv-50-q021
+[273/280] VERIFIED records=273/280
+[274/280] START E4 conv-50-q047
+[274/280] VERIFIED records=274/280
+[275/280] START E5 conv-50-q047
+[275/280] VERIFIED records=275/280
+[276/280] START E6 conv-50-q047
+[276/280] VERIFIED records=276/280
+[277/280] START E1 conv-50-q047
+[277/280] VERIFIED records=277/280
+[278/280] START E2 conv-50-q047
+[278/280] VERIFIED records=278/280
+[279/280] START E3 conv-50-q047
+[279/280] VERIFIED records=279/280
+[280/280] START E7 conv-50-q047
+[280/280] VERIFIED records=280/280
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v1-main40-orchestrator-v1",
+  "run_id": "formal-v1-main40-run-02",
+  "plan_id": "plan-f3ff203e4356dcdaa98ea21ef1d12b1e69dd8ff93912eb3c03ba1df52adaa81a",
+  "formal_run_manifest_id": "formal-run-dcc281d3380749f8e0a88a82d78b754850decb3a476f9cd4cbb66ebea452ae57",
+  "status": "completed",
+  "planned_records": 280,
+  "completed_records": 280,
+  "pending_records": 0,
+  "failure_attempts": 7,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 40,
+    "E2": 40,
+    "E3": 40,
+    "E4": 40,
+    "E5": 40,
+    "E6": 40,
+    "E7": 40
+  },
+  "finished_questions": 40,
+  "completed_blocks": 8,
+  "next_key": null,
+  "updated_at": "2026-10-11T06:05:59.513633Z",
+  "execution_control": {
+    "through_block": 8,
+    "target_records": 280,
+    "target_reached": true
+  }
+}
+===== BATCH 08 PASSED =====

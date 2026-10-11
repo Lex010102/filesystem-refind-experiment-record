@@ -1,0 +1,286 @@
+===== START BATCH 02 =====
+[036/280] START E6 conv-50-q151
+[036/280] VERIFIED records=36/280
+[037/280] START E1 conv-50-q151
+[037/280] VERIFIED records=37/280
+[038/280] START E2 conv-50-q151
+[038/280] VERIFIED records=38/280
+[039/280] START E3 conv-50-q151
+[039/280] VERIFIED records=39/280
+[040/280] START E4 conv-50-q151
+[040/280] VERIFIED records=40/280
+[041/280] START E5 conv-50-q151
+[041/280] VERIFIED records=41/280
+[042/280] START E7 conv-50-q151
+[042/280] VERIFIED records=42/280
+[043/280] START E1 conv-50-q152
+[043/280] VERIFIED records=43/280
+[044/280] START E2 conv-50-q152
+[044/280] VERIFIED records=44/280
+[045/280] START E3 conv-50-q152
+[045/280] VERIFIED records=45/280
+[046/280] START E4 conv-50-q152
+[046/280] VERIFIED records=46/280
+[047/280] START E5 conv-50-q152
+{
+  "status": "failed",
+  "condition_id": "E5",
+  "question_id": "conv-50-q152",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v1-main40-orchestrator-v1",
+    "run_id": "formal-v1-main40-run-02",
+    "plan_id": "plan-f3ff203e4356dcdaa98ea21ef1d12b1e69dd8ff93912eb3c03ba1df52adaa81a",
+    "formal_run_manifest_id": "formal-run-dcc281d3380749f8e0a88a82d78b754850decb3a476f9cd4cbb66ebea452ae57",
+    "status": "failed",
+    "planned_records": 280,
+    "completed_records": 46,
+    "pending_records": 234,
+    "failure_attempts": 1,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 7,
+      "E2": 7,
+      "E3": 7,
+      "E4": 7,
+      "E5": 6,
+      "E6": 6,
+      "E7": 6
+    },
+    "finished_questions": 6,
+    "completed_blocks": 1,
+    "next_key": {
+      "condition_id": "E5",
+      "question_id": "conv-50-q152"
+    },
+    "updated_at": "2026-10-10T16:01:15.148785Z"
+  }
+}
+===== START BATCH 02 =====
+[047/280] START E5 conv-50-q152
+{
+  "status": "failed",
+  "condition_id": "E5",
+  "question_id": "conv-50-q152",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v1-main40-orchestrator-v1",
+    "run_id": "formal-v1-main40-run-02",
+    "plan_id": "plan-f3ff203e4356dcdaa98ea21ef1d12b1e69dd8ff93912eb3c03ba1df52adaa81a",
+    "formal_run_manifest_id": "formal-run-dcc281d3380749f8e0a88a82d78b754850decb3a476f9cd4cbb66ebea452ae57",
+    "status": "failed",
+    "planned_records": 280,
+    "completed_records": 46,
+    "pending_records": 234,
+    "failure_attempts": 2,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 7,
+      "E2": 7,
+      "E3": 7,
+      "E4": 7,
+      "E5": 6,
+      "E6": 6,
+      "E7": 6
+    },
+    "finished_questions": 6,
+    "completed_blocks": 1,
+    "next_key": {
+      "condition_id": "E5",
+      "question_id": "conv-50-q152"
+    },
+    "updated_at": "2026-10-10T16:24:12.877270Z"
+  }
+}
+===== START BATCH 02 =====
+[047/280] START E5 conv-50-q152
+[047/280] VERIFIED records=47/280
+[048/280] START E6 conv-50-q152
+[048/280] VERIFIED records=48/280
+[049/280] START E7 conv-50-q152
+[049/280] VERIFIED records=49/280
+[050/280] START E2 conv-50-q016
+[050/280] VERIFIED records=50/280
+[051/280] START E3 conv-50-q016
+[051/280] VERIFIED records=51/280
+[052/280] START E4 conv-50-q016
+[052/280] VERIFIED records=52/280
+[053/280] START E5 conv-50-q016
+[053/280] VERIFIED records=53/280
+[054/280] START E6 conv-50-q016
+[054/280] VERIFIED records=54/280
+[055/280] START E1 conv-50-q016
+[055/280] VERIFIED records=55/280
+[056/280] START E7 conv-50-q016
+[056/280] VERIFIED records=56/280
+[057/280] START E3 conv-50-q024
+[057/280] VERIFIED records=57/280
+[058/280] START E4 conv-50-q024
+[058/280] VERIFIED records=58/280
+[059/280] START E5 conv-50-q024
+[059/280] VERIFIED records=59/280
+[060/280] START E6 conv-50-q024
+[060/280] VERIFIED records=60/280
+[061/280] START E1 conv-50-q024
+{
+  "status": "failed",
+  "condition_id": "E1",
+  "question_id": "conv-50-q024",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v1-main40-orchestrator-v1",
+    "run_id": "formal-v1-main40-run-02",
+    "plan_id": "plan-f3ff203e4356dcdaa98ea21ef1d12b1e69dd8ff93912eb3c03ba1df52adaa81a",
+    "formal_run_manifest_id": "formal-run-dcc281d3380749f8e0a88a82d78b754850decb3a476f9cd4cbb66ebea452ae57",
+    "status": "failed",
+    "planned_records": 280,
+    "completed_records": 60,
+    "pending_records": 220,
+    "failure_attempts": 3,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 8,
+      "E2": 8,
+      "E3": 9,
+      "E4": 9,
+      "E5": 9,
+      "E6": 9,
+      "E7": 8
+    },
+    "finished_questions": 8,
+    "completed_blocks": 1,
+    "next_key": {
+      "condition_id": "E1",
+      "question_id": "conv-50-q024"
+    },
+    "updated_at": "2026-10-10T17:12:15.981462Z"
+  }
+}
+===== START BATCH 02 =====
+[061/280] START E1 conv-50-q024
+[061/280] VERIFIED records=61/280
+[062/280] START E2 conv-50-q024
+[062/280] VERIFIED records=62/280
+[063/280] START E7 conv-50-q024
+[063/280] VERIFIED records=63/280
+[064/280] START E4 conv-50-q043
+[064/280] VERIFIED records=64/280
+[065/280] START E5 conv-50-q043
+{
+  "status": "failed",
+  "condition_id": "E5",
+  "question_id": "conv-50-q043",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v1-main40-orchestrator-v1",
+    "run_id": "formal-v1-main40-run-02",
+    "plan_id": "plan-f3ff203e4356dcdaa98ea21ef1d12b1e69dd8ff93912eb3c03ba1df52adaa81a",
+    "formal_run_manifest_id": "formal-run-dcc281d3380749f8e0a88a82d78b754850decb3a476f9cd4cbb66ebea452ae57",
+    "status": "failed",
+    "planned_records": 280,
+    "completed_records": 64,
+    "pending_records": 216,
+    "failure_attempts": 4,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 9,
+      "E2": 9,
+      "E3": 9,
+      "E4": 10,
+      "E5": 9,
+      "E6": 9,
+      "E7": 9
+    },
+    "finished_questions": 9,
+    "completed_blocks": 1,
+    "next_key": {
+      "condition_id": "E5",
+      "question_id": "conv-50-q043"
+    },
+    "updated_at": "2026-10-10T17:47:08.858484Z"
+  }
+}
+===== START BATCH 02 =====
+[065/280] START E5 conv-50-q043
+[065/280] VERIFIED records=65/280
+[066/280] START E6 conv-50-q043
+[066/280] VERIFIED records=66/280
+[067/280] START E1 conv-50-q043
+[067/280] VERIFIED records=67/280
+[068/280] START E2 conv-50-q043
+[068/280] VERIFIED records=68/280
+[069/280] START E3 conv-50-q043
+{
+  "status": "failed",
+  "condition_id": "E3",
+  "question_id": "conv-50-q043",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v1-main40-orchestrator-v1",
+    "run_id": "formal-v1-main40-run-02",
+    "plan_id": "plan-f3ff203e4356dcdaa98ea21ef1d12b1e69dd8ff93912eb3c03ba1df52adaa81a",
+    "formal_run_manifest_id": "formal-run-dcc281d3380749f8e0a88a82d78b754850decb3a476f9cd4cbb66ebea452ae57",
+    "status": "failed",
+    "planned_records": 280,
+    "completed_records": 68,
+    "pending_records": 212,
+    "failure_attempts": 5,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 10,
+      "E2": 10,
+      "E3": 9,
+      "E4": 10,
+      "E5": 10,
+      "E6": 10,
+      "E7": 9
+    },
+    "finished_questions": 9,
+    "completed_blocks": 1,
+    "next_key": {
+      "condition_id": "E3",
+      "question_id": "conv-50-q043"
+    },
+    "updated_at": "2026-10-10T18:10:32.272221Z"
+  }
+}
+===== START BATCH 02 =====
+[069/280] START E3 conv-50-q043
+[069/280] VERIFIED records=69/280
+[070/280] START E7 conv-50-q043
+[070/280] VERIFIED records=70/280
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v1-main40-orchestrator-v1",
+  "run_id": "formal-v1-main40-run-02",
+  "plan_id": "plan-f3ff203e4356dcdaa98ea21ef1d12b1e69dd8ff93912eb3c03ba1df52adaa81a",
+  "formal_run_manifest_id": "formal-run-dcc281d3380749f8e0a88a82d78b754850decb3a476f9cd4cbb66ebea452ae57",
+  "status": "pending",
+  "planned_records": 280,
+  "completed_records": 70,
+  "pending_records": 210,
+  "failure_attempts": 5,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 10,
+    "E2": 10,
+    "E3": 10,
+    "E4": 10,
+    "E5": 10,
+    "E6": 10,
+    "E7": 10
+  },
+  "finished_questions": 10,
+  "completed_blocks": 2,
+  "next_key": {
+    "condition_id": "E5",
+    "question_id": "conv-50-q052"
+  },
+  "updated_at": "2026-10-10T18:24:27.392271Z",
+  "execution_control": {
+    "through_block": 2,
+    "target_records": 70,
+    "target_reached": true
+  }
+}
+===== BATCH 02 PASSED =====

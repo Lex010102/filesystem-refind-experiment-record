@@ -1,0 +1,388 @@
+{
+  "pre_gold_audit_id": "pre-gold-14021813e2deef3953fffcddc0dc0789a72dce1118855581a60100147f817387",
+  "schema_version": 1,
+  "protocol_version": "formal-v1-main40-orchestrator-v1",
+  "run_id": "formal-v1-main40-run-02",
+  "plan_id": "plan-f3ff203e4356dcdaa98ea21ef1d12b1e69dd8ff93912eb3c03ba1df52adaa81a",
+  "formal_run_manifest_id": "formal-run-dcc281d3380749f8e0a88a82d78b754850decb3a476f9cd4cbb66ebea452ae57",
+  "status": "passed",
+  "checks": {
+    "records_280_complete": true,
+    "conditions_40_each": true,
+    "served_model_exact": true,
+    "citations_real": true,
+    "stores_unchanged": true,
+    "retrieval_artifacts_match_records": true,
+    "e7_no_hidden_retrieval": true,
+    "e7_cost_rule_exact": true,
+    "one_formal_manifest": true,
+    "semantic_gold_not_loaded": true
+  },
+  "condition_counts": {
+    "E1": 40,
+    "E2": 40,
+    "E3": 40,
+    "E4": 40,
+    "E5": 40,
+    "E6": 40,
+    "E7": 40
+  },
+  "capped_retrieval_episodes": {
+    "E1": 7,
+    "E2": 33,
+    "E3": 7,
+    "E4": 31,
+    "E5": 0,
+    "E6": 32
+  },
+  "empty_retrieval_episodes": {
+    "E1": 0,
+    "E2": 3,
+    "E3": 1,
+    "E4": 5,
+    "E5": 0,
+    "E6": 1
+  },
+  "budget_skipped_episodes": {
+    "E1": 0,
+    "E2": 0,
+    "E3": 0,
+    "E4": 1,
+    "E5": 1,
+    "E6": 22
+  },
+  "deployment_total_tokens": {
+    "E1": 6072586,
+    "E2": 737484,
+    "E3": 6008177,
+    "E4": 736746,
+    "E5": 11764087,
+    "E6": 1575125,
+    "E7": 2259475
+  },
+  "e7_checks": [
+    {
+      "question_id": "conv-50-q023",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q081",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q051",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q027",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q022",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q151",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q152",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q016",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q024",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q043",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q052",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q008",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q002",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q054",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q090",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q037",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q069",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q145",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q038",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q013",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q010",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q014",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q154",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q103",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q128",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q068",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q046",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q040",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q033",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q087",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q070",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q088",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q125",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q032",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q005",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q117",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q143",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q042",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q021",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q047",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    }
+  ],
+  "gold_boundary": {
+    "semantic_records_loaded": false
+  }
+}
