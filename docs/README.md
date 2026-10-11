@@ -6,6 +6,7 @@
 
 - [一个月实验地图](plans/one-month-experiment-map.md)：七个实验条件、数据预处理、检索、评测、错误归因、逐日安排和完成标准。
 - [`formal-v1` main-40 正式跑批指南](plans/formal-v1-main40-batch-guide.md)：Stage 5A/5B、280 条正式运行、检查点/恢复、pre-gold 审计、评分和结果分析的完整操作地图。
+- [B3 Full Context 独立实验操作方案](plans/full-context-baseline-v1-operation-plan.md)：30 个 S1 会话正文（含 BLIP captions）的确定性包装、context-window 预检、独立 runner、main-40 跑批、评分、成本和失败恢复规则。
 
 ## Progress
 
@@ -20,6 +21,7 @@
 - [2026-10-10 Stage 5A/5B 正式跑批准备](progress/2026-10-10-stage5a-stage5b-formal-preparation.md)：正式 280 项调度层、运行身份、无 API dry-run 的 18 项检查、测试与恢复边界。
 - [2026-10-11 formal-v1 main-40 完成记录](progress/2026-10-11-formal-v1-main40-completion.md)：B01–B08、280/280 RunRecords、失败恢复、pre-gold 审计、成本快照与公开归档说明。
 - [2026-10-11 formal-v1 main-40 评分结果](progress/2026-10-11-formal-v1-scoring-results.md)：280 条官方 LoCoMo token/stem F1、分类结果、证据命中、token/call 效率、运行诊断和初步发现。
+- [2026-10-11 B3 Full Context 准备记录](progress/2026-10-11-full-context-preparation.md)：无检索完整上下文 baseline 的确定性源包、runner、容量估计、安全修正、测试与正式开跑门槛。
 
 ## Data
 
