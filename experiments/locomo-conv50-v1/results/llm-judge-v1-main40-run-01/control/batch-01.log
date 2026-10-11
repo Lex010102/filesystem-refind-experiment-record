@@ -1,0 +1,105 @@
+===== START JUDGE BATCH 01 ATTEMPT 1 =====
+[001/280] START E1 conv-50-q023
+[001/280] VERIFIED judgments=1/280
+[002/280] START E2 conv-50-q023
+[002/280] VERIFIED judgments=2/280
+[003/280] START E3 conv-50-q023
+[003/280] VERIFIED judgments=3/280
+[004/280] START E4 conv-50-q023
+[004/280] VERIFIED judgments=4/280
+[005/280] START E5 conv-50-q023
+[005/280] VERIFIED judgments=5/280
+[006/280] START E6 conv-50-q023
+[006/280] VERIFIED judgments=6/280
+[007/280] START E7 conv-50-q023
+[007/280] VERIFIED judgments=7/280
+[008/280] START E2 conv-50-q081
+[008/280] VERIFIED judgments=8/280
+[009/280] START E3 conv-50-q081
+[009/280] VERIFIED judgments=9/280
+[010/280] START E4 conv-50-q081
+[010/280] VERIFIED judgments=10/280
+[011/280] START E5 conv-50-q081
+[011/280] VERIFIED judgments=11/280
+[012/280] START E6 conv-50-q081
+[012/280] VERIFIED judgments=12/280
+[013/280] START E1 conv-50-q081
+[013/280] VERIFIED judgments=13/280
+[014/280] START E7 conv-50-q081
+[014/280] VERIFIED judgments=14/280
+[015/280] START E3 conv-50-q051
+[015/280] VERIFIED judgments=15/280
+[016/280] START E4 conv-50-q051
+[016/280] VERIFIED judgments=16/280
+[017/280] START E5 conv-50-q051
+[017/280] VERIFIED judgments=17/280
+[018/280] START E6 conv-50-q051
+[018/280] VERIFIED judgments=18/280
+[019/280] START E1 conv-50-q051
+[019/280] VERIFIED judgments=19/280
+[020/280] START E2 conv-50-q051
+[020/280] VERIFIED judgments=20/280
+[021/280] START E7 conv-50-q051
+[021/280] VERIFIED judgments=21/280
+[022/280] START E4 conv-50-q027
+[022/280] VERIFIED judgments=22/280
+[023/280] START E5 conv-50-q027
+[023/280] VERIFIED judgments=23/280
+[024/280] START E6 conv-50-q027
+[024/280] VERIFIED judgments=24/280
+[025/280] START E1 conv-50-q027
+[025/280] VERIFIED judgments=25/280
+[026/280] START E2 conv-50-q027
+[026/280] VERIFIED judgments=26/280
+[027/280] START E3 conv-50-q027
+[027/280] VERIFIED judgments=27/280
+[028/280] START E7 conv-50-q027
+[028/280] VERIFIED judgments=28/280
+[029/280] START E5 conv-50-q022
+[029/280] VERIFIED judgments=29/280
+[030/280] START E6 conv-50-q022
+[030/280] VERIFIED judgments=30/280
+[031/280] START E1 conv-50-q022
+[031/280] VERIFIED judgments=31/280
+[032/280] START E2 conv-50-q022
+[032/280] VERIFIED judgments=32/280
+[033/280] START E3 conv-50-q022
+[033/280] VERIFIED judgments=33/280
+[034/280] START E4 conv-50-q022
+[034/280] VERIFIED judgments=34/280
+[035/280] START E7 conv-50-q022
+[035/280] VERIFIED judgments=35/280
+{
+  "schema_version": 1,
+  "protocol_version": "supplemental-anonymous-judge-run-v1",
+  "judge_run_id": "llm-judge-v1-main40-run-01",
+  "judge_manifest_id": "judge-manifest-97bdb5dc1f0d726bb6ddbc0ea13a76d02e54f98a8acaca8af53555513df5eecd",
+  "source_run_id": "formal-v1-main40-run-02",
+  "status": "pending",
+  "completed_judgments": 35,
+  "pending_judgments": 245,
+  "planned_judgments": 280,
+  "completed_batches": 1,
+  "completed_by_condition": {
+    "E1": 5,
+    "E2": 5,
+    "E3": 5,
+    "E4": 5,
+    "E5": 5,
+    "E6": 5,
+    "E7": 5
+  },
+  "label_counts": {
+    "correct": 22,
+    "partial": 9,
+    "incorrect": 4
+  },
+  "active_failed_keys": 0,
+  "judge_total_tokens": 23693,
+  "next_key": {
+    "condition_id": "E6",
+    "question_id": "conv-50-q151"
+  },
+  "updated_at": "2026-10-11T15:05:42.719883Z"
+}
+===== JUDGE BATCH 01 PASSED =====

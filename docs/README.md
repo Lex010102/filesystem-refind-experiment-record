@@ -23,6 +23,11 @@
 - [2026-10-11 formal-v1 main-40 完成记录](progress/2026-10-11-formal-v1-main40-completion.md)：B01–B08、280/280 RunRecords、失败恢复、pre-gold 审计、成本快照与公开归档说明。
 - [2026-10-11 formal-v1 main-40 评分结果](progress/2026-10-11-formal-v1-scoring-results.md)：280 条官方 LoCoMo token/stem F1、分类结果、证据命中、token/call 效率、运行诊断和初步发现。
 - [2026-10-11 B3 Full Context 准备记录](progress/2026-10-11-full-context-preparation.md)：无检索完整上下文 baseline 的确定性源包、runner、容量估计、安全修正、测试与正式开跑门槛。
+- [2026-10-12 LLM-as-Judge v1 完成记录](progress/2026-10-12-llm-judge-v1-completion.md)：280/280 三档匿名语义评分、8 批审计、Strict/Partial/Soft 汇总和公开结果归档。
+
+## Analysis
+
+- [E1–E7 结果分析框架与论文写作地图](analysis/e1-e7-results-analysis-framework.md)：四个研究问题、配对统计、错误归因、效果–成本、论文对照、建议图表与分析执行顺序。
 
 ## Data
 
