@@ -330,6 +330,130 @@ class Model2PilotPipelineTests(unittest.TestCase):
                 (output / pilot_id / PILOT_IDENTITY_DRIFT_NAME).exists()
             )
 
+    def test_retrieval_retry_success_does_not_exhaust_later_distinct_key(self):
+        """One invocation may recover key A and then first-fail key B."""
+
+        with tempfile.TemporaryDirectory(dir=ROOT) as temporary:
+            root = Path(temporary)
+            pilot_root = root / "pilot"
+            retrieval_output = root / "retrieval"
+            retrieval_run_id = "retrieval-run"
+            (retrieval_output / retrieval_run_id).mkdir(parents=True)
+            pilot_root.mkdir()
+            key_a = RunKey("E3", "q066")
+            key_b = RunKey("E1", "q066")
+            plan = SimpleNamespace(execution_order=(key_a, key_b))
+            old_failure = {
+                "condition_id": key_a.condition_id,
+                "question_id": key_a.question_id,
+                "failure_id": "failure-" + "a" * 64,
+            }
+            new_failure = {
+                "condition_id": key_b.condition_id,
+                "question_id": key_b.question_id,
+                "failure_id": "failure-" + "b" * 64,
+            }
+            bundle = SimpleNamespace(
+                bundle_id="bundle-test",
+                model={"served_models": [SERVED_MODEL]},
+            )
+            recovery = {
+                "recovery_id": "model2-pilot-recovery-test",
+                "retry_key": key_a.to_dict(),
+            }
+
+            class Gated:
+                observed_served_model = SERVED_MODEL
+
+                @staticmethod
+                def failure_cursor():
+                    return 0
+
+                @staticmethod
+                def usage_cursor():
+                    return 0
+
+                @staticmethod
+                def raise_if_identity_error():
+                    return None
+
+            gated = Gated()
+            manifest = {
+                "deployment": {"required_served_model": SERVED_MODEL}
+            }
+            paths = {
+                "retrieval_output": str(retrieval_output),
+                "retrieval_run_id": retrieval_run_id,
+            }
+            questions = [SimpleNamespace(question_id="q066")]
+            first_scan = ({}, [old_failure], plan, {"manifest_id": "manifest"})
+            second_scan = (
+                {key_a: bundle},
+                [old_failure, new_failure],
+                plan,
+                {"manifest_id": "manifest"},
+            )
+            with (
+                mock.patch(
+                    "fs_memory_lab.model2_pilot._open_pipeline",
+                    return_value=(pilot_root, manifest, paths),
+                ),
+                mock.patch(
+                    "fs_memory_lab.model2_pilot._identity_provider",
+                    return_value=gated,
+                ),
+                mock.patch(
+                    "fs_memory_lab.model2_pilot._load_authorized_retrieval_retry",
+                    return_value=recovery,
+                ),
+                mock.patch(
+                    "fs_memory_lab.model2_pilot._consume_retrieval_retry"
+                ) as consume,
+                mock.patch(
+                    "fs_memory_lab.model2_pilot.dev._scan",
+                    side_effect=[first_scan, second_scan],
+                ),
+                mock.patch(
+                    "fs_memory_lab.model2_pilot.load_question_inputs",
+                    return_value=questions,
+                ),
+                mock.patch("fs_memory_lab.model2_pilot.load_r1_store"),
+                mock.patch("fs_memory_lab.model2_pilot.build_r2_raw_corpus"),
+                mock.patch("fs_memory_lab.model2_pilot.load_r3_corpus"),
+                mock.patch(
+                    "fs_memory_lab.model2_pilot.execute_r1_question",
+                    side_effect=[
+                        SimpleNamespace(status="completed", artifact_path=root / "a"),
+                        SimpleNamespace(status="failed", artifact_path=root / "b"),
+                    ],
+                ),
+                mock.patch(
+                    "fs_memory_lab.model2_pilot.dev._verify_success",
+                    return_value=bundle,
+                ),
+                mock.patch(
+                    "fs_memory_lab.model2_pilot._publish_retrieval_failure_evidence"
+                ) as publish_failure,
+                mock.patch("fs_memory_lab.model2_pilot.dev.write_status"),
+                mock.patch("fs_memory_lab.model2_pilot.write_model2_pilot_status"),
+            ):
+                result = run_model2_pilot_retrieval(
+                    repo_root=ROOT,
+                    output_root=root,
+                    pilot_id="pilot",
+                    provider=WrongProtocolProvider(),
+                )
+            self.assertEqual(
+                result,
+                {
+                    "status": "failed",
+                    "retry_exhausted": False,
+                    **key_b.to_dict(),
+                },
+            )
+            consume.assert_called_once()
+            publish_failure.assert_called_once()
+
     def test_answer_active_failure_requires_authorization_before_provider_call(self):
         with tempfile.TemporaryDirectory(dir=ROOT) as temporary:
             root = Path(temporary)
@@ -465,6 +589,99 @@ class Model2PilotPipelineTests(unittest.TestCase):
             self.assertEqual(answers.call_count, 2)
             authorize_retrieval.assert_called_once()
             authorize_answer.assert_called_once()
+
+    def test_run_all_allows_one_retrieval_retry_for_each_distinct_key(self):
+        with tempfile.TemporaryDirectory(dir=ROOT) as temporary:
+            pilot_root = Path(temporary) / "pilot"
+            pilot_root.mkdir()
+            provider = WrongProtocolProvider()
+            first = {
+                "status": "failed",
+                "condition_id": "E3",
+                "question_id": "q066",
+                "retry_exhausted": False,
+            }
+            second = {
+                "status": "failed",
+                "condition_id": "E1",
+                "question_id": "q066",
+                "retry_exhausted": False,
+            }
+            with (
+                mock.patch(
+                    "fs_memory_lab.model2_pilot._open_pipeline",
+                    return_value=(pilot_root, {}, {}),
+                ),
+                mock.patch(
+                    "fs_memory_lab.model2_pilot.run_model2_pilot_retrieval",
+                    side_effect=[first, second, {"status": "completed"}],
+                ) as retrieval,
+                mock.patch(
+                    "fs_memory_lab.model2_pilot.authorize_model2_pilot_retrieval_retry"
+                ) as authorize_retrieval,
+                mock.patch(
+                    "fs_memory_lab.model2_pilot.run_model2_pilot_answers",
+                    return_value={
+                        "status": "passed",
+                        "model2_pilot_audit_id": "audit-test",
+                    },
+                ),
+            ):
+                result = run_model2_pilot_all(
+                    repo_root=ROOT,
+                    output_root=Path(temporary),
+                    pilot_id="pilot",
+                    provider=provider,
+                )
+            self.assertEqual(result["model2_pilot_audit_id"], "audit-test")
+            self.assertEqual(retrieval.call_count, 3)
+            self.assertEqual(authorize_retrieval.call_count, 2)
+
+    def test_run_all_stops_after_same_retrieval_key_exhausts_its_retry(self):
+        with tempfile.TemporaryDirectory(dir=ROOT) as temporary:
+            pilot_root = Path(temporary) / "pilot"
+            pilot_root.mkdir()
+            provider = WrongProtocolProvider()
+            first = {
+                "status": "failed",
+                "condition_id": "E3",
+                "question_id": "q066",
+                "retry_exhausted": False,
+            }
+            exhausted = {
+                "status": "failed",
+                "condition_id": "E3",
+                "question_id": "q066",
+                "retry_exhausted": True,
+            }
+            with (
+                mock.patch(
+                    "fs_memory_lab.model2_pilot._open_pipeline",
+                    return_value=(pilot_root, {}, {}),
+                ),
+                mock.patch(
+                    "fs_memory_lab.model2_pilot.run_model2_pilot_retrieval",
+                    side_effect=[first, exhausted],
+                ) as retrieval,
+                mock.patch(
+                    "fs_memory_lab.model2_pilot.authorize_model2_pilot_retrieval_retry"
+                ) as authorize_retrieval,
+                mock.patch(
+                    "fs_memory_lab.model2_pilot.run_model2_pilot_answers"
+                ) as answers,
+            ):
+                with self.assertRaisesRegex(
+                    EvidenceValidationError, "retrieval retry limit is exhausted"
+                ):
+                    run_model2_pilot_all(
+                        repo_root=ROOT,
+                        output_root=Path(temporary),
+                        pilot_id="pilot",
+                        provider=provider,
+                    )
+            self.assertEqual(retrieval.call_count, 2)
+            authorize_retrieval.assert_called_once()
+            answers.assert_not_called()
 
     def test_retry_classification_rejects_dns_and_http400_but_accepts_transient(self):
         base = {

@@ -1423,13 +1423,23 @@ def run_model2_pilot_retrieval(
         for sequence, key in enumerate(plan.execution_order, start=1):
             if key in completed:
                 continue
+            # A recovery authorization belongs to exactly one RunKey.  The
+            # same invocation may successfully replay that key and then
+            # continue until a *different* key fails.  Never carry the first
+            # key's consumed retry budget forward to that later failure.
+            recovery_for_key = (
+                recovery
+                if recovery is not None
+                and recovery.get("retry_key") == key.to_dict()
+                else None
+            )
             key_failures = [
                 item
                 for item in active_failures
                 if RunKey(item["condition_id"], item["question_id"]) == key
             ]
             if key_failures:
-                if recovery is None or recovery.get("retry_key") != key.to_dict():
+                if recovery_for_key is None:
                     raise EvidenceValidationError(
                         "Pending Model 2 retrieval key has no authorized retry"
                     )
@@ -1439,7 +1449,7 @@ def run_model2_pilot_retrieval(
                         "event": "model2_retrieval_retry_started",
                         "at": _now(),
                         "sequence": sequence,
-                        "recovery_id": recovery["recovery_id"],
+                        "recovery_id": recovery_for_key["recovery_id"],
                         **key.to_dict(),
                         "prior_failure_id": key_failures[0]["failure_id"],
                     },
@@ -1500,7 +1510,7 @@ def run_model2_pilot_retrieval(
                 _raise_and_seal_identity_drift(
                     pilot_root=pilot_root, manifest=manifest, provider=gated
                 )
-                retry_collision = recovery is not None and (
+                retry_collision = recovery_for_key is not None and (
                     (
                         isinstance(error, EvidenceValidationError)
                         and str(error) == "R1 failure artifact already exists"
@@ -1510,7 +1520,7 @@ def run_model2_pilot_retrieval(
                 if retry_collision:
                     outcome = _publish_retry_collision_outcome(
                         pilot_root=pilot_root,
-                        recovery=recovery,
+                        recovery=recovery_for_key,
                         provider=gated,
                         usage_cursor=usage_cursor,
                         error=error,
@@ -1594,7 +1604,7 @@ def run_model2_pilot_retrieval(
                 )
                 return {
                     "status": "failed",
-                    "retry_exhausted": recovery is not None,
+                    "retry_exhausted": recovery_for_key is not None,
                     **key.to_dict(),
                 }
             bundle = dev._verify_success(
