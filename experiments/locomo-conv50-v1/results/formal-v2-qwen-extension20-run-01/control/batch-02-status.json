@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-qwen-extension20-orchestrator-v1",
+  "run_id": "formal-v2-qwen-extension20-run-01",
+  "plan_id": "plan-dcaf54e83b31ed430835b20d13f6c40050f4a97d7ae4fa97037ad6429dc445e6",
+  "formal_run_manifest_id": "formal-run-b6201d20e22c51b8485a66c127c8d7d65fca3bfb90b200e93ce4fbedd9ec0b13",
+  "status": "pending",
+  "planned_records": 140,
+  "completed_records": 70,
+  "pending_records": 70,
+  "failure_attempts": 2,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 10,
+    "E2": 10,
+    "E3": 10,
+    "E4": 10,
+    "E5": 10,
+    "E6": 10,
+    "E7": 10
+  },
+  "finished_questions": 10,
+  "completed_blocks": 2,
+  "next_key": {
+    "condition_id": "E3",
+    "question_id": "conv-50-q111"
+  },
+  "updated_at": "2026-10-14T16:43:39.940976Z"
+}

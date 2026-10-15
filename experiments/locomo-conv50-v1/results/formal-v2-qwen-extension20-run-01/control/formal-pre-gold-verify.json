@@ -1,0 +1,231 @@
+{
+  "pre_gold_audit_id": "pre-gold-714dd15e66c6772acea0ce75225e75ba55db29241b34446087b1a2716f83c3e8",
+  "schema_version": 1,
+  "protocol_version": "formal-v2-qwen-extension20-orchestrator-v1",
+  "run_id": "formal-v2-qwen-extension20-run-01",
+  "plan_id": "plan-dcaf54e83b31ed430835b20d13f6c40050f4a97d7ae4fa97037ad6429dc445e6",
+  "formal_run_manifest_id": "formal-run-b6201d20e22c51b8485a66c127c8d7d65fca3bfb90b200e93ce4fbedd9ec0b13",
+  "status": "passed",
+  "checks": {
+    "records_140_complete": true,
+    "conditions_20_each": true,
+    "served_model_exact": true,
+    "citations_real": true,
+    "stores_unchanged": true,
+    "retrieval_artifacts_match_records": true,
+    "e7_no_hidden_retrieval": true,
+    "e7_cost_rule_exact": true,
+    "semantic_gold_not_loaded": true,
+    "judge_not_run": true
+  },
+  "condition_counts": {
+    "E1": 20,
+    "E2": 20,
+    "E3": 20,
+    "E4": 20,
+    "E5": 20,
+    "E6": 20,
+    "E7": 20
+  },
+  "capped_retrieval_episodes": {
+    "E1": 4,
+    "E2": 15,
+    "E3": 1,
+    "E4": 14,
+    "E5": 0,
+    "E6": 14
+  },
+  "empty_retrieval_episodes": {
+    "E1": 0,
+    "E2": 0,
+    "E3": 0,
+    "E4": 1,
+    "E5": 0,
+    "E6": 0
+  },
+  "budget_skipped_episodes": {
+    "E1": 0,
+    "E2": 0,
+    "E3": 0,
+    "E4": 1,
+    "E5": 0,
+    "E6": 6
+  },
+  "deployment_total_tokens": {
+    "E1": 2862631,
+    "E2": 367642,
+    "E3": 2409128,
+    "E4": 372013,
+    "E5": 5117167,
+    "E6": 607539,
+    "E7": 958735
+  },
+  "e7_checks": [
+    {
+      "question_id": "conv-50-q147",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q126",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q075",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q144",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q019",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q114",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q121",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q044",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q057",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q058",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q111",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q078",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q074",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q082",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q104",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q089",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q012",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q132",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q028",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    },
+    {
+      "question_id": "conv-50-q118",
+      "source_bundle_ids_match": true,
+      "no_new_search": true,
+      "retrieval_cost_once": true,
+      "source_answer_cost_excluded": true,
+      "budget_2b": true
+    }
+  ],
+  "gold_boundary": {
+    "semantic_records_loaded": false
+  },
+  "judge_boundary": {
+    "judge_run": false
+  }
+}

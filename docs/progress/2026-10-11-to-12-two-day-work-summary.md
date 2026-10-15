@@ -1,6 +1,6 @@
-# 2026-10-11 至 2026-10-12 两日工作总记录
+# 项目工作长笔记（始于 2026-10-11 至 2026-10-12）
 
-本文汇总 2026-10-11 至 2026-10-12 的研究与工程工作，集中回答三件事：**做了什么、怎么做、为什么做**。详细运行日志、逐题结果和协议仍以各专项文档与结果目录为准；本文是以后写报告、向师兄汇报和追溯实验版本时使用的总入口。
+本文最初汇总 2026-10-11 至 2026-10-12 的研究与工程工作，后续继续按时间追加重要讨论、计划和已核验进展。它集中回答三件事：**做了什么、怎么做、为什么做**。详细运行日志、逐题结果和协议仍以各专项文档与结果目录为准；本文是以后写报告、向师兄汇报和追溯实验版本时使用的总入口。
 
 这两天项目从“正式实验已经冻结、准备开始跑批”推进到：
 
@@ -473,3 +473,107 @@ Judge 结果归档包含 280 个逐题 JSON、8 组 audit/PASSED/log、manifest�
 5. **可选扩展**：根据时间决定是否做 action cap 4/6/8、one-shot/iterative、更多 conversation 或 Judge 重复性，不回头改 formal-v1。
 
 截至本记录完成时，E1–E7 主实验和两套评分已经完成；Full Context 是唯一已经完整搭好但尚未真实 API 跑批的新增 baseline；A-MEM 与 Mem0 保留为未来工作。
+
+---
+
+## 13. 2026-10-14 至 2026-10-16 后续更新：main-60 与第二 backbone
+
+本节把随后两天的讨论、决策和实际进展继续记在同一份长笔记中。技术参数、故障经过、
+冻结文件和后续 checklist 详见
+[formal-v2 main-60 扩展计划与题集记录](2026-10-14-formal-v2-main60-planning.md)。
+
+### 13.1 为什么继续扩展
+
+师兄提出三项关键问题：40 题规模偏小；检索 Agent 与 Answerer 只有 Qwen 一个 backbone；
+Judge 不应再使用与被评系统相同的模型。因此后续主计划确定为：
+
+1. 保留原 40 题和 280 条结果，append-only 增加 20 题，形成 main-60；
+2. Qwen 作为 Model 1，增加 `x-test-2` 作为 Model 2；
+3. 新的统一 Judge 计划使用 `x-test-1`，但必须先通过 served-model 与协议 preflight；
+4. old-40、new-20、combined-60 分开报告，不能把事后扩展包装成事前抽样；
+5. S1/S2/S3 是既有固定快照，第二 backbone 只替换查询阶段的检索与回答模型。
+
+### 13.2 新增 20 题和 Qwen 结果
+
+新增题从 LoCoMo `conv-50` 的可靠剩余题中确定，配额为 C1/C2/C3/C4=`3/3/0/14`，与
+原 40 题组合后得到 `13/13/7/27`。旧题及其顺序、hash 和结果不改写。
+
+Qwen extension-20 已用独立 runner 完成：
+
+- 20 题 × E1–E7，共 140/140；
+- E1–E7 各 20 条，4 个 batch 全部通过；
+- pending=0，active failed keys=0；
+- 11 次历史失败尝试均由 checkpoint 恢复，且保留成本/事件审计；
+- pre-gold verify=`passed`，生成 `ANSWER-RUN-COMPLETED-NO-JUDGE`；
+- 本阶段按要求没有运行 token-F1 或 LLM-as-Judge。
+
+由此 Qwen 已具备 old-40 的 280 条加 new-20 的 140 条，共 420 条 main-60 答案。
+去凭据公开归档位于
+`experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/`。
+
+### 13.3 Model 2 的准备、故障修复与 pilot
+
+Model 2 的目标是做严格的 backbone 对照，而不是发明另一套检索方法。正式 preflight 已确认
+requested alias=`x-test-2`，实际 served model=`deepseek-v4.1-flash`，并验证 Retrieval
+Agent、Answerer、R1/R2/R3 的 JSON/动作协议。
+
+随后建立完全独立的 Model 2 runner、manifest、checkpoint、batch audit 和恢复控制；离线
+dry-run 已验证 60 题、420 个唯一 key、12×35 batch、模型身份、断点恢复、预算/caps、
+store/prompt hashes 和 E7 无重新检索，且不产生正式答案。
+
+第一次 dev-6 pilot `run-01` 在 16/36 retrieval 后暴露出一个工程恢复缺陷：恢复状态错误地
+在不同 key 之间共享。该 run 被保留为 aborted 证据，绝不续跑或计入结果。修复将恢复状态
+隔离到每个 execution key，没有改变题目、prompt、模型、存储、预算或检索协议；修复后用
+全新 candidate-02 和 run-02 重跑。
+
+`run-02` 已通过：
+
+- 36/36 retrieval episodes；
+- 42/42 answers，E1–E7 各 6；
+- requested/served model 全程一致，无身份漂移；
+- 一次 retrieval 失败已恢复并完整计费；
+- final audit=`passed`，`MODEL2-PILOT-42.PASSED` 存在；
+- E7 确认只复用 E2/E6，不重新检索；Judge 未运行。
+
+pilot 通过后已建立 `formal-v2-model2` 版本级冻结，绑定 candidate-02、双 preflight、
+pipeline manifest、final audit/PASSED hashes 和实现 commit `95986c3...`。截至本次更新，
+Model 2 正式 main-60 的 420 条尚未启动。
+去凭据 pilot 归档位于
+`experiments/locomo-conv50-v1/results/formal-v2-model2-dev6-pilot-run-02/`。
+
+### 13.4 双 backbone 是否公平
+
+可以称为相同的科学条件包括：60 题及顺序、S1/S2/S3、E1–E7、R1/R2/R3、BM25、
+Answerer prompt、temperature、B=16000、round/action caps、E7 融合、timeout 和并发。
+有意改变的变量只有 backbone：
+
+- Model 1：`coding → qwen3.8:27b`；
+- Model 2：`x-test-2 → deepseek-v4.1-flash`。
+
+Model 2 额外增加逐响应身份检查和有限自动恢复，这是工程控制差异，不改变检索/回答算法。
+因此答案质量可以做受控 backbone 对照；但效率分析必须把“成功路径 token/调用”与
+“失败和重试开销”分开报告，避免把不同恢复机制误当成模型质量差异。
+
+### 13.5 后台运行与沟通方式
+
+为避免 10 分钟一次的 heartbeat 打断研究讨论，今后冒烟测试和正式跑批采用：后台单实例
+runner + 独立 Codex 监控任务。主对话不再接收周期性正常进度；独立监控只在里程碑、失败、
+需要用户动作或全部完成时通知。恢复前必须检查 lock，已完成 key 不能重复执行，API key
+只从 Keychain 注入，不进入日志、项目文件或 GitHub。
+
+## 14. 更新后的执行顺序
+
+| 顺序 | 任务 | 当前状态 | 目的 |
+| ---: | --- | --- | --- |
+| 1 | main-60 题集与 Qwen extension-20 | 已完成 | 将 Qwen 扩展到 420 条答案 |
+| 2 | Model 2 preflight、dry-run、dev-6 pilot | 已完成 | 在正式成本前验证兼容性和恢复 |
+| 3 | 冻结 formal-v2-model2 candidate-02 | 已完成 | 防止看到正式结果后改协议 |
+| 4 | Model 2 正式 main-60，420 条 | 待启动 | 形成第二 backbone 完整对照 |
+| 5 | Model 2 pre-gold verify | 待 Model 2 完成 | 先封存答案再加载评分信息 |
+| 6 | `x-test-1` Judge preflight 与冻结 | 待完成 | 保证 Judge 独立且身份可核验 |
+| 7 | 840 条统一 LoCoMo P/R/F1 | 待完成 | 给出可复现词面主指标 |
+| 8 | 840 条匿名 LLM-as-Judge | 待完成 | 补充 Strict/Partial/Soft 语义指标 |
+| 9 | 配对统计、类别、过程、错误与成本分析 | 待评分后 | 检验 E1–E7 排序是否跨 backbone 稳定 |
+
+B3 Full Context 仍是候选 baseline，但不应插入或改变当前已经冻结的双-backbone主实验。
+A-MEM 与 Mem0 继续作为未来扩展，不在本轮主线中临时加入。

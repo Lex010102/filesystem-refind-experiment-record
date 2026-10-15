@@ -293,3 +293,226 @@ python3 -m fs_memory_lab.question_sets_v2 --verify-only
 ```
 
 本轮没有调用任何学校 API，也没有运行新的检索、回答或 Judge。
+
+## 12. 2026-10-14 至 2026-10-16：Qwen extension-20 正式运行
+
+### 12.1 为什么单独补跑 20 题
+
+新增 20 题的目的，是在不作废原 main-40 结果的前提下，把主测试集扩展到师兄建议的
+至少 60 题。Qwen 旧 40 题的 280 条答案保持冻结；新增题使用独立 runner 运行
+`20 题 × E1–E7 = 140 条`，最后再按 question ID 与旧 40 题组合。这样既保留历史结果，
+也避免改写旧记录的 question-set identity。
+
+### 12.2 如何运行
+
+- 独立运行：`formal-v2-qwen-extension20-run-01`；
+- 模型：requested alias=`coding`，served model=`qwen3.8:27b`；
+- E1–E7、S1/S2/S3、prompt、BM25、Answerer、预算和 cap 均沿用冻结协议；
+- `B=16,000 characters`；R1 caps=`20/20/40`；R2/R3 cap=`4`；
+- timeout=`300s`、并发=`1`，按 35 条划为 4 个 batch；
+- 凭据只从 macOS Keychain 注入运行进程，未写入项目文件；
+- runner 支持 checkpoint、单实例锁和有限重试，已完成记录不会重复计入。
+
+### 12.3 已核验结果
+
+| 项目 | 结果 |
+| --- | ---: |
+| 总完成数 | 140/140 |
+| E1–E7 | 各 20/20 |
+| 完成问题数 | 20/20 |
+| 完成 batch | 4/4 |
+| pending | 0 |
+| active failed keys | 0 |
+| 历史失败尝试 | 11（均已恢复，保留审计） |
+| 最终状态 | `completed` |
+
+4 个 batch 的 audit 和 `PASSED` marker 均存在；只读 pre-gold verify 为 `passed`，并生成
+`ANSWER-RUN-COMPLETED-NO-JUDGE`。核验覆盖记录数、每条件 20 条、served model、真实引用、
+store 不变、检索 bundle 一致、E7 无隐藏重检索及成本一致性。按用户要求，本阶段**没有运行
+token-F1、LLM-as-Judge 或其他评分**。
+
+公开、去凭据结果归档位于：
+`experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/`。
+
+因此，截至本节记录时间，Qwen 在答案层面已经具备 `旧 280 + 新 140 = 420 条` main-60
+结果；但旧 40 与新增 20 来自两个相互独立且兼容的 run，后续评分和汇总必须保留
+`old-40 / new-20 / combined-60` 三个口径。
+
+## 13. Model 2 的 preflight、独立 runner 与离线 dry-run
+
+### 13.1 研究目的
+
+Model 2 不是替换 Qwen，而是增加第二个检索与回答 backbone，用来回答：当存储快照、
+检索协议、Answerer prompt 和题目完全不变时，E1–E7 的结论是否能跨 backbone 保持稳定。
+唯一计划中的科学变量是 backbone：
+
+| 系统 | requested alias | 实际 served model |
+| --- | --- | --- |
+| Model 1 | `coding` | `qwen3.8:27b` |
+| Model 2 | `x-test-2` | `deepseek-v4.1-flash` |
+
+### 13.2 preflight
+
+正式运行前先做小规模 API preflight，确认：
+
+- `/v1/models` 中存在 `x-test-2`；
+- 实际响应的 `served_model` 为 `deepseek-v4.1-flash`；
+- Retrieval Agent、Answerer、R1/R2/R3 所需 JSON/动作协议可解析；
+- portable API profile、usage、finish reason、context limit 和超时行为可记录；
+- requested alias 与 served model 任一漂移都 fail closed。
+
+preflight 只用于协议兼容性验证，不计入正式答案或分数。
+
+### 13.3 独立 Model 2 suite
+
+Model 2 使用独立目录、manifest、checkpoint、审计和恢复脚本，不修改 Qwen 代码冻结版本或
+结果。正式候选为 `formal-v2-model2-main60-candidate-02`，绑定实现 commit
+`95986c3588f404526d7f0aa0235030643e430007`，并冻结：
+
+- 60 题及顺序、420 个唯一执行 key、12 个 batch × 35；
+- S1/S2/S3 store hashes；
+- E1–E7、R1/R2/R3、BM25、Answerer prompt 与 temperature=0；
+- `B=16000`、R1 caps=`20/20/40`、R2/R3 cap=`4`；
+- E7 复用同 backbone 的 E2+E6 bundle，不重新检索；
+- timeout=`300s`、response cap=`20 MB`、concurrency=`1`；
+- 模型 alias=`x-test-2` 和 served model=`deepseek-v4.1-flash`。
+
+离线 dry-run 不调用 API、不生成答案、不加载 semantic gold，也不运行 Judge；它已通过
+420 个唯一 key、E1–E7 各 60 条、12×35 batch、题序、hash、预算、cap、E7 复用、模型身份
+门禁和断点恢复等检查。
+
+## 14. Model 2 dev-6 pilot：故障、修复与验收
+
+### 14.1 为什么先跑 dev-6
+
+正式 420 条成本较高，因此先运行 `6 题 × E1–E7 = 42 条答案`。其中需先完成 36 个独立
+retrieval episodes；E7 直接复用 E2/E6，不增加第 7 组检索。pilot 只验证兼容性、恢复、
+身份和审计，不用于调整科学协议。
+
+### 14.2 run-01 的控制缺陷
+
+旧 pilot `run-01` 在 16/36 retrieval 后中止。问题不是题目、prompt 或模型漂移，而是恢复
+控制状态按整个 run 共享：某个 key 留下的恢复状态会让后续 key 的第一次失败被误判成
+“已耗尽重试”。`run-01` 被明确标记为 aborted，只保留为故障证据；其输出没有复制、续跑
+或计入新 pilot。
+
+修复方式是把恢复状态改为**按 execution key 隔离**，并补充最小测试；没有修改题目、
+store、prompt、工具、预算、cap、模型或评分口径。修复形成 commit
+`95986c3588f404526d7f0aa0235030643e430007`，随后建立全新的 candidate-02 和 run-02，
+避免混用故障前后的运行。
+
+### 14.3 run-02 验收结果
+
+| 项目 | 结果 |
+| --- | ---: |
+| Retrieval episodes | 36/36 |
+| Answers | 42/42 |
+| E1–E7 | 各 6/6 |
+| Retrieval failure attempts | 1（已恢复并完整计费） |
+| Answer failure attempts | 0 |
+| Active failures | 0 |
+| 模型身份漂移 | 0 |
+| Final audit | `passed` |
+
+`model2-final-audit.json` 与 `MODEL2-PILOT-42.PASSED` 已生成。最终审计确认 requested
+alias、所有 served model、预算、caps、引用、store hashes、E2/E4 检索不变量、E7 无重新
+检索、失败尝试成本、无空 bundle、gold 只在全部 42 条完成后进入审计，以及 Judge 未调用。
+
+公开、去凭据 pilot 归档位于：
+`experiments/locomo-conv50-v1/results/formal-v2-model2-dev6-pilot-run-02/`。
+
+## 15. formal-v2-model2 冻结
+
+pilot 通过后已建立版本级冻结说明和机器可读 manifest，并形成本地 Git commit
+`1768257`（`Freeze formal-v2 Model 2 candidate-02`）。冻结文件包括：
+
+```text
+docs/reproduction/formal-v2-model2-freeze.md
+experiments/locomo-conv50-v1/formal-v2-model2/README.md
+experiments/locomo-conv50-v1/formal-v2-model2/manifest.json
+```
+
+冻结绑定 candidate-02 suite manifest/dry-run、双 preflight hashes、run-02 pipeline manifest、
+final audit/PASSED hashes，以及实现 commit `95986c3...`。这表示 Model 2 已具备正式运行条件，
+但**截至本节记录时间，正式 60 题 × 7 条件的 420 条尚未启动，Judge 也未启动**。
+
+## 16. 双 backbone 对照的公平性边界
+
+### 16.1 可以称为相同的部分
+
+| 维度 | Model 1 与 Model 2 |
+| --- | --- |
+| 60 题与顺序 | 相同 |
+| S1/S2/S3 内容与 hash | 相同 |
+| E1–E7 条件 | 相同 |
+| R1/R2/R3 实现、prompt、工具和 BM25 | 相同 |
+| Answerer 实现、prompt、temperature | 相同 |
+| Evidence budget 与 round/action cap | 相同 |
+| E7 融合规则 | 相同，且都不重新检索 |
+| API profile、timeout、并发 | 相同 |
+| 有意改变的变量 | backbone/model deployment |
+
+因此主实验可以描述为：**冻结算法与数据条件，只替换检索 Agent 和 Answerer 的
+backbone**。这正是合理的双-backbone 稳健性对照。
+
+### 16.2 必须披露的工程差异
+
+Model 2 增加了逐响应模型身份检查、单实例锁、自动且有限的外层恢复，以及失败尝试成本
+审计。Qwen 的旧 main-40 主要采用失败停止后从 checkpoint 外部续跑，extension-20 才使用
+更完整的 batch 恢复。因此不能声称两个部署“逐字节完全相同”。这些差异不改变题目、
+检索或回答算法，但会影响可靠性与总运行成本。
+
+后续效率报告必须拆成两层：
+
+1. **成功路径效率**：成功记录的 retrieval/answer token、调用、动作与时延，可用于公平的
+   backbone 比较；
+2. **运行恢复开销**：失败、重试和中断产生的额外 token/调用，单独报告为工程鲁棒性成本。
+
+另外，portable API 对两个模型都不发送 `reasoning_effort` 和 `max_completion_tokens`；
+请求结构保持一致，但各模型自身的默认推理行为和 tokenizer 差异属于 backbone/deployment
+差异，应在论文限制中说明。
+
+## 17. 后台运行与监控约定
+
+为避免每 10 分钟的自动消息打断主对话，后续冒烟测试和正式跑批采用以下组织方式：
+
+1. 真正的 runner 在纯后台运行，不占用前台终端窗口；
+2. 监控放在独立 Codex 任务/窗口，不再把周期 heartbeat 插入本讨论线程；
+3. 正常推进时保持安静，只在里程碑、失败、需要用户动作或全部完成时通知；
+4. 监控只读 status/events/audit/PASSED 等文件，不能改变冻结协议；
+5. 恢复前必须验证 run lock，确保只有一个 runner，且已完成 key 不重复执行；
+6. API key 只通过 Keychain 注入进程，不显示、不写入项目、不读取终端历史。
+
+这一决定只改变运行与通知方式，不改变实验条件。
+
+## 18. 当前状态与下一步
+
+### 18.1 已完成
+
+- [x] main-60 两层题集、顺序、composition、manifest 与 verification；
+- [x] Qwen extension-20 的 140/140 答案、4 个 batch audit 与 pre-gold verify；
+- [x] Qwen main-60 在答案层面具备旧 280 + 新 140 共 420 条；
+- [x] Model 2 `/v1/models` 与角色级 preflight；
+- [x] Model 2 独立 candidate-02、420-key 离线 dry-run；
+- [x] Model 2 dev-6 run-02：36/36 retrieval、42/42 answers、final audit passed；
+- [x] formal-v2-model2 的版本级冻结；
+- [x] 后台 runner＋独立任务监控的工作约定。
+
+### 18.2 尚未完成
+
+- [ ] 后台启动 Model 2 正式 main-60：420 条、12 个 batch；
+- [ ] Model 2 完成后运行只读 pre-gold verification；
+- [ ] 对 `x-test-1` 做 Judge preflight，并验证其真实 served model；
+- [ ] 冻结独立 Judge 协议与匿名输入顺序；
+- [ ] 对两个 backbone 共 840 条答案统一计算 LoCoMo P/R/F1；
+- [ ] 使用独立 Judge 计算 Strict Accuracy、Partial Rate、Soft Semantic Score；
+- [ ] 按 old-40/new-20/combined-60、类别、E1–E7、backbone、错误阶段和成本做配对分析；
+- [ ] B3 Full Context 仍是候选 baseline，未并入本轮双-backbone正式主实验。
+
+### 18.3 推荐执行顺序
+
+1. 在后台按冻结 candidate-02 启动 Model 2 420 条正式运行，并在独立任务监控；
+2. 12 个 batch 与 final/pre-gold audit 全部通过后，冻结 Model 2 正式答案；
+3. preflight 并冻结 `x-test-1` Judge；
+4. 对 840 条统一运行 deterministic LoCoMo P/R/F1，再运行匿名 LLM-as-Judge；
+5. 先完成配对主效应与 backbone 稳健性分析，再决定是否补 Full Context 或其他 baseline。

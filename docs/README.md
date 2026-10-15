@@ -25,8 +25,12 @@
 - [2026-10-11 formal-v1 main-40 评分结果](progress/2026-10-11-formal-v1-scoring-results.md)：280 条官方 LoCoMo token/stem F1、分类结果、证据命中、token/call 效率、运行诊断和初步发现。
 - [2026-10-11 B3 Full Context 准备记录](progress/2026-10-11-full-context-preparation.md)：无检索完整上下文 baseline 的确定性源包、runner、容量估计、安全修正、测试与正式开跑门槛。
 - [2026-10-12 LLM-as-Judge v1 完成记录](progress/2026-10-12-llm-judge-v1-completion.md)：280/280 三档匿名语义评分、8 批审计、Strict/Partial/Soft 汇总和公开结果归档。
-- [2026-10-11 至 2026-10-12 两日工作总记录](progress/2026-10-11-to-12-two-day-work-summary.md)：正式 280 条跑批、LoCoMo 评分、Full Context 离线准备、LLM Judge、分析与报告规划的“做了什么—怎么做—为什么做”总索引。
+- [项目工作长笔记（始于 2026-10-11）](progress/2026-10-11-to-12-two-day-work-summary.md)：持续记录正式跑批、评分、main-60、第二 backbone、分析与报告规划的“做了什么—怎么做—为什么做”总索引。
 - [2026-10-14 formal-v2 main-60 扩展计划与题集记录](progress/2026-10-14-formal-v2-main60-planning.md)：师兄反馈后的60题追加设计、双backbone与独立Judge TODO、append-only题集、确定性抽样、验收门和当前完成状态。
+
+## Explanations
+
+- [Filesystem × ReFind 长期对话记忆实验：完整解释](explanations/end-to-end-experiment-explanation.md)：面向第一次接触项目的读者，从研究问题、S1–S3、R1–R3、E1–E7、运行流程到评价方法完整解释实验。
 
 ## Analysis
 

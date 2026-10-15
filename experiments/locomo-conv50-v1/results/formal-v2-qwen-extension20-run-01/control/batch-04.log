@@ -1,0 +1,400 @@
+===== START BATCH 04 ATTEMPT 1 =====
+[106/140] START E2 conv-50-q089
+[106/140] VERIFIED records=106/140
+[107/140] START E3 conv-50-q089
+[107/140] VERIFIED records=107/140
+[108/140] START E4 conv-50-q089
+[108/140] VERIFIED records=108/140
+[109/140] START E5 conv-50-q089
+{
+  "status": "failed",
+  "condition_id": "E5",
+  "question_id": "conv-50-q089",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-qwen-extension20-orchestrator-v1",
+    "run_id": "formal-v2-qwen-extension20-run-01",
+    "plan_id": "plan-dcaf54e83b31ed430835b20d13f6c40050f4a97d7ae4fa97037ad6429dc445e6",
+    "formal_run_manifest_id": "formal-run-b6201d20e22c51b8485a66c127c8d7d65fca3bfb90b200e93ce4fbedd9ec0b13",
+    "status": "failed",
+    "planned_records": 140,
+    "completed_records": 108,
+    "pending_records": 32,
+    "failure_attempts": 4,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 15,
+      "E2": 16,
+      "E3": 16,
+      "E4": 16,
+      "E5": 15,
+      "E6": 15,
+      "E7": 15
+    },
+    "finished_questions": 15,
+    "completed_blocks": 3,
+    "next_key": {
+      "condition_id": "E5",
+      "question_id": "conv-50-q089"
+    },
+    "updated_at": "2026-10-14T17:23:19.472798Z"
+  }
+}
+Batch 04 attempt 1 incomplete (rc=0); resuming same frozen run.
+===== START BATCH 04 ATTEMPT 2 =====
+[109/140] START E5 conv-50-q089
+{
+  "status": "failed",
+  "condition_id": "E5",
+  "question_id": "conv-50-q089",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-qwen-extension20-orchestrator-v1",
+    "run_id": "formal-v2-qwen-extension20-run-01",
+    "plan_id": "plan-dcaf54e83b31ed430835b20d13f6c40050f4a97d7ae4fa97037ad6429dc445e6",
+    "formal_run_manifest_id": "formal-run-b6201d20e22c51b8485a66c127c8d7d65fca3bfb90b200e93ce4fbedd9ec0b13",
+    "status": "failed",
+    "planned_records": 140,
+    "completed_records": 108,
+    "pending_records": 32,
+    "failure_attempts": 5,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 15,
+      "E2": 16,
+      "E3": 16,
+      "E4": 16,
+      "E5": 15,
+      "E6": 15,
+      "E7": 15
+    },
+    "finished_questions": 15,
+    "completed_blocks": 3,
+    "next_key": {
+      "condition_id": "E5",
+      "question_id": "conv-50-q089"
+    },
+    "updated_at": "2026-10-14T17:45:10.965894Z"
+  }
+}
+Batch 04 attempt 2 incomplete (rc=0); resuming same frozen run.
+===== START BATCH 04 ATTEMPT 3 =====
+[109/140] START E5 conv-50-q089
+{
+  "status": "failed",
+  "condition_id": "E5",
+  "question_id": "conv-50-q089",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-qwen-extension20-orchestrator-v1",
+    "run_id": "formal-v2-qwen-extension20-run-01",
+    "plan_id": "plan-dcaf54e83b31ed430835b20d13f6c40050f4a97d7ae4fa97037ad6429dc445e6",
+    "formal_run_manifest_id": "formal-run-b6201d20e22c51b8485a66c127c8d7d65fca3bfb90b200e93ce4fbedd9ec0b13",
+    "status": "failed",
+    "planned_records": 140,
+    "completed_records": 108,
+    "pending_records": 32,
+    "failure_attempts": 6,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 15,
+      "E2": 16,
+      "E3": 16,
+      "E4": 16,
+      "E5": 15,
+      "E6": 15,
+      "E7": 15
+    },
+    "finished_questions": 15,
+    "completed_blocks": 3,
+    "next_key": {
+      "condition_id": "E5",
+      "question_id": "conv-50-q089"
+    },
+    "updated_at": "2026-10-14T18:01:35.845767Z"
+  }
+}
+Batch 04 attempt 3 incomplete (rc=0); resuming same frozen run.
+===== START BATCH 04 ATTEMPT 4 =====
+[109/140] START E5 conv-50-q089
+{
+  "status": "failed",
+  "condition_id": "E5",
+  "question_id": "conv-50-q089",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-qwen-extension20-orchestrator-v1",
+    "run_id": "formal-v2-qwen-extension20-run-01",
+    "plan_id": "plan-dcaf54e83b31ed430835b20d13f6c40050f4a97d7ae4fa97037ad6429dc445e6",
+    "formal_run_manifest_id": "formal-run-b6201d20e22c51b8485a66c127c8d7d65fca3bfb90b200e93ce4fbedd9ec0b13",
+    "status": "failed",
+    "planned_records": 140,
+    "completed_records": 108,
+    "pending_records": 32,
+    "failure_attempts": 7,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 15,
+      "E2": 16,
+      "E3": 16,
+      "E4": 16,
+      "E5": 15,
+      "E6": 15,
+      "E7": 15
+    },
+    "finished_questions": 15,
+    "completed_blocks": 3,
+    "next_key": {
+      "condition_id": "E5",
+      "question_id": "conv-50-q089"
+    },
+    "updated_at": "2026-10-14T18:18:06.226415Z"
+  }
+}
+Batch 04 attempt 4 incomplete (rc=0); resuming same frozen run.
+===== START BATCH 04 ATTEMPT 5 =====
+[109/140] START E5 conv-50-q089
+{
+  "status": "failed",
+  "condition_id": "E5",
+  "question_id": "conv-50-q089",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-qwen-extension20-orchestrator-v1",
+    "run_id": "formal-v2-qwen-extension20-run-01",
+    "plan_id": "plan-dcaf54e83b31ed430835b20d13f6c40050f4a97d7ae4fa97037ad6429dc445e6",
+    "formal_run_manifest_id": "formal-run-b6201d20e22c51b8485a66c127c8d7d65fca3bfb90b200e93ce4fbedd9ec0b13",
+    "status": "failed",
+    "planned_records": 140,
+    "completed_records": 108,
+    "pending_records": 32,
+    "failure_attempts": 8,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 15,
+      "E2": 16,
+      "E3": 16,
+      "E4": 16,
+      "E5": 15,
+      "E6": 15,
+      "E7": 15
+    },
+    "finished_questions": 15,
+    "completed_blocks": 3,
+    "next_key": {
+      "condition_id": "E5",
+      "question_id": "conv-50-q089"
+    },
+    "updated_at": "2026-10-14T18:34:40.378593Z"
+  }
+}
+Batch 04 attempt 5 incomplete (rc=0); resuming same frozen run.
+===== START BATCH 04 ATTEMPT 6 =====
+[109/140] START E5 conv-50-q089
+[109/140] VERIFIED records=109/140
+[110/140] START E6 conv-50-q089
+[110/140] VERIFIED records=110/140
+[111/140] START E1 conv-50-q089
+[111/140] VERIFIED records=111/140
+[112/140] START E7 conv-50-q089
+[112/140] VERIFIED records=112/140
+[113/140] START E3 conv-50-q012
+[113/140] VERIFIED records=113/140
+[114/140] START E4 conv-50-q012
+[114/140] VERIFIED records=114/140
+[115/140] START E5 conv-50-q012
+[115/140] VERIFIED records=115/140
+[116/140] START E6 conv-50-q012
+[116/140] VERIFIED records=116/140
+[117/140] START E1 conv-50-q012
+[117/140] VERIFIED records=117/140
+[118/140] START E2 conv-50-q012
+[118/140] VERIFIED records=118/140
+[119/140] START E7 conv-50-q012
+[119/140] VERIFIED records=119/140
+[120/140] START E4 conv-50-q132
+[120/140] VERIFIED records=120/140
+[121/140] START E5 conv-50-q132
+{
+  "status": "failed",
+  "condition_id": "E5",
+  "question_id": "conv-50-q132",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-qwen-extension20-orchestrator-v1",
+    "run_id": "formal-v2-qwen-extension20-run-01",
+    "plan_id": "plan-dcaf54e83b31ed430835b20d13f6c40050f4a97d7ae4fa97037ad6429dc445e6",
+    "formal_run_manifest_id": "formal-run-b6201d20e22c51b8485a66c127c8d7d65fca3bfb90b200e93ce4fbedd9ec0b13",
+    "status": "failed",
+    "planned_records": 140,
+    "completed_records": 120,
+    "pending_records": 20,
+    "failure_attempts": 9,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 17,
+      "E2": 17,
+      "E3": 17,
+      "E4": 18,
+      "E5": 17,
+      "E6": 17,
+      "E7": 17
+    },
+    "finished_questions": 17,
+    "completed_blocks": 3,
+    "next_key": {
+      "condition_id": "E5",
+      "question_id": "conv-50-q132"
+    },
+    "updated_at": "2026-10-14T18:55:06.280813Z"
+  }
+}
+Batch 04 attempt 6 incomplete (rc=0); resuming same frozen run.
+===== START BATCH 04 ATTEMPT 7 =====
+[121/140] START E5 conv-50-q132
+[121/140] VERIFIED records=121/140
+[122/140] START E6 conv-50-q132
+[122/140] VERIFIED records=122/140
+[123/140] START E1 conv-50-q132
+[123/140] VERIFIED records=123/140
+[124/140] START E2 conv-50-q132
+[124/140] VERIFIED records=124/140
+[125/140] START E3 conv-50-q132
+[125/140] VERIFIED records=125/140
+[126/140] START E7 conv-50-q132
+[126/140] VERIFIED records=126/140
+[127/140] START E5 conv-50-q028
+{
+  "status": "failed",
+  "condition_id": "E5",
+  "question_id": "conv-50-q028",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-qwen-extension20-orchestrator-v1",
+    "run_id": "formal-v2-qwen-extension20-run-01",
+    "plan_id": "plan-dcaf54e83b31ed430835b20d13f6c40050f4a97d7ae4fa97037ad6429dc445e6",
+    "formal_run_manifest_id": "formal-run-b6201d20e22c51b8485a66c127c8d7d65fca3bfb90b200e93ce4fbedd9ec0b13",
+    "status": "failed",
+    "planned_records": 140,
+    "completed_records": 126,
+    "pending_records": 14,
+    "failure_attempts": 10,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 18,
+      "E2": 18,
+      "E3": 18,
+      "E4": 18,
+      "E5": 18,
+      "E6": 18,
+      "E7": 18
+    },
+    "finished_questions": 18,
+    "completed_blocks": 3,
+    "next_key": {
+      "condition_id": "E5",
+      "question_id": "conv-50-q028"
+    },
+    "updated_at": "2026-10-14T20:11:50.936639Z"
+  }
+}
+Batch 04 attempt 7 incomplete (rc=0); resuming same frozen run.
+===== START BATCH 04 ATTEMPT 8 =====
+[127/140] START E5 conv-50-q028
+{
+  "status": "failed",
+  "condition_id": "E5",
+  "question_id": "conv-50-q028",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-qwen-extension20-orchestrator-v1",
+    "run_id": "formal-v2-qwen-extension20-run-01",
+    "plan_id": "plan-dcaf54e83b31ed430835b20d13f6c40050f4a97d7ae4fa97037ad6429dc445e6",
+    "formal_run_manifest_id": "formal-run-b6201d20e22c51b8485a66c127c8d7d65fca3bfb90b200e93ce4fbedd9ec0b13",
+    "status": "failed",
+    "planned_records": 140,
+    "completed_records": 126,
+    "pending_records": 14,
+    "failure_attempts": 11,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 18,
+      "E2": 18,
+      "E3": 18,
+      "E4": 18,
+      "E5": 18,
+      "E6": 18,
+      "E7": 18
+    },
+    "finished_questions": 18,
+    "completed_blocks": 3,
+    "next_key": {
+      "condition_id": "E5",
+      "question_id": "conv-50-q028"
+    },
+    "updated_at": "2026-10-14T23:14:56.544171Z"
+  }
+}
+Batch 04 attempt 8 incomplete (rc=0); resuming same frozen run.
+Batch 04 exceeded 8 recovery attempts.
+===== START BATCH 04 ATTEMPT 1 =====
+[127/140] START E5 conv-50-q028
+[127/140] VERIFIED records=127/140
+[128/140] START E6 conv-50-q028
+[128/140] VERIFIED records=128/140
+[129/140] START E1 conv-50-q028
+[129/140] VERIFIED records=129/140
+[130/140] START E2 conv-50-q028
+[130/140] VERIFIED records=130/140
+[131/140] START E3 conv-50-q028
+[131/140] VERIFIED records=131/140
+[132/140] START E4 conv-50-q028
+[132/140] VERIFIED records=132/140
+[133/140] START E7 conv-50-q028
+[133/140] VERIFIED records=133/140
+[134/140] START E6 conv-50-q118
+[134/140] VERIFIED records=134/140
+[135/140] START E1 conv-50-q118
+[135/140] VERIFIED records=135/140
+[136/140] START E2 conv-50-q118
+[136/140] VERIFIED records=136/140
+[137/140] START E3 conv-50-q118
+[137/140] VERIFIED records=137/140
+[138/140] START E4 conv-50-q118
+[138/140] VERIFIED records=138/140
+[139/140] START E5 conv-50-q118
+[139/140] VERIFIED records=139/140
+[140/140] START E7 conv-50-q118
+[140/140] VERIFIED records=140/140
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-qwen-extension20-orchestrator-v1",
+  "run_id": "formal-v2-qwen-extension20-run-01",
+  "plan_id": "plan-dcaf54e83b31ed430835b20d13f6c40050f4a97d7ae4fa97037ad6429dc445e6",
+  "formal_run_manifest_id": "formal-run-b6201d20e22c51b8485a66c127c8d7d65fca3bfb90b200e93ce4fbedd9ec0b13",
+  "status": "completed",
+  "planned_records": 140,
+  "completed_records": 140,
+  "pending_records": 0,
+  "failure_attempts": 11,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 20,
+    "E2": 20,
+    "E3": 20,
+    "E4": 20,
+    "E5": 20,
+    "E6": 20,
+    "E7": 20
+  },
+  "finished_questions": 20,
+  "completed_blocks": 4,
+  "next_key": null,
+  "updated_at": "2026-10-15T13:53:46.989126Z",
+  "execution_control": {
+    "through_block": 4,
+    "target_records": 140,
+    "target_reached": true
+  }
+}
+===== BATCH 04 PASSED =====

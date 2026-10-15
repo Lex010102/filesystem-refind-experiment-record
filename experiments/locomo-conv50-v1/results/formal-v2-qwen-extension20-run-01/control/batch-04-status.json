@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-qwen-extension20-orchestrator-v1",
+  "run_id": "formal-v2-qwen-extension20-run-01",
+  "plan_id": "plan-dcaf54e83b31ed430835b20d13f6c40050f4a97d7ae4fa97037ad6429dc445e6",
+  "formal_run_manifest_id": "formal-run-b6201d20e22c51b8485a66c127c8d7d65fca3bfb90b200e93ce4fbedd9ec0b13",
+  "status": "completed",
+  "planned_records": 140,
+  "completed_records": 140,
+  "pending_records": 0,
+  "failure_attempts": 11,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 20,
+    "E2": 20,
+    "E3": 20,
+    "E4": 20,
+    "E5": 20,
+    "E6": 20,
+    "E7": 20
+  },
+  "finished_questions": 20,
+  "completed_blocks": 4,
+  "next_key": null,
+  "updated_at": "2026-10-15T13:53:55.541822Z"
+}
