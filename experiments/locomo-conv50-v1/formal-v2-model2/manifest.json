@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-freeze-v1",
+  "status": "frozen",
+  "freeze_manifest_id": "formal-v2-model2-freeze-05bd1fbe832c471f20c5c855823d46c88e66601788391730f52ac04697fd79e8",
+  "frozen_at": "2026-10-16",
+  "implementation_git_commit": "95986c3588f404526d7f0aa0235030643e430007",
+  "suite": {
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "suite_manifest_sha256": "ea0a7aca0ce5ff85fa5ed6bfd9d3e154ab476217b98f1c33b26caf56c00812dc",
+    "runner": {
+      "path": "fs_memory_lab/formal_v2_model2.py",
+      "sha256": "364d3882b2933f11a6a4035e56cf3a355fed77ad681cada538b97e05b51a9394"
+    },
+    "cli": {
+      "path": "fs_memory_lab/formal_v2_model2_cli.py",
+      "sha256": "6b90358a730fd52c74bc62d78d6a9a815447a9209b853c2e616bf8b5286bec18"
+    },
+    "parent_algorithm_manifest": {
+      "path": "experiments/locomo-conv50-v1/formal-v1/manifest.json",
+      "formal_manifest_id": "formal-337ebb2061b34493a2e81cad19453eb85481d82a646ce4c40a750e2222d08925",
+      "sha256": "78caf90e0e067db261bc1b0c287ac9c67be5781b4fdbf1f93dd45914fb453b4b"
+    }
+  },
+  "pilot_gate": {
+    "pilot_id": "formal-v2-model2-dev6-pilot-run-02",
+    "status": "passed",
+    "retrieval_completed": 36,
+    "answers_completed": 42,
+    "active_failed_keys": 0,
+    "identity_drift": false,
+    "audit_id": "model2-pilot-audit-552fddad512bfba4e3cb24e68735b544ab4b38ee8ec00a16652aaa82d021aabf",
+    "pipeline_manifest_sha256": "9ee314835d788b6f768edeb36edb0654cf2c2fb8152dbce4070d2a7c66880463",
+    "final_audit_sha256": "3492797870ce486f0b76d23c69b2d534cd9f9d7d48c065053faf3b8468d25daa",
+    "passed_marker_sha256": "8d441f10c4a20e90935c249778ceb8799631b7c7e66797c5e924190fe1069426",
+    "retrieval_system_failure_attempts": 1,
+    "retrieval_system_failure_rate": 0.02702702702702703,
+    "answer_system_failure_attempts": 0,
+    "answer_system_failure_rate": 0.0,
+    "empty_evidence_bundles": 0,
+    "preregistered_failure_rate_limit": 0.05
+  },
+  "deployment": {
+    "protocol_version": "formal-v2-model2-deployment-v1",
+    "deployment_contract_sha256": "e6d32e33480d5f4ffeca92962362ca9fabfe4b0720f0f7c57c35f9a9529b4199",
+    "api_base_url": "https://soclaas-api.comp.nus.edu.sg/v1",
+    "chat_endpoint": "https://soclaas-api.comp.nus.edu.sg/v1/chat/completions",
+    "api_style": "portable",
+    "requested_model_alias": "x-test-2",
+    "required_served_model": "deepseek-v4.1-flash",
+    "identity_policy": "every response including compaction, correction, and repair must report the exact required_served_model",
+    "context_limit_tokens": 1048576,
+    "request_timeout_seconds": 300,
+    "max_response_bytes": 20000000,
+    "concurrency": 1,
+    "runtime_model_override": "forbidden",
+    "models_check_report_sha256": "03d41797b556a20d471a04a6e757af813a063acd62e6e3b726313742089e7791",
+    "role_smoke_report_sha256": "c698272aa3258ab8a9684f337757625aa4cf943b4ec5a31231c5cfd60d1695d1"
+  },
+  "questions": {
+    "question_count": 60,
+    "condition_ids": ["E1", "E2", "E3", "E4", "E5", "E6", "E7"],
+    "planned_records": 420,
+    "composition_path": "experiments/locomo-conv50-v1/question-sets-main60-v2/main-60-composition.json",
+    "composition_sha256": "c6f5452a8f7491cb9c1fd553f636352f45c4774d1efdd7d4a1ac8a19370f7acd",
+    "main40_input_sha256": "31a65ab18797abb4491cf8de2e172050d25000eb5c1f6ddb77383d3900b757af",
+    "main40_manifest_sha256": "a58f07b3341ed7c79009fc233e7a9fc52ec2ba6f8ee59bc00c4602da759ba997",
+    "extension20_input_sha256": "8e9e27e8cec7768144ca48df3a7a5b63d6f29af1acfd482d73c0b04fd854a565",
+    "main60_manifest_sha256": "de37d2da62b781e72a2a16624041c481e39ab004159dee3d63b2fde764c222af",
+    "children": {
+      "main40": {
+        "question_set_id": "locomo-conv50-main40-v1",
+        "question_count": 40,
+        "planned_records": 280,
+        "global_question_positions": [1, 40],
+        "local_batches": 8,
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6"
+      },
+      "extension20": {
+        "question_set_id": "locomo-conv50-extension20-v2",
+        "question_count": 20,
+        "planned_records": 140,
+        "global_question_positions": [41, 60],
+        "local_batches": 4,
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b"
+      }
+    }
+  },
+  "stores": {
+    "s1": {
+      "tree_sha256": "ca39361e8e23f204a9fda55fc83e3ce7f411c7c8d582939aa63688c1923c7679",
+      "manifest_sha256": "5c5900c333c8f85463f038448560cb4357f1161d6ed43e9fbc86809ba7916d3c"
+    },
+    "s2": {
+      "tree_sha256": "e9b96bcd4e036f4ea4599edb06e9c0527c929442b09efe05d09ea416b8a4469d",
+      "manifest_sha256": "4858e430f3c197d4f718ea5839596597c3dbbd885e3d1fc654e982a90dc707ac"
+    },
+    "s3": {
+      "tree_sha256": "983238fddc77a88ef4ae3d06b50bcfd25a429f497e89c6af4d9477cefca9cad2",
+      "manifest_sha256": "70fb5ad56ff11bb849ce60b193cd6db29be601e613ca3afb76aac336e3b36e00"
+    }
+  },
+  "methods": {
+    "evidence_budget": {
+      "unit": "characters",
+      "single_source_limit": 16000,
+      "e7_per_source_limit": 16000,
+      "e7_total_limit": 32000
+    },
+    "r1": {
+      "protocol_version": "r1-evidence-agent-v3",
+      "limits_sha256": "ed5f6b5077da7406b5fa2919a3c8100f4379cde23939e661f4a8caf02281024a",
+      "round_cap": {"E1": 20, "E3": 20, "E5": 40}
+    },
+    "r2": {
+      "protocol_version": "r2-raw-refind-style-v1",
+      "protocol_sha256": "b338aafc73f4f4fd674ad5433e624b1a4e2f44e3422e06b9f5bb1dfa7d1dacb2",
+      "action_cap": 4
+    },
+    "r3": {
+      "protocol_version": "r3-curated-refind-inspired-v1",
+      "protocol_sha256": "0535a229b856dd73be89f4b617dfb9c046e9bde178e9e6689f3ac062397b0878",
+      "action_cap": 4
+    },
+    "answerer": {
+      "protocol_version": "shared-evidence-answerer-v1",
+      "prompt_sha256": "6ee299d5a5095aaaac19c0a7b61321af3b1c87e7f6aec818f47749097b87a572"
+    },
+    "e7": {
+      "protocol_version": "e7-deterministic-fusion-v1",
+      "contract_sha256": "035770f66df01bfdc937227a819ada720163fd6fa03416d88e5484ea54ae0abb",
+      "retrieval": "reuse same-run E2 and E6 bundles; no new search or LLM"
+    }
+  },
+  "execution_control": {
+    "global_batches": 12,
+    "records_per_batch": 35,
+    "main40_local_batches": 8,
+    "extension20_local_batches": 4,
+    "single_suite_lock": true,
+    "child_run_locks": true,
+    "outer_same_config_attempt_limit": 8,
+    "retryable_failure_stages": ["answer_schema", "compaction_response", "provider_response"],
+    "resume_policy": "revalidate immutable suite and child plans; skip only verified completed records; retry only the current failed key",
+    "formal_order": "main40 B01-B08, then extension20 B09-B12, then combined pre-gold verify",
+    "semantic_gold_access": "forbidden during answer run",
+    "judge_calls": "forbidden during answer run",
+    "configuration_overrides": "forbidden"
+  },
+  "tests": {
+    "tests/test_formal_v2_model2.py": "6f902ff9148ada2edaaaf0f64a26d252ad264abff1da083f0a1e75856c7989a3",
+    "tests/test_model2_preflight.py": "1dc484bd80a0f72a4040322415f4f773889d64fb5fb7f535ea93fc033ca66a04",
+    "tests/test_model2_validation.py": "f6b9b6f2f14aef2d3d298c4fa18c5a69ff07a6da997a7af9cefaf6da19c88bc3",
+    "tests/test_model2_pilot.py": "c02ab73964eb04fc6851937f43e29f05ef7caa22093320491a4010912bd2f354"
+  },
+  "change_control": {
+    "forbidden_after_freeze": [
+      "prompt changes",
+      "evidence budget changes",
+      "search parameter changes",
+      "cap changes",
+      "question reordering",
+      "model or scoring changes"
+    ],
+    "substantive_bug_rule": "create a new formal version and rerun every affected condition; never mix records from different formal versions"
+  }
+}
