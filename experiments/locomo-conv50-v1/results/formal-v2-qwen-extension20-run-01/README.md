@@ -15,7 +15,8 @@ This directory is the public, credential-free archive of the completed
 - 11 historical failed attempts were preserved for recovery/cost analysis
 - requested model alias: `coding`
 - required and verified served model: `qwen3.8:27b`
-- no token-F1 evaluation and no LLM Judge were run for this extension archive
+- answer generation completed before scoring and did not load gold or run a Judge
+- official offline LoCoMo Precision/Recall/F1 was added later; see `SCORING.md`
 
 The authoritative final outputs are under `run/records/E1` through
 `run/records/E7`. `run/E1` through `run/E6` preserve successful retrieval
@@ -27,6 +28,9 @@ are not counted among the 140 final records.
 `control/` contains the four batch logs, status snapshots, audits, PASSED
 markers, the read-only pre-gold verification report, and the
 `ANSWER-RUN-COMPLETED-NO-JUDGE` marker.
+
+`run/evaluation.json` and `run/locomo-prf-summary.json` are later, read-only
+offline scoring artifacts. They do not change any answer record and made zero API calls.
 
 ## Deliberate exclusions
 

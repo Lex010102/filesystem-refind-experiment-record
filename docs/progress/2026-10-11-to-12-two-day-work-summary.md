@@ -577,3 +577,27 @@ runner + 独立 Codex 监控任务。主对话不再接收周期性正常进度�
 
 B3 Full Context 仍是候选 baseline，但不应插入或改变当前已经冻结的双-backbone主实验。
 A-MEM 与 Mem0 继续作为未来扩展，不在本轮主线中临时加入。
+
+## 15. 2026-10-16 至 2026-10-17：正式运行和统一重评分完成
+
+此前“待启动/待完成”的双 backbone 主线已经全部跑完：
+
+- Qwen extension-20：140/140；Model 1 合计 420 条 main-60 答案；
+- Model 2 candidate-02：420/420，12/12 batch 和 continuation pre-gold verify 通过；
+- Model 1 新 20 题完成官方 LoCoMo P/R/F1；
+- Model 2 全 60 题完成官方 LoCoMo P/R/F1；
+- 独立 Judge `x-test-1 → glm-5.3-flash` 对两模型各评 420 条，合计 840/840；
+- 两个 Judge run 各 12/12 batch、verification 和 final audit 全部通过。
+
+Model 2 在 88/420 和 238/420 两次达到 R1 安全 fuse。用户明确授权保留既有记录并把 fuse
+依次从 1,000,000 提高到 2,000,000、再提高到 4,000,000。除这两个内容寻址授权外没有
+改变其他科学条件，最终结果明确披露为 `not-eligible-mixed-protocol`，不能冒充原始 fuse
+下的一次性 formal run。
+
+官方 token/stem 指标显示 Model 2 总体 Precision/Recall/F1 为
+0.1957/0.6884/0.2636；低 F1 主要来自 Precision。统一匿名 Judge 则显示 Model 1 与 Model 2
+的 Strict 分别为 0.7262 和 0.7119，Soft 分别为 0.7619 和 0.7560。两套语义分数很接近，
+说明 Model 2 的长回答和额外词面内容会显著压低 token F1；但正式结论仍需逐题配对统计。
+
+完整过程、条件级分数、Judge 模型纠正记录和归档位置见
+[2026-10-16 至 17 完成记录](2026-10-16-to-17-main60-model2-and-rescoring.md)。

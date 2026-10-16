@@ -27,6 +27,7 @@
 - [2026-10-12 LLM-as-Judge v1 完成记录](progress/2026-10-12-llm-judge-v1-completion.md)：280/280 三档匿名语义评分、8 批审计、Strict/Partial/Soft 汇总和公开结果归档。
 - [项目工作长笔记（始于 2026-10-11）](progress/2026-10-11-to-12-two-day-work-summary.md)：持续记录正式跑批、评分、main-60、第二 backbone、分析与报告规划的“做了什么—怎么做—为什么做”总索引。
 - [2026-10-14 formal-v2 main-60 扩展计划与题集记录](progress/2026-10-14-formal-v2-main60-planning.md)：师兄反馈后的60题追加设计、双backbone与独立Judge TODO、append-only题集、确定性抽样、验收门和当前完成状态。
+- [2026-10-16/17 main-60、Model 2 与统一重评分完成记录](progress/2026-10-16-to-17-main60-model2-and-rescoring.md)：20题扩展、Model 2 mixed-protocol 420条完成、LoCoMo P/R/F1、x-test-1 匿名 Judge 840条及公开归档。
 
 ## Explanations
 

@@ -1,0 +1,1569 @@
+Traceback (most recent call last):
+  File "/Users/wangwenqi/Desktop/memory bench/local-runs/formal-v2-model2/formal-v2-model2-main60-candidate-02/continuation_runner.py", line 18, in <module>
+    from fs_memory_lab.evidence import EvidenceValidationError, canonical_json_bytes, sha256_bytes
+ModuleNotFoundError: No module named 'fs_memory_lab'
+Traceback (most recent call last):
+  File "/Users/wangwenqi/Desktop/memory bench/local-runs/formal-v2-model2/formal-v2-model2-main60-candidate-02/continuation_runner.py", line 271, in <module>
+    main()
+    ~~~~^^
+  File "/Users/wangwenqi/Desktop/memory bench/local-runs/formal-v2-model2/formal-v2-model2-main60-candidate-02/continuation_runner.py", line 263, in main
+    _run_child(policy, args.child, args.through_block)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangwenqi/Desktop/memory bench/local-runs/formal-v2-model2/formal-v2-model2-main60-candidate-02/continuation_runner.py", line 139, in _run_child
+    return model2.run_child_with_recovery(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        repo_root=REPO_ROOT,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        provider=load_model2_provider_from_environment(),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/wangwenqi/Desktop/memory bench/fs_memory_lab/formal_v2_model2.py", line 1943, in run_child_with_recovery
+    key = RunKey(str(result["condition_id"]), str(result["question_id"]))
+                     ~~~~~~^^^^^^^^^^^^^^^^
+KeyError: 'condition_id'
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "child_id": "main40",
+  "run_id": "formal-v2-model2-main60-candidate-02-main40",
+  "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+  "status": "running",
+  "planned_records": 280,
+  "completed_records": 105,
+  "pending_records": 175,
+  "failure_attempts": 8,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 15,
+    "E2": 15,
+    "E3": 15,
+    "E4": 15,
+    "E5": 15,
+    "E6": 15,
+    "E7": 15
+  },
+  "finished_questions": 15,
+  "completed_blocks": 3,
+  "next_key": {
+    "condition_id": "E4",
+    "question_id": "conv-50-q037"
+  },
+  "checkpoint_sha256": "c651be0cb278ffea5f736747d31cc81b7ec07dc8eeeac853b45c1063233b58e9",
+  "updated_at": "2026-10-16T02:03:18.147726Z",
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "pending",
+    "planned_records": 420,
+    "completed_records": 105,
+    "pending_records": 315,
+    "failure_attempts": 8,
+    "active_failed_keys": 0,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 15,
+      "E2": 15,
+      "E3": 15,
+      "E4": 15,
+      "E5": 15,
+      "E6": 15,
+      "E7": 15
+    },
+    "finished_questions": 15,
+    "completed_batches": 3,
+    "next_key": {
+      "batch_id": "B04",
+      "child_id": "main40",
+      "child_local_sequence": 106,
+      "condition_id": "E4",
+      "global_sequence": 106,
+      "question_id": "conv-50-q037"
+    },
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 105,
+        "pending": 175,
+        "failed_attempts": 8
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 0,
+        "pending": 140,
+        "failed_attempts": 0
+      }
+    },
+    "updated_at": "2026-10-16T02:03:25.624210Z"
+  },
+  "execution_control": {
+    "through_block": 3,
+    "target_records": 105,
+    "target_reached": true
+  },
+  "recovery": {
+    "runner_invocations": 4,
+    "status": "target-reached"
+  }
+}
+{
+  "batch_audit_id": "model2-batch-audit-b0c124c62db43151e8ed7cb0949d42e6543e188b2d56aa3f39ce6e6c73b20eef",
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "batch_id": "B03",
+  "global_batch": 3,
+  "status": "passed",
+  "target_records": 105,
+  "verified_records": 105,
+  "verified_failure_attempts": 8,
+  "failed_attempt_usage": {
+    "failure_attempts": 8,
+    "model_calls": 95,
+    "usage_available_calls": 95,
+    "usage_unavailable_calls": 0,
+    "prompt_tokens": 3130168,
+    "completion_tokens": 96323,
+    "total_tokens": 3226491
+  },
+  "failed_attempt_token_cost_complete": true,
+  "batch_mapping": {
+    "batch_id": "B03",
+    "child_id": "main40",
+    "child_local_batch": 3,
+    "child_target_records": 105,
+    "global_batch": 3,
+    "global_record_range": [
+      71,
+      105
+    ],
+    "question_ids": [
+      "conv-50-q052",
+      "conv-50-q008",
+      "conv-50-q002",
+      "conv-50-q054",
+      "conv-50-q090"
+    ],
+    "record_count": 35,
+    "suite_target_records": 105
+  },
+  "deployment_contract_sha256": "e6d32e33480d5f4ffeca92962362ca9fabfe4b0720f0f7c57c35f9a9529b4199",
+  "model_identity_verified": true,
+  "citations_verified": true,
+  "e7_no_new_retrieval_verified": true
+}
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "child_id": "main40",
+  "run_id": "formal-v2-model2-main60-candidate-02-main40",
+  "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+  "status": "running",
+  "planned_records": 280,
+  "completed_records": 140,
+  "pending_records": 140,
+  "failure_attempts": 8,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 20,
+    "E2": 20,
+    "E3": 20,
+    "E4": 20,
+    "E5": 20,
+    "E6": 20,
+    "E7": 20
+  },
+  "finished_questions": 20,
+  "completed_blocks": 4,
+  "next_key": {
+    "condition_id": "E3",
+    "question_id": "conv-50-q010"
+  },
+  "checkpoint_sha256": "c4f6d0b7fd1a949571e5239715ca1eca221ff6df71b71eaeff32bf8d5050eef5",
+  "updated_at": "2026-10-16T03:16:49.937832Z",
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "pending",
+    "planned_records": 420,
+    "completed_records": 140,
+    "pending_records": 280,
+    "failure_attempts": 8,
+    "active_failed_keys": 0,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 20,
+      "E2": 20,
+      "E3": 20,
+      "E4": 20,
+      "E5": 20,
+      "E6": 20,
+      "E7": 20
+    },
+    "finished_questions": 20,
+    "completed_batches": 4,
+    "next_key": {
+      "batch_id": "B05",
+      "child_id": "main40",
+      "child_local_sequence": 141,
+      "condition_id": "E3",
+      "global_sequence": 141,
+      "question_id": "conv-50-q010"
+    },
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 140,
+        "pending": 140,
+        "failed_attempts": 8
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 0,
+        "pending": 140,
+        "failed_attempts": 0
+      }
+    },
+    "updated_at": "2026-10-16T03:16:59.762336Z"
+  },
+  "execution_control": {
+    "through_block": 4,
+    "target_records": 140,
+    "target_reached": true
+  },
+  "recovery": {
+    "runner_invocations": 1,
+    "status": "target-reached"
+  }
+}
+{
+  "batch_audit_id": "model2-batch-audit-1f30318ff046d682e4a422998754d56e371969110b8392727ff7fe9d5cb95e89",
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "batch_id": "B04",
+  "global_batch": 4,
+  "status": "passed",
+  "target_records": 140,
+  "verified_records": 140,
+  "verified_failure_attempts": 8,
+  "failed_attempt_usage": {
+    "failure_attempts": 8,
+    "model_calls": 95,
+    "usage_available_calls": 95,
+    "usage_unavailable_calls": 0,
+    "prompt_tokens": 3130168,
+    "completion_tokens": 96323,
+    "total_tokens": 3226491
+  },
+  "failed_attempt_token_cost_complete": true,
+  "batch_mapping": {
+    "batch_id": "B04",
+    "child_id": "main40",
+    "child_local_batch": 4,
+    "child_target_records": 140,
+    "global_batch": 4,
+    "global_record_range": [
+      106,
+      140
+    ],
+    "question_ids": [
+      "conv-50-q037",
+      "conv-50-q069",
+      "conv-50-q145",
+      "conv-50-q038",
+      "conv-50-q013"
+    ],
+    "record_count": 35,
+    "suite_target_records": 140
+  },
+  "deployment_contract_sha256": "e6d32e33480d5f4ffeca92962362ca9fabfe4b0720f0f7c57c35f9a9529b4199",
+  "model_identity_verified": true,
+  "citations_verified": true,
+  "e7_no_new_retrieval_verified": true
+}
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "child_id": "main40",
+  "run_id": "formal-v2-model2-main60-candidate-02-main40",
+  "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+  "status": "running",
+  "planned_records": 280,
+  "completed_records": 175,
+  "pending_records": 105,
+  "failure_attempts": 10,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 25,
+    "E2": 25,
+    "E3": 25,
+    "E4": 25,
+    "E5": 25,
+    "E6": 25,
+    "E7": 25
+  },
+  "finished_questions": 25,
+  "completed_blocks": 5,
+  "next_key": {
+    "condition_id": "E2",
+    "question_id": "conv-50-q068"
+  },
+  "checkpoint_sha256": "536b1dbf069b5a43c20ac78dbbb10101c6f8b0c907aaaf4bd55ab2ac85f855b8",
+  "updated_at": "2026-10-16T03:51:09.983838Z",
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "pending",
+    "planned_records": 420,
+    "completed_records": 175,
+    "pending_records": 245,
+    "failure_attempts": 10,
+    "active_failed_keys": 0,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 25,
+      "E2": 25,
+      "E3": 25,
+      "E4": 25,
+      "E5": 25,
+      "E6": 25,
+      "E7": 25
+    },
+    "finished_questions": 25,
+    "completed_batches": 5,
+    "next_key": {
+      "batch_id": "B06",
+      "child_id": "main40",
+      "child_local_sequence": 176,
+      "condition_id": "E2",
+      "global_sequence": 176,
+      "question_id": "conv-50-q068"
+    },
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 175,
+        "pending": 105,
+        "failed_attempts": 10
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 0,
+        "pending": 140,
+        "failed_attempts": 0
+      }
+    },
+    "updated_at": "2026-10-16T03:51:21.587612Z"
+  },
+  "execution_control": {
+    "through_block": 5,
+    "target_records": 175,
+    "target_reached": true
+  },
+  "recovery": {
+    "runner_invocations": 3,
+    "status": "target-reached"
+  }
+}
+{
+  "batch_audit_id": "model2-batch-audit-b6b2353490f73ed0357241309491bd5505a357b8b9305cc3a210617d3c3e28e6",
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "batch_id": "B05",
+  "global_batch": 5,
+  "status": "passed",
+  "target_records": 175,
+  "verified_records": 175,
+  "verified_failure_attempts": 10,
+  "failed_attempt_usage": {
+    "failure_attempts": 10,
+    "model_calls": 120,
+    "usage_available_calls": 120,
+    "usage_unavailable_calls": 0,
+    "prompt_tokens": 3363842,
+    "completion_tokens": 106816,
+    "total_tokens": 3470658
+  },
+  "failed_attempt_token_cost_complete": true,
+  "batch_mapping": {
+    "batch_id": "B05",
+    "child_id": "main40",
+    "child_local_batch": 5,
+    "child_target_records": 175,
+    "global_batch": 5,
+    "global_record_range": [
+      141,
+      175
+    ],
+    "question_ids": [
+      "conv-50-q010",
+      "conv-50-q014",
+      "conv-50-q154",
+      "conv-50-q103",
+      "conv-50-q128"
+    ],
+    "record_count": 35,
+    "suite_target_records": 175
+  },
+  "deployment_contract_sha256": "e6d32e33480d5f4ffeca92962362ca9fabfe4b0720f0f7c57c35f9a9529b4199",
+  "model_identity_verified": true,
+  "citations_verified": true,
+  "e7_no_new_retrieval_verified": true
+}
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "child_id": "main40",
+  "run_id": "formal-v2-model2-main60-candidate-02-main40",
+  "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+  "status": "running",
+  "planned_records": 280,
+  "completed_records": 210,
+  "pending_records": 70,
+  "failure_attempts": 11,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 30,
+    "E2": 30,
+    "E3": 30,
+    "E4": 30,
+    "E5": 30,
+    "E6": 30,
+    "E7": 30
+  },
+  "finished_questions": 30,
+  "completed_blocks": 6,
+  "next_key": {
+    "condition_id": "E1",
+    "question_id": "conv-50-q070"
+  },
+  "checkpoint_sha256": "8bf01513e16a8f081cf54c22c998e3e899bd5916a2721797f93f01ed878e3ffe",
+  "updated_at": "2026-10-16T06:21:58.092255Z",
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "pending",
+    "planned_records": 420,
+    "completed_records": 210,
+    "pending_records": 210,
+    "failure_attempts": 11,
+    "active_failed_keys": 0,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 30,
+      "E2": 30,
+      "E3": 30,
+      "E4": 30,
+      "E5": 30,
+      "E6": 30,
+      "E7": 30
+    },
+    "finished_questions": 30,
+    "completed_batches": 6,
+    "next_key": {
+      "batch_id": "B07",
+      "child_id": "main40",
+      "child_local_sequence": 211,
+      "condition_id": "E1",
+      "global_sequence": 211,
+      "question_id": "conv-50-q070"
+    },
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 210,
+        "pending": 70,
+        "failed_attempts": 11
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 0,
+        "pending": 140,
+        "failed_attempts": 0
+      }
+    },
+    "updated_at": "2026-10-16T06:22:12.633638Z"
+  },
+  "execution_control": {
+    "through_block": 6,
+    "target_records": 210,
+    "target_reached": true
+  },
+  "recovery": {
+    "runner_invocations": 2,
+    "status": "target-reached"
+  }
+}
+{
+  "batch_audit_id": "model2-batch-audit-31b7764fe61a33fe4de6248d223f1795fd0525bbcb4a6ec996f304753e8285ed",
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "batch_id": "B06",
+  "global_batch": 6,
+  "status": "passed",
+  "target_records": 210,
+  "verified_records": 210,
+  "verified_failure_attempts": 11,
+  "failed_attempt_usage": {
+    "failure_attempts": 11,
+    "model_calls": 122,
+    "usage_available_calls": 122,
+    "usage_unavailable_calls": 0,
+    "prompt_tokens": 3370153,
+    "completion_tokens": 106914,
+    "total_tokens": 3477067
+  },
+  "failed_attempt_token_cost_complete": true,
+  "batch_mapping": {
+    "batch_id": "B06",
+    "child_id": "main40",
+    "child_local_batch": 6,
+    "child_target_records": 210,
+    "global_batch": 6,
+    "global_record_range": [
+      176,
+      210
+    ],
+    "question_ids": [
+      "conv-50-q068",
+      "conv-50-q046",
+      "conv-50-q040",
+      "conv-50-q033",
+      "conv-50-q087"
+    ],
+    "record_count": 35,
+    "suite_target_records": 210
+  },
+  "deployment_contract_sha256": "e6d32e33480d5f4ffeca92962362ca9fabfe4b0720f0f7c57c35f9a9529b4199",
+  "model_identity_verified": true,
+  "citations_verified": true,
+  "e7_no_new_retrieval_verified": true
+}
+{
+  "status": "failed",
+  "child_id": "main40",
+  "condition_id": "E5",
+  "question_id": "conv-50-q005",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "child_id": "main40",
+    "run_id": "formal-v2-model2-main60-candidate-02-main40",
+    "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+    "status": "failed",
+    "planned_records": 280,
+    "completed_records": 238,
+    "pending_records": 42,
+    "failure_attempts": 13,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 34,
+      "E2": 34,
+      "E3": 34,
+      "E4": 34,
+      "E5": 34,
+      "E6": 34,
+      "E7": 34
+    },
+    "finished_questions": 34,
+    "completed_blocks": 6,
+    "next_key": {
+      "condition_id": "E5",
+      "question_id": "conv-50-q005"
+    },
+    "checkpoint_sha256": "1aa6516483f36418bb40232e659af1780e0cb29b3b4b5cf6cc33015a49141be7",
+    "updated_at": "2026-10-16T07:32:08.668493Z"
+  },
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "failed",
+    "planned_records": 420,
+    "completed_records": 238,
+    "pending_records": 182,
+    "failure_attempts": 13,
+    "active_failed_keys": 1,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 34,
+      "E2": 34,
+      "E3": 34,
+      "E4": 34,
+      "E5": 34,
+      "E6": 34,
+      "E7": 34
+    },
+    "finished_questions": 34,
+    "completed_batches": 6,
+    "next_key": {
+      "batch_id": "B07",
+      "child_id": "main40",
+      "child_local_sequence": 239,
+      "condition_id": "E5",
+      "global_sequence": 239,
+      "question_id": "conv-50-q005"
+    },
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 238,
+        "pending": 42,
+        "failed_attempts": 13
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 0,
+        "pending": 140,
+        "failed_attempts": 0
+      }
+    },
+    "updated_at": "2026-10-16T07:32:25.190342Z"
+  },
+  "recovery": {
+    "runner_invocations": 2,
+    "status": "non-retryable",
+    "attempts_for_key": 1
+  }
+}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/wangwenqi/Desktop/memory bench/fs_memory_lab/formal_v2_model2_cli.py", line 129, in <module>
+    main()
+    ~~~~^^
+  File "/Users/wangwenqi/Desktop/memory bench/fs_memory_lab/formal_v2_model2_cli.py", line 115, in main
+    result = write_batch_audit(**common, global_batch=args.global_batch)
+  File "/Users/wangwenqi/Desktop/memory bench/fs_memory_lab/formal_v2_model2.py", line 2192, in write_batch_audit
+    raise EvidenceValidationError("Batch audit target is not complete")
+fs_memory_lab.evidence.EvidenceValidationError: Batch audit target is not complete
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "child_id": "main40",
+  "run_id": "formal-v2-model2-main60-candidate-02-main40",
+  "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+  "status": "running",
+  "planned_records": 280,
+  "completed_records": 245,
+  "pending_records": 35,
+  "failure_attempts": 13,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 35,
+    "E2": 35,
+    "E3": 35,
+    "E4": 35,
+    "E5": 35,
+    "E6": 35,
+    "E7": 35
+  },
+  "finished_questions": 35,
+  "completed_blocks": 7,
+  "next_key": {
+    "condition_id": "E6",
+    "question_id": "conv-50-q117"
+  },
+  "checkpoint_sha256": "389db6e69786dfdc5f2da147ba960400aa7d8dba1a77ec68ca04821124c9757f",
+  "updated_at": "2026-10-16T09:04:21.152087Z",
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "pending",
+    "planned_records": 420,
+    "completed_records": 245,
+    "pending_records": 175,
+    "failure_attempts": 13,
+    "active_failed_keys": 0,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 35,
+      "E2": 35,
+      "E3": 35,
+      "E4": 35,
+      "E5": 35,
+      "E6": 35,
+      "E7": 35
+    },
+    "finished_questions": 35,
+    "completed_batches": 7,
+    "next_key": {
+      "batch_id": "B08",
+      "child_id": "main40",
+      "child_local_sequence": 246,
+      "condition_id": "E6",
+      "global_sequence": 246,
+      "question_id": "conv-50-q117"
+    },
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 245,
+        "pending": 35,
+        "failed_attempts": 13
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 0,
+        "pending": 140,
+        "failed_attempts": 0
+      }
+    },
+    "updated_at": "2026-10-16T09:04:38.532652Z"
+  },
+  "execution_control": {
+    "through_block": 7,
+    "target_records": 245,
+    "target_reached": true
+  },
+  "recovery": {
+    "runner_invocations": 1,
+    "status": "target-reached"
+  }
+}
+{
+  "batch_audit_id": "model2-batch-audit-a783031ae816410ff6bf08bbd9f45a554debc56f92935b9c0e755cccd3439114",
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "batch_id": "B07",
+  "global_batch": 7,
+  "status": "passed",
+  "target_records": 245,
+  "verified_records": 245,
+  "verified_failure_attempts": 13,
+  "failed_attempt_usage": {
+    "failure_attempts": 13,
+    "model_calls": 160,
+    "usage_available_calls": 158,
+    "usage_unavailable_calls": 2,
+    "prompt_tokens": 5308842,
+    "completion_tokens": 320612,
+    "total_tokens": 5629454
+  },
+  "failed_attempt_token_cost_complete": false,
+  "batch_mapping": {
+    "batch_id": "B07",
+    "child_id": "main40",
+    "child_local_batch": 7,
+    "child_target_records": 245,
+    "global_batch": 7,
+    "global_record_range": [
+      211,
+      245
+    ],
+    "question_ids": [
+      "conv-50-q070",
+      "conv-50-q088",
+      "conv-50-q125",
+      "conv-50-q032",
+      "conv-50-q005"
+    ],
+    "record_count": 35,
+    "suite_target_records": 245
+  },
+  "deployment_contract_sha256": "e6d32e33480d5f4ffeca92962362ca9fabfe4b0720f0f7c57c35f9a9529b4199",
+  "model_identity_verified": true,
+  "citations_verified": true,
+  "e7_no_new_retrieval_verified": true
+}
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "child_id": "main40",
+  "run_id": "formal-v2-model2-main60-candidate-02-main40",
+  "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+  "status": "completed",
+  "planned_records": 280,
+  "completed_records": 280,
+  "pending_records": 0,
+  "failure_attempts": 13,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 40,
+    "E2": 40,
+    "E3": 40,
+    "E4": 40,
+    "E5": 40,
+    "E6": 40,
+    "E7": 40
+  },
+  "finished_questions": 40,
+  "completed_blocks": 8,
+  "next_key": null,
+  "checkpoint_sha256": "bfa526d2a041f2977c5223f385c8646b8151ec6125a8e9eea1e433fcce343aee",
+  "updated_at": "2026-10-16T09:48:27.775902Z",
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "pending",
+    "planned_records": 420,
+    "completed_records": 280,
+    "pending_records": 140,
+    "failure_attempts": 13,
+    "active_failed_keys": 0,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 40,
+      "E2": 40,
+      "E3": 40,
+      "E4": 40,
+      "E5": 40,
+      "E6": 40,
+      "E7": 40
+    },
+    "finished_questions": 40,
+    "completed_batches": 8,
+    "next_key": {
+      "batch_id": "B09",
+      "child_id": "extension20",
+      "child_local_sequence": 1,
+      "condition_id": "E5",
+      "global_sequence": 281,
+      "question_id": "conv-50-q147"
+    },
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 280,
+        "pending": 0,
+        "failed_attempts": 13
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 0,
+        "pending": 140,
+        "failed_attempts": 0
+      }
+    },
+    "updated_at": "2026-10-16T09:48:47.046101Z"
+  },
+  "execution_control": {
+    "through_block": 8,
+    "target_records": 280,
+    "target_reached": true
+  },
+  "recovery": {
+    "runner_invocations": 1,
+    "status": "target-reached"
+  }
+}
+{
+  "batch_audit_id": "model2-batch-audit-d102a0303c563bbdb102bb99bcfcc3eaa05cb5c8cdbf092b3da1c16bf6720bed",
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "batch_id": "B08",
+  "global_batch": 8,
+  "status": "passed",
+  "target_records": 280,
+  "verified_records": 280,
+  "verified_failure_attempts": 13,
+  "failed_attempt_usage": {
+    "failure_attempts": 13,
+    "model_calls": 160,
+    "usage_available_calls": 158,
+    "usage_unavailable_calls": 2,
+    "prompt_tokens": 5308842,
+    "completion_tokens": 320612,
+    "total_tokens": 5629454
+  },
+  "failed_attempt_token_cost_complete": false,
+  "batch_mapping": {
+    "batch_id": "B08",
+    "child_id": "main40",
+    "child_local_batch": 8,
+    "child_target_records": 280,
+    "global_batch": 8,
+    "global_record_range": [
+      246,
+      280
+    ],
+    "question_ids": [
+      "conv-50-q117",
+      "conv-50-q143",
+      "conv-50-q042",
+      "conv-50-q021",
+      "conv-50-q047"
+    ],
+    "record_count": 35,
+    "suite_target_records": 280
+  },
+  "deployment_contract_sha256": "e6d32e33480d5f4ffeca92962362ca9fabfe4b0720f0f7c57c35f9a9529b4199",
+  "model_identity_verified": true,
+  "citations_verified": true,
+  "e7_no_new_retrieval_verified": true
+}
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "child_id": "extension20",
+  "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+  "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+  "status": "running",
+  "planned_records": 140,
+  "completed_records": 35,
+  "pending_records": 105,
+  "failure_attempts": 0,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 5,
+    "E2": 5,
+    "E3": 5,
+    "E4": 5,
+    "E5": 5,
+    "E6": 5,
+    "E7": 5
+  },
+  "finished_questions": 5,
+  "completed_blocks": 1,
+  "next_key": {
+    "condition_id": "E4",
+    "question_id": "conv-50-q114"
+  },
+  "checkpoint_sha256": "73280d7eb56c750c1be101ef856f74ddc8634051b9353e436ecb2ace737c1ade",
+  "updated_at": "2026-10-16T10:14:03.909084Z",
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "pending",
+    "planned_records": 420,
+    "completed_records": 315,
+    "pending_records": 105,
+    "failure_attempts": 13,
+    "active_failed_keys": 0,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 45,
+      "E2": 45,
+      "E3": 45,
+      "E4": 45,
+      "E5": 45,
+      "E6": 45,
+      "E7": 45
+    },
+    "finished_questions": 45,
+    "completed_batches": 9,
+    "next_key": {
+      "batch_id": "B10",
+      "child_id": "extension20",
+      "child_local_sequence": 36,
+      "condition_id": "E4",
+      "global_sequence": 316,
+      "question_id": "conv-50-q114"
+    },
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 280,
+        "pending": 0,
+        "failed_attempts": 13
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 35,
+        "pending": 105,
+        "failed_attempts": 0
+      }
+    },
+    "updated_at": "2026-10-16T10:14:24.797195Z"
+  },
+  "execution_control": {
+    "through_block": 1,
+    "target_records": 35,
+    "target_reached": true
+  },
+  "recovery": {
+    "runner_invocations": 1,
+    "status": "target-reached"
+  }
+}
+{
+  "batch_audit_id": "model2-batch-audit-016c0b4a74454255d1b25fb605501b8c56486c6495dba27582eee393f6bb0000",
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "batch_id": "B09",
+  "global_batch": 9,
+  "status": "passed",
+  "target_records": 315,
+  "verified_records": 315,
+  "verified_failure_attempts": 13,
+  "failed_attempt_usage": {
+    "failure_attempts": 13,
+    "model_calls": 160,
+    "usage_available_calls": 158,
+    "usage_unavailable_calls": 2,
+    "prompt_tokens": 5308842,
+    "completion_tokens": 320612,
+    "total_tokens": 5629454
+  },
+  "failed_attempt_token_cost_complete": false,
+  "batch_mapping": {
+    "batch_id": "B09",
+    "child_id": "extension20",
+    "child_local_batch": 1,
+    "child_target_records": 35,
+    "global_batch": 9,
+    "global_record_range": [
+      281,
+      315
+    ],
+    "question_ids": [
+      "conv-50-q147",
+      "conv-50-q126",
+      "conv-50-q075",
+      "conv-50-q144",
+      "conv-50-q019"
+    ],
+    "record_count": 35,
+    "suite_target_records": 315
+  },
+  "deployment_contract_sha256": "e6d32e33480d5f4ffeca92962362ca9fabfe4b0720f0f7c57c35f9a9529b4199",
+  "model_identity_verified": true,
+  "citations_verified": true,
+  "e7_no_new_retrieval_verified": true
+}
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "child_id": "extension20",
+  "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+  "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+  "status": "running",
+  "planned_records": 140,
+  "completed_records": 70,
+  "pending_records": 70,
+  "failure_attempts": 8,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 10,
+    "E2": 10,
+    "E3": 10,
+    "E4": 10,
+    "E5": 10,
+    "E6": 10,
+    "E7": 10
+  },
+  "finished_questions": 10,
+  "completed_blocks": 2,
+  "next_key": {
+    "condition_id": "E3",
+    "question_id": "conv-50-q111"
+  },
+  "checkpoint_sha256": "3fb1f7139a571abde63a6d23099c956a3c064271aa7450d17b49f5144daaca76",
+  "updated_at": "2026-10-16T13:50:51.248769Z",
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "pending",
+    "planned_records": 420,
+    "completed_records": 350,
+    "pending_records": 70,
+    "failure_attempts": 21,
+    "active_failed_keys": 0,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 50,
+      "E2": 50,
+      "E3": 50,
+      "E4": 50,
+      "E5": 50,
+      "E6": 50,
+      "E7": 50
+    },
+    "finished_questions": 50,
+    "completed_batches": 10,
+    "next_key": {
+      "batch_id": "B11",
+      "child_id": "extension20",
+      "child_local_sequence": 71,
+      "condition_id": "E3",
+      "global_sequence": 351,
+      "question_id": "conv-50-q111"
+    },
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 280,
+        "pending": 0,
+        "failed_attempts": 13
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 70,
+        "pending": 70,
+        "failed_attempts": 8
+      }
+    },
+    "updated_at": "2026-10-16T13:55:58.624093Z"
+  },
+  "execution_control": {
+    "through_block": 2,
+    "target_records": 70,
+    "target_reached": true
+  },
+  "recovery": {
+    "runner_invocations": 9,
+    "status": "target-reached"
+  }
+}
+{
+  "batch_audit_id": "model2-batch-audit-3c14b10d1a4df203996f5439f7dc22a3b18ae90d9cd6b950613dc482b7697528",
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "batch_id": "B10",
+  "global_batch": 10,
+  "status": "passed",
+  "target_records": 350,
+  "verified_records": 350,
+  "verified_failure_attempts": 21,
+  "failed_attempt_usage": {
+    "failure_attempts": 21,
+    "model_calls": 256,
+    "usage_available_calls": 254,
+    "usage_unavailable_calls": 2,
+    "prompt_tokens": 6506490,
+    "completion_tokens": 360662,
+    "total_tokens": 6867152
+  },
+  "failed_attempt_token_cost_complete": false,
+  "batch_mapping": {
+    "batch_id": "B10",
+    "child_id": "extension20",
+    "child_local_batch": 2,
+    "child_target_records": 70,
+    "global_batch": 10,
+    "global_record_range": [
+      316,
+      350
+    ],
+    "question_ids": [
+      "conv-50-q114",
+      "conv-50-q121",
+      "conv-50-q044",
+      "conv-50-q057",
+      "conv-50-q058"
+    ],
+    "record_count": 35,
+    "suite_target_records": 350
+  },
+  "deployment_contract_sha256": "e6d32e33480d5f4ffeca92962362ca9fabfe4b0720f0f7c57c35f9a9529b4199",
+  "model_identity_verified": true,
+  "citations_verified": true,
+  "e7_no_new_retrieval_verified": true
+}
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "child_id": "extension20",
+  "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+  "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+  "status": "running",
+  "planned_records": 140,
+  "completed_records": 105,
+  "pending_records": 35,
+  "failure_attempts": 8,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 15,
+    "E2": 15,
+    "E3": 15,
+    "E4": 15,
+    "E5": 15,
+    "E6": 15,
+    "E7": 15
+  },
+  "finished_questions": 15,
+  "completed_blocks": 3,
+  "next_key": {
+    "condition_id": "E2",
+    "question_id": "conv-50-q089"
+  },
+  "checkpoint_sha256": "5beb08e69b9fac8f74b3dffe67d88e06ec6ee80ae085b58ef9093b2262b6e3e6",
+  "updated_at": "2026-10-16T14:28:27.271598Z",
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "pending",
+    "planned_records": 420,
+    "completed_records": 385,
+    "pending_records": 35,
+    "failure_attempts": 21,
+    "active_failed_keys": 0,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 55,
+      "E2": 55,
+      "E3": 55,
+      "E4": 55,
+      "E5": 55,
+      "E6": 55,
+      "E7": 55
+    },
+    "finished_questions": 55,
+    "completed_batches": 11,
+    "next_key": {
+      "batch_id": "B12",
+      "child_id": "extension20",
+      "child_local_sequence": 106,
+      "condition_id": "E2",
+      "global_sequence": 386,
+      "question_id": "conv-50-q089"
+    },
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 280,
+        "pending": 0,
+        "failed_attempts": 13
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 105,
+        "pending": 35,
+        "failed_attempts": 8
+      }
+    },
+    "updated_at": "2026-10-16T14:28:43.487577Z"
+  },
+  "execution_control": {
+    "through_block": 3,
+    "target_records": 105,
+    "target_reached": true
+  },
+  "recovery": {
+    "runner_invocations": 1,
+    "status": "target-reached"
+  }
+}
+{
+  "batch_audit_id": "model2-batch-audit-813f8f45e44bb042624d44e7fabcd6695478f6355073958161c11dd1d469e03d",
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "batch_id": "B11",
+  "global_batch": 11,
+  "status": "passed",
+  "target_records": 385,
+  "verified_records": 385,
+  "verified_failure_attempts": 21,
+  "failed_attempt_usage": {
+    "failure_attempts": 21,
+    "model_calls": 256,
+    "usage_available_calls": 254,
+    "usage_unavailable_calls": 2,
+    "prompt_tokens": 6506490,
+    "completion_tokens": 360662,
+    "total_tokens": 6867152
+  },
+  "failed_attempt_token_cost_complete": false,
+  "batch_mapping": {
+    "batch_id": "B11",
+    "child_id": "extension20",
+    "child_local_batch": 3,
+    "child_target_records": 105,
+    "global_batch": 11,
+    "global_record_range": [
+      351,
+      385
+    ],
+    "question_ids": [
+      "conv-50-q111",
+      "conv-50-q078",
+      "conv-50-q074",
+      "conv-50-q082",
+      "conv-50-q104"
+    ],
+    "record_count": 35,
+    "suite_target_records": 385
+  },
+  "deployment_contract_sha256": "e6d32e33480d5f4ffeca92962362ca9fabfe4b0720f0f7c57c35f9a9529b4199",
+  "model_identity_verified": true,
+  "citations_verified": true,
+  "e7_no_new_retrieval_verified": true
+}
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "child_id": "extension20",
+  "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+  "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+  "status": "completed",
+  "planned_records": 140,
+  "completed_records": 140,
+  "pending_records": 0,
+  "failure_attempts": 10,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 20,
+    "E2": 20,
+    "E3": 20,
+    "E4": 20,
+    "E5": 20,
+    "E6": 20,
+    "E7": 20
+  },
+  "finished_questions": 20,
+  "completed_blocks": 4,
+  "next_key": null,
+  "checkpoint_sha256": "7f591d51203049fd9e6bd4e8a6efd52e4c40cec5ac02f24162b0a589f70eed46",
+  "updated_at": "2026-10-16T16:08:35.473241Z",
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "completed",
+    "planned_records": 420,
+    "completed_records": 420,
+    "pending_records": 0,
+    "failure_attempts": 23,
+    "active_failed_keys": 0,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 60,
+      "E2": 60,
+      "E3": 60,
+      "E4": 60,
+      "E5": 60,
+      "E6": 60,
+      "E7": 60
+    },
+    "finished_questions": 60,
+    "completed_batches": 12,
+    "next_key": null,
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 280,
+        "pending": 0,
+        "failed_attempts": 13
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 140,
+        "pending": 0,
+        "failed_attempts": 10
+      }
+    },
+    "updated_at": "2026-10-16T16:09:04.138434Z"
+  },
+  "execution_control": {
+    "through_block": 4,
+    "target_records": 140,
+    "target_reached": true
+  },
+  "recovery": {
+    "runner_invocations": 3,
+    "status": "target-reached"
+  }
+}
+{
+  "batch_audit_id": "model2-batch-audit-cc158b158474bbee1570a490258e7830f61823e3f6f488c6e372c08f4503cd20",
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "batch_id": "B12",
+  "global_batch": 12,
+  "status": "passed",
+  "target_records": 420,
+  "verified_records": 420,
+  "verified_failure_attempts": 23,
+  "failed_attempt_usage": {
+    "failure_attempts": 23,
+    "model_calls": 276,
+    "usage_available_calls": 274,
+    "usage_unavailable_calls": 2,
+    "prompt_tokens": 6717317,
+    "completion_tokens": 374074,
+    "total_tokens": 7091391
+  },
+  "failed_attempt_token_cost_complete": false,
+  "batch_mapping": {
+    "batch_id": "B12",
+    "child_id": "extension20",
+    "child_local_batch": 4,
+    "child_target_records": 140,
+    "global_batch": 12,
+    "global_record_range": [
+      386,
+      420
+    ],
+    "question_ids": [
+      "conv-50-q089",
+      "conv-50-q012",
+      "conv-50-q132",
+      "conv-50-q028",
+      "conv-50-q118"
+    ],
+    "record_count": 35,
+    "suite_target_records": 420
+  },
+  "deployment_contract_sha256": "e6d32e33480d5f4ffeca92962362ca9fabfe4b0720f0f7c57c35f9a9529b4199",
+  "model_identity_verified": true,
+  "citations_verified": true,
+  "e7_no_new_retrieval_verified": true
+}
+{
+  "continuation_audit_id": "model2-continuation-pre-gold-db277950a9b520941a9163747926e28e3f6877174606cffe1c5b255cf7bf7b2a",
+  "schema_version": 1,
+  "protocol_version": "model2-mixed-protocol-continuation-v2",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "continuation_policy_id": "mixed-continuation-30bf6c72eec7f3f947f1cdb49aca4a6500a99c0592c2490758572d695266e4aa",
+  "status": "passed",
+  "formal_eligibility": "not-eligible-mixed-protocol",
+  "completed_records": 420,
+  "inherited_completed_records": 238,
+  "previous_policy_id": "mixed-continuation-8cb135a3f83ac5f62b259a41857595bd27dfde65c473102dc16978323f1affa4",
+  "original_protocol_fuse_limit": 1000000,
+  "inherited_continuation_fuse_limit": 2000000,
+  "continuation_fuse_limit": 4000000,
+  "condition_counts": {
+    "E1": 60,
+    "E2": 60,
+    "E3": 60,
+    "E4": 60,
+    "E5": 60,
+    "E6": 60,
+    "E7": 60
+  },
+  "verified_failure_attempts": 23,
+  "failed_attempt_usage": {
+    "failure_attempts": 23,
+    "model_calls": 276,
+    "usage_available_calls": 274,
+    "usage_unavailable_calls": 2,
+    "prompt_tokens": 6717317,
+    "completion_tokens": 374074,
+    "total_tokens": 7091391
+  },
+  "checks": {
+    "records_420_complete": true,
+    "conditions_60_each": true,
+    "served_model_exact": true,
+    "citations_real": true,
+    "e7_no_new_retrieval": true,
+    "all_12_batch_gates_passed": true,
+    "failure_model_receipts_verified": true,
+    "mixed_protocol_disclosed": true,
+    "semantic_gold_loaded": false,
+    "judge_calls": 0
+  },
+  "batch_audit_ids": [
+    "model2-batch-audit-09d2525570c1c92f34e3aca6367dd323f286a2a9cd1f1671a7f0b99bf246966a",
+    "model2-batch-audit-3ee066d801fd925afa50391e74fd6624d817ba7530ec322ec0cd325ae61dc945",
+    "model2-batch-audit-b0c124c62db43151e8ed7cb0949d42e6543e188b2d56aa3f39ce6e6c73b20eef",
+    "model2-batch-audit-1f30318ff046d682e4a422998754d56e371969110b8392727ff7fe9d5cb95e89",
+    "model2-batch-audit-b6b2353490f73ed0357241309491bd5505a357b8b9305cc3a210617d3c3e28e6",
+    "model2-batch-audit-31b7764fe61a33fe4de6248d223f1795fd0525bbcb4a6ec996f304753e8285ed",
+    "model2-batch-audit-a783031ae816410ff6bf08bbd9f45a554debc56f92935b9c0e755cccd3439114",
+    "model2-batch-audit-d102a0303c563bbdb102bb99bcfcc3eaa05cb5c8cdbf092b3da1c16bf6720bed",
+    "model2-batch-audit-016c0b4a74454255d1b25fb605501b8c56486c6495dba27582eee393f6bb0000",
+    "model2-batch-audit-3c14b10d1a4df203996f5439f7dc22a3b18ae90d9cd6b950613dc482b7697528",
+    "model2-batch-audit-813f8f45e44bb042624d44e7fabcd6695478f6355073958161c11dd1d469e03d",
+    "model2-batch-audit-cc158b158474bbee1570a490258e7830f61823e3f6f488c6e372c08f4503cd20"
+  ],
+  "completion_marker": "ANSWER-RUN-COMPLETED-NO-JUDGE-MIXED-PROTOCOL"
+}

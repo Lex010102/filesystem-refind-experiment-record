@@ -1,0 +1,383 @@
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "child_id": "main40",
+  "run_id": "formal-v2-model2-main60-candidate-02-main40",
+  "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+  "status": "running",
+  "planned_records": 280,
+  "completed_records": 35,
+  "pending_records": 245,
+  "failure_attempts": 3,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 5,
+    "E2": 5,
+    "E3": 5,
+    "E4": 5,
+    "E5": 5,
+    "E6": 5,
+    "E7": 5
+  },
+  "finished_questions": 5,
+  "completed_blocks": 1,
+  "next_key": {
+    "condition_id": "E6",
+    "question_id": "conv-50-q151"
+  },
+  "checkpoint_sha256": "96486c6372d4c9334b0054f4e5b5e426c42ea83435667291ca31afac22d9be62",
+  "updated_at": "2026-10-15T18:01:31.441597Z",
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "pending",
+    "planned_records": 420,
+    "completed_records": 35,
+    "pending_records": 385,
+    "failure_attempts": 3,
+    "active_failed_keys": 0,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 5,
+      "E2": 5,
+      "E3": 5,
+      "E4": 5,
+      "E5": 5,
+      "E6": 5,
+      "E7": 5
+    },
+    "finished_questions": 5,
+    "completed_batches": 1,
+    "next_key": {
+      "batch_id": "B02",
+      "child_id": "main40",
+      "child_local_sequence": 36,
+      "condition_id": "E6",
+      "global_sequence": 36,
+      "question_id": "conv-50-q151"
+    },
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 35,
+        "pending": 245,
+        "failed_attempts": 3
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 0,
+        "pending": 140,
+        "failed_attempts": 0
+      }
+    },
+    "updated_at": "2026-10-15T18:01:33.758139Z"
+  },
+  "execution_control": {
+    "through_block": 1,
+    "target_records": 35,
+    "target_reached": true
+  },
+  "recovery": {
+    "runner_invocations": 4,
+    "status": "target-reached"
+  }
+}
+{
+  "batch_audit_id": "model2-batch-audit-09d2525570c1c92f34e3aca6367dd323f286a2a9cd1f1671a7f0b99bf246966a",
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "batch_id": "B01",
+  "global_batch": 1,
+  "status": "passed",
+  "target_records": 35,
+  "verified_records": 35,
+  "verified_failure_attempts": 3,
+  "failed_attempt_usage": {
+    "failure_attempts": 3,
+    "model_calls": 44,
+    "usage_available_calls": 44,
+    "usage_unavailable_calls": 0,
+    "prompt_tokens": 710916,
+    "completion_tokens": 35625,
+    "total_tokens": 746541
+  },
+  "failed_attempt_token_cost_complete": true,
+  "batch_mapping": {
+    "batch_id": "B01",
+    "child_id": "main40",
+    "child_local_batch": 1,
+    "child_target_records": 35,
+    "global_batch": 1,
+    "global_record_range": [
+      1,
+      35
+    ],
+    "question_ids": [
+      "conv-50-q023",
+      "conv-50-q081",
+      "conv-50-q051",
+      "conv-50-q027",
+      "conv-50-q022"
+    ],
+    "record_count": 35,
+    "suite_target_records": 35
+  },
+  "deployment_contract_sha256": "e6d32e33480d5f4ffeca92962362ca9fabfe4b0720f0f7c57c35f9a9529b4199",
+  "model_identity_verified": true,
+  "citations_verified": true,
+  "e7_no_new_retrieval_verified": true
+}
+{
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "child_id": "main40",
+  "run_id": "formal-v2-model2-main60-candidate-02-main40",
+  "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+  "status": "running",
+  "planned_records": 280,
+  "completed_records": 70,
+  "pending_records": 210,
+  "failure_attempts": 3,
+  "active_failed_keys": 0,
+  "completed_by_condition": {
+    "E1": 10,
+    "E2": 10,
+    "E3": 10,
+    "E4": 10,
+    "E5": 10,
+    "E6": 10,
+    "E7": 10
+  },
+  "finished_questions": 10,
+  "completed_blocks": 2,
+  "next_key": {
+    "condition_id": "E5",
+    "question_id": "conv-50-q052"
+  },
+  "checkpoint_sha256": "a8de2132615a4e829ac38f3aa26d29db7e4d6ca4fdacbc0498249fff1bf6b4b4",
+  "updated_at": "2026-10-15T18:59:23.722692Z",
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "pending",
+    "planned_records": 420,
+    "completed_records": 70,
+    "pending_records": 350,
+    "failure_attempts": 3,
+    "active_failed_keys": 0,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 10,
+      "E2": 10,
+      "E3": 10,
+      "E4": 10,
+      "E5": 10,
+      "E6": 10,
+      "E7": 10
+    },
+    "finished_questions": 10,
+    "completed_batches": 2,
+    "next_key": {
+      "batch_id": "B03",
+      "child_id": "main40",
+      "child_local_sequence": 71,
+      "condition_id": "E5",
+      "global_sequence": 71,
+      "question_id": "conv-50-q052"
+    },
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 70,
+        "pending": 210,
+        "failed_attempts": 3
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 0,
+        "pending": 140,
+        "failed_attempts": 0
+      }
+    },
+    "updated_at": "2026-10-15T18:59:28.752857Z"
+  },
+  "execution_control": {
+    "through_block": 2,
+    "target_records": 70,
+    "target_reached": true
+  },
+  "recovery": {
+    "runner_invocations": 1,
+    "status": "target-reached"
+  }
+}
+{
+  "batch_audit_id": "model2-batch-audit-3ee066d801fd925afa50391e74fd6624d817ba7530ec322ec0cd325ae61dc945",
+  "schema_version": 1,
+  "protocol_version": "formal-v2-model2-main60-suite-v1",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "batch_id": "B02",
+  "global_batch": 2,
+  "status": "passed",
+  "target_records": 70,
+  "verified_records": 70,
+  "verified_failure_attempts": 3,
+  "failed_attempt_usage": {
+    "failure_attempts": 3,
+    "model_calls": 44,
+    "usage_available_calls": 44,
+    "usage_unavailable_calls": 0,
+    "prompt_tokens": 710916,
+    "completion_tokens": 35625,
+    "total_tokens": 746541
+  },
+  "failed_attempt_token_cost_complete": true,
+  "batch_mapping": {
+    "batch_id": "B02",
+    "child_id": "main40",
+    "child_local_batch": 2,
+    "child_target_records": 70,
+    "global_batch": 2,
+    "global_record_range": [
+      36,
+      70
+    ],
+    "question_ids": [
+      "conv-50-q151",
+      "conv-50-q152",
+      "conv-50-q016",
+      "conv-50-q024",
+      "conv-50-q043"
+    ],
+    "record_count": 35,
+    "suite_target_records": 70
+  },
+  "deployment_contract_sha256": "e6d32e33480d5f4ffeca92962362ca9fabfe4b0720f0f7c57c35f9a9529b4199",
+  "model_identity_verified": true,
+  "citations_verified": true,
+  "e7_no_new_retrieval_verified": true
+}
+{
+  "status": "failed",
+  "child_id": "main40",
+  "condition_id": "E5",
+  "question_id": "conv-50-q002",
+  "progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "child_id": "main40",
+    "run_id": "formal-v2-model2-main60-candidate-02-main40",
+    "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+    "status": "failed",
+    "planned_records": 280,
+    "completed_records": 88,
+    "pending_records": 192,
+    "failure_attempts": 5,
+    "active_failed_keys": 1,
+    "completed_by_condition": {
+      "E1": 13,
+      "E2": 13,
+      "E3": 13,
+      "E4": 13,
+      "E5": 12,
+      "E6": 12,
+      "E7": 12
+    },
+    "finished_questions": 12,
+    "completed_blocks": 2,
+    "next_key": {
+      "condition_id": "E5",
+      "question_id": "conv-50-q002"
+    },
+    "checkpoint_sha256": "ed917c44e2245d1d280953a16caa7e313083783a32bef9a574b7a3eab8947018",
+    "updated_at": "2026-10-15T19:24:16.844014Z"
+  },
+  "suite_progress": {
+    "schema_version": 1,
+    "protocol_version": "formal-v2-model2-main60-suite-v1",
+    "suite_id": "formal-v2-model2-main60-candidate-02",
+    "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+    "status": "failed",
+    "planned_records": 420,
+    "completed_records": 88,
+    "pending_records": 332,
+    "failure_attempts": 5,
+    "active_failed_keys": 1,
+    "model_identity_drift_halted": false,
+    "completed_by_condition": {
+      "E1": 13,
+      "E2": 13,
+      "E3": 13,
+      "E4": 13,
+      "E5": 12,
+      "E6": 12,
+      "E7": 12
+    },
+    "finished_questions": 12,
+    "completed_batches": 2,
+    "next_key": {
+      "batch_id": "B03",
+      "child_id": "main40",
+      "child_local_sequence": 89,
+      "condition_id": "E5",
+      "global_sequence": 89,
+      "question_id": "conv-50-q002"
+    },
+    "children": {
+      "main40": {
+        "run_id": "formal-v2-model2-main60-candidate-02-main40",
+        "plan_id": "plan-c88160aca36d2c2acd633b50f8ded0fc27287ce195461d95cfdf8972909edca6",
+        "planned": 280,
+        "completed": 88,
+        "pending": 192,
+        "failed_attempts": 5
+      },
+      "extension20": {
+        "run_id": "formal-v2-model2-main60-candidate-02-extension20",
+        "plan_id": "plan-e33c937291e2814a71757990f4247b6e35f89d9a6f1508d2475b4055053a3f6b",
+        "planned": 140,
+        "completed": 0,
+        "pending": 140,
+        "failed_attempts": 0
+      }
+    },
+    "updated_at": "2026-10-15T19:24:23.265804Z"
+  },
+  "recovery": {
+    "runner_invocations": 2,
+    "status": "non-retryable",
+    "attempts_for_key": 1
+  }
+}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/wangwenqi/Desktop/memory bench/fs_memory_lab/formal_v2_model2_cli.py", line 129, in <module>
+    main()
+    ~~~~^^
+  File "/Users/wangwenqi/Desktop/memory bench/fs_memory_lab/formal_v2_model2_cli.py", line 115, in main
+    result = write_batch_audit(**common, global_batch=args.global_batch)
+  File "/Users/wangwenqi/Desktop/memory bench/fs_memory_lab/formal_v2_model2.py", line 2192, in write_batch_audit
+    raise EvidenceValidationError("Batch audit target is not complete")
+fs_memory_lab.evidence.EvidenceValidationError: Batch audit target is not complete

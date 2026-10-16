@@ -498,21 +498,25 @@ Model 2 增加了逐响应模型身份检查、单实例锁、自动且有限的
 - [x] formal-v2-model2 的版本级冻结；
 - [x] 后台 runner＋独立任务监控的工作约定。
 
-### 18.2 尚未完成
+### 18.2 后续分析尚未完成
 
-- [ ] 后台启动 Model 2 正式 main-60：420 条、12 个 batch；
-- [ ] Model 2 完成后运行只读 pre-gold verification；
-- [ ] 对 `x-test-1` 做 Judge preflight，并验证其真实 served model；
-- [ ] 冻结独立 Judge 协议与匿名输入顺序；
-- [ ] 对两个 backbone 共 840 条答案统一计算 LoCoMo P/R/F1；
-- [ ] 使用独立 Judge 计算 Strict Accuracy、Partial Rate、Soft Semantic Score；
-- [ ] 按 old-40/new-20/combined-60、类别、E1–E7、backbone、错误阶段和成本做配对分析；
+- [x] Model 2 正式 main-60：420 条、12 个 batch；
+- [x] Model 2 只读 continuation pre-gold verification；
+- [x] 对 `x-test-1` 做 Judge preflight，served model=`glm-5.3-flash`；
+- [x] 冻结并复用独立 Judge 匿名协议与输入顺序；
+- [x] Model 1 新 20 题与 Model 2 全 60 题计算 LoCoMo P/R/F1；
+- [x] 使用独立 Judge 对两个 backbone 共 840 条计算 Strict/Partial/Soft；
+- [ ] 生成 Model 1 old-40/new-20/combined-60 的显式统一 LoCoMo 汇总；
+- [ ] 按类别、E1–E7、backbone、错误阶段和成本做逐题配对分析；
 - [ ] B3 Full Context 仍是候选 baseline，未并入本轮双-backbone正式主实验。
 
 ### 18.3 推荐执行顺序
 
-1. 在后台按冻结 candidate-02 启动 Model 2 420 条正式运行，并在独立任务监控；
-2. 12 个 batch 与 final/pre-gold audit 全部通过后，冻结 Model 2 正式答案；
-3. preflight 并冻结 `x-test-1` Judge；
-4. 对 840 条统一运行 deterministic LoCoMo P/R/F1，再运行匿名 LLM-as-Judge；
-5. 先完成配对主效应与 backbone 稳健性分析，再决定是否补 Full Context 或其他 baseline。
+1. 合并 Model 1 old-40 与 new-20 的逐条 LoCoMo 结果，生成 combined-60 汇总；
+2. 完成 question × condition 配对主效应、bootstrap CI、类别分层和 backbone 稳健性分析；
+3. 分析回答长度、token Precision、Judge 标签和成本之间的关系；
+4. 明确区分 Model 2 成功路径成本与 mixed-protocol fuse/恢复成本；
+5. 再决定是否补 Full Context 或其他 baseline。
+
+2026-10-17 的最终完成详情见
+[main-60、Model 2 与统一重评分完成记录](2026-10-16-to-17-main60-model2-and-rescoring.md)。

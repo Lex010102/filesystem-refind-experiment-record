@@ -1,0 +1,21 @@
+{
+  "policy_id": "mixed-continuation-30bf6c72eec7f3f947f1cdb49aca4a6500a99c0592c2490758572d695266e4aa",
+  "schema_version": 1,
+  "protocol_version": "model2-mixed-protocol-continuation-v2",
+  "status": "authorized",
+  "suite_id": "formal-v2-model2-main60-candidate-02",
+  "suite_manifest_id": "model2-suite-b6ea58a8b11937b8fc63e5c822d91dbd45df4721aa77fae02c98eaa1e7b2bde3",
+  "previous_policy_id": "mixed-continuation-8cb135a3f83ac5f62b259a41857595bd27dfde65c473102dc16978323f1affa4",
+  "inherited_completed_records": 238,
+  "original_protocol_fuse_limit": 1000000,
+  "inherited_continuation_fuse_limit": 2000000,
+  "continuation_fuse_limit": 4000000,
+  "authorized_failure_ids": [
+    "run-failure-a9f3abe34a6b28f43f492602e3e2c8a25bc4ceed4cfd8f285d26d45fa73392b5",
+    "run-failure-f2c88ea383b0c9fa023b612d120ccdc8c75cb3fa10abf01025c46a858994845e"
+  ],
+  "authorization": "user-explicitly-approved-4000000-token-continuation",
+  "formal_eligibility": "not-eligible-mixed-protocol",
+  "no_gold": true,
+  "judge_forbidden": true
+}

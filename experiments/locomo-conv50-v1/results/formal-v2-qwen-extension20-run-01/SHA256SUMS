@@ -1,4 +1,5 @@
-cf0f02e11ffb97ee490e2cd1a5d2bfaaf703353b20e55e67e3ff69dfa1eb2300  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/README.md
+d3fd1ce612187ddcd9af5f3382dccb1ead127fd1d9bc72788d09a6f9bdc0291f  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/README.md
+099f478165a214612edbbd8c90cb0804ad86d7a4afe4b38ea80f7e5fc3938aa1  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/SCORING.md
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/control/ANSWER-RUN-COMPLETED-NO-JUDGE
 49449c9f93c0b0311a212392eb14f1599ff94a44f63bec978c93f73fe0601d0e  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/control/batch-01-audit.json
 d463cec5d34acf06fffd979042e988dc2175e0097efe0be38057efe1b0da4bf5  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/control/batch-01-status.json
@@ -535,6 +536,7 @@ a29b67cc1e0b4eb81dede4ae16ce5b09c05c0040304a3127ff2baab15b02e1dd  experiments/lo
 65059348bfc8df45519d5e898b154a9a64dd88b236d099baa8924b63cf811322  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/E6/conv-50-q147/episode.json
 45ca7508fef543cc39e6b49a4401085abc5c71d76ebdd53e2480f03d78c62d8e  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/E6/conv-50-q147/trace.jsonl
 abba57c6d9ea2e337bf4fa40665cc4dc5d439ab6b524f3281b1b03864bf16588  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/dry-run.json
+3421efe56d98258f862d4bb8ee5c0db452fc55a662c0b1c5f55d3da15d7119a3  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/evaluation.json
 9d33e5f443a58bf2ac3614841b2f5699784ddd7eed4dbc5cd5cd23bafd9a3cdc  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/events.jsonl
 3096539a8e1aca42d86d19ccc4cddb1f0762fd20fbaf26981392bd0a876e2199  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/failures/E3/conv-50-q044/attempt-0001.json
 786c9784d1a6f21d308372ab9a33a68bf92ebd58ba749cfc6cba61fedb56ee48  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/failures/E3/conv-50-q057/attempt-0001.json
@@ -548,6 +550,7 @@ f94186a21821228ada8a25da5ae3eac6d79e834fcbed8edd5e72bb80638f46a9  experiments/lo
 7bbd6e03f373103011f3b4b3a7fc97a2c5c8bec4c31f7bd531039dfa8d422282  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/failures/E5/conv-50-q089/attempt-0005.json
 4a62521f07fa66abae29ed469bf3afce6d6dac5d9a228898fd7b181021694f46  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/failures/E5/conv-50-q132/attempt-0001.json
 154bae316c2c683f133b5f8772a6f75f9cf62440077d5dd074a0ac33ecc662bc  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/formal-run-manifest.json
+f12dea8c40215b4d1168be776598a5f74d77e58b51d9d68f04571786413a2232  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/locomo-prf-summary.json
 42bc8f1c070010ea66c9bd9104df2e5b94c98b1cd9755d702e7239e17d6ff786  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/plan.json
 47faf5d3f789baaf2b44393f7b6feb045be6e28f27fb22eb127de0ae03388aa4  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/pre-gold-audit.json
 82633b2c18ef93c7102cee7447e84de8550db4390bd7f9ce01317b79690559ce  experiments/locomo-conv50-v1/results/formal-v2-qwen-extension20-run-01/run/records/E1/conv-50-q012.json
