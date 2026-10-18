@@ -21,9 +21,15 @@ from fs_memory_lab.full_context import (
 )
 from fs_memory_lab.full_context_cli import _parser, _result_exit_code
 from fs_memory_lab.full_context_runner import (
+    FULL_CONTEXT_DEV_PASSED_MARKER,
     FULL_CONTEXT_DEV_PILOT_RUN_ID,
+    FULL_CONTEXT_MAIN_QUESTION_SET,
+    FULL_CONTEXT_MAIN_RUN_ID,
+    FULL_CONTEXT_PREFLIGHT_PASSED_MARKER,
     FULL_CONTEXT_PREFLIGHT_QUESTION_ID,
     _append_event,
+    _load_full_context_gold,
+    _provider_preflight,
     _write_exclusive,
     dry_run_full_context,
     evaluate_full_context_run,
@@ -34,6 +40,12 @@ from fs_memory_lab.full_context_runner import (
     verify_full_context_run,
     write_full_context_status,
 )
+from fs_memory_lab.formal_v2_model2 import (
+    MODEL2_CHAT_ENDPOINT,
+    MODEL2_CONTEXT_LIMIT,
+    MODEL2_REQUESTED_MODEL_ALIAS,
+    MODEL2_REQUIRED_SERVED_MODEL,
+)
 from fs_memory_lab.r1_inputs import load_question_inputs, load_r1_store
 
 
@@ -43,11 +55,12 @@ FAKE_COMMIT = "f" * 40
 
 class FakeFullContextProvider:
     api_style = "portable"
-    model = "coding"
+    model = MODEL2_REQUESTED_MODEL_ALIAS
+    endpoint = MODEL2_CHAT_ENDPOINT
     timeout = 300
     max_response_bytes = 20_000_000
 
-    def __init__(self, *, served_model: str = "qwen3.8:27b") -> None:
+    def __init__(self, *, served_model: str = MODEL2_REQUIRED_SERVED_MODEL) -> None:
         self.served_model = served_model
         self.calls: list[tuple[list[dict], list[dict], object]] = []
 
@@ -83,6 +96,24 @@ class TimeoutFullContextProvider(FakeFullContextProvider):
         raise TransientProviderError(
             f"temporary timeout for {self.api_key}", kind="timeout"
         )
+
+
+class RepairIdentityDriftProvider(FakeFullContextProvider):
+    def complete(self, messages, tools, config):
+        self.calls.append((messages, tools, config))
+        served_model = (
+            MODEL2_REQUIRED_SERVED_MODEL if len(self.calls) == 1 else "wrong-model"
+        )
+        return {
+            "message": {"role": "assistant", "content": "{}"},
+            "usage": {
+                "prompt_tokens": 40_000,
+                "completion_tokens": 2,
+                "total_tokens": 40_002,
+            },
+            "served_model": served_model,
+            "response_id": f"repair-drift-{len(self.calls)}",
+        }
 
 
 class FullContextSourceTests(unittest.TestCase):
@@ -150,6 +181,23 @@ class FullContextSourceTests(unittest.TestCase):
         self.assertGreater(report["largest_request"]["total_message_characters"], 100_000)
         self.assertTrue(report["api_preflight_required"])
 
+    def test_main60_composition_and_context_capacity_are_exact(self):
+        report = inspect_full_context(
+            repo_root=ROOT, question_set=FULL_CONTEXT_MAIN_QUESTION_SET
+        )
+        self.assertEqual(report["question_count"], 60)
+        self.assertEqual(report["rows"][0]["question_id"], "conv-50-q023")
+        self.assertEqual(report["rows"][-1]["question_id"], "conv-50-q118")
+        self.assertEqual(report["largest_request"]["question_id"], "conv-50-q043")
+        self.assertEqual(report["deployment_context_limit_tokens"], MODEL2_CONTEXT_LIMIT)
+        self.assertTrue(report["estimated_request_with_output_fits_context"])
+        gold = _load_full_context_gold(ROOT, FULL_CONTEXT_MAIN_QUESTION_SET)
+        self.assertEqual(len(gold), 60)
+        self.assertEqual(
+            {row.question_id for row in gold},
+            {row["question_id"] for row in report["rows"]},
+        )
+
 
 class FullContextRunnerTests(unittest.TestCase):
     def test_immutable_publication_and_short_event_writes(self):
@@ -196,6 +244,15 @@ class FullContextRunnerTests(unittest.TestCase):
             self.assertTrue(dry["checks"]["semantic_gold_not_loaded"])
 
             provider = FakeFullContextProvider()
+            failed_preflight = run_full_context(
+                repo_root=ROOT,
+                output_root=output,
+                run_id=run_id,
+                provider=TimeoutFullContextProvider(),
+                question_id=FULL_CONTEXT_PREFLIGHT_QUESTION_ID,
+                sleeper=lambda _: None,
+            )
+            self.assertEqual(failed_preflight["status"], "failed")
             preflight = run_full_context(
                 repo_root=ROOT,
                 output_root=output,
@@ -207,6 +264,9 @@ class FullContextRunnerTests(unittest.TestCase):
             self.assertEqual(preflight["completed_records"], 1)
             self.assertEqual(len(provider.calls), 1)
             self.assertEqual(provider.calls[0][1], [])
+            self.assertTrue(
+                (output / run_id / FULL_CONTEXT_PREFLIGHT_PASSED_MARKER).is_file()
+            )
             record_path = (
                 output
                 / run_id
@@ -236,13 +296,30 @@ class FullContextRunnerTests(unittest.TestCase):
                     repo_root=ROOT, output_root=output, run_id=run_id
                 )
 
-            main_run_id = "full-context-main-gate-test"
+            main_run_id = FULL_CONTEXT_MAIN_RUN_ID
             prepare_full_context_run(
                 repo_root=ROOT,
                 output_root=output,
                 run_id=main_run_id,
-                question_set="main-40",
+                question_set=FULL_CONTEXT_MAIN_QUESTION_SET,
                 implementation_commit=FAKE_COMMIT,
+            )
+            main_manifest = json.loads(
+                (output / main_run_id / "run-manifest.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(main_manifest["question_set"]["question_count"], 60)
+            self.assertEqual(
+                main_manifest["question_set"]["question_set_id"],
+                "locomo-conv50-main60-v2",
+            )
+            self.assertEqual(main_manifest["execution"]["batches"], 12)
+            self.assertEqual(
+                main_manifest["question_set"]["question_order"][0]["question_id"],
+                "conv-50-q023",
+            )
+            self.assertEqual(
+                main_manifest["question_set"]["question_order"][-1]["question_id"],
+                "conv-50-q118",
             )
             main_provider = FakeFullContextProvider()
             with self.assertRaises(EvidenceValidationError):
@@ -273,6 +350,7 @@ class FullContextRunnerTests(unittest.TestCase):
                 repo_root=ROOT, output_root=output, run_id=run_id
             )
             self.assertEqual(audit1, audit2)
+            self.assertTrue((output / run_id / FULL_CONTEXT_DEV_PASSED_MARKER).is_file())
             main_status = run_full_context(
                 repo_root=ROOT,
                 output_root=output,
@@ -293,11 +371,29 @@ class FullContextRunnerTests(unittest.TestCase):
             )
             self.assertEqual(evaluation["count"], 6)
             self.assertIn("locomo_f1", evaluation["micro"])
+            overhead = evaluation["summary"]["failed_attempt_overhead"]
+            self.assertEqual(overhead["failure_attempts"], 1)
+            self.assertEqual(overhead["model_calls"], 3)
+            self.assertEqual(overhead["usage_unavailable_calls"], 3)
+            combined = evaluation["summary"]["all_attempts_observed_costs"]
+            self.assertEqual(combined["model_calls_total"], 9)
+            self.assertEqual(combined["usage_unavailable_calls"], 3)
 
     def test_provider_settings_fail_closed_before_request(self):
+        for attribute, invalid in (
+            ("endpoint", "https://example.invalid/v1/chat/completions"),
+            ("api_style", "legacy"),
+            ("timeout", 299),
+            ("max_response_bytes", 19_999_999),
+        ):
+            provider = FakeFullContextProvider()
+            setattr(provider, attribute, invalid)
+            with self.assertRaises(EvidenceValidationError):
+                _provider_preflight(provider)
+            self.assertEqual(provider.calls, [])
         with tempfile.TemporaryDirectory(dir=ROOT) as folder:
             output = Path(folder)
-            run_id = "full-context-provider-test"
+            run_id = FULL_CONTEXT_DEV_PILOT_RUN_ID
             prepare_full_context_run(
                 repo_root=ROOT,
                 output_root=output,
@@ -305,6 +401,17 @@ class FullContextRunnerTests(unittest.TestCase):
                 question_set="dev-6",
                 implementation_commit=FAKE_COMMIT,
             )
+            premature_pilot_provider = FakeFullContextProvider()
+            with self.assertRaises(EvidenceValidationError):
+                run_full_context(
+                    repo_root=ROOT,
+                    output_root=output,
+                    run_id=run_id,
+                    provider=premature_pilot_provider,
+                    run_all=True,
+                    sleeper=lambda _: None,
+                )
+            self.assertEqual(premature_pilot_provider.calls, [])
             provider = FakeFullContextProvider()
             provider.model = None
             with self.assertRaises(EvidenceValidationError):
@@ -316,7 +423,7 @@ class FullContextRunnerTests(unittest.TestCase):
                     question_id=FULL_CONTEXT_PREFLIGHT_QUESTION_ID,
                 )
             self.assertEqual(provider.calls, [])
-            provider.model = "coding"
+            provider.model = MODEL2_REQUESTED_MODEL_ALIAS
             timeout_provider = TimeoutFullContextProvider()
             failed = run_full_context(
                 repo_root=ROOT,
@@ -348,6 +455,58 @@ class FullContextRunnerTests(unittest.TestCase):
             self.assertEqual(failed_again["status"], "failed")
             self.assertTrue((failure.parent / "attempt-0004.json").is_file())
 
+            repair_drift_provider = RepairIdentityDriftProvider()
+            drift = run_full_context(
+                repo_root=ROOT,
+                output_root=output,
+                run_id=run_id,
+                provider=repair_drift_provider,
+                question_id=FULL_CONTEXT_PREFLIGHT_QUESTION_ID,
+                sleeper=lambda _: None,
+            )
+            self.assertEqual(drift["status"], "failed")
+            self.assertEqual(len(repair_drift_provider.calls), 2)
+            self.assertFalse(
+                (
+                    output
+                    / run_id
+                    / "records"
+                    / FULL_CONTEXT_CONDITION_ID
+                    / FULL_CONTEXT_PREFLIGHT_QUESTION_ID
+                    / "record.json"
+                ).exists()
+            )
+            terminal = output / run_id / "MODEL-IDENTITY-DRIFT.json"
+            self.assertTrue(terminal.is_file())
+            terminal_value = json.loads(terminal.read_text(encoding="utf-8"))
+            self.assertEqual(terminal_value["status"], "halted")
+            halted_status = write_full_context_status(
+                repo_root=ROOT, output_root=output, run_id=run_id
+            )
+            self.assertEqual(halted_status["status"], "halted")
+            self.assertTrue(halted_status["identity_drift"])
+            identity_failure = json.loads(
+                sorted(failure.parent.glob("attempt-*.json"))[-1].read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(identity_failure["error_type"], "ModelIdentityError")
+            self.assertEqual(identity_failure["attempt_usage"]["model_calls"], 2)
+            self.assertEqual(
+                identity_failure["attempt_usage"]["usage_available_calls"], 2
+            )
+            sealed_provider = FakeFullContextProvider()
+            with self.assertRaises(EvidenceValidationError):
+                run_full_context(
+                    repo_root=ROOT,
+                    output_root=output,
+                    run_id=run_id,
+                    provider=sealed_provider,
+                    question_id=FULL_CONTEXT_PREFLIGHT_QUESTION_ID,
+                    sleeper=lambda _: None,
+                )
+            self.assertEqual(sealed_provider.calls, [])
+
     def test_cli_requires_an_explicit_run_target(self):
         parser = _parser()
         base = [
@@ -359,10 +518,34 @@ class FullContextRunnerTests(unittest.TestCase):
             parser.parse_args(base)
         args = parser.parse_args([*base, "--through-block", "1"])
         self.assertEqual(args.through_block, 1)
+        args = parser.parse_args([*base, "--through-block", "12"])
+        self.assertEqual(args.through_block, 12)
+        with redirect_stderr(StringIO()), self.assertRaises(SystemExit):
+            parser.parse_args([*base, "--through-block", "13"])
         self.assertEqual(_result_exit_code("run", {"status": "failed"}), 1)
         self.assertEqual(_result_exit_code("pilot", {"status": "failed"}), 1)
         self.assertEqual(_result_exit_code("status", {"status": "failed"}), 0)
         self.assertEqual(_result_exit_code("run", {"status": "pending"}), 0)
+
+    def test_legacy_run_identifiers_and_question_set_are_rejected(self):
+        with tempfile.TemporaryDirectory(dir=ROOT) as folder:
+            output = Path(folder)
+            with self.assertRaises(EvidenceValidationError):
+                prepare_full_context_run(
+                    repo_root=ROOT,
+                    output_root=output,
+                    run_id="b3-full-context-v1-dev6-run-01",
+                    question_set="dev-6",
+                    implementation_commit=FAKE_COMMIT,
+                )
+            with self.assertRaises(EvidenceValidationError):
+                prepare_full_context_run(
+                    repo_root=ROOT,
+                    output_root=output,
+                    run_id=FULL_CONTEXT_MAIN_RUN_ID,
+                    question_set="main-40",
+                    implementation_commit=FAKE_COMMIT,
+                )
 
 
 if __name__ == "__main__":

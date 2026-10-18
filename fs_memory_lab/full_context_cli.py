@@ -18,6 +18,8 @@ from .full_context import publish_source_package
 from .full_context_runner import (
     FULL_CONTEXT_DEV_PILOT_RUN_ID,
     FULL_CONTEXT_IMPLEMENTATION_FILES,
+    FULL_CONTEXT_MAIN_QUESTION_SET,
+    FULL_CONTEXT_MAIN_RUN_ID,
     FULL_CONTEXT_PUBLISHED_SOURCE_FILES,
     FULL_CONTEXT_PREFLIGHT_QUESTION_ID,
     FULL_CONTEXT_SOURCE_RELATIVE_DIR,
@@ -29,6 +31,7 @@ from .full_context_runner import (
     verify_full_context_run,
     write_full_context_status,
 )
+from .model2_preflight import load_model2_provider_from_environment
 
 
 _ONLINE_COMMANDS = frozenset({"preflight", "pilot", "run"})
@@ -82,8 +85,8 @@ def _git_head(repo_root: Path) -> str:
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "B3 Full Context baseline: all 30 S1 sessions, no search, one shared "
-            "Answerer episode per question"
+            "B3 Full Context Model 2 baseline: all 30 S1 sessions, no search, "
+            "one DeepSeek Answerer episode per question"
         )
     )
     parser.add_argument(
@@ -95,10 +98,16 @@ def _parser() -> argparse.ArgumentParser:
 
     sub.add_parser("build-source", help="publish and verify the 30-session package; no API")
     inspect = sub.add_parser("inspect", help="measure exact prompt sizes; no API")
-    inspect.add_argument("--question-set", choices=("dev-6", "main-40"), required=True)
+    inspect.add_argument(
+        "--question-set", choices=("dev-6", FULL_CONTEXT_MAIN_QUESTION_SET),
+        required=True,
+    )
 
     prepare = sub.add_parser("prepare", help="freeze one content-addressed run; no API")
-    prepare.add_argument("--question-set", choices=("dev-6", "main-40"), required=True)
+    prepare.add_argument(
+        "--question-set", choices=("dev-6", FULL_CONTEXT_MAIN_QUESTION_SET),
+        required=True,
+    )
     sub.add_parser("dry-run", help="verify a pristine prepared run; no API")
     sub.add_parser("status", help="verify checkpoints and report progress; no API")
     sub.add_parser(
@@ -109,10 +118,10 @@ def _parser() -> argparse.ArgumentParser:
     )
     sub.add_parser("pilot", help="complete the six-question dev pilot")
 
-    run = sub.add_parser("run", help="run/resume one explicit main-40 target")
+    run = sub.add_parser("run", help="run/resume one explicit main-60-v2 target")
     target = run.add_mutually_exclusive_group(required=True)
     target.add_argument("--question-id")
-    target.add_argument("--through-block", type=int, choices=range(1, 9))
+    target.add_argument("--through-block", type=int, choices=range(1, 13))
     target.add_argument("--all", action="store_true", dest="run_all")
 
     sub.add_parser("verify", help="require a complete run and perform pre-gold audit")
@@ -133,7 +142,7 @@ def _run_args(args: argparse.Namespace) -> dict[str, Any]:
 def _provider() -> CompatibleChatProvider:
     # The adapter obtains the already-exported key from the process environment.
     # It never writes, prints, clears, or rotates the value.
-    return CompatibleChatProvider.from_environment()
+    return load_model2_provider_from_environment()
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -188,8 +197,14 @@ def main(argv: list[str] | None = None) -> None:
     elif args.command == "run":
         common = _run_args(args)
         status = write_full_context_status(**common)
-        if status["question_set"] != "main-40":
-            raise SystemExit("run is allowed only for a prepared main-40 run")
+        if (
+            status["question_set"] != FULL_CONTEXT_MAIN_QUESTION_SET
+            or args.run_id != FULL_CONTEXT_MAIN_RUN_ID
+        ):
+            raise SystemExit(
+                "run is allowed only for the fixed prepared main-60-v2 run: "
+                + FULL_CONTEXT_MAIN_RUN_ID
+            )
         result = run_full_context(
             **common,
             provider=_provider(),
