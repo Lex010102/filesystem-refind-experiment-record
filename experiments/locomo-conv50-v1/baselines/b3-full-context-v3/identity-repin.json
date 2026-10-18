@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "protocol_version": "b3-full-context-model2-identity-repin-v1",
+  "status": "accepted-for-new-run-only",
+  "observed_at": "2026-10-18T03:13:46.220271Z",
+  "requested_model_alias": "x-test-2",
+  "previous_required_served_model": "deepseek-v4.1-flash",
+  "required_served_model": "deepseek-v4.1-flash-1017",
+  "identity_policy": "exact-match-every-response-fail-closed",
+  "recovery_policy": "v2-run-remains-halted-new-v3-run-required",
+  "incident": {
+    "run_id": "b3-full-context-v2-model2-dev6-run-01",
+    "manifest_id": "full-context-run-manifest-4ad29fd66a912d8b16adb75cc2fcc0efc4a73c0bd2129befe210c92487b517ef",
+    "question_id": "conv-50-q079",
+    "failure_id": "full-context-failure-be7d3ea8f14da21a51b42cfa5a68950b95d8d7bd1d1d3cd90b6a77f8ec9dd4bb",
+    "identity_drift_sha256": "fb40600013339248fea3e07091bf7ec8ea8086dbe844cd8589fe337d40c5fe6b",
+    "failure_sha256": "6d7233b3d0e5103ea2af649e9b9e91e2eeb25e91552faa53bce8aa181a872c7b",
+    "model_calls": 1,
+    "prompt_tokens": 35754,
+    "completion_tokens": 185,
+    "total_tokens": 35939
+  }
+}

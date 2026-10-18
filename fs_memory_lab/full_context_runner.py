@@ -105,22 +105,30 @@ from .model2_preflight import verify_sanitized_preflight_artifact
 from .vendor.locomo_porter import PorterStemmer
 
 
-FULL_CONTEXT_RUN_PROTOCOL_VERSION = "b3-full-context-model2-main60-run-v2"
-FULL_CONTEXT_RECORD_PROTOCOL_VERSION = "b3-full-context-model2-main60-record-v2"
-FULL_CONTEXT_FAILURE_PROTOCOL_VERSION = "b3-full-context-model2-main60-failure-v2"
-FULL_CONTEXT_EVALUATION_PROTOCOL_VERSION = "b3-full-context-model2-main60-evaluation-v2"
+FULL_CONTEXT_RUN_PROTOCOL_VERSION = "b3-full-context-model2-main60-run-v3"
+FULL_CONTEXT_RECORD_PROTOCOL_VERSION = "b3-full-context-model2-main60-record-v3"
+FULL_CONTEXT_FAILURE_PROTOCOL_VERSION = "b3-full-context-model2-main60-failure-v3"
+FULL_CONTEXT_EVALUATION_PROTOCOL_VERSION = "b3-full-context-model2-main60-evaluation-v3"
 FULL_CONTEXT_BATCH_SIZE = 5
 FULL_CONTEXT_PREFLIGHT_QUESTION_ID = "conv-50-q079"
-FULL_CONTEXT_DEV_PILOT_RUN_ID = "b3-full-context-v2-model2-dev6-run-01"
-FULL_CONTEXT_MAIN_RUN_ID = "b3-full-context-v2-model2-main60-run-01"
+FULL_CONTEXT_DEV_PILOT_RUN_ID = "b3-full-context-v3-model2-1017-dev6-run-01"
+FULL_CONTEXT_MAIN_RUN_ID = "b3-full-context-v3-model2-1017-main60-run-01"
 FULL_CONTEXT_MAIN_QUESTION_SET = "main-60-v2"
 FULL_CONTEXT_MAIN_QUESTION_SET_ID = "locomo-conv50-main60-v2"
-FULL_CONTEXT_DEV_PASSED_MARKER = "FULL-CONTEXT-MODEL2-DEV6-6.PASSED"
-FULL_CONTEXT_MAIN_PASSED_MARKER = "FULL-CONTEXT-MODEL2-MAIN60-60.PASSED"
+FULL_CONTEXT_REQUIRED_SERVED_MODEL = "deepseek-v4.1-flash-1017"
+FULL_CONTEXT_DEV_PASSED_MARKER = "FULL-CONTEXT-MODEL2-1017-DEV6-6.PASSED"
+FULL_CONTEXT_MAIN_PASSED_MARKER = "FULL-CONTEXT-MODEL2-1017-MAIN60-60.PASSED"
 FULL_CONTEXT_PREFLIGHT_PASSED_MARKER = (
-    "FULL-CONTEXT-MODEL2-LONG-CONTEXT-PREFLIGHT.PASSED"
+    "FULL-CONTEXT-MODEL2-1017-LONG-CONTEXT-PREFLIGHT.PASSED"
 )
 FULL_CONTEXT_IDENTITY_DRIFT_MARKER = "MODEL-IDENTITY-DRIFT.json"
+FULL_CONTEXT_IDENTITY_REPIN_RELATIVE_PATH = (
+    "experiments/locomo-conv50-v1/baselines/"
+    "b3-full-context-v3/identity-repin.json"
+)
+FULL_CONTEXT_IDENTITY_REPIN_SHA256 = (
+    "c82267f5278d8680e1ea18303f85bcd4a23c1d859b25ad5be0f0c70e0e149d9e"
+)
 FULL_CONTEXT_PARENT_FORMAL_MANIFEST_ID = (
     "formal-337ebb2061b34493a2e81cad19453eb85481d82a646ce4c40a750e2222d08925"
 )
@@ -460,7 +468,7 @@ def _question_set_manifest(
 
 
 def _verify_model2_foundation(repo_root: Path) -> dict[str, Any]:
-    """Bind the Full Context run to the already frozen Model 2 deployment."""
+    """Bind the run to the legacy deployment freeze and the v3 identity re-pin."""
 
     root = Path(repo_root).resolve()
     freeze_path = root / FULL_CONTEXT_MODEL2_FREEZE_MANIFEST_RELATIVE_PATH
@@ -514,12 +522,51 @@ def _verify_model2_foundation(repo_root: Path) -> dict[str, Any]:
         != MODEL2_REQUIRED_SERVED_MODEL
     ):
         raise EvidenceValidationError("Archived Model 2 preflight differs")
+    repin_path = root / FULL_CONTEXT_IDENTITY_REPIN_RELATIVE_PATH
+    if _file_sha256(repin_path) != FULL_CONTEXT_IDENTITY_REPIN_SHA256:
+        raise EvidenceValidationError("Full Context identity re-pin differs")
+    repin = _read_json(repin_path)
+    incident = repin.get("incident")
+    if (
+        repin.get("schema_version") != 1
+        or repin.get("protocol_version")
+        != "b3-full-context-model2-identity-repin-v1"
+        or repin.get("status") != "accepted-for-new-run-only"
+        or repin.get("requested_model_alias") != MODEL2_REQUESTED_MODEL_ALIAS
+        or repin.get("previous_required_served_model")
+        != MODEL2_REQUIRED_SERVED_MODEL
+        or repin.get("required_served_model")
+        != FULL_CONTEXT_REQUIRED_SERVED_MODEL
+        or repin.get("identity_policy")
+        != "exact-match-every-response-fail-closed"
+        or repin.get("recovery_policy")
+        != "v2-run-remains-halted-new-v3-run-required"
+        or not isinstance(incident, Mapping)
+        or incident.get("run_id") != "b3-full-context-v2-model2-dev6-run-01"
+        or incident.get("question_id") != FULL_CONTEXT_PREFLIGHT_QUESTION_ID
+        or incident.get("identity_drift_sha256")
+        != "fb40600013339248fea3e07091bf7ec8ea8086dbe844cd8589fe337d40c5fe6b"
+        or incident.get("failure_sha256")
+        != "6d7233b3d0e5103ea2af649e9b9e91e2eeb25e91552faa53bce8aa181a872c7b"
+    ):
+        raise EvidenceValidationError("Full Context identity re-pin contract differs")
     return {
         "freeze_manifest_id": FULL_CONTEXT_MODEL2_FREEZE_MANIFEST_ID,
         "freeze_manifest_relative_path": FULL_CONTEXT_MODEL2_FREEZE_MANIFEST_RELATIVE_PATH,
         "freeze_manifest_sha256": FULL_CONTEXT_MODEL2_FREEZE_MANIFEST_SHA256,
         "preflight_files": files,
         "preflight_summaries": summaries,
+        "identity_repin": {
+            "relative_path": FULL_CONTEXT_IDENTITY_REPIN_RELATIVE_PATH,
+            "sha256": FULL_CONTEXT_IDENTITY_REPIN_SHA256,
+            "status": repin["status"],
+            "previous_required_served_model": repin[
+                "previous_required_served_model"
+            ],
+            "required_served_model": repin["required_served_model"],
+            "incident_run_id": incident["run_id"],
+            "incident_failure_id": incident["failure_id"],
+        },
     }
 
 
@@ -603,7 +650,9 @@ class FullContextRunRecord:
         validate_answer_result(self.answer_result, bundle=self.evidence_bundle)
         if self.answer_result.requested_model != MODEL2_REQUESTED_MODEL_ALIAS:
             raise EvidenceValidationError("Full Context requested model differs")
-        if set(self.answer_result.served_models) != {MODEL2_REQUIRED_SERVED_MODEL}:
+        if set(self.answer_result.served_models) != {
+            FULL_CONTEXT_REQUIRED_SERVED_MODEL
+        }:
             raise EvidenceValidationError("Full Context served model differs")
         request = dict(self.request_metrics)
         deployment = dict(self.deployment_metrics)
@@ -717,7 +766,7 @@ def _manifest_body(
         "source_package_id": package["source_package_id"],
         "answerer_prompt_sha256": ANSWERER_SYSTEM_PROMPT_SHA256,
         "requested_model": MODEL2_REQUESTED_MODEL_ALIAS,
-        "required_served_model": MODEL2_REQUIRED_SERVED_MODEL,
+        "required_served_model": FULL_CONTEXT_REQUIRED_SERVED_MODEL,
         "required_dev_pilot_run_id": (
             FULL_CONTEXT_DEV_PILOT_RUN_ID
             if question_set == FULL_CONTEXT_MAIN_QUESTION_SET
@@ -769,7 +818,7 @@ def _manifest_body(
         },
         "deployment": {
             "requested_model_alias": MODEL2_REQUESTED_MODEL_ALIAS,
-            "required_served_model": MODEL2_REQUIRED_SERVED_MODEL,
+            "required_served_model": FULL_CONTEXT_REQUIRED_SERVED_MODEL,
             "chat_endpoint": MODEL2_CHAT_ENDPOINT,
             "api_style": MODEL2_API_STYLE,
             "context_limit_tokens": MODEL2_CONTEXT_LIMIT,
@@ -906,7 +955,7 @@ def _publish_completed_batch_audits(
             ),
             "served_model_constant": all(
                 set(record.answer_result.served_models)
-                == {MODEL2_REQUIRED_SERVED_MODEL}
+                == {FULL_CONTEXT_REQUIRED_SERVED_MODEL}
                 for record in records
             ),
             "record_ids_unique": len({record.record_id for record in records})
@@ -1140,7 +1189,7 @@ def _seal_identity_drift(
             "manifest_id": manifest["manifest_id"],
             "question_id": question.question_id,
             "requested_model_alias": MODEL2_REQUESTED_MODEL_ALIAS,
-            "required_served_model": MODEL2_REQUIRED_SERVED_MODEL,
+            "required_served_model": FULL_CONTEXT_REQUIRED_SERVED_MODEL,
             "observed_served_model": provider.observed_served_model,
             "error_type": "ModelIdentityError",
             "reason": "provider response violated the frozen model identity",
@@ -1162,7 +1211,7 @@ def _preflight_marker_value(
         "question_id": record.question.question_id,
         "record_id": record.record_id,
         "requested_model_alias": MODEL2_REQUESTED_MODEL_ALIAS,
-        "required_served_model": MODEL2_REQUIRED_SERVED_MODEL,
+        "required_served_model": FULL_CONTEXT_REQUIRED_SERVED_MODEL,
         "total_message_characters": metrics["total_message_characters"],
         "estimated_total_context_with_2048_output_high": metrics[
             "estimated_total_context_with_2048_output_high"
@@ -1188,7 +1237,7 @@ def _publish_long_context_preflight(
         or record.run_id != manifest["run_id"]
         or record.plan_id != manifest["plan_id"]
         or set(record.answer_result.served_models)
-        != {MODEL2_REQUIRED_SERVED_MODEL}
+        != {FULL_CONTEXT_REQUIRED_SERVED_MODEL}
         or len(record.evidence_bundle.evidence_items) != 30
     ):
         raise EvidenceValidationError("Long-context preflight record differs")
@@ -1424,7 +1473,7 @@ def run_full_context(
     guarded_provider = ModelIdentityProvider(
         provider,
         requested_model_alias=MODEL2_REQUESTED_MODEL_ALIAS,
-        required_served_model=MODEL2_REQUIRED_SERVED_MODEL,
+        required_served_model=FULL_CONTEXT_REQUIRED_SERVED_MODEL,
     )
     answerer = SharedAnswerer(
         provider=guarded_provider,
@@ -1460,7 +1509,9 @@ def run_full_context(
             provider_failure_cursor = guarded_provider.provider_failure_cursor()
             try:
                 answer = answerer.run(bundle)
-                if set(answer.served_models) != {MODEL2_REQUIRED_SERVED_MODEL}:
+                if set(answer.served_models) != {
+                    FULL_CONTEXT_REQUIRED_SERVED_MODEL
+                }:
                     raise EvidenceValidationError("Full Context Answerer served model drifted")
                 elapsed_ms = max(0, round((time.monotonic() - started) * 1000))
                 usage = {
@@ -1588,7 +1639,7 @@ def verify_full_context_run(
     checks = {
         "all_records_complete": len(record_ids) == len(questions),
         "record_ids_unique": len(record_ids) == len(set(record_ids)),
-        "served_model_constant": served == {MODEL2_REQUIRED_SERVED_MODEL},
+        "served_model_constant": served == {FULL_CONTEXT_REQUIRED_SERVED_MODEL},
         "source_store_unchanged": loaded.snapshot.to_dict() == manifest["source_snapshot"],
         "all_30_sessions_each_record": all(
             len(_load_record(_record_path(run_root, question.question_id)).evidence_bundle.evidence_items) == 30

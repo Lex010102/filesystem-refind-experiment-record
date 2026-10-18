@@ -27,6 +27,7 @@ from fs_memory_lab.full_context_runner import (
     FULL_CONTEXT_MAIN_RUN_ID,
     FULL_CONTEXT_PREFLIGHT_PASSED_MARKER,
     FULL_CONTEXT_PREFLIGHT_QUESTION_ID,
+    FULL_CONTEXT_REQUIRED_SERVED_MODEL,
     _append_event,
     _load_full_context_gold,
     _provider_preflight,
@@ -44,7 +45,6 @@ from fs_memory_lab.formal_v2_model2 import (
     MODEL2_CHAT_ENDPOINT,
     MODEL2_CONTEXT_LIMIT,
     MODEL2_REQUESTED_MODEL_ALIAS,
-    MODEL2_REQUIRED_SERVED_MODEL,
 )
 from fs_memory_lab.r1_inputs import load_question_inputs, load_r1_store
 
@@ -60,7 +60,9 @@ class FakeFullContextProvider:
     timeout = 300
     max_response_bytes = 20_000_000
 
-    def __init__(self, *, served_model: str = MODEL2_REQUIRED_SERVED_MODEL) -> None:
+    def __init__(
+        self, *, served_model: str = FULL_CONTEXT_REQUIRED_SERVED_MODEL
+    ) -> None:
         self.served_model = served_model
         self.calls: list[tuple[list[dict], list[dict], object]] = []
 
@@ -102,7 +104,9 @@ class RepairIdentityDriftProvider(FakeFullContextProvider):
     def complete(self, messages, tools, config):
         self.calls.append((messages, tools, config))
         served_model = (
-            MODEL2_REQUIRED_SERVED_MODEL if len(self.calls) == 1 else "wrong-model"
+            FULL_CONTEXT_REQUIRED_SERVED_MODEL
+            if len(self.calls) == 1
+            else "wrong-model"
         )
         return {
             "message": {"role": "assistant", "content": "{}"},
@@ -313,6 +317,16 @@ class FullContextRunnerTests(unittest.TestCase):
                 "locomo-conv50-main60-v2",
             )
             self.assertEqual(main_manifest["execution"]["batches"], 12)
+            self.assertEqual(
+                main_manifest["deployment"]["required_served_model"],
+                FULL_CONTEXT_REQUIRED_SERVED_MODEL,
+            )
+            self.assertEqual(
+                main_manifest["model2_foundation"]["identity_repin"][
+                    "required_served_model"
+                ],
+                FULL_CONTEXT_REQUIRED_SERVED_MODEL,
+            )
             self.assertEqual(
                 main_manifest["question_set"]["question_order"][0]["question_id"],
                 "conv-50-q023",
@@ -535,6 +549,14 @@ class FullContextRunnerTests(unittest.TestCase):
                     repo_root=ROOT,
                     output_root=output,
                     run_id="b3-full-context-v1-dev6-run-01",
+                    question_set="dev-6",
+                    implementation_commit=FAKE_COMMIT,
+                )
+            with self.assertRaises(EvidenceValidationError):
+                prepare_full_context_run(
+                    repo_root=ROOT,
+                    output_root=output,
+                    run_id="b3-full-context-v2-model2-dev6-run-01",
                     question_set="dev-6",
                     implementation_commit=FAKE_COMMIT,
                 )
