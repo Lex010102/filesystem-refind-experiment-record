@@ -601,3 +601,174 @@ Model 2 在 88/420 和 238/420 两次达到 R1 安全 fuse。用户明确授权�
 
 完整过程、条件级分数、Judge 模型纠正记录和归档位置见
 [2026-10-16 至 17 完成记录](2026-10-16-to-17-main60-model2-and-rescoring.md)。
+
+---
+
+## 16. 2026-10-18 至 2026-10-20：报告框架、前三章正文与出版资产
+
+这两天的工作重点从实验运行转向正式报告写作。主要完成了全报告框架、Chapter 1–3
+英文正文、References、附录登记册，以及前三章图片和后续 LaTeX 迁移准备。
+
+### 16.1 完成全报告框架和核心分析路线
+
+根据统一 Main-60、两个 backbone 和 Full Context，重新整理了完整报告结构。最终报告采用
+九章结构：引言、背景与相关工作、系统设计与方法、实验设计与评价、结果与问题分析、讨论、
+局限、未来工作和结论。
+
+第 3–5 章的职责被明确分开：
+
+- Chapter 3 解释系统是什么、各组件如何工作，以及为什么形成 E1–E7；
+- Chapter 4 解释实验怎样公平实施和评价；
+- Chapter 5 按架构、跨-backbone 稳健性、错误机制和质量—成本决策展开结果分析。
+
+结果分析将 60 道题视为一个统一测试集，不再拆分 old-40 和 new-20。核心分析沿三条主线展开：
+
+1. 架构线：存储表示与检索方式如何交互；
+2. 稳健性线：结论是否跨 Qwen 与 DeepSeek 成立；
+3. 机制与决策线：错误发生在哪一阶段，以及 selective retrieval 与 Full Context 如何取舍。
+
+主要框架文件：
+
+- `docs/analysis/main60-complete-report-outline.md`
+- `docs/analysis/main60-problem-analysis-detailed-outline.md`
+- `docs/analysis/main60-three-system-results-analysis-framework.md`
+- `docs/analysis/chapter1-2-detailed-writing-guide.md`
+
+### 16.2 完成 Chapter 1–3 英文正文
+
+三章均使用简洁、专业的英文，并统一采用 `long-term memory`、`Answerer`、`Full Context`、
+`backbone model` 和 `LLM judge` 等术语。
+
+#### Chapter 1: Introduction
+
+Chapter 1 已完成研究背景、问题陈述、研究现状与缺口、研究目标、六个研究问题、研究贡献和
+研究边界。正文先抽象说明存储、检索、证据利用和长上下文问题，不提前要求读者理解
+S1–S3、R1–R3 或 E1–E7；这些正式标签留到 Chapter 3 定义。
+
+- 正文：`docs/report/chapter-1-introduction.md`
+
+#### Chapter 2: Background and Related Work
+
+Chapter 2 已完成长期记忆基础、外部记忆表示、检索方法、Filesystem-Based Memory、ReFind、
+LoCoMo 和多维评价方法的综述。该章区分通用研究背景与本项目实现，并在结尾解释现有研究
+为什么不能直接回答本文问题，从而过渡到 Chapter 3。
+
+- 正文：`docs/report/chapter-2-background-and-related-work.md`
+
+#### Chapter 3: System Design and Methodology
+
+Chapter 3 首先把第二章的研究缺口转化为方法需求，再定义任务、数据结构和端到端信息流。
+正文系统说明了 canonical source record 与 source map、S1–S3、R1–R3、共享
+EvidenceBundle、condition-blind Answerer、E1–E7、E7 双源融合和 Full Context 诊断路径。
+本章只说明系统与方法，不展开正式实验运行和本地工程控制细节。
+
+- 正文：`docs/report/chapter-3-system-design-and-methodology.md`
+
+### 16.3 建立并复核 References
+
+References 采用 IEEE 数字引用格式，当前包含 14 项正式文献或软件引用。引用编号按正文首次
+出现顺序排列，并已逐章核对 Chapter 1–3 的引用位置、支持论点和可复查的章节或页码。
+
+重点规则：
+
+- Filesystem-Based Memory 和 ReFind 按可核验的 arXiv preprint 引用，不写成已正式同行评审
+  的会议论文；
+- LoCoMo 的任务设计引用 ACL 2024 正式论文；
+- LoCoMo 的具体评分实现引用固定 commit 的官方 evaluator；
+- Main-60、S1–S3、R1–R3、E1–E7 和 Full Context 等项目事实不伪装成外部论文结论；
+- 后续增加文献时，应统一更新编号，不能只修改孤立引用。
+
+- 文件：`docs/report/references.md`
+
+该文件同时保存正式 bibliography、Chapter 1–3 citation audit、核验位置以及版本和论断边界。
+最终提交时只需把正式 bibliography 放入论文正文，审计表保留为内部核查材料。
+
+### 16.4 建立附录登记册
+
+已对 Chapter 1–3 逐节检查哪些内容应移入附录，并建立以下附录结构：
+
+- Appendix A：完整 prompts；
+- Appendix B：数据集和 Main-60 manifest；
+- Appendix C：数据 schema、符号与 provenance；
+- Appendix D：memory-store 构建与冻结快照；
+- Appendix E：检索、融合和 Full Context 规格；
+- Appendix F：实验条件、模型身份和固定控制；
+- Appendix G：评分与成本协议；
+- Appendix H：统计与错误分析协议；
+- Appendix I：补充结果和案例；
+- Appendix J：论文、表格、图片和资产来源。
+
+- 文件：`docs/report/appendix-register.md`
+
+登记册还保存了 Chapter 1–3 的附录候选项、权威源文件位置，以及今后每完成一章都要执行的
+维护规则。
+
+### 16.5 Chapter 1–3 图片的位置和用途
+
+#### Chapter 1
+
+图片目录：`docs/report/figures/chapter-1/`
+
+| 图片 | 正文位置 | 用途 |
+|---|---|---|
+| Figure 1.1 | §1.1.1 后 | 展示跨多个 session 的长期对话记忆问题 |
+| Figure 1.2 | §1.1.2 后 | 对比 Full Context 与 selective retrieval |
+| Figure 1.3 | §1.1.3 后 | 展示 storage–retrieval–utilisation 管线及主要故障点 |
+| Figure 1.4 | §1.3.4 后 | 总结研究版图与尚未解决的比较缺口 |
+| Figure 1.5 | §1.3.5 后 | 概览本文的受控实验设计和评价层次 |
+
+#### Chapter 2
+
+图片目录：`docs/report/figures/chapter-2/`
+
+| 图片 | 正文位置 | 用途 |
+|---|---|---|
+| Figure 2.1 | §2.1.3 后 | 展示长期记忆生命周期和 storage/retrieval/utilisation failure |
+| Figure 2.2 | §2.5.5 后 | 比较 Filesystem、ReFind-style 和 Full Context 的访问路径 |
+| Figure 2.3 | §2.6.3 后 | 展示 LoCoMo 多 session、题型和 gold source-turn 结构 |
+| Figure 2.4 | §2.7.5 后 | 展示答案、证据和过程指标分别观察管线的哪个部分 |
+
+Figure 2.1 和 2.4 使用黑白灰线稿；Figure 2.2 和 2.3 使用全文统一的 navy、teal、amber、
+red 和 violet 视觉语言。每张图均保留 PNG 和可编辑 SVG。
+
+#### Chapter 3
+
+图片目录：`docs/report/figures/chapter-3/`
+
+| 最终图号 | 正文位置 | 用途 |
+|---|---|---|
+| Figure 3.1 | §3.3.5 后 | 总体系统架构与证据访问路径 |
+| Figure 3.2 | §3.4.5 后 | 用代码框展示一个 source turn 的完整可追溯链 |
+| Figure 3.3 | §3.5.3 后 | 比较 S1、S2、S3 的实际存储组织 |
+| Figure 3.4 | §3.6.3 后 | 比较 R1、R2、R3 的检索控制流 |
+| Figure 3.5 | §3.7.7 后 | 展示 evidence validation、EvidenceBundle 和 Answerer 的交接 |
+| Figure 3.6 | §3.9.2 后 | 对比 E7 双源融合与 Full Context |
+
+Chapter 3 的最终图号按正文首次出现顺序确定。部分素材文件保留了审核期间的工作编号，因此
+正文图号与文件名数字不完全相同；映射以 `docs/report/figures/chapter-3/README.md` 为准，
+不再重命名已经批准的资产。
+
+### 16.6 LaTeX 迁移准备
+
+图片使用稳定的项目相对路径。各图片目录包含 manifest 和 SHA-256 文件；SVG 是可编辑的
+矢量母版，PNG 用于当前 Markdown 预览。最终排版时可把 SVG 导出为 PDF，再在 LaTeX 中
+替换扩展名。
+
+Chapter 3 已另存完整的 LaTeX figure blocks：
+
+- `docs/report/latex/chapter-3-figure-blocks.tex`
+
+其中保存了六个 `figure` 环境、caption、label、推荐尺寸和插入位置。Figure 3.2 使用
+`Verbatim` 代码框，其余图片当前引用高分辨率 PNG。LaTeX 主文档需要 `graphicx` 和
+`fancyvrb`；后续可通过统一的 `\graphicspath` 管理 Chapter 1–3 资产。
+
+### 16.7 后续维护规则
+
+每完成一个新 chapter，需要同步完成四项工作：
+
+1. 更新正文；
+2. 更新 `references.md` 的 bibliography 和逐章 citation audit；
+3. 更新 `appendix-register.md` 的附录候选和源文件位置；
+4. 为新增图片保存正文位置、caption、可编辑母版、预览文件和 LaTeX 插入块。
+
+这样可以避免正文完成后再集中补引用、附录或图片来源，也能降低最终转换为 LaTeX 时的遗漏风险。

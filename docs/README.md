@@ -27,7 +27,7 @@
 - [2026-10-12 LLM-as-Judge v1 完成记录](progress/2026-10-12-llm-judge-v1-completion.md)：280/280 三档匿名语义评分、8 批审计、Strict/Partial/Soft 汇总和公开结果归档。
 - [项目工作长笔记（始于 2026-10-11）](progress/2026-10-11-to-12-two-day-work-summary.md)：持续记录正式跑批、评分、main-60、第二 backbone、分析与报告规划的“做了什么—怎么做—为什么做”总索引。
 - [2026-10-14 formal-v2 main-60 扩展计划与题集记录](progress/2026-10-14-formal-v2-main60-planning.md)：师兄反馈后的60题追加设计、双backbone与独立Judge TODO、append-only题集、确定性抽样、验收门和当前完成状态。
-- [2026-10-16/17 main-60、Model 2 与统一重评分完成记录](progress/2026-10-16-to-17-main60-model2-and-rescoring.md)：20题扩展、Model 2 mixed-protocol 420条完成、LoCoMo P/R/F1、x-test-1 匿名 Judge 840条及公开归档。
+- [2026-10-16/17 main-60、Model 2 与统一重评分完成记录](progress/2026-10-16-to-17-main60-model2-and-rescoring.md)：20题扩展、Model 2 420条完成、LoCoMo P/R/F1、x-test-1 匿名 Judge 840条及公开归档。
 
 ## Explanations
 
@@ -35,7 +35,20 @@
 
 ## Analysis
 
-- [E1–E7 结果分析框架与论文写作地图](analysis/e1-e7-results-analysis-framework.md)：四个研究问题、配对统计、错误归因、效果–成本、论文对照、建议图表与分析执行顺序。
+- [Main-60 完整报告框架目录](analysis/main60-complete-report-outline.md)：参考学校 92 页 sample report 与 Filesystem 论文，覆盖前置材料、引言、背景、系统设计、第 4 章实验设计、第 5 章问题分析、综合讨论、局限、开放性探索、结论和附录的全报告写作蓝图。
+- [第 1–2 章详细写作指南](analysis/chapter1-2-detailed-writing-guide.md)：把引言与背景/相关工作的每个三级标题继续细化为可直接写正文的四级标题，逐节说明核心内容、段落顺序、引用、过渡、边界和当天完成标准。
+- [Main-60 三系统结果分析框架与报告写作地图](analysis/main60-three-system-results-analysis-framework.md)：面向 Qwen E1–E7、DeepSeek E1–E7 和 DeepSeek Full Context 的六个研究问题、配对统计、跨 backbone 稳定性、错误链、效果–成本与报告章节地图。
+- [Main-60 问题分析：精简目录与逐节分析指南](analysis/main60-problem-analysis-detailed-outline.md)：报告核心分析章的 6 个三级标题、18 个四级标题；每节均说明核心问题、必要对照、统计方法、图表产物、错误复核和结论边界。
+- [E1–E7 main-40 结果分析框架与论文写作地图](analysis/e1-e7-results-analysis-framework.md)：早期 main-40 历史框架，保留用于追踪分析方案演进。
+
+## Report drafts
+
+- [第 1 章：引言](report/chapter-1-introduction.md)：依据冻结的完整报告目录和第 1–2 章写作指南形成的完整正文，含研究背景、问题、缺口、目标、RQ、贡献、边界和章节结构。
+- [第 2 章：背景与相关工作](report/chapter-2-background-and-related-work.md)：严格依照既定目录完成的英文正文，覆盖长期记忆基础、存储表示、检索范式、Filesystem、ReFind、LoCoMo、评价方法与本研究定位。
+- [第 3 章：系统设计与方法](report/chapter-3-system-design-and-methodology.md)：从研究问题到 E1–E7 条件映射，完整说明数据规范化、S1–S3、R1–R3、共享 EvidenceBundle/Answerer、E7 融合与 Full Context 诊断路径。
+- [References（报告参考文献主表）](report/references.md)：与正文 `[n]` 标注对应的 IEEE 格式参考文献，以及第 1–3 章引用位置与原文依据核验表。
+- [附录登记册](report/appendix-register.md)：集中登记正文中不宜展开但需保留以支持复现的 prompt、schema、完整配置、审计字段与补充材料，并记录第 1–3 章附录自查结果。
+- [Chapter 3 LaTeX 插图块](report/latex/chapter-3-figure-blocks.tex)：按正文顺序保存 Figure 3.1–3.6 的 `figure` 环境、caption、label 与资源路径，供最终迁移到 LaTeX 时直接复用。
 
 ## Data
 

@@ -1,0 +1,81 @@
+% Chapter 3 figure blocks for the future LaTeX report.
+%
+% Insert each block at the section noted in its comment. The order below is
+% the final publication order, even though several preserved draft asset stems
+% use their earlier working numbers.
+%
+% Required packages in the main document:
+%   \usepackage{graphicx}
+%   \usepackage{fancyvrb}
+%
+% These blocks use the high-resolution PNG previews for immediate portability.
+% The editable SVG files in figures/chapter-3/ remain the canonical masters.
+% For the final submission, export those SVG masters to vector PDF and replace
+% the .png extensions below with .pdf.
+
+\providecommand{\ChapterThreeFigureDir}{figures/chapter-3}
+
+% Place after Section 3.3.5.
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{\ChapterThreeFigureDir/figure-3-1-overall-system-architecture.png}
+  \caption{Overall system architecture and evidence-access paths. The canonical conversation is transformed into three memory representations and accessed through compatible retrieval systems. Selective conditions converge on a common EvidenceBundle and shared Answerer; E7 fuses the completed E2 and E6 bundles, whereas Full Context bypasses question-dependent retrieval.}
+  \label{fig:overall-system-architecture}
+\end{figure}
+
+% Place after Section 3.4.5. ASCII branches are used here so that this block
+% remains portable across pdfLaTeX, XeLaTeX, and LuaLaTeX.
+\begin{figure}[tbp]
+  \centering
+  \begin{minipage}{0.82\linewidth}
+\begin{Verbatim}[frame=single,fontsize=\small]
+Original turn
+session 7, turn 12
+       v
+Canonical record: S07:T12
+       |--> S1 raw session file
+       |--> S2 topic folder / raw session file
+       |--> Exchange unit used by R2
+       `--> S3 curated fact [source: S07:T12]
+                        v
+                 Retrieved evidence
+                        v
+              Validated EvidenceItem
+\end{Verbatim}
+  \end{minipage}
+  \caption{One canonical source turn remains traceable across raw, foldered, exchange-based, and curated representations.}
+  \label{fig:canonical-traceability}
+\end{figure}
+
+% Place after Section 3.5.3 and before Table 3.3. The preserved source asset
+% was originally drafted as figure-3-6-storage-organization.*.
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{\ChapterThreeFigureDir/figure-3-6-storage-organization.png}
+  \caption{Organisation of the three memory representations. S1 stores 30 raw session files in a flat directory; S2 places byte-identical session bodies under four topic folders; S3 reorganises the conversation into two entity files containing 35 topic groups and 390 provenance-bearing facts.}
+  \label{fig:storage-organisation}
+\end{figure}
+
+% Place after Section 3.6.3 and before Table 3.4.
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth,height=0.82\textheight,keepaspectratio]{\ChapterThreeFigureDir/figure-3-3-retrieval-system-flowcharts.png}
+  \caption{Control flow of R1, R2, and R3. R1 navigates a read-only filesystem through iterative observations and actions, R2 ranks raw exchanges and expands within sessions, and R3 ranks curated facts and expands within H2 topic groups. Each path terminates retrieval through \texttt{finish\_search} and returns a validated EvidenceBundle rather than a benchmark answer.}
+  \label{fig:retrieval-system-flows}
+\end{figure}
+
+% Place after Section 3.7.7.
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=0.72\linewidth,height=0.82\textheight,keepaspectratio]{\ChapterThreeFigureDir/figure-3-4-evidence-validation-and-answerer.png}
+  \caption{Evidence validation and Answerer handoff. Model-selected evidence references are resolved against frozen source bytes, validated, ordered, merged, and budgeted before the condition-blind Answerer generates a structured candidate response.}
+  \label{fig:evidence-validation-answerer}
+\end{figure}
+
+% Place after Section 3.9.2 and before the chapter summary.
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{\ChapterThreeFigureDir/figure-3-5-e7-fusion-vs-full-context.png}
+  \caption{Comparison of E7 dual-source fusion and the Full Context diagnostic path. E7 deterministically combines the completed E2 and E6 EvidenceBundles without new retrieval, whereas Full Context exposes the complete ordered raw history without the selective 16,000-character limit. Both paths use the shared Answerer.}
+  \label{fig:e7-vs-full-context}
+\end{figure}

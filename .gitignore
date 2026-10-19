@@ -29,9 +29,13 @@ venv/
 
 # Regenerable local work and default harness outputs
 /tmp/
+/tmp*/
 /memories/
 /runs/
 /local-runs/
+
+# Local third-party reference material
+/sample report.pdf
 
 # Crash remnants from guarded S2/S3 publishers (normal runs remove these)
 experiments/**/stores/.s2-foldered.staging-*/
