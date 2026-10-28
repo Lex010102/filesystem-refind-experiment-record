@@ -1,0 +1,32 @@
+\documentclass[12pt,a4paper,oneside]{report}
+
+\input{config/metadata}
+\input{config/preamble}
+
+\begin{document}
+
+\pagenumbering{roman}
+\hypersetup{pageanchor=false}
+\input{frontmatter/title-page}
+\clearpage
+\hypersetup{pageanchor=true}
+
+% The compact report keeps only the contents page in the front matter.  The
+% separate lists of figures, tables, abbreviations, and symbols are omitted.
+\tableofcontents
+
+\clearpage
+\pagenumbering{arabic}
+
+\input{chapters/chapter-01-introduction}
+\input{chapters/chapter-02-background-and-related-work}
+\input{chapters/chapter-03-system-design-and-methodology}
+\input{chapters/chapter-04-experimental-design-and-evaluation-methodology}
+\input{chapters/chapter-05-results-and-analysis}
+\input{chapters/chapter-06-general-discussion}
+
+\clearpage
+\bibliographystyle{IEEEtran}
+\bibliography{bibliography/references}
+
+\end{document}

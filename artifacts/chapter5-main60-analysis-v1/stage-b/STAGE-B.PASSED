@@ -1,0 +1,1 @@
+{"answer_denominator":60,"audit_id":"stage-b-audit-2c5061c3db5cba00f099648963eaa2175d1136954e4cf673720423e7ffed6932","audit_sha256":"67b638bccad3f664a8eec9f0e9f11554f777c336888c95d0594bbdb96d11e526","bootstrap_replicates":10000,"effect_units":10,"evidence_denominator":58,"input_rows":480,"protocol_version":"chapter5-main60-stage-b-v1","question_count":60,"status":"passed"}

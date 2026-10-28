@@ -1,0 +1,72 @@
+{
+  "schema": "report-latex-migration-v1",
+  "generator": "scripts/migrate_markdown_to_latex.py",
+  "chapters": [
+    {
+      "chapter": 1,
+      "source": "docs/report/chapter-1-introduction.md",
+      "source_sha256": "ed23947e11c416c15d060d87725f64a60c797f45660e9fce604c6ceb1828e045",
+      "output": "chapters/chapter-01-introduction.tex",
+      "output_sha256": "6bc895b5c5fd9eb0321a69e975693b2e20cc2166b837439caeba781891afd710",
+      "figures": 5,
+      "captioned_tables": 0,
+      "citations": 48,
+      "display_math_blocks": 0
+    },
+    {
+      "chapter": 2,
+      "source": "docs/report/chapter-2-background-and-related-work.md",
+      "source_sha256": "9a75a5fecd51efd5a871e8555bddc879ce85bda6e731eeada65f34724a91abe3",
+      "output": "chapters/chapter-02-background-and-related-work.tex",
+      "output_sha256": "b0bad741c92323e10c368b05fa55b10a4fd8e8f7b66e4c9ff9e352a97357771d",
+      "figures": 4,
+      "captioned_tables": 6,
+      "citations": 66,
+      "display_math_blocks": 0
+    },
+    {
+      "chapter": 3,
+      "source": "docs/report/chapter-3-system-design-and-methodology.md",
+      "source_sha256": "19394325342137de06238f2d07c83adceba2904b043c294cb7b1d7a8dc8d9410",
+      "output": "chapters/chapter-03-system-design-and-methodology.tex",
+      "output_sha256": "5440845f9534c93c917a247ce52471790dae1b7611e46c8dc6cb895ce0679421",
+      "figures": 6,
+      "captioned_tables": 5,
+      "citations": 18,
+      "display_math_blocks": 30
+    },
+    {
+      "chapter": 4,
+      "source": "docs/report/chapter-4-experimental-design-and-evaluation-methodology.md",
+      "source_sha256": "2676a9a568f87961683a7490d7160f293fe6f2fb56e3dcb388351e2749b8fe98",
+      "output": "chapters/chapter-04-experimental-design-and-evaluation-methodology.tex",
+      "output_sha256": "e861e9b065802acf39bce76453f849f70901a1fda4cf6b429152cd2ca1310463",
+      "figures": 2,
+      "captioned_tables": 8,
+      "citations": 4,
+      "display_math_blocks": 31
+    },
+    {
+      "chapter": 5,
+      "source": "docs/report/chapter-5-new.md",
+      "source_sha256": "00efcc834c2c36cde3cc38e825ff2ed11a3f10906d0a3ddf036c2e782828de10",
+      "output": "chapters/chapter-05-results-and-analysis.tex",
+      "output_sha256": "c72a40c242246f00f3278d6ba2b7f3937bd0e410b1ce0dc2d7c2264095a6512f",
+      "figures": 8,
+      "captioned_tables": 20,
+      "citations": 0,
+      "display_math_blocks": 0
+    },
+    {
+      "chapter": 6,
+      "source": "docs/report/chapter-6-general-discussion.md",
+      "source_sha256": "1de0805a8175ab7fcb9439570bf0c0d94e93b1fff673e105296b2cf099db081f",
+      "output": "chapters/chapter-06-general-discussion.tex",
+      "output_sha256": "bdb4511770e0f36e19ba7a71a0ae421e328cc75978a17766b7dc4c5abc30b0fa",
+      "figures": 0,
+      "captioned_tables": 1,
+      "citations": 3,
+      "display_math_blocks": 0
+    }
+  ]
+}

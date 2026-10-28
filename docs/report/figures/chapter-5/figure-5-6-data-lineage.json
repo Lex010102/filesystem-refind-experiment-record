@@ -1,0 +1,45 @@
+{
+  "figure_id": "Figure 5.6",
+  "title": "Stored Support in Selective-Path Errors",
+  "protocol_version": "chapter5-main60-rq5-storage-audit-v1",
+  "audit_id": "rq5-storage-audit-5ff8638baf55d3e678e266ade364aafd6076e0d89c1193aad05b59bda631f5eb",
+  "source": "artifacts/chapter5-main60-analysis-v1/rq5-storage-audit/case-storage-linkage.csv",
+  "source_sha256": "700cc8b9981696eb56d9c7d7ca366e97fd4b6bbc386a03f053d692b1a585d403",
+  "answer_path_denominator": 205,
+  "counts": {
+    "S1": {
+      "available": 41,
+      "partial": 14,
+      "mismatch": 10,
+      "conflict": 0,
+      "no_annotation": 5
+    },
+    "S2": {
+      "available": 41,
+      "partial": 15,
+      "mismatch": 10,
+      "conflict": 0,
+      "no_annotation": 5
+    },
+    "S3": {
+      "available": 37,
+      "partial": 16,
+      "mismatch": 6,
+      "conflict": 1,
+      "no_annotation": 4
+    },
+    "ALL": {
+      "available": 119,
+      "partial": 45,
+      "mismatch": 26,
+      "conflict": 1,
+      "no_annotation": 14
+    }
+  },
+  "store_specific_decisive_losses": 0,
+  "output_sha256": {
+    "figure-5-6-selective-error-storage-state.svg": "a9d788efb8315a9823d56d9cf5404ec621f3f2f4589033f30a2ac94d934186dc",
+    "figure-5-6-selective-error-storage-state.png": "40978b49633801fcd9f86d15d62bd46cc58a628b2a253cb744caa584142d78b3"
+  },
+  "inserted_into_report": true
+}

@@ -306,153 +306,166 @@
 
 ---
 
-# 第 4 章 实验设计与评价方法
+# Chapter 4 Experimental Design and Evaluation Methodology
 
-本章回答“为了公平回答 RQ，具体怎么跑、什么保持不变、如何打分和检验”。它不解释最终结果，也不宣布哪个系统最好。
+This chapter explains how the study was designed, controlled, evaluated, and analysed. Chapter 3 defines the system components and evidence-access paths. Chapter 4 specifies how those components are instantiated in the formal experiments and how fair comparisons are constructed. Chapter 5 reports and interprets the empirical results. This chapter does not present final scores or identify a winning condition.
 
-## 4.1 研究问题、变量与可检验假设
+## 4.1 Research Questions, Variables, and Identification Strategy
 
-### 4.1.1 RQ 与实验轴的对应关系
+### 4.1.1 Mapping Research Questions to Experimental Comparisons
 
-建立 RQ1–RQ6、实验条件、主要指标和所需对照的映射表。
+Map each research question to its experimental material, main contrast, and required evidence. The main table should connect RQ1–RQ6 to E1–E7, Full Context, the two backbone models, answer-quality metrics, evidence metrics, process records, and cost records. This subsection should operationalise the research questions rather than repeat their motivation from Chapter 1.
 
-### 4.1.2 自变量、因变量与控制变量
+### 4.1.2 Independent, Dependent, and Controlled Variables
 
-- 自变量：存储表示、检索系统、backbone、证据提供方式；
-- 因变量：F1、Strict、Soft、Evidence Recall、tokens、calls、latency 等；
-- 控制变量：60 题与顺序、源数据、store snapshots、证据预算、round/action cap、Answerer contract、评分协议等。
+Define the independent variables as memory representation, retrieval system, backbone model, evidence-access regime, and single- or dual-source evidence. Define the dependent variables as token Precision, Recall, and F1; Strict Accuracy, Partial Rate, and Soft Semantic Score; Evidence Recall, Any-hit, and All-hit; and process or cost measures. Controlled variables include the unified Main-60 set, question order, frozen store snapshots, EvidenceBundle interface, Answerer contract, and evaluation rules.
 
-### 4.1.3 可识别效应与不可识别效应
+### 4.1.3 Identifiable and Non-Identifiable Effects
 
-明确 E1–E4 可用于较干净的存储 × 检索分析；E5/E6 只能作为完整 curated-memory 系统；E7 识别融合；Full Context 是同模型家族下的诊断性对照。该小节用于防止报告后文过度因果化。
+State what each comparison can and cannot establish. E1–E4 provide the cleanest storage–retrieval comparisons. E5 and E6 are complete curated-memory systems. E7 evaluates evidence fusion rather than a new retrieval method. Full Context is a diagnostic baseline rather than an oracle. The backbone comparison changes the Retrieval Agent and Answerer together and therefore represents a change to the complete query-time pipeline.
 
-## 4.2 数据集与冻结的 Main-60
+### 4.1.4 Primary and Exploratory Analyses
 
-### 4.2.1 LoCoMo 数据来源与 Conversation
+Distinguish full-set paired comparisons from exploratory category, correlation, anomaly, and case analyses. Use the term *primary comparison* rather than imply formal preregistration. Main conclusions should rely on the unified Main-60 results; C1–C4 analyses should support mechanism interpretation.
 
-说明数据版本、conversation 范围、30 sessions、turns 与 captions 等输入边界。
+## 4.2 Dataset and the Frozen Main-60 Test Set
 
-### 4.2.2 60 道题的构成
+### 4.2.1 LoCoMo Source and Conversation Scope
 
-报告 C1–C4 数量、抽样原则、问题顺序和冻结机制。所有主结果统一分析 60 题，不再按题目加入时间拆分。
+Describe the LoCoMo source and version, the selected `conv-50` conversation, its 30 sessions, and the included turns, speakers, timestamps, and existing image captions. State that the experiment did not rerun a vision model. Dataset fingerprints and the complete source manifest belong in Appendix B.
 
-### 4.2.3 Gold Answer 与 Gold Evidence
+### 4.2.2 Composition of Main-60
 
-说明 gold answer、evidence IDs、可评价题目数，以及 Evidence Recall 分母为何不是所有 60 题。
+Present Main-60 as one unified test set: 13 multi-hop questions, 13 temporal questions, 7 open-domain questions, and 27 single-hop questions. Report the fixed order and explain that no old-40/new-20 result split is used. Category-level results remain exploratory and do not replace the full-set analysis.
 
-### 4.2.4 数据完整性与泄漏防护
+### 4.2.3 Gold Answers and Gold Evidence
 
-说明题目、参考答案、Judge 输入、检索 agent 和 Answerer 的可见边界。
+Explain the separate roles of reference answers and annotated source-turn evidence. State that 58 questions are eligible for evidence-based metrics and explain why that denominator differs from 60. Note that annotated evidence may not exhaust every valid supporting passage. Gold answers and gold evidence are used only during offline evaluation and are not exposed to the Retrieval Agent or Answerer.
 
-## 4.3 实验矩阵与核心对照
+## 4.3 Experimental Matrix and Core Comparisons
 
-### 4.3.1 E1–E4：近似 2×2 组件设计
+### 4.3.1 Complete Experimental Matrix
 
-给出 `S1/S2 × R1/R2` 矩阵和四个核心对照：E3−E1、E4−E2、E2−E1、E4−E3。
+Report the formal scale of the study: Qwen contributes 420 answers from 60 questions across E1–E7, DeepSeek contributes another 420, and DeepSeek Full Context contributes 60, giving 900 candidate answers. Clarify that these are repeated observations over the same 60 questions rather than 900 independent samples.
 
-### 4.3.2 E5–E6：Curated Memory 完整系统
+### 4.3.2 E1–E4: Controlled Storage–Retrieval Comparisons
 
-说明与原始存储条件的系统级比较，以及 E6−E5 的含义与边界。
+Present the approximate `S1/S2 × R1/R2` design. Define `E3−E1` and `E4−E2` as the storage-organisation contrasts, and `E2−E1` and `E4−E3` as the retrieval-system contrasts. Define the interaction descriptively as `DID = (E4−E2)−(E3−E1)`.
 
-### 4.3.3 E7：双源融合条件
+### 4.3.3 E5–E6: Curated-Memory Systems
 
-说明父系统、证据复用和在线完整成本口径。
+Explain that E5 and E6 use the same frozen S3 store and that `E6−E5` compares two access methods on that store. Comparisons with raw-memory conditions are complete-system comparisons and cannot isolate one effect of summarisation, structure, or compression.
 
-### 4.3.4 Full Context：无检索诊断基线
+### 4.3.4 E7: Dual-Source Fusion
 
-说明主要比较锚点、为什么只跑 DeepSeek 一套，以及为何不能视为严格 oracle。
+Define E2 and E6 as the parent conditions, explain that E7 reuses their EvidenceBundles without new retrieval, and use `E7−E2` and `E7−E6` as the main comparisons. Distinguish the recorded experimental reuse cost from the full online cost of running two retrieval paths and a fused answer.
 
-## 4.4 Backbone、Agent 角色与 Judge
+### 4.3.5 Full Context Diagnostic
 
-### 4.4.1 Model 1：Qwen
+Explain that Full Context receives all 30 raw sessions, performs no retrieval, and does not use the 16,000-character EvidenceBundle. Evidence-retrieval metrics are not applicable. The primary diagnostic anchors should be the DeepSeek raw-memory retrieval conditions, while comparisons with all E1–E7 conditions may also be reported. Full Context is neither E8 nor a theoretical upper bound.
 
-记录 requested alias、served model、检索与回答角色。
+## 4.4 Models and Evaluation Roles
 
-### 4.4.2 Model 2：DeepSeek
+### 4.4.1 Backbone Models and Query-Time Roles
 
-记录同样信息，并强调其 E1–E7 协议与 Model 1 的固定条件一致。
+Introduce Model 1 as the Qwen backbone, Model 2 as the DeepSeek backbone, and Full Context as using the DeepSeek model family. Within each E1–E7 system, one backbone performs both the Retrieval Agent and Answerer roles. The cross-backbone comparison therefore concerns the complete query-time pipeline, not an isolated retrieval or answering component. A compact table should report the publication-facing model name, requested alias, served identity, applicable conditions, and role; detailed service metadata belongs in Appendix F.
 
-### 4.4.3 Full Context Backbone
+### 4.4.2 Independent LLM Judge
 
-记录具体 served model 与上下文预检。
+Explain that semantic evaluation uses an independent LLM judge from a different model family. The judge receives anonymised question, reference-answer, and candidate-answer inputs; it does not observe the condition, backbone, retrieval trace, cost, or token-overlap score. One fixed rubric assigns one `correct`, `partial`, or `incorrect` label, from which the three semantic metrics are derived.
 
-### 4.4.4 独立 LLM Judge
+## 4.5 Controlled Experimental Conditions
 
-说明 Judge 与回答模型分离、匿名化输入、标签空间和固定 prompt。
+Keep this section concise. Explain that each comparison changes only the factor relevant to its research question while holding the question set, source conversation, frozen stores, EvidenceBundle and Answerer contracts, and evaluation procedures constant wherever applicable. Storage representation, retrieval system, backbone model, evidence-access regime, and evidence fusion are the intended sources of variation. Evidence budgets and search limits were frozen before formal evaluation, while Full Context was not subject to the selective EvidenceBundle limit.
 
-## 4.5 固定条件、变化条件与公平性审计
+Use one held-fixed/varied/not-applicable table rather than several configuration subsections. Exact budgets, caps, model identities, and frozen configuration values belong in Appendix F, while complete prompt versions belong in Appendix A. Do not include batch size, checkpoints, process identifiers, run locks, launcher commands, local paths, or marker filenames in the report.
 
-这是借鉴 Filesystem 论文“what is held fixed and what varies”的关键小节。建议给出一张完整矩阵，逐项说明：题集、顺序、S1/S2/S3、prompt、预算、cap、timeout、并发、评分和成本记录中哪些固定，哪些只在研究轴上改变。
+## 4.6 Evaluation Metrics and Cost Accounting
 
-## 4.6 正式运行协议
+### 4.6.1 Token Precision, Recall, and F1
 
-### 4.6.1 Preflight、Dry-Run 与 Pilot
+Define per-question token Precision and Recall under the aligned normalisation procedure. Define F1 at the question level and report macro-averages across questions. Explain that aggregate F1 is the mean of per-question F1 values and cannot be reconstructed from aggregate Precision and Recall. Require one common offline evaluator for all 900 answers so that Full Context and E1–E7 use the same report-level Precision and Recall rules. Use Precision and Recall to diagnose verbosity and omission, while F1 supports comparison with LoCoMo-style evaluation.
 
-说明模型身份、JSON/工具调用、长上下文和断点恢复如何在正式运行前验证。
+### 4.6.2 LLM Judge Metrics
 
-### 4.6.2 批次、Checkpoint 与续跑
+Define `Strict Accuracy = correct/n`, `Partial Rate = partial/n`, and `Soft Semantic Score = (correct + 0.5 × partial)/n`. Clarify that Partial Rate describes the label distribution rather than an independently maximised quality measure.
 
-说明批次划分、唯一 key、已完成记录跳过和单实例运行。
+### 4.6.3 Evidence-Access Metrics
 
-### 4.6.3 失败、重试与成本保留
+Define Any-hit, All-hit, and Evidence Recall. State that they apply to the 58 evidence-eligible questions for E1–E7, including the fused parent EvidenceBundles used by E7. Full Context should be reported as `N/A`, not as perfect Evidence Recall. Evidence-access metrics explain evidence coverage but do not replace answer-quality evaluation.
 
-说明瞬时 API、超时或协议错误如何处理，失败尝试是否计入成本，何种问题必须停止而不能自动修复。
+### 4.6.4 Process and Efficiency Metrics
 
-### 4.6.4 完成审计
+Record retrieval and Answerer calls, input and output tokens, latency, retrieval rounds or actions, failed attempts, memory-construction cost, query-time cost, and evaluation-only Judge cost. Separate one-time construction cost, per-question cost, failure or recovery cost, and Judge cost.
 
-说明 batch audit、PASSED marker、pre-gold verify 与 final audit 的完成门槛。
+### 4.6.5 Metric Aggregation and Applicability
 
-## 4.7 评价指标
+Provide one table specifying, for every metric, its calculation unit, aggregation method, eligible denominator, applicable conditions, and role as a primary or diagnostic measure.
 
-### 4.7.1 LoCoMo Token Precision、Recall 与 F1
+## 4.7 Statistical Analysis Plan
 
-给出逐题计算、宏平均方式和为什么不能由汇总 P/R 反推汇总 F1。
+The analysis should remain primarily descriptive and paired. Confidence intervals are supporting evidence rather than the organising principle of the chapter.
 
-### 4.7.2 Judge Strict、Partial 与 Soft
+### 4.7.1 Unit of Analysis and Paired Design
 
-给出三档标签和公式：`Strict = correct/n`，`Partial Rate = partial/n`，`Soft = (correct + 0.5×partial)/n`。
+Define `question_id` as the primary analysis unit. For metric `m`, compare conditions through per-question paired differences `d_i = m_i(A) − m_i(B)`. All architecture, fusion, backbone, and Full Context comparisons should retain the pairing between answers to the same question.
 
-### 4.7.3 Evidence Recall、Any-Hit 与 All-Hit
+### 4.7.2 Overall Paired Differences and Win/Tie/Loss
 
-说明适用范围、匹配方式、分母与 Full Context 的 `N/A`。
+For each main comparison, report the mean paired difference, median paired difference, win/tie/loss counts, and the distribution of per-question differences. Fix metric direction before assigning wins: higher values are better for quality measures, while lower values are better for calls, tokens, latency, and cost. These are the main tools for determining whether an average improvement is broad or driven by a small number of questions.
 
-### 4.7.4 效率与成本
+### 4.7.3 Category-Level Analysis
 
-分开记录检索 token、Answerer token、calls、latency、rounds/actions、失败重试、一次性建库成本和每题查询成本；Judge 成本单列。
+Report paired differences for multi-hop, temporal, open-domain, and single-hop questions. Use these results to identify where an effect is concentrated. Because some groups are small, particularly the seven open-domain questions, category analyses remain descriptive and exploratory.
 
-## 4.8 统计分析协议
+### 4.7.4 Storage–Retrieval Interaction and Backbone Stability
 
-### 4.8.1 分析单位与同题配对
+Use the DID contrast to examine whether folder organisation affects R1 and R2 differently. For backbone stability, compare the direction, magnitude, and question-level pattern of the same architecture contrast under Qwen and DeepSeek. Do not claim model dependence merely because one model-specific comparison is significant and another is not.
 
-说明 900 个候选答案不是 900 个独立样本，统计单位是 60 个 `question_id`。
+### 4.7.5 Auxiliary Paired Bootstrap Confidence Intervals
 
-### 4.8.2 效果量、Win/Tie/Loss 与置信区间
+Use paired bootstrap confidence intervals only as supporting evidence for a limited set of primary contrasts, such as the main raw-memory storage and retrieval comparisons, E7 relative to its parents, and the principal Full Context diagnostic comparison. Resample `question_id` as a paired unit. The intervals describe uncertainty within Main-60 and do not estimate variation across conversations. Repetition count, random seed, and implementation details belong in Appendix H.
 
-报告同题均值差、中位数差、win/tie/loss 和按题重采样的 paired bootstrap 95% CI。
+### 4.7.6 Strict-Label Transitions
 
-### 4.8.3 Strict 标签转移与 McNemar 检验
+For selected Strict comparisons, report incorrect-to-correct gains, correct-to-incorrect harms, and unchanged outcomes. An exact McNemar test may be included for a small number of central comparisons as supplementary evidence, but it should not dominate the analysis.
 
-用 correct/partial/incorrect 转移解释改变，用 exact McNemar 检查二值 Strict 的 gain/loss。
+### 4.7.7 Multiple Comparisons and Interpretation Boundaries
 
-### 4.8.4 交互与跨 Backbone 稳健性
+Separate primary paired comparisons from exploratory category, correlation, anomaly, and case analyses. Emphasise effect direction, magnitude, distribution, and cross-backbone consistency rather than producing a large family of isolated significance tests. If a multiple-comparison correction is applied, define its comparison family and procedure in Appendix H.
 
-定义存储 × 检索的 DID，以及架构效应跨 backbone 的 contrast-of-contrasts；禁止用“一边显著、另一边不显著”直接声称模型依赖。
+## 4.8 Error Analysis Method
 
-### 4.8.5 多重比较与探索性分析
+### 4.8.1 Error Categories
 
-预先区分确认性 contrast 与 C1–C4、相关性、异常扫描等探索性分析，并说明 Holm 或 BH-FDR 的使用范围。
+Use a concise stage-based taxonomy covering storage omission or distortion, retrieval failure, incomplete multi-hop evidence, evidence-budget or packaging loss, Answerer utilisation failure, fusion interference, long-context utilisation failure, lexical–semantic evaluation disagreement, and mixed or indeterminate errors. Only high-level definitions belong in Chapter 4; the complete codebook belongs in Appendix H.
 
-## 4.9 人工错误复核协议
+### 4.8.2 Review Procedure
 
-定义抽样规则、错误链 codebook、双人或复核流程、证据材料、分歧处理和案例呈现模板。该节只说明方法，实际发现放第 5 章。
+Explain that manual review follows the complete information path from the source conversation through the stored representation, retrieval trace, EvidenceBundle, candidate answer, and evaluation outputs. Sample cases should cover different backbone models, conditions, question categories, evidence–answer mismatches, E7 repair or interference, Full Context repair or failure, and F1–Judge disagreement. Chapter 4 defines the method; Chapter 5 reports the observed error distribution and representative cases, while the complete casebook belongs in Appendix H.
 
-## 4.10 可复现性与伦理边界
+### Recommended Chapter Artefacts
 
-说明版本、hash、随机种子、API 模型身份、匿名化、凭据不落盘、外部 API 数据发送授权和结果归档。完整 manifest 放附录。
+- **Table 4.1:** Research questions, conditions, contrasts, and evidence.
+- **Table 4.2:** Main-60 composition and evidence eligibility.
+- **Table 4.3:** Complete experimental matrix.
+- **Table 4.4:** Backbone models and evaluation roles.
+- **Table 4.5:** Held-fixed and varied conditions.
+- **Table 4.6:** Metric definitions and applicability.
+- **Table 4.7:** Primary comparisons and analysis methods.
+- **Table 4.8:** High-level error taxonomy.
+- **Figure 4.1:** A polished experimental-design workflow from frozen inputs through Qwen E1–E7, DeepSeek E1–E7, and Full Context to 900 candidate answers, blind offline evaluation, paired analysis, and error review. It must show that gold answers and gold evidence enter only the offline evaluation stage.
+- **Figure 4.3:** A plain Markdown decision flow for stage-based error attribution. It checks storage fidelity, retrieval access, evidence-budget or packaging loss, EvidenceBundle sufficiency, Answerer utilisation, and token–semantic evaluation disagreement.
+
+Figure 4.2 is intentionally omitted. The paired statistical procedure is already defined by the formulas and tables in Sections 4.7.1–4.7.7 and does not require a separate diagram.
+
+The chapter does not require a separate summary subsection. A short closing paragraph should state that this protocol produces the empirical evidence analysed in Chapter 5. Exact dataset inventories, model and condition configurations, evaluation rules, and statistical and review protocols should be transferred to Appendices B, F, G, and H, respectively.
 
 ---
 
 # 第 5 章 结果与问题分析
+
+本章的英文逐节写作与分析指南见 [Chapter 5 Results and Analysis — Detailed Writing Outline](chapter-5-detailed-outline.md)。本目录保留全报告层级与章节职责，详细指南负责每个小节的核心问题、对照、分析产物和结论边界。
 
 本章不按 E1、E2、E3 逐项写流水账，也不把 Accuracy、Cost、Case Study 拆成彼此孤立的大块。它按 RQ 组织，每个小节都遵循：
 
@@ -568,7 +581,7 @@
 
 ### 5.5.1 经复核的错误阶段分布与主要瓶颈
 
-- **分析依据：** 直接应用第 4.9 节预先定义的错误链与 codebook，不在看完结果后另造分类；
+- **分析依据：** 直接应用第 4.8 节预先定义的错误链与 codebook，不在看完结果后另造分类；
 - **怎么分析：** 汇总经人工复核后的 store fidelity、retrieval coverage、budget/packing、answer utilization、fusion/long-context 与 evaluation 各阶段错误；
 - **要回答：** 各系统、题型和 backbone 的实际失败阶段占比，以及哪个阶段是当前主要瓶颈；
 - **关键指标：** `P(Strict correct | All-hit)`、未命中时正确率、部分命中、多余证据、预算截断；
@@ -586,7 +599,7 @@
 
 ### 5.6.1 实测质量—成本与维护开销
 
-- **报告什么：** 按第 4.7.4 的统一记账规则，报告一次性建库、每题检索、Answerer、失败重试、延迟和单列的 Judge 实测成本；
+- **报告什么：** 按第 4.6.4 节的统一记账规则，报告一次性建库、每题检索、Answerer、失败重试、延迟和单列的 Judge 实测成本；
 - **怎么分析：** 比较各条件实际质量增益与资源增量，并计算不同查询量下的建库成本摊销；
 - **要回答：** 哪些复杂度真正换来了稳定质量，哪些条件被更便宜且更好的方案支配；
 - **边界：** API 网络波动下的小幅 latency 差异不能过度解释。
@@ -606,39 +619,28 @@
 
 ---
 
-# 第 6 章 综合讨论
+# 第 6 章 综合讨论：走向证据受控的记忆系统
 
-第 5 章回答“结果是什么、为什么”；第 6 章回答“这些结果意味着什么”。本章不重复所有数字。
+第 5 章回答“各实验条件表现如何、错误发生在哪里”；第 6 章只回答一个更普遍的问题：这些结果对长期记忆系统的架构意味着什么。本章不再次罗列 E1–E7 的排名与数字，而是围绕一个中心论点展开：当前系统缺少显式管理证据状态的中间控制层。
 
-## 6.1 核心发现的综合解释
+## 6.1 证据转换缺口
 
-围绕架构、稳健性和机制三条主线，提炼 3–5 条最高层结论，并明确每条结论成立的条件。
+将传统的“存储 → 检索 → 回答”拆为“已存储信息 → 可访问的信息 → 可回答的证据 → 被正确使用的证据”。说明信息即使存在、被检索或完整可见，也不必然已经成为充分、聚焦、连贯且可被 Answerer 使用的证据。用第 5 章的综合诊断支撑这一概念，但不重复详细数字。
 
-## 6.2 与 Filesystem 论文的关系
+## 6.2 缺失的架构层：Evidence Controller
 
-讨论本研究是否支持“memory shape 的价值取决于 searcher、模型能力和 harness”的条件化观点；比较 store shape、backbone 和成本结论，同时解释数据规模与实验设计差异。
+提出位于证据访问与 Answerer 之间的 Evidence Controller。它不替代存储、Retrieval Agent 或 Answerer，而是负责四项判断：证据是否充分、证据之间是否冲突、关键陈述是否可追溯，以及下一步应该回答、继续搜索、切换来源、融合、升级到 Full Context 还是拒答。必须明确该组件是由实验结果推导出的设计建议，并非本研究已经实现或验证的系统。
 
-## 6.3 与 ReFind 及选择性检索研究的关系
+## 6.3 自适应证据访问策略
 
-讨论迭代检索在不同存储表示上的收益、action cap 与证据完整性，以及本项目中增强检索并非始终占优的可能原因。
+提出“使用能够达到可靠证据状态的最小访问模式”这一原则：
 
-## 6.4 对长期记忆系统设计的启示
+1. 默认采用 selective retrieval，以获得聚焦、可追溯的证据；
+2. 在证据不完整且另一来源可能互补时，采用受控的 multi-source fusion；
+3. 在仍怀疑选择性遗漏或需要广泛跨 session 检查时，升级到 Full Context recovery；
+4. 在证据仍然冲突或不足时，拒答、标记不确定性或请求澄清。
 
-建议围绕以下原则讨论：
-
-1. 记忆组织是检索接口的一部分，而不是纯粹文件排版；
-2. 存储与检索应联合设计，但因果解释要区分组件对照与完整系统；
-3. 证据可见不等于模型能正确利用；
-4. 多源融合需要显式处理重复和冲突；
-5. 长上下文与检索应被视为可路由的两种 operating mode，而非二选一信条。
-
-## 6.5 实际部署启示
-
-从可维护性、增量更新、成本摊销、可解释性、错误恢复和模型替换角度说明，实验中的最佳平均分不必然等于生产系统最佳选择。
-
-## 6.6 研究方法论启示
-
-强调同题配对、多个评分视角、过程证据、独立 Judge、失败成本保留和人工案例复核，说明为什么这些比单一排行榜更能支持可信结论。
+本节用一张概念表总结“当前证据状态—控制动作—预期收益—必要保护”。结尾将本章的通用结论概括为：长期记忆系统应围绕显式的证据控制机制组织，并根据充分性、冲突与来源动态选择访问路径。
 
 ---
 
@@ -905,7 +907,7 @@
 | 第 4 章 实验设计 | 如何公平比较、如何打分与检验 | 不提前宣布结果 |
 | 第 5 章 问题分析 | 结果是什么、为什么、结论边界是什么 | 不重复长篇配置说明 |
 
-因此，原先独立分析指南里的“分析对象、比较地图与统一统计规则”，在完整报告中应主要放入第 4.3、4.5 和 4.8；第 5.1.1 直接从总体结果开始。
+因此，原先独立分析指南里的“分析对象、比较地图与统一统计规则”，在完整报告中应主要放入第 4.3、4.5 和 4.7；第 5.1.1 直接从总体结果开始。
 
 ### 10.2 每个结果小节使用同一证据闭环
 

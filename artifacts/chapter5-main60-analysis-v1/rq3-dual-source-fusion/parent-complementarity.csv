@@ -1,0 +1,9 @@
+result_id,protocol_version,backbone_order,backbone_id,profile_order,parent_profile,denominator,count,proportion,definition_metric
+rq3-parent-profile-991875680ee14c0e1411f271505d1ca151c5e876b45766f70597671fff3e3c98,chapter5-main60-rq3-v1,1,qwen,1,both_correct,60,37,0.6166666666666667,strict_accuracy
+rq3-parent-profile-6f2770c96cc42c046c01a7a413ba0d70da1667afdb183ba7542b63c4aaa0d1da,chapter5-main60-rq3-v1,1,qwen,2,e2_only_correct,60,3,0.05,strict_accuracy
+rq3-parent-profile-a7619610a21a02214330c715c839d2a941a1190b56abed313f861f7396cace1d,chapter5-main60-rq3-v1,1,qwen,3,e6_only_correct,60,7,0.11666666666666667,strict_accuracy
+rq3-parent-profile-9858328b6f47aecfa9c61957487ab69e2038d6f6a919f48ec449d8378978ae7f,chapter5-main60-rq3-v1,1,qwen,4,neither_correct,60,13,0.21666666666666667,strict_accuracy
+rq3-parent-profile-dc63a224f579ff0f4643d325b79ac70d18864d1ae2697f481a0df2c5e7ef0852,chapter5-main60-rq3-v1,2,deepseek,1,both_correct,60,36,0.6,strict_accuracy
+rq3-parent-profile-21090b624b018ce2d1a046786e012375de19f5e494f5e5b0d67dc074b986a1a7,chapter5-main60-rq3-v1,2,deepseek,2,e2_only_correct,60,6,0.1,strict_accuracy
+rq3-parent-profile-1a6bc73fd113ee9206633881d0935ff972f7303051d5da3fdbe11b6c9f85dee0,chapter5-main60-rq3-v1,2,deepseek,3,e6_only_correct,60,4,0.06666666666666667,strict_accuracy
+rq3-parent-profile-ae1bace6afad461b4a80e82356953459c5025a19cb7ea2719f9c81ce28a85b86,chapter5-main60-rq3-v1,2,deepseek,4,neither_correct,60,14,0.23333333333333334,strict_accuracy

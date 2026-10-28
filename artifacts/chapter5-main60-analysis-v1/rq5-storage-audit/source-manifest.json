@@ -1,0 +1,81 @@
+{
+  "files": [
+    {
+      "bytes": 8316,
+      "path": "experiments/locomo-conv50-v1/question-sets/main-40-input.jsonl",
+      "sha256": "31a65ab18797abb4491cf8de2e172050d25000eb5c1f6ddb77383d3900b757af"
+    },
+    {
+      "bytes": 4203,
+      "path": "experiments/locomo-conv50-v1/question-sets-main60-v2/extension-20-input.jsonl",
+      "sha256": "8e9e27e8cec7768144ca48df3a7a5b63d6f29af1acfd482d73c0b04fd854a565"
+    },
+    {
+      "bytes": 16002,
+      "path": "experiments/locomo-conv50-v1/question-sets/main-40-gold.jsonl",
+      "sha256": "a6833ca585ca26efcdd038a5cf202fd46657999053ebd7b8cc73793f7544718b"
+    },
+    {
+      "bytes": 8086,
+      "path": "experiments/locomo-conv50-v1/question-sets-main60-v2/extension-20-gold.jsonl",
+      "sha256": "c8b08771af27537579e418db0ace600076cd09108019fc86cd584740bb035ec8"
+    },
+    {
+      "bytes": 419086,
+      "path": "data/processed/conv-50.jsonl",
+      "sha256": "130a5a1e1b75083358ef27a98dd215a4e75c819ace6f2ee9b560ba394e0f0394"
+    },
+    {
+      "bytes": 7699,
+      "path": "experiments/locomo-conv50-v1/manifests/s2-foldered-path-map.json",
+      "sha256": "d98e2d8d00bd6081e35ac5a430cbf4679428a3c7bd21f155947444fc2f377a9f"
+    },
+    {
+      "bytes": 9286,
+      "path": "experiments/locomo-conv50-v1/question-sets-main60-v2/main-60-composition.json",
+      "sha256": "c6f5452a8f7491cb9c1fd553f636352f45c4774d1efdd7d4a1ac8a19370f7acd"
+    },
+    {
+      "bytes": 18243,
+      "path": "docs/analysis/reviews/chapter5-rq5-storage-review-v1.json",
+      "sha256": "3852ee2313f587ead96657d110f0eb41dfe608d6747fdefa48656717523b6e8d"
+    },
+    {
+      "bytes": 10155,
+      "path": "docs/analysis/reviews/chapter5-rq5-s2-routing-review-v1.json",
+      "sha256": "73bd7f9445461a9aa73e0ab593bcafbfe73f1405b42596b2ed16be9c526a8e81"
+    },
+    {
+      "bytes": 2557801,
+      "path": "artifacts/chapter5-main60-analysis-v1/stage-a/master-table.jsonl",
+      "sha256": "8e54db42ae6eeb65fc4a47049af622fea4e7dc611b8028920486029885d65a01"
+    },
+    {
+      "bytes": 481073,
+      "path": "artifacts/chapter5-main60-analysis-v1/rq5-root-cause-index/strict-error-cases.jsonl",
+      "sha256": "209f84bd43d2e1ee2e97ea502b7b4b99955bb6459900410d45ff2e4941fa3631"
+    },
+    {
+      "bytes": 436759,
+      "path": "artifacts/chapter5-main60-analysis-v1/rq5-root-cause-index/root-cause-state-register.jsonl",
+      "sha256": "09ee41e8d998323264ce86d309406fe40abcd100ccaa5c26a41c281fb83e38d1"
+    },
+    {
+      "bytes": 223533,
+      "path": "experiments/locomo-conv50-v1/manifests/s1-flat.json",
+      "sha256": "5c5900c333c8f85463f038448560cb4357f1161d6ed43e9fbc86809ba7916d3c"
+    },
+    {
+      "bytes": 239998,
+      "path": "experiments/locomo-conv50-v1/manifests/s2-foldered.json",
+      "sha256": "4858e430f3c197d4f718ea5839596597c3dbbd885e3d1fc654e982a90dc707ac"
+    },
+    {
+      "bytes": 133882,
+      "path": "experiments/locomo-conv50-v1/manifests/s3-curated.json",
+      "sha256": "70fb5ad56ff11bb849ce60b193cd6db29be601e613ca3afb76aac336e3b36e00"
+    }
+  ],
+  "protocol_version": "chapter5-main60-rq5-storage-audit-v1",
+  "source_manifest_id": "rq5-storage-sources-d2bdeb95f4e4c621a29cf56f5cbff6403d0677f6b3189432a02abbef41f695f2"
+}

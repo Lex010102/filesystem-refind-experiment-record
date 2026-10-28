@@ -1,0 +1,8 @@
+check_order,check_id,record_count,group_count,conflict_group_count,status,interpretation
+1,exact_input_label_consistency,305,80,0,passed,Exact duplicate inputs were label-consistent; this does not establish stability near semantic decision boundaries.
+2,confidence_correct_high,598,,,descriptive,Judge confidence is self-reported and is not treated as a calibrated probability.
+3,confidence_correct_medium,52,,,descriptive,Judge confidence is self-reported and is not treated as a calibrated probability.
+4,confidence_incorrect_high,169,,,descriptive,Judge confidence is self-reported and is not treated as a calibrated probability.
+5,confidence_incorrect_medium,7,,,descriptive,Judge confidence is self-reported and is not treated as a calibrated probability.
+6,confidence_partial_high,35,,,descriptive,Judge confidence is self-reported and is not treated as a calibrated probability.
+7,confidence_partial_medium,39,,,descriptive,Judge confidence is self-reported and is not treated as a calibrated probability.

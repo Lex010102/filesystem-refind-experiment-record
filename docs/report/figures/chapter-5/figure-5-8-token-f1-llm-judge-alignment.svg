@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1125" viewBox="0 0 2000 1125">
+<title>Token F1 distribution by frozen LLM judge label</title>
+<desc>A three-by-five teal heatmap shows the distribution of Token F1 scores within the Correct, Partial, and Incorrect frozen LLM judge labels for 900 answers. Each cell reports an answer count and the percentage within that judge label.</desc>
+<defs><linearGradient id="share-scale" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#EAF7F5"/><stop offset="100%" stop-color="#087F78"/></linearGradient></defs>
+<rect x="0" y="0" width="2000" height="1125" rx="0" fill="#FEFEFE" stroke="none" stroke-width="0"/>
+<text x="1000" y="86" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">Token F1 distribution by frozen LLM judge label</text>
+<text x="1000" y="139" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">Cells report answer count and within-label share across 900 frozen answers</text>
+<text x="1151" y="178" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">Token F1 range</text>
+<text x="442" y="222" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="600" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">Frozen LLM judge label</text>
+<text x="611" y="218" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">[0.00, 0.10)</text>
+<text x="611" y="253" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">bin N = 265</text>
+<text x="881" y="218" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">[0.10, 0.25)</text>
+<text x="881" y="253" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">bin N = 207</text>
+<text x="1151" y="218" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">[0.25, 0.50)</text>
+<text x="1151" y="253" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">bin N = 219</text>
+<text x="1421" y="218" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">[0.50, 0.75)</text>
+<text x="1421" y="253" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">bin N = 79</text>
+<text x="1691" y="218" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">[0.75, 1.00]</text>
+<text x="1691" y="253" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">bin N = 130</text>
+<text x="442" y="366" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">Correct</text>
+<text x="442" y="403" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">N = 650</text>
+<rect x="480" y="292" width="262" height="168" rx="8" fill="#cae6e3" stroke="#FFFFFF" stroke-width="2"/>
+<text x="611" y="364" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">92</text>
+<text x="611" y="407" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">14.2%</text>
+<rect x="750" y="292" width="262" height="168" rx="8" fill="#b3dad7" stroke="#FFFFFF" stroke-width="2"/>
+<text x="881" y="364" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">157</text>
+<text x="881" y="407" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">24.2%</text>
+<rect x="1020" y="292" width="262" height="168" rx="8" fill="#a3d2ce" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1151" y="364" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">203</text>
+<text x="1151" y="407" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">31.2%</text>
+<rect x="1290" y="292" width="262" height="168" rx="8" fill="#d2eae8" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1421" y="364" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">68</text>
+<text x="1421" y="407" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">10.5%</text>
+<rect x="1560" y="292" width="262" height="168" rx="8" fill="#bddfdc" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1691" y="364" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">130</text>
+<text x="1691" y="407" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">20.0%</text>
+<text x="442" y="542" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">Partial</text>
+<text x="442" y="579" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">N = 74</text>
+<rect x="480" y="468" width="262" height="168" rx="8" fill="#8bc5c1" stroke="#FFFFFF" stroke-width="2"/>
+<text x="611" y="540" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">31</text>
+<text x="611" y="583" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">41.9%</text>
+<rect x="750" y="468" width="262" height="168" rx="8" fill="#b3dad7" stroke="#FFFFFF" stroke-width="2"/>
+<text x="881" y="540" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">18</text>
+<text x="881" y="583" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">24.3%</text>
+<rect x="1020" y="468" width="262" height="168" rx="8" fill="#bfe0dd" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1151" y="540" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">14</text>
+<text x="1151" y="583" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">18.9%</text>
+<rect x="1290" y="468" width="262" height="168" rx="8" fill="#c8e5e2" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1421" y="540" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">11</text>
+<text x="1421" y="583" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">14.9%</text>
+<rect x="1560" y="468" width="262" height="168" rx="8" fill="#eaf7f5" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1691" y="540" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">0</text>
+<text x="1691" y="583" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">0.0%</text>
+<text x="442" y="718" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">Incorrect</text>
+<text x="442" y="755" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">N = 176</text>
+<rect x="480" y="644" width="262" height="168" rx="8" fill="#349690" stroke="#FFFFFF" stroke-width="2"/>
+<text x="611" y="716" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#FFFFFF" fill-opacity="1" text-rendering="geometricPrecision">142</text>
+<text x="611" y="759" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#FFFFFF" fill-opacity="1" text-rendering="geometricPrecision">80.7%</text>
+<rect x="750" y="644" width="262" height="168" rx="8" fill="#c1e1de" stroke="#FFFFFF" stroke-width="2"/>
+<text x="881" y="716" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">32</text>
+<text x="881" y="759" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">18.2%</text>
+<rect x="1020" y="644" width="262" height="168" rx="8" fill="#e7f6f4" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1151" y="716" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">2</text>
+<text x="1151" y="759" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">1.1%</text>
+<rect x="1290" y="644" width="262" height="168" rx="8" fill="#eaf7f5" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1421" y="716" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">0</text>
+<text x="1421" y="759" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">0.0%</text>
+<rect x="1560" y="644" width="262" height="168" rx="8" fill="#eaf7f5" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1691" y="716" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">0</text>
+<text x="1691" y="759" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">0.0%</text>
+<text x="665" y="914" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="600" fill="#102F4F" fill-opacity="1" text-rendering="geometricPrecision">Within-label share</text>
+<rect x="690" y="892" width="620" height="28" rx="3" fill="url(#share-scale)" stroke="#AEBBC6" stroke-width="1"/>
+<text x="690" y="954" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">0%</text>
+<text x="1000" y="954" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">50%</text>
+<text x="1310" y="954" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">100%</text>
+<text x="1000" y="1010" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">Percentages are rounded; each row sums to 100% before rounding</text>
+<text x="1000" y="1052" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="500" fill="#61788D" fill-opacity="1" text-rendering="geometricPrecision">The bins visualise lexical–semantic disagreement; they do not define evaluator error</text>
+</svg>

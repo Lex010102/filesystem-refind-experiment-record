@@ -1,0 +1,31 @@
+{
+  "generated_at": "2026-10-27T18:58:08.549Z",
+  "generator": "docs/report/figures/chapter-5/generate_chapter5_rq2_figure.js",
+  "rq2_audit_id": "rq2-audit-ef0e571affac75cd8b6ad71d833411e7a41c10664132770f77d86712827ab00b",
+  "rq2_status": "passed",
+  "scope": "descriptive cross-backbone architecture-effect stability",
+  "source_files": [
+    {
+      "path": "artifacts/chapter5-main60-analysis-v1/rq2-backbone-robustness/table-5-13-inputs.csv",
+      "sha256": "a85cc3e7ce595863a9a1d2a693cba74a652773b03d051956f85b7a51b8384f09"
+    },
+    {
+      "path": "artifacts/chapter5-main60-analysis-v1/rq2-backbone-robustness/audit.json",
+      "sha256": "3bbf1f3cb61f9a18d46dcf5969ecb2748a77c29232385e60a1e56637b016233b"
+    },
+    {
+      "path": "artifacts/chapter5-main60-analysis-v1/rq2-backbone-robustness/RQ2.PASSED",
+      "sha256": "3e4a7364cfaa6c0a28498980ea75235bd288a6728f3d4264024e437093592e22"
+    }
+  ],
+  "output_files": [
+    {
+      "path": "docs/report/figures/chapter-5/figure-5-3-cross-backbone-architecture-stability.svg",
+      "sha256": "0af5111fe171a2a27c58654acd87fff517758ae22bf3ab3e8beacc9de2e66754"
+    },
+    {
+      "path": "docs/report/figures/chapter-5/figure-5-3-cross-backbone-architecture-stability.png",
+      "sha256": "3819d0e562c093077a3b1b14741c5149d3f8593fe2473b386701396c4217c365"
+    }
+  ]
+}

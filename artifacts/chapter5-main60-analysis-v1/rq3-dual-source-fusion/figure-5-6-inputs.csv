@@ -1,0 +1,17 @@
+result_id,protocol_version,backbone_order,backbone_id,parent_profile_order,parent_profile,e7_strict_correct,fusion_outcome,denominator,count,proportion
+rq3-figure-5-6-4354eba64500b6c5c413a6fb8df71e5e221b04a4cc0d55d1db526744c3872daf,chapter5-main60-rq3-v1,1,qwen,1,both_correct,False,harm,60,0,0.0
+rq3-figure-5-6-011861e5b42f402d2533f3db809cd5938e4a3a5252a15d3f9499e14bfdeb321e,chapter5-main60-rq3-v1,1,qwen,1,both_correct,True,preserve,60,37,0.6166666666666667
+rq3-figure-5-6-8242f3df468e02ec6ccfed5fd2fd4d55e58b4db44636b076f6eb8cb97d9aec2e,chapter5-main60-rq3-v1,1,qwen,2,e2_only_correct,False,harm,60,1,0.016666666666666666
+rq3-figure-5-6-e12287f2cf3e007f3c65de3a75dfc1569c9989936fa8ac0f275c279581200a2d,chapter5-main60-rq3-v1,1,qwen,2,e2_only_correct,True,preserve,60,2,0.03333333333333333
+rq3-figure-5-6-16f07f544abfdb85f9e75f6e28b39fcb47e0884e94f1be8538c2249a714aedd3,chapter5-main60-rq3-v1,1,qwen,3,e6_only_correct,False,harm,60,3,0.05
+rq3-figure-5-6-180582223bb7b6269d2f0de0de0aa162c8119da73187be0821e5b2271327d21f,chapter5-main60-rq3-v1,1,qwen,3,e6_only_correct,True,preserve,60,4,0.06666666666666667
+rq3-figure-5-6-3021417146dd328eb7a225e6f923155cc9b31f91e4645c871903896e830dfd94,chapter5-main60-rq3-v1,1,qwen,4,neither_correct,False,unresolved,60,12,0.2
+rq3-figure-5-6-5b284fd8337fb1da5b707496c6ce829a602da8be5786767c66b6d005906e7915,chapter5-main60-rq3-v1,1,qwen,4,neither_correct,True,repair,60,1,0.016666666666666666
+rq3-figure-5-6-d93dbc6b35a51268e3a21381771afdc3d6b045ad8aa6abe7fbdb5c88074901d1,chapter5-main60-rq3-v1,2,deepseek,1,both_correct,False,harm,60,1,0.016666666666666666
+rq3-figure-5-6-045aa7f8fb36c2a2465ecb6b559abce2b0f181a5e469956b707abeae2386d46d,chapter5-main60-rq3-v1,2,deepseek,1,both_correct,True,preserve,60,35,0.5833333333333334
+rq3-figure-5-6-ffe2174cf3aef41ee395c351a35e6095e18838b633cc46f2f68ac4e510b0affa,chapter5-main60-rq3-v1,2,deepseek,2,e2_only_correct,False,harm,60,2,0.03333333333333333
+rq3-figure-5-6-12ba39eae5c42058d342e2c513ea4bbd3cd304fcf4ea5f00abc7c26eda49981c,chapter5-main60-rq3-v1,2,deepseek,2,e2_only_correct,True,preserve,60,4,0.06666666666666667
+rq3-figure-5-6-82b7f6d1f132c00c6f1d8276c3fe7ef026d0b23102c7c256824457c0fd6e05cc,chapter5-main60-rq3-v1,2,deepseek,3,e6_only_correct,False,harm,60,1,0.016666666666666666
+rq3-figure-5-6-c0a790569950849534275ef4bd863e9e9f9e128457cccbeec6191f29fd0b753d,chapter5-main60-rq3-v1,2,deepseek,3,e6_only_correct,True,preserve,60,3,0.05
+rq3-figure-5-6-43f4422e24846a32192f5ddc9df737fd93c2a36a3fa07db4c4245f469f3cb487,chapter5-main60-rq3-v1,2,deepseek,4,neither_correct,False,unresolved,60,11,0.18333333333333332
+rq3-figure-5-6-191f2a08ef0ea111a56941891620b033ccb24093e1f4c673da9418e71abafad1,chapter5-main60-rq3-v1,2,deepseek,4,neither_correct,True,repair,60,3,0.05

@@ -1,0 +1,71 @@
+{
+  "all_pipeline_error_paths_exposed_to_shared_representation_insufficiency": 14,
+  "audit_id": "rq5-storage-audit-5ff8638baf55d3e678e266ade364aafd6076e0d89c1193aad05b59bda631f5eb",
+  "counts": {
+    "case-storage-linkage": 205,
+    "root-cause-state-register-after-storage": 250,
+    "s1-s2-equivalence": 30,
+    "s2-routing": 60,
+    "s2-routing-session-review": 79,
+    "s3-fact-preservation": 60,
+    "storage-fidelity": 180,
+    "storage-outcome-linkage": 720,
+    "storage-summary": 379,
+    "store-integrity": 3
+  },
+  "curated_form_census": {
+    "compressed_but_sufficient": 5,
+    "partially_preserved": 4,
+    "preserved_exactly": 48,
+    "stale_or_conflicting": 1
+  },
+  "curator_introduced_decisive_losses": 0,
+  "output_sha256": {
+    "README.md": "8419cdb74d22ffd39e888ea6137e7aa86f1c12fbd53af1e08946114ef172d946",
+    "case-storage-linkage.csv": "700cc8b9981696eb56d9c7d7ca366e97fd4b6bbc386a03f053d692b1a585d403",
+    "case-storage-linkage.jsonl": "db78241f74b4149528c15616c89c350b2972bd5a647428cfd6bd7afc9701c5e2",
+    "root-cause-state-register-after-storage.csv": "ad78197fb6a136c54ae2cdf9cfd605a0499f1f92f98efff3dfcbec09309cca8c",
+    "root-cause-state-register-after-storage.jsonl": "56a2ebf59b2e0bf3ffe240923e63a833e671b69dcb57dd2ea74191b96f60b17a",
+    "s1-s2-equivalence.csv": "55f574a43af4f1c3875b8f237e160698a277ea583351473f750ead271a9bb0ee",
+    "s1-s2-equivalence.jsonl": "932d7b533b7ab027b583c9baaadc0461f978d32a6ae2f4ebf1dcb7b43ac12c28",
+    "s2-routing-session-review.csv": "8c659264b990be01334d8e37fb4857108f66c42379c4ded5bb1a0b9df59d794f",
+    "s2-routing-session-review.jsonl": "f37395b6293931f1dd05c29e208e1bfd746d2740eb76ee2e9c7574ac9031958d",
+    "s2-routing.csv": "8ad02ff715b68f1a3a39625d5b9321e5b49248b8a45b45cd378881127ff6d810",
+    "s2-routing.jsonl": "959107081ee416f6cf3e164958fe17053d057b124e530470c183e5d1820e0ee7",
+    "s3-fact-preservation.csv": "b98c1a48a66e482de062a323e04c8b444c57fc321176d9d268df611d797b82c9",
+    "s3-fact-preservation.jsonl": "85a8f9deaf9cbd64488d8de78976f4fa4930e20ccb4cc6fd6c80a6dbfe090048",
+    "schema.json": "cd1c3140f2ccd04d7b6281fc9d66141ba7bab1f8773784e2f2acbbe011664fee",
+    "source-manifest.json": "d72e80fd2982073b567531fd1ecfb39e9ec5b5595fae6089bb91b8454be45020",
+    "storage-fidelity.csv": "c611e3ebec11d0b8cda84c8389367f5237e878f3774cf208aaa67dd303096a22",
+    "storage-fidelity.jsonl": "2948246fb27a1becfa527df8c2334d58b6dd3c8fde150eea45debe3246807a2f",
+    "storage-outcome-linkage.csv": "f97a77c73c551e37738817afdaa25359f0f2665c3b4af797bd81a847a47a4cee",
+    "storage-outcome-linkage.jsonl": "38681eee3df0ecd44081565f7dc5ba767821909c3e44c44c5e5e702fa3d89661",
+    "storage-summary.csv": "b7eee5287b86d1511b526dfc31b71271f403a37255b64cd51e2da437e8babe71",
+    "storage-summary.jsonl": "7a17ceeec0db0272191050603ad43bafe2ed5cd4d9ceee2f2303281fc123ae97",
+    "store-integrity.csv": "8163c2c7c9654a0c356f0bdd132cde280ecdfcd634f6e1e2630ae13d67e686a7",
+    "store-integrity.jsonl": "9036201e15e0911eba3c5e941458c422e7d024048494c871cf25d8b7370e2d6b"
+  },
+  "protocol_version": "chapter5-main60-rq5-storage-audit-v1",
+  "reference_support_census": {
+    "available_but_conflicting": 1,
+    "partial": 4,
+    "source_reference_mismatch": 3,
+    "sufficient": 50
+  },
+  "s2_routing_census": {
+    "aligned": 55,
+    "misleading": 18,
+    "partially_aligned": 6
+  },
+  "selective_error_paths_exposed_to_shared_representation_insufficiency": 12,
+  "shared_representation_insufficiency_unique_questions": 1,
+  "source_fidelity_census": {
+    "compressed_but_source_faithful": 5,
+    "faithful_to_source": 51,
+    "shared_renderer_detail_loss": 1,
+    "source_conflict_preserved": 1
+  },
+  "source_manifest_id": "rq5-storage-sources-d2bdeb95f4e4c621a29cf56f5cbff6403d0677f6b3189432a02abbef41f695f2",
+  "status": "passed",
+  "store_specific_decisive_losses": 0
+}

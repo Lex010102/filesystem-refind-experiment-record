@@ -1,0 +1,295 @@
+% AUTO-GENERATED FILE. DO NOT EDIT DIRECTLY.
+% Source: docs/report/chapter-1-introduction.md
+% Regenerate with: python3 scripts/migrate_markdown_to_latex.py
+
+\hypertarget{chap:ch1}{%
+\chapter{Introduction}\label{chap:ch1}}
+
+\hypertarget{sec:ch1-1}{%
+\section{Research Background}\label{sec:ch1-1}}
+
+\hypertarget{sec:ch1-1-1}{%
+\subsection{From Single-Turn Question Answering to Long-Term Interactive Agents}\label{sec:ch1-1-1}}
+
+Large language models (LLMs) are increasingly used as agents that perform tasks, call tools, and interact with users over time. In personal assistance, collaborative work, customer service, and similar settings, users reveal preferences, relationships, events, and plans across many sessions. An effective agent must therefore understand the current request and access information introduced much earlier. LoCoMo frames this challenge as long-term conversational understanding, while MemoryAgentBench emphasises incremental memory in multi-turn environments \cite{maharana2024locomo,hu2026memoryagentbench}.
+
+Long-term interaction is difficult for more than one reason. Relevant facts may be scattered across sessions, expressed in different words, or updated by later events. A question may also require several pieces of evidence. For example, a user may propose a plan, revise its date, and later report the outcome. Retrieving only the first statement can produce an outdated answer. Retrieving all statements is still insufficient if the model cannot resolve entities, temporal order, and the current state. LoCoMo includes single-hop, multi-hop, and temporal questions, which capture these different requirements \cite{maharana2024locomo}.
+
+Long-term agents therefore need mechanisms to preserve, update, locate, and use historical information. Many systems provide these capabilities through external memory. Retrieval-augmented generation combines a parametric generator with retrievable non-parametric memory \cite{lewis2020rag}. Filesystem-based memory instead treats files, memory-management agents, search agents, and tool interfaces as parts of a persistent memory system \cite{zhou2026filesystem}. Reliable memory is important because an agent that cannot access past information may contradict earlier statements, ignore user preferences, or rely on outdated facts.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=0.68\linewidth,height=0.27\textheight,keepaspectratio]{../figures/chapter-1/figure-1-1-long-term-conversational-memory-challenge.png}
+  \caption{Long-term conversational memory challenge: relevant evidence may be distributed across sessions, revised over time, and surrounded by irrelevant dialogue.}
+  \label{fig:ch1-1}
+\end{figure}
+
+\hypertarget{sec:ch1-1-2}{%
+\subsection{A Long Context Window Is Not a Long-Term Memory System}\label{sec:ch1-1-2}}
+
+A direct approach is to place the entire conversation history in the model context. This preserves the raw source and avoids omissions caused by an explicit retrieval step. However, information that fits in the context window is not always used reliably. Long-context performance can vary with the position of relevant evidence, especially when it appears in the middle of the input \cite{liu2024lost}. Context capacity and effective memory are therefore not equivalent.
+
+As the history grows, Full Context increases the amount of text that the Answerer must process on each query. This can raise token use, latency, and computation. Raw conversations contain repetition, irrelevant dialogue, similar entities, conflicts, and outdated states. A long-term memory system must address selection, organisation, updating, provenance, and auditability, not only input capacity. Filesystem-Based Memory and ReFind address these needs through maintainable file memory and controlled search over raw chat logs, respectively \cite{zhou2026filesystem,li2026refind}.
+
+This study therefore uses Full Context as a \textbf{diagnostic baseline without explicit retrieval selection}. It is not a storage representation, an additional experimental condition in the selective-retrieval matrix, or an oracle. It exposes the complete raw source to the answering model, referred to as the Answerer, but remains subject to long-context localisation, noise, conflict, and reasoning failures \cite{maharana2024locomo,liu2024lost}.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=0.68\linewidth,height=0.27\textheight,keepaspectratio]{../figures/chapter-1/figure-1-2-full-context-vs-selective-retrieval.png}
+  \caption{Full Context preserves complete source visibility but increases context length and noise, whereas selective retrieval provides focused evidence at the risk of omission.}
+  \label{fig:ch1-2}
+\end{figure}
+
+\hypertarget{sec:ch1-1-3}{%
+\subsection{External Memory as a Storage--Retrieval--Utilisation System}\label{sec:ch1-1-3}}
+
+External memory has three interdependent stages. \textbf{Storage} determines how history is represented. The same conversations may be kept as flat raw records, organised into topic directories, or consolidated into entity-, event-, or topic-centred memory. These choices trade off source fidelity, navigation, compression, write cost, and maintenance. Their value also depends on the tools and agents used to access them \cite{zhou2026filesystem}.
+
+\textbf{Retrieval} selects evidence for the current question. An agent may browse directories, search for terms, and inspect files. A lexical method such as BM25 may instead rank conversation units, supported by query reformulation, context expansion, temporal constraints, and iterative search. ReFind shows how an agent can use iterative lexical search over raw chat logs without first constructing a semantic memory structure \cite{li2026refind}. Narrow retrieval may miss evidence, whereas broad retrieval may introduce noise or conflict.
+
+\textbf{Evidence utilisation} occurs when the Answerer produces the final response. Relevant evidence does not guarantee a correct answer. The model may fail to resolve references, order events, combine facts, or identify the latest state. Recent diagnostic work distinguishes retrieval-stage failures from downstream utilisation failures, but groups missing stored detail and missed retrieval under the former category \cite{yuan2026retrievalutilization}. This study extends that separation by checking stored content, retrieved evidence, evidence packaging, and answer generation as distinct points in the end-to-end system.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=0.68\linewidth,height=0.27\textheight,keepaspectratio]{../figures/chapter-1/figure-1-3-storage-retrieval-utilisation-pipeline.png}
+  \caption{End-to-end storage--retrieval--utilisation pipeline and the principal failure points examined in this study.}
+  \label{fig:ch1-3}
+\end{figure}
+
+\hypertarget{sec:ch1-2}{%
+\section{Problem Statement}\label{sec:ch1-2}}
+
+\hypertarget{sec:ch1-2-1}{%
+\subsection{Storage: Fidelity, Organisation, and Compression}\label{sec:ch1-2-1}}
+
+Raw logs preserve wording, temporal cues, and dialogue context, but distribute relevant facts across many files and turns. They reduce information loss at write time while increasing the search burden at query time. Topic directories can provide useful navigation cues. Organised stores may require more navigation steps while reducing the amount of text read, and they do not improve answer quality uniformly \cite{zhou2026filesystem}.
+
+Curated memory can consolidate related facts and remove repetition. It can reduce the text read at query time, but curation is a lossy transformation. It may condense away details, flatten temporal updates, or leave stale states unreconciled \cite{zhou2026filesystem}. The first problem is therefore whether storage organisation improves retrieval and answering when the source data are fixed, and whether the effect depends on the retrieval system.
+
+\hypertarget{sec:ch1-2-2}{%
+\subsection{Retrieval: Coverage, Noise, and Cost}\label{sec:ch1-2-2}}
+
+Retrieval must collect sufficient evidence within a limited context and cost budget. Agent-led file search can adapt after each observation, but it requires repeated model calls and may follow an early wrong decision. Lexical retrieval is efficient and auditable, but depends on query formulation, index units, ranking, and context expansion. ReFind shows that these surrounding design choices affect retrieval from raw conversations \cite{li2026refind}.
+
+More retrieved text may improve coverage but also add duplicates and conflicts. Less text may reduce noise but remove a critical condition. Retrieval should therefore be assessed through gold-source coverage and the evidence retained in the EvidenceBundle, not only through final answer quality. LoCoMo provides source turn identifiers that support this separation \cite{maharana2024locomo}. The broader question is whether retrieval-system effects remain stable across storage representations or form a storage × retrieval interaction.
+
+\hypertarget{sec:ch1-2-3}{%
+\subsection{Utilisation: Visible Evidence Does Not Guarantee a Correct Answer}\label{sec:ch1-2-3}}
+
+An Answerer may still fail when the EvidenceBundle contains the required information. Common demands include entity resolution, temporal ordering, multi-hop composition, and separation of plans from completed events \cite{maharana2024locomo}. Retrieval sufficiency and evidence use must therefore be diagnosed separately \cite{yuan2026retrievalutilization}.
+
+Full Context supports the same distinction. If it repairs an error made by selective retrieval, the likely bottleneck may be access or evidence budget. If selective retrieval succeeds while Full Context fails, selection may have improved focus or reduced noise. If both fail, the cause may lie in reasoning, interpretation, or data ambiguity \cite{liu2024lost,yuan2026retrievalutilization}. Backbone models may differ in both search behaviour and evidence use, so an architecture observed with one backbone model may not transfer unchanged to another.
+
+\hypertarget{sec:ch1-2-4}{%
+\subsection{Evaluation: One Final Score Is Insufficient}\label{sec:ch1-2-4}}
+
+LoCoMo evaluates question answering with normalised token-level partial-match F1 \cite{maharana2024locomo}. This study reports that official-style F1 together with project-defined, aligned token-overlap Precision and Recall as diagnostic measures. The aggregates are means of per-question values, so aggregate Precision and Recall should not be used to recompute aggregate F1. Exact normalisation and category-specific procedures are deferred to Chapter~\ref{chap:ch4}, where the evaluator implementation is documented. These metrics are reproducible, but remain sensitive to wording and answer length \cite{maharana2024locomo}.
+
+An LLM judge can complement lexical overlap with semantic assessment, but prior work documents position, verbosity, and self-enhancement biases, as well as limited reasoning ability \cite{zheng2023llmjudge}. This study therefore uses an independent LLM judge under a fixed rubric and reports Strict Accuracy, Partial Rate, and Soft Semantic Score alongside the deterministic metrics. None is treated as a complete measure of answer quality.
+
+For retrieval, Evidence Recall is the fractional coverage of annotated gold source turns. Any-hit and All-hit capture binary source-access outcomes. These evidence measures apply only to the 58 evidence-eligible Main-60 questions and are not applicable to Full Context, which performs no retrieval. Process evaluation also includes model calls, input and output tokens, latency, construction cost, and maintenance burden.
+
+The studies reviewed here do not provide one controlled comparison that jointly covers storage organisation, retrieval strategy, backbone model, dual-source fusion, and Full Context under shared data and evaluation \cite{zhou2026filesystem,li2026refind,yuan2026retrievalutilization}. This study addresses that combined gap and traces outcome differences to evidence access, evidence packaging, evidence utilisation, and cost.
+
+\hypertarget{sec:ch1-3}{%
+\section{Research Landscape and Gaps}\label{sec:ch1-3}}
+
+\hypertarget{sec:ch1-3-1}{%
+\subsection{Existing Memory Representations}\label{sec:ch1-3-1}}
+
+Research on long-term agent memory has produced a wide range of representations. Retrieval-augmented generation introduced the general pattern of combining a parametric generator with externally retrievable, non-parametric memory \cite{lewis2020rag}. Subsequent systems have represented memory as extracted facts, summaries, graph structures, linked notes, discourse units, embedding-organised indexes, raw interaction records, and hierarchical files \cite{zhou2026filesystem}. Long-conversation benchmarks such as LoCoMo and incremental-agent evaluations further show why these representations matter: relevant information may be introduced across sessions, revised later, or require several pieces of evidence to answer one question \cite{maharana2024locomo,hu2026memoryagentbench}.
+
+These representations make different trade-offs. Raw conversations preserve wording, provenance, temporal cues, and surrounding dialogue, but leave relevant facts distributed across many turns. Topic-based files add navigational structure without rewriting the source. Curated memory can consolidate related material and reduce repetition, but curation is a lossy operation that may omit qualifiers, weaken temporal relationships, or preserve an outdated state. Filesystem-Based Memory treats organisation, management agents, search agents, tool interfaces, cost, and store health as parts of one persistent-memory design space \cite{zhou2026filesystem}. Its analysis also shows that a well-organised store should not automatically be assumed to produce better answers: the value of a representation depends on how it is searched and used.
+
+\hypertarget{sec:ch1-3-2}{%
+\subsection{Retrieval Paradigms}\label{sec:ch1-3-2}}
+
+Memory representations are accessed through several retrieval paradigms. The simplest diagnostic is Full Context, in which the complete raw history is placed in the model input. This removes explicit retrieval selection but does not guarantee that the model will locate and use the relevant evidence. Long-context performance can depend on evidence position, with information in the middle of an input often used less reliably than information near its boundaries \cite{liu2024lost}. Full Context also increases input size and exposes the Answerer to irrelevant, repeated, or conflicting material.
+
+Selective retrieval attempts to reduce this burden. Agent-led filesystem search allows a model to inspect directories, formulate search terms, open files, and revise its search after each observation \cite{zhou2026filesystem}. ReFind instead uses an agent-controlled iterative lexical process over raw chat logs, combining query formulation, ranked retrieval, local context expansion, temporal constraints, and stopping decisions before a separate answering stage \cite{li2026refind}. These approaches differ not only in search algorithm but also in the actions available to the agent, the units being ranked or viewed, the number of iterations, and the evidence finally passed to the Answerer. Retrieval quality must therefore be analysed as a process rather than treated as a single interchangeable component.
+
+\hypertarget{sec:ch1-3-3}{%
+\subsection{Evaluation Practices}\label{sec:ch1-3-3}}
+
+Evaluation has likewise moved beyond one final accuracy number. LoCoMo uses normalised token-level partial-match F1 and provides answer-source turn identifiers for questions with annotated evidence \cite{maharana2024locomo}. Token overlap is transparent and reproducible, but it is sensitive to wording and answer length \cite{maharana2024locomo}. Semantic evaluation with an LLM judge can recognise meaning beyond exact token overlap, yet LLM judges may exhibit position, verbosity, and self-enhancement biases, as well as limited reasoning ability \cite{zheng2023llmjudge}. LLM judge scores should consequently complement rather than replace deterministic metrics.
+
+A second distinction concerns where failure occurs. Recent diagnostic work distinguishes retrieval-stage failures from downstream utilisation failures and hallucinations, although its retrieval-stage category includes both missing stored detail and missed retrieval \cite{yuan2026retrievalutilization}. This study further separates storage fidelity, evidence access, evidence packaging, and answer utilisation. Filesystem-Based Memory additionally measures search effort, token use, content read, and store health, showing the importance of evaluating operational cost alongside answer quality \cite{zhou2026filesystem}. Together, these practices motivate a multi-level evaluation comprising answer quality, gold-evidence coverage, process traces, and resource use.
+
+\hypertarget{sec:ch1-3-4}{%
+\subsection{Unresolved Gaps}\label{sec:ch1-3-4}}
+
+Four gaps remain. First, emerging studies have begun to isolate memory shape \cite{zhou2026filesystem} or cross write and retrieval strategies \cite{yuan2026retrievalutilization}, but many end-to-end system comparisons still vary representation and access procedures jointly \cite{li2026refind}. A result obtained with a curated store and a specialised retriever cannot reveal whether the gain came from representation, search procedure, their interaction, or the Answerer. Cross-paper comparisons are especially weak for this purpose because datasets, prompts, tools, budgets, and models also differ.
+
+Second, the backbone model is itself a source of variation. Model capability can change query formulation, tool use, stopping behaviour, memory maintenance, and downstream outcomes \cite{zhou2026filesystem}. An apparent property of a memory architecture may therefore depend on the Retrieval Agent or Answerer used to test it.
+
+Third, the studies reviewed here do not establish the per-question paired diagnostic between selective retrieval and Full Context used in this study \cite{maharana2024locomo,zhou2026filesystem,li2026refind,yuan2026retrievalutilization}. Complete visibility may repair retrieval omissions, while selective evidence may outperform a longer context by reducing noise. If both fail despite access to the same source, the bottleneck may instead lie in evidence utilisation or answer generation \cite{liu2024lost,yuan2026retrievalutilization}.
+
+Fourth, final rankings provide limited causal explanation. Similar answer scores can conceal different evidence coverage, token cost, latency, and failure stages. Practical recommendations therefore require question-level comparisons, evidence measures, process records, and manual case analysis, not only aggregate F1 or LLM judge scores.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=0.68\linewidth,height=0.27\textheight,keepaspectratio]{../figures/chapter-1/figure-1-4-research-landscape-and-gap.png}
+  \caption{Conceptual synthesis of retrieval-augmented generation \cite{lewis2020rag}, organised and curated filesystem memory \cite{zhou2026filesystem}, ReFind-style raw-chat search \cite{li2026refind}, and controlled write--retrieval crossings \cite{yuan2026retrievalutilization}. The figure motivates cross-combination analysis rather than treating any cited system as one fixed storage--access pair.}
+  \label{fig:ch1-4}
+\end{figure}
+
+\hypertarget{sec:ch1-3-5}{%
+\subsection{Response of This Study}\label{sec:ch1-3-5}}
+
+This study addresses these gaps through one controlled framework built on a unified Main-60 question set. It compares three storage representations---flat raw conversations, topic-organised source files, and agent-curated memory---and three retrieval processes---agent-led filesystem search, ReFind-style iterative lexical retrieval over raw conversation units, and an adaptation of that iterative process to curated memory. All selective-retrieval paths produce a standardised EvidenceBundle for the Answerer. Matched raw-memory and topic-organised conditions support cleaner storage and retrieval contrasts; the curated-memory conditions are evaluated as complete systems and are not interpreted as pure single-component ablations.
+
+The same selective-retrieval configurations are run with Qwen and DeepSeek Retrieval Agents and Answerers while the stored snapshots remain fixed, enabling matched analysis across backbone models. A DeepSeek Full Context run supplies a separate diagnostic comparison. Full Context performs no explicit retrieval selection and is therefore neither a storage representation, an eighth selective-retrieval condition, nor an oracle.
+
+Evaluation combines LoCoMo-style token F1 \cite{maharana2024locomo} with this study's aligned token Precision and Recall, semantic Strict Accuracy, Partial Rate, and Soft Semantic Score produced by an independent LLM judge under a fixed rubric \cite{zheng2023llmjudge}, gold-source coverage for evidence-eligible questions, and process measures including model calls, tokens, latency, construction cost, and maintenance burden. Paired contrasts and manual review then trace likely failures to storage fidelity, retrieval access, evidence packaging, answer utilisation, or long-context processing. The purpose is not to identify one context-free winner, but to determine which conclusions are architecturally stable, which depend on the backbone model, and which system offers the most defensible quality--cost trade-off under different deployment priorities. Chapter~\ref{chap:ch3} defines the system components and condition identifiers, while Chapter~\ref{chap:ch4} specifies their implementation, controls, and evaluation protocol.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=0.68\linewidth,height=0.27\textheight,keepaspectratio]{../figures/chapter-1/figure-1-5-study-overview.png}
+  \caption{High-level overview of the study, including the selective-retrieval and Full Context paths and the four levels of evaluation.}
+  \label{fig:ch1-5}
+\end{figure}
+
+\hypertarget{sec:ch1-4}{%
+\section{Research Objectives}\label{sec:ch1-4}}
+
+\hypertarget{sec:ch1-4-1}{%
+\subsection{Overall Objective}\label{sec:ch1-4-1}}
+
+This study aims to evaluate long-term conversational memory under a controlled framework. It examines how storage representation, retrieval strategy, and backbone model capability affect answer quality, evidence coverage, and operational cost. Dual-source fusion and Full Context are used to diagnose system bottlenecks. The goal is to determine when each design is useful and whether its gains justify its cost.
+
+\hypertarget{sec:ch1-4-2}{%
+\subsection{Specific Objectives}\label{sec:ch1-4-2}}
+
+The study has six objectives:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Construct three traceable storage representations from the same source data.
+\item
+  Connect agent-led file search, iterative lexical retrieval, and curated-memory retrieval to a common EvidenceBundle interface.
+\item
+  Compare the same selective-retrieval configurations with Qwen and DeepSeek Retrieval Agents and Answerers.
+\item
+  Use a DeepSeek Full Context diagnostic baseline to examine access and long-context utilisation.
+\item
+  Evaluate lexical quality, semantic quality, gold-evidence coverage, model calls, tokens, latency, and maintenance burden.
+\item
+  Develop a stage-based error analysis and derive bounded practical implications for different quality, cost, scalability, and auditability needs.
+\end{enumerate}
+
+\hypertarget{sec:ch1-5}{%
+\section{Research Questions}\label{sec:ch1-5}}
+
+\hypertarget{sec:ch1-5-1}{%
+\subsection{Architecture: RQ1}\label{sec:ch1-5-1}}
+
+\textbf{RQ1: What effects do storage representation and retrieval strategy have, and do they interact?}
+
+The experiment uses matched conditions that vary storage organisation while holding the retrieval approach fixed, and vary retrieval while holding storage fixed. These comparisons estimate storage effects, retrieval effects, and their interaction. Complete curated-memory systems are analysed separately because their outcomes cannot be attributed to one isolated component.
+
+\hypertarget{sec:ch1-5-2}{%
+\subsection{Robustness: RQ2}\label{sec:ch1-5-2}}
+
+\textbf{RQ2: Are these architectural effects stable across Qwen and DeepSeek?}
+
+The analysis compares the direction and magnitude of matched contrasts across the two backbone models. Consistency supports a more general architectural interpretation; a direct difference between model-specific effects indicates dependence on the backbone model.
+
+\hypertarget{sec:ch1-5-3}{%
+\subsection{Mechanisms: RQ3--RQ5}\label{sec:ch1-5-3}}
+
+\textbf{RQ3: When does dual-source fusion repair errors, and when does it introduce interference?}
+
+The dual-source condition reuses evidence from two existing retrieval paths and adds no new retrieval process. Its repair, preserve, harm, and unresolved outcomes are compared with those of the two single-source parent conditions.
+
+\textbf{RQ4: Does Full Context outperform selective retrieval, and what bottlenecks does each approach reveal?}
+
+The within-DeepSeek paired descriptive comparison tests whether complete source visibility repairs selective-retrieval failures and whether selected evidence can reduce noise. Full Context is not a storage representation, an additional selective-retrieval condition, or an oracle.
+
+\textbf{RQ5: Do errors mainly arise from storage fidelity, retrieval coverage, evidence packaging, answer utilisation, or long-context processing?}
+
+Stored content, retrieval traces, EvidenceBundles, gold evidence, candidate answers, and evaluation outputs are combined with manual review to locate the likely failure stage.
+
+\hypertarget{sec:ch1-5-4}{%
+\subsection{Decision-Making: RQ6}\label{sec:ch1-5-4}}
+
+\textbf{RQ6: Considering quality, cost, stability, and maintenance complexity, which conditions are most suitable for practical use?}
+
+RQ6 examines quality--cost trade-offs and stability across backbone models. It develops conditional guidance for quality-first, cost-sensitive, and audit-focused settings, while treating implications for continuously growing memory as tentative because sustained memory updates are outside the present experiment.
+
+\begingroup
+\renewcommand{\theHtable}{\thechapter.\arabic{table}.block1}
+\fontsize{5.0pt}{5.45pt}\selectfont
+\setlength{\tabcolsep}{0.7pt}
+\renewcommand{\arraystretch}{0.82}
+\hfuzz=\maxdimen
+\vfuzz=\maxdimen
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(.96\columnwidth - 4\tabcolsep) * \real{0.33}}
+  >{\raggedright\arraybackslash}p{(.96\columnwidth - 4\tabcolsep) * \real{0.33}}
+  >{\raggedright\arraybackslash}p{(.96\columnwidth - 4\tabcolsep) * \real{0.33}}@{}}
+\toprule
+Research question & Main experimental material & Main evidence \\
+\midrule
+\endhead
+RQ1 & Controlled storage--retrieval comparisons and complete curated-memory systems & Paired quality differences, Evidence Recall, storage--retrieval interaction \\
+RQ2 & The same selective-retrieval configurations with two backbone models & Effect direction and magnitude across backbone models \\
+RQ3 & Two single-source conditions and their dual-source fusion condition & Repair, preserve, harm, unresolved, evidence complementarity and conflict \\
+RQ4 & DeepSeek selective retrieval and Full Context & Paired outcomes, answer quality, context size, and cost \\
+RQ5 & Storage, retrieval traces, EvidenceBundles, and answers & Stage-based errors, evidence conversion, and manual cases \\
+RQ6 & All formal conditions & Quality--cost Pareto analysis, cost amortisation, and decision matrix \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+Chapter~\ref{chap:ch3} formally defines the system components and experimental condition identifiers. Chapter~\ref{chap:ch4} presents the execution protocol, metric definitions, and statistical tests.
+
+\hypertarget{sec:ch1-6}{%
+\section{Research Contributions}\label{sec:ch1-6}}
+
+\hypertarget{sec:ch1-6-1}{%
+\subsection{Controlled Experimental Design}\label{sec:ch1-6-1}}
+
+The study provides one storage--retrieval--answering framework with shared data, questions, storage snapshots, and evidence interfaces. Matched conditions support architecture contrasts, while separate integrated conditions evaluate complete curated-memory systems. This separation limits unsupported single-component claims and supports explicit analysis of storage--retrieval interaction.
+
+\hypertarget{sec:ch1-6-2}{%
+\subsection{Evidence Across Backbone Models and Full Context}\label{sec:ch1-6-2}}
+
+The same selective-retrieval configurations are evaluated with Qwen and DeepSeek Retrieval Agents and Answerers while storage snapshots remain fixed. A DeepSeek-family Full Context diagnostic adds evidence about selective retrieval, complete source visibility, and long-context utilisation.
+
+\hypertarget{sec:ch1-6-3}{%
+\subsection{Multi-Level Evaluation and Error Diagnosis}\label{sec:ch1-6-3}}
+
+The study combines LoCoMo-style token F1 \cite{maharana2024locomo} with this study's aligned token Precision and Recall, plus three semantic metrics defined for this study and produced by an independent LLM judge. The LLM judge follows the general semantic-evaluation paradigm described in prior work \cite{zheng2023llmjudge}. Gold-evidence measures and process and cost records provide further diagnostic evidence. Paired comparisons and manual case review distinguish failures to retrieve evidence from failures to use it correctly.
+
+\hypertarget{sec:ch1-6-4}{%
+\subsection{Practical Decision Support}\label{sec:ch1-6-4}}
+
+Answer quality is considered together with model calls, tokens, latency, construction cost, maintenance burden, and stability across backbone models. The study provides bounded, conditional guidance rather than one unconditional system ranking.
+
+\hypertarget{sec:ch1-7}{%
+\section{Research Scope and Boundaries}\label{sec:ch1-7}}
+
+\hypertarget{sec:ch1-7-1}{%
+\subsection{Included Scope}\label{sec:ch1-7-1}}
+
+The formal study uses the frozen Main-60 question set from LoCoMo \texttt{conv-50}. All 60 questions form one unified test set and cover the C1--C4 categories used in this work. The study uses only the question-answering material and relevant source annotations \cite{maharana2024locomo}.
+
+The experiments include three storage representations, three retrieval processes, seven selective-retrieval configurations, two backbone model configurations for the Retrieval Agent and Answerer, and one DeepSeek-family Full Context diagnostic. The evaluation covers token-level metrics and answer metrics produced by an LLM judge, evidence measures for the 58 eligible questions, model calls, tokens, latency, and maintenance cost. Retrieval traces, EvidenceBundles, and run audits support stage-based analysis.
+
+\hypertarget{sec:ch1-7-2}{%
+\subsection{Excluded Scope}\label{sec:ch1-7-2}}
+
+This is not a full reproduction across all LoCoMo conversations. Other self-organising, fact-based, graph-based, and vector-RAG memory systems are not formal baselines. The study does not simulate months of continuous writing, active forgetting, conflict accumulation, or automatic reorganisation.
+
+The backbone model comparison is not a full Retrieval-Agent × Answerer factorial design. The Retrieval Agent and Answerer change together, while the topic-organised and curated-memory snapshots remain fixed. It therefore measures dependence on the backbone model across the query-time pipeline, not the separate effect of each model role or the writing model. Full Context is evaluated only with DeepSeek, so it cannot support a conclusion across backbone models about Full Context prompting.
+
+\hypertarget{sec:ch1-7-3}{%
+\subsection{Limits on Interpretation}\label{sec:ch1-7-3}}
+
+The matched raw-memory and topic-organised conditions provide the cleaner architecture contrasts, but retrieval-system comparisons still include their full search procedures. The integrated curated-memory conditions jointly change the memory representation and its corresponding retrieval process. They cannot support a claim about changing only storage or only retrieval.
+
+Full Context performs no retrieval, but it is neither a new storage method nor an accuracy ceiling. Its comparison with selective retrieval is diagnostic rather than a strict causal ablation because the input mechanism and context scale differ. All conclusions are limited to the present question set, storage snapshots, models, and protocols. Broader generalisation requires further validation.
+
+The remainder of this report is organised as follows. Chapter~\ref{chap:ch2} reviews the relevant literature. Chapters~\ref{chap:ch3} and~\ref{chap:ch4} define the system and experimental methodology. Chapters~\ref{chap:ch5} and~\ref{chap:ch6} present and discuss the empirical findings. Chapters 7 and 8 address validity and future research directions, followed by the conclusion in Chapter 9.

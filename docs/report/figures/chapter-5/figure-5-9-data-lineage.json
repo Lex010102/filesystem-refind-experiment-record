@@ -1,0 +1,34 @@
+{
+  "figure_id": "Figure 5.9",
+  "title": "Integrated Bottleneck Decomposition",
+  "protocol_version": "chapter5-main60-rq5-integrated-v1",
+  "audit_id": "rq5-integrated-audit-7c68cdb9c619409de661590729605b9c2d9c650003db223f8651f8de0c48eaf2",
+  "source": "artifacts/chapter5-main60-analysis-v1/rq5-integrated-bottleneck/primary-root-cause-summary.csv",
+  "source_sha256": "c2d644f6d3aa138ff8e6db8f6f4b681b6daa5e7be8100518dc78d155f8f16b34",
+  "population": {
+    "all_non_correct_paths": 250,
+    "confirmed_system_internal_paths": 123
+  },
+  "primary_counts": {
+    "storage": 0,
+    "retrieval": 42,
+    "packaging": 7,
+    "answerer": 68,
+    "fusion_or_long_context": 6,
+    "evaluation_sensitive": 53,
+    "mixed_or_indeterminate": 74
+  },
+  "confirmed_system_internal_counts": {
+    "answerer": 68,
+    "retrieval": 42,
+    "packaging": 7,
+    "fusion_or_long_context": 6,
+    "storage": 0
+  },
+  "denominator_note": "The two panels use different denominators. Evaluation-sensitive and mixed-or-indeterminate paths are excluded from the right panel.",
+  "output_sha256": {
+    "figure-5-9-integrated-bottleneck-decomposition.svg": "45cec9d02705153aeafc0940894bd59b9db58469f5174e6414a254e03d36ffd4",
+    "figure-5-9-integrated-bottleneck-decomposition.png": "5b073d26bc3f22b8e463b47929fe037fdbcad901ef6ab8dd2888c27da1eaa23c"
+  },
+  "inserted_into_report": true
+}

@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1125" viewBox="0 0 2000 1125">
+<title>Quality–Cost Pareto Frontiers</title>
+<desc>Two scatter plots show Soft Semantic Score against mean successful-query tokens. Solid points are Pareto-efficient, pale points are dominated, and Full Context is a diagnostic point.</desc>
+<defs><filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#0F2D4E" flood-opacity="0.10"/></filter></defs>
+<rect x="0" y="0" width="2000" height="1125" rx="0" fill="#FEFEFE" stroke="#FEFEFE" stroke-width="2"/>
+<text x="1000" y="73" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="700" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="1000" dy="0">Quality–Cost Pareto Frontiers</tspan></text>
+<text x="1000" y="122" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1000" dy="0">Soft Semantic Score versus mean successful-query tokens</tspan></text>
+<circle cx="660" cy="162" r="11" fill="#0A8C86" stroke="#FFFFFF" stroke-width="3"/>
+<text x="680" y="169" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="600" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="680" dy="0">Pareto-efficient</tspan></text>
+<circle cx="900" cy="162" r="10" fill="#C7D4DE" stroke="#FFFFFF" stroke-width="3"/>
+<text x="920" y="169" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="600" fill="#60788E" text-rendering="geometricPrecision"><tspan x="920" dy="0">Dominated</tspan></text>
+<polygon points="1090,150 1102,162 1090,174 1078,162" fill="#E58A00" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round"/>
+<text x="1112" y="169" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="600" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="1112" dy="0">Full Context diagnostic</tspan></text>
+<rect x="55" y="205" width="925" height="815" rx="26" fill="#F5F8FA" stroke="#A8BAC9" stroke-width="2.4" filter="url(#shadow)"/>
+<text x="517.5" y="260" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="517.5" dy="0">Panel A · Qwen</tspan></text>
+<text x="517.5" y="296" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="517.5" dy="0">Exact selective-retrieval scope · E1–E7</tspan></text>
+<line x1="170" y1="877" x2="934" y2="877" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="154" y="884" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="154" dy="0">0.700</tspan></text>
+<line x1="170" y1="781.9999999999999" x2="934" y2="781.9999999999999" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="154" y="788.9999999999999" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="154" dy="0">0.725</tspan></text>
+<line x1="170" y1="686.9999999999998" x2="934" y2="686.9999999999998" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="154" y="693.9999999999998" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="154" dy="0">0.750</tspan></text>
+<line x1="170" y1="591.9999999999998" x2="934" y2="591.9999999999998" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="154" y="598.9999999999998" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="154" dy="0">0.775</tspan></text>
+<line x1="170" y1="496.9999999999997" x2="934" y2="496.9999999999997" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="154" y="503.9999999999997" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="154" dy="0">0.800</tspan></text>
+<line x1="170" y1="402" x2="934" y2="402" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="154" y="409" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="154" dy="0">0.825</tspan></text>
+<line x1="234.6210962463314" y1="345" x2="234.6210962463314" y2="915" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="234.6210962463314" y="946" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="234.6210962463314" dy="0">20k</tspan></text>
+<line x1="440.44452858407584" y1="345" x2="440.44452858407584" y2="915" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="440.44452858407584" y="946" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="440.44452858407584" dy="0">50k</tspan></text>
+<line x1="596.1439445612226" y1="345" x2="596.1439445612226" y2="915" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="596.1439445612226" y="946" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="596.1439445612226" dy="0">100k</tspan></text>
+<line x1="751.8433605383693" y1="345" x2="751.8433605383693" y2="915" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="751.8433605383693" y="946" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="751.8433605383693" dy="0">200k</tspan></text>
+<line x1="907.542776515516" y1="345" x2="907.542776515516" y2="915" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="907.542776515516" y="946" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="907.542776515516" dy="0">400k</tspan></text>
+<line x1="170" y1="915" x2="934" y2="915" stroke="#0F2D4E" stroke-width="2.2" stroke-opacity="1" stroke-linecap="round"/>
+<line x1="170" y1="345" x2="170" y2="915" stroke="#0F2D4E" stroke-width="2.2" stroke-opacity="1" stroke-linecap="round"/>
+<text x="552" y="977" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="600" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="552" dy="0">Mean query tokens (log scale)</tspan></text>
+<text x="84" y="630" transform="rotate(-90 84 630)" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="600" fill="#0F2D4E">Soft Semantic Score</text>
+<polyline points="216.12,813.67 216.86,782.00 369.00,655.33 672.19,528.67 828.51,433.67" fill="none" stroke="#0A8C86" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.92"/>
+<line x1="685.5995284566039" y1="623.6666666666663" x2="695.5995284566039" y2="641.6666666666663" stroke="#60788E" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="685.5995284566039" cy="623.6666666666663" r="11" fill="#C7D4DE" stroke="#FFFFFF" stroke-width="3"/>
+<text x="703.5995284566039" y="655.6666666666663" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="600" fill="#60788E" text-rendering="geometricPrecision"><tspan x="703.5995284566039" dy="0">E1</tspan></text>
+<line x1="456.2162518841604" y1="655.3333333333333" x2="466.2162518841604" y2="673.3333333333333" stroke="#60788E" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="456.2162518841604" cy="655.3333333333333" r="11" fill="#C7D4DE" stroke="#FFFFFF" stroke-width="3"/>
+<text x="474.2162518841604" y="687.3333333333333" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="600" fill="#60788E" text-rendering="geometricPrecision"><tspan x="474.2162518841604" dy="0">E7</tspan></text>
+<line x1="216.1203405897029" y1="813.6666666666665" x2="206.1203405897029" y2="833.6666666666665" stroke="#0A8C86" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="216.1203405897029" cy="813.6666666666665" r="13" fill="#0A8C86" stroke="#FFFFFF" stroke-width="4"/>
+<text x="198.1203405897029" y="847.6666666666665" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="198.1203405897029" dy="0">E2</tspan></text>
+<line x1="672.1868999351404" y1="528.6666666666666" x2="662.1868999351404" y2="511.66666666666663" stroke="#0A8C86" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="672.1868999351404" cy="528.6666666666666" r="13" fill="#0A8C86" stroke="#FFFFFF" stroke-width="4"/>
+<text x="654.1868999351404" y="506.66666666666663" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="654.1868999351404" dy="0">E3</tspan></text>
+<line x1="216.8575693140458" y1="781.9999999999999" x2="230.8575693140458" y2="766.9999999999999" stroke="#0A8C86" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="216.8575693140458" cy="781.9999999999999" r="13" fill="#0A8C86" stroke="#FFFFFF" stroke-width="4"/>
+<text x="238.8575693140458" y="761.9999999999999" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="238.8575693140458" dy="0">E4</tspan></text>
+<line x1="828.5078333078624" y1="433.66666666666663" x2="818.5078333078624" y2="416.66666666666663" stroke="#0A8C86" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="828.5078333078624" cy="433.66666666666663" r="13" fill="#0A8C86" stroke="#FFFFFF" stroke-width="4"/>
+<text x="810.5078333078624" y="411.66666666666663" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="810.5078333078624" dy="0">E5</tspan></text>
+<line x1="368.9983573193315" y1="655.3333333333333" x2="358.9983573193315" y2="638.3333333333333" stroke="#0A8C86" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="368.9983573193315" cy="655.3333333333333" r="13" fill="#0A8C86" stroke="#FFFFFF" stroke-width="4"/>
+<text x="350.9983573193315" y="633.3333333333333" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="350.9983573193315" dy="0">E6</tspan></text>
+<rect x="1020" y="205" width="925" height="815" rx="26" fill="#F5F8FA" stroke="#A8BAC9" stroke-width="2.4" filter="url(#shadow)"/>
+<text x="1482.5" y="260" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="1482.5" dy="0">Panel B · DeepSeek + Full Context</tspan></text>
+<text x="1482.5" y="296" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1482.5" dy="0">Diagnostic mixed-served-model scope</tspan></text>
+<line x1="1135" y1="877" x2="1899" y2="877" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="1119" y="884" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1119" dy="0">0.700</tspan></text>
+<line x1="1135" y1="781.9999999999999" x2="1899" y2="781.9999999999999" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="1119" y="788.9999999999999" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1119" dy="0">0.725</tspan></text>
+<line x1="1135" y1="686.9999999999998" x2="1899" y2="686.9999999999998" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="1119" y="693.9999999999998" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1119" dy="0">0.750</tspan></text>
+<line x1="1135" y1="591.9999999999998" x2="1899" y2="591.9999999999998" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="1119" y="598.9999999999998" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1119" dy="0">0.775</tspan></text>
+<line x1="1135" y1="496.9999999999997" x2="1899" y2="496.9999999999997" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="1119" y="503.9999999999997" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1119" dy="0">0.800</tspan></text>
+<line x1="1135" y1="402" x2="1899" y2="402" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="1119" y="409" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1119" dy="0">0.825</tspan></text>
+<line x1="1199.6210962463315" y1="345" x2="1199.6210962463315" y2="915" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="1199.6210962463315" y="946" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1199.6210962463315" dy="0">20k</tspan></text>
+<line x1="1405.444528584076" y1="345" x2="1405.444528584076" y2="915" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="1405.444528584076" y="946" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1405.444528584076" dy="0">50k</tspan></text>
+<line x1="1561.1439445612227" y1="345" x2="1561.1439445612227" y2="915" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="1561.1439445612227" y="946" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1561.1439445612227" dy="0">100k</tspan></text>
+<line x1="1716.8433605383693" y1="345" x2="1716.8433605383693" y2="915" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="1716.8433605383693" y="946" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1716.8433605383693" dy="0">200k</tspan></text>
+<line x1="1872.542776515516" y1="345" x2="1872.542776515516" y2="915" stroke="#DCE4EA" stroke-width="1.5" stroke-opacity="1" stroke-linecap="round"/>
+<text x="1872.542776515516" y="946" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1872.542776515516" dy="0">400k</tspan></text>
+<line x1="1135" y1="915" x2="1899" y2="915" stroke="#0F2D4E" stroke-width="2.2" stroke-opacity="1" stroke-linecap="round"/>
+<line x1="1135" y1="345" x2="1135" y2="915" stroke="#0F2D4E" stroke-width="2.2" stroke-opacity="1" stroke-linecap="round"/>
+<text x="1517" y="977" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="600" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="1517" dy="0">Mean query tokens (log scale)</tspan></text>
+<text x="1049" y="630" transform="rotate(-90 1049 630)" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="600" fill="#0F2D4E">Soft Semantic Score</text>
+<polyline points="1167.21,845.33 1335.65,402.00" fill="none" stroke="#E58A00" stroke-width="4" stroke-dasharray="10 8" stroke-linecap="round" stroke-linejoin="round" opacity="0.92"/>
+<line x1="1717.9970894263552" y1="465.33333333333314" x2="1727.9970894263552" y2="448.33333333333314" stroke="#60788E" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="1717.9970894263552" cy="465.33333333333314" r="11" fill="#C7D4DE" stroke="#FFFFFF" stroke-width="3"/>
+<text x="1735.9970894263552" y="443.33333333333314" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="600" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1735.9970894263552" dy="0">E1</tspan></text>
+<line x1="1704.902805119731" y1="655.3333333333333" x2="1686.902805119731" y2="675.3333333333333" stroke="#60788E" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="1704.902805119731" cy="655.3333333333333" r="11" fill="#C7D4DE" stroke="#FFFFFF" stroke-width="3"/>
+<text x="1678.902805119731" y="689.3333333333333" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="600" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1678.902805119731" dy="0">E3</tspan></text>
+<line x1="1169.0819000590454" y1="845.333333333333" x2="1186.0819000590454" y2="865.333333333333" stroke="#60788E" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="1169.0819000590454" cy="845.333333333333" r="11" fill="#C7D4DE" stroke="#FFFFFF" stroke-width="3"/>
+<text x="1194.0819000590454" y="879.333333333333" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="600" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1194.0819000590454" dy="0">E4</tspan></text>
+<line x1="1857.8657534366598" y1="496.9999999999997" x2="1847.8657534366598" y2="479.9999999999997" stroke="#60788E" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="1857.8657534366598" cy="496.9999999999997" r="11" fill="#C7D4DE" stroke="#FFFFFF" stroke-width="3"/>
+<text x="1839.8657534366598" y="474.9999999999997" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="600" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1839.8657534366598" dy="0">E5</tspan></text>
+<line x1="1328.2425320933453" y1="845.333333333333" x2="1316.2425320933453" y2="865.333333333333" stroke="#60788E" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="1328.2425320933453" cy="845.333333333333" r="11" fill="#C7D4DE" stroke="#FFFFFF" stroke-width="3"/>
+<text x="1308.2425320933453" y="879.333333333333" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="600" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1308.2425320933453" dy="0">E6</tspan></text>
+<line x1="1412.4374636924067" y1="496.9999999999997" x2="1422.4374636924067" y2="479.9999999999997" stroke="#60788E" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="1412.4374636924067" cy="496.9999999999997" r="11" fill="#C7D4DE" stroke="#FFFFFF" stroke-width="3"/>
+<text x="1430.4374636924067" y="474.9999999999997" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="600" fill="#60788E" text-rendering="geometricPrecision"><tspan x="1430.4374636924067" dy="0">E7</tspan></text>
+<line x1="1335.6498052876102" y1="402" x2="1349.6498052876102" y2="385" stroke="#E58A00" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<polygon points="1335.6498052876102,386 1351.6498052876102,402 1335.6498052876102,418 1319.6498052876102,402" fill="#E58A00" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round"/>
+<text x="1357.6498052876102" y="380" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#E58A00" text-rendering="geometricPrecision"><tspan x="1357.6498052876102" dy="0">Full Context</tspan></text>
+<line x1="1167.210561127379" y1="845.333333333333" x2="1151.210561127379" y2="828.333333333333" stroke="#0A8C86" stroke-width="1.4" stroke-opacity="0.72" stroke-linecap="round"/>
+<circle cx="1167.210561127379" cy="845.333333333333" r="13" fill="#0A8C86" stroke="#FFFFFF" stroke-width="4"/>
+<text x="1143.210561127379" y="823.333333333333" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="1143.210561127379" dy="0">E2</tspan></text>
+<rect x="300" y="1040" width="1400" height="55" rx="18" fill="#FFF0D8" stroke="#E58A00" stroke-width="2"/>
+<text x="1000" y="1075" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="600" fill="#0F2D4E" text-rendering="geometricPrecision"><tspan x="1000" dy="0">Pareto status is computed within each panel; Panel B is diagnostic because Full Context used a different served-model identifier.</tspan></text>
+</svg>

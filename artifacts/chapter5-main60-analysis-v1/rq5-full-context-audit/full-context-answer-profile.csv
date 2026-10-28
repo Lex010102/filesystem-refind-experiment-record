@@ -1,0 +1,3 @@
+result_id,protocol_version,strict_outcome,question_count,mean_answer_normalized_tokens,median_answer_normalized_tokens,mean_token_precision,mean_token_recall,mean_token_f1,mean_soft_semantic_score
+rq5-full-context-answer-profile-52906dd0494ffd9af669052434b609ceac8c7334e47c137e498e66be8b860ff2,chapter5-main60-rq5-full-context-v2,strict_correct,46,20.782608695652176,17.5,0.20305843298572798,0.841407867494824,0.2928691881092331,1.0
+rq5-full-context-answer-profile-ce1835936aafd833839859d215a985ed000d1feed80accac18d43f4fba0877ab,chapter5-main60-rq5-full-context-v2,strict_noncorrect,14,31.857142857142858,30.5,0.05288230217493399,0.3623917748917749,0.08574174476372427,0.25

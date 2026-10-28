@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1330" viewBox="0 0 1800 1330">
+<defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="7" stdDeviation="8" flood-color="#102F50" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow-navy" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 12 6 L 0 12 z" fill="#102F50"/></marker>
+    <marker id="arrow-teal" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 12 6 L 0 12 z" fill="#0A918A"/></marker>
+    <marker id="arrow-violet" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 12 6 L 0 12 z" fill="#5263D8"/></marker>
+    <marker id="arrow-amber" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 12 6 L 0 12 z" fill="#CF8115"/></marker>
+  </defs>
+<rect width="1800" height="1330" fill="#FEFEFE"/>
+<text x="900" y="76" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="54" font-weight="750" fill="#102F50" text-rendering="geometricPrecision">How E7 Is Constructed</text>
+<text x="900" y="122" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="500" fill="#5F7890" text-rendering="geometricPrecision">Two representation-appropriate retrieval paths are fused after retrieval</text>
+<rect x="630" y="155" width="540" height="70" rx="35" fill="#EAF1F7" stroke="#102F50" stroke-width="2.5" filter="url(#shadow)"/>
+<text x="900" y="200" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="29" font-weight="700" fill="#102F50" text-rendering="geometricPrecision">Same question q</text>
+<path d="M 900 225 V 238 H 470 V 258" fill="none" stroke="#102F50" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-navy)"/>
+<path d="M 900 225 V 238 H 1330 V 258" fill="none" stroke="#102F50" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-navy)"/>
+<rect x="80" y="260" width="780" height="430" rx="24" fill="#DDF4F1" stroke="#0A918A" stroke-width="3" filter="url(#shadow)"/>
+<path d="M 104 260 H 836 Q 860 260 860 284 V 330 H 80 V 284 Q 80 260 104 260 Z" fill="#0A918A"/>
+<text x="470" y="306" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" fill="#FFFFFF" text-rendering="geometricPrecision">E2 · Raw-dialogue evidence path</text>
+<rect x="150" y="355" width="640" height="80" rx="17" fill="#FFFFFF" stroke="#0A918A" stroke-width="2.5"/>
+<text x="470" y="389" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#102F50" text-rendering="geometricPrecision">S1 · Flat Raw Sessions</text>
+<text x="470" y="417" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="500" fill="#5F7890" text-rendering="geometricPrecision">original 30-session dialogue</text>
+<path d="M 470 435 V 465" fill="none" stroke="#0A918A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<rect x="150" y="475" width="640" height="80" rx="17" fill="#FFFFFF" stroke="#0A918A" stroke-width="2.5"/>
+<text x="470" y="509" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#102F50" text-rendering="geometricPrecision">R2 · ReFind-Style Raw-Chat Retrieval</text>
+<text x="470" y="537" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="500" fill="#5F7890" text-rendering="geometricPrecision">lexical retrieval over raw exchanges and sessions</text>
+<path d="M 470 555 V 585" fill="none" stroke="#0A918A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<rect x="150" y="595" width="640" height="74" rx="17" fill="#FFFFFF" stroke="#0A918A" stroke-width="2.5"/>
+<text x="470" y="629" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700" fill="#102F50" text-rendering="geometricPrecision">E2 EvidenceBundle</text>
+<text x="470" y="657" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#5F7890" text-rendering="geometricPrecision">raw exchange windows · ≤ 16,000 characters</text>
+<rect x="940" y="260" width="780" height="430" rx="24" fill="#E9EBFF" stroke="#5263D8" stroke-width="3" filter="url(#shadow)"/>
+<path d="M 964 260 H 1696 Q 1720 260 1720 284 V 330 H 940 V 284 Q 940 260 964 260 Z" fill="#5263D8"/>
+<text x="1330" y="306" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" fill="#FFFFFF" text-rendering="geometricPrecision">E6 · Curated-memory evidence path</text>
+<rect x="1010" y="355" width="640" height="80" rx="17" fill="#FFFFFF" stroke="#5263D8" stroke-width="2.5"/>
+<text x="1330" y="389" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#102F50" text-rendering="geometricPrecision">S3 · Agent-Curated Memory</text>
+<text x="1330" y="417" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="500" fill="#5F7890" text-rendering="geometricPrecision">curated facts organised by entity and topic</text>
+<path d="M 1330 435 V 465" fill="none" stroke="#5263D8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-violet)"/>
+<rect x="1010" y="475" width="640" height="80" rx="17" fill="#FFFFFF" stroke="#5263D8" stroke-width="2.5"/>
+<text x="1330" y="509" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#102F50" text-rendering="geometricPrecision">R3 · Curated-Memory Retrieval</text>
+<text x="1330" y="537" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="500" fill="#5F7890" text-rendering="geometricPrecision">retrieval adapted to fact units and topic groups</text>
+<path d="M 1330 555 V 585" fill="none" stroke="#5263D8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-violet)"/>
+<rect x="1010" y="595" width="640" height="74" rx="17" fill="#FFFFFF" stroke="#5263D8" stroke-width="2.5"/>
+<text x="1330" y="629" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700" fill="#102F50" text-rendering="geometricPrecision">E6 EvidenceBundle</text>
+<text x="1330" y="657" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#5F7890" text-rendering="geometricPrecision">curated fact windows · ≤ 16,000 characters</text>
+<path d="M 470 669 V 710 L 730 765" fill="none" stroke="#0A918A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<path d="M 1330 669 V 710 L 1070 765" fill="none" stroke="#5263D8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-violet)"/>
+<rect x="500" y="765" width="800" height="115" rx="24" fill="#FCEBD2" stroke="#CF8115" stroke-width="3" filter="url(#shadow)"/>
+<text x="900" y="808" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="750" fill="#102F50" text-rendering="geometricPrecision">Deterministic fusion</text>
+<text x="900" y="842" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="500" fill="#5F7890" text-rendering="geometricPrecision">verify parent identity · exact-deduplicate · order-preserving interleave</text>
+<rect x="715" y="856" width="370" height="46" rx="23" fill="#FFFFFF" stroke="#CF8115" stroke-width="2"/>
+<text x="900" y="887" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#CF8115" text-rendering="geometricPrecision">No new retrieval or query</text>
+<path d="M 900 902 V 930" fill="none" stroke="#CF8115" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-amber)"/>
+<rect x="570" y="935" width="660" height="88" rx="20" fill="#EAF1F7" stroke="#102F50" stroke-width="2.7" filter="url(#shadow)"/>
+<text x="900" y="973" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="29" font-weight="750" fill="#102F50" text-rendering="geometricPrecision">E7 fused EvidenceBundle</text>
+<text x="900" y="1003" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="500" fill="#5F7890" text-rendering="geometricPrecision">raw + curated evidence · ≤ 32,000 characters</text>
+<path d="M 900 1023 V 1064" fill="none" stroke="#102F50" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-navy)"/>
+<rect x="680" y="1070" width="440" height="82" rx="20" fill="#FFFFFF" stroke="#102F50" stroke-width="2.7" filter="url(#shadow)"/>
+<text x="900" y="1106" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="29" font-weight="750" fill="#102F50" text-rendering="geometricPrecision">Shared Answerer</text>
+<text x="900" y="1135" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="500" fill="#5F7890" text-rendering="geometricPrecision">one invocation</text>
+<path d="M 900 1152 V 1194" fill="none" stroke="#102F50" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-navy)"/>
+<rect x="715" y="1200" width="370" height="68" rx="34" fill="#102F50" stroke="#102F50" stroke-width="2.5" filter="url(#shadow)"/>
+<text x="900" y="1244" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="750" fill="#FFFFFF" text-rendering="geometricPrecision">E7 candidate answer</text>
+<text x="900" y="1310" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="600" fill="#5F7890" text-rendering="geometricPrecision">E7 is a post-retrieval fusion condition—not a new memory store or retriever.</text>
+</svg>

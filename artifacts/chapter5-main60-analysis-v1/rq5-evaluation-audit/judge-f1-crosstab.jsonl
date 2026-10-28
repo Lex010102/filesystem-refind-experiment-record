@@ -1,0 +1,15 @@
+{"bin_order":1,"bin_total":265,"count":142,"f1_bin":"[0.00,0.10)","judge_label":"incorrect","label_total":176,"share_of_bin":0.5358490566037736,"share_of_label":0.8068181818181818}
+{"bin_order":1,"bin_total":265,"count":31,"f1_bin":"[0.00,0.10)","judge_label":"partial","label_total":74,"share_of_bin":0.1169811320754717,"share_of_label":0.4189189189189189}
+{"bin_order":1,"bin_total":265,"count":92,"f1_bin":"[0.00,0.10)","judge_label":"correct","label_total":650,"share_of_bin":0.3471698113207547,"share_of_label":0.14153846153846153}
+{"bin_order":2,"bin_total":207,"count":32,"f1_bin":"[0.10,0.25)","judge_label":"incorrect","label_total":176,"share_of_bin":0.15458937198067632,"share_of_label":0.18181818181818182}
+{"bin_order":2,"bin_total":207,"count":18,"f1_bin":"[0.10,0.25)","judge_label":"partial","label_total":74,"share_of_bin":0.08695652173913043,"share_of_label":0.24324324324324326}
+{"bin_order":2,"bin_total":207,"count":157,"f1_bin":"[0.10,0.25)","judge_label":"correct","label_total":650,"share_of_bin":0.7584541062801933,"share_of_label":0.24153846153846154}
+{"bin_order":3,"bin_total":219,"count":2,"f1_bin":"[0.25,0.50)","judge_label":"incorrect","label_total":176,"share_of_bin":0.0091324200913242,"share_of_label":0.011363636363636364}
+{"bin_order":3,"bin_total":219,"count":14,"f1_bin":"[0.25,0.50)","judge_label":"partial","label_total":74,"share_of_bin":0.0639269406392694,"share_of_label":0.1891891891891892}
+{"bin_order":3,"bin_total":219,"count":203,"f1_bin":"[0.25,0.50)","judge_label":"correct","label_total":650,"share_of_bin":0.9269406392694064,"share_of_label":0.3123076923076923}
+{"bin_order":4,"bin_total":79,"count":0,"f1_bin":"[0.50,0.75)","judge_label":"incorrect","label_total":176,"share_of_bin":0.0,"share_of_label":0.0}
+{"bin_order":4,"bin_total":79,"count":11,"f1_bin":"[0.50,0.75)","judge_label":"partial","label_total":74,"share_of_bin":0.13924050632911392,"share_of_label":0.14864864864864866}
+{"bin_order":4,"bin_total":79,"count":68,"f1_bin":"[0.50,0.75)","judge_label":"correct","label_total":650,"share_of_bin":0.8607594936708861,"share_of_label":0.10461538461538461}
+{"bin_order":5,"bin_total":130,"count":0,"f1_bin":"[0.75,1.00]","judge_label":"incorrect","label_total":176,"share_of_bin":0.0,"share_of_label":0.0}
+{"bin_order":5,"bin_total":130,"count":0,"f1_bin":"[0.75,1.00]","judge_label":"partial","label_total":74,"share_of_bin":0.0,"share_of_label":0.0}
+{"bin_order":5,"bin_total":130,"count":130,"f1_bin":"[0.75,1.00]","judge_label":"correct","label_total":650,"share_of_bin":1.0,"share_of_label":0.2}

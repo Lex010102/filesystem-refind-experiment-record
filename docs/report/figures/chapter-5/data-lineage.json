@@ -1,0 +1,42 @@
+{
+  "generated_at": "2026-10-26T16:41:52.362Z",
+  "generator": "docs/report/figures/chapter-5/generate_chapter5_rq1_figures.js",
+  "stage_e_audit_id": "stage-e-rq1-audit-eb62d71e3b89fd63833853e6a21ad306bdb637f4b8140bc57dc1fdbf572ecb24",
+  "stage_e_status": "passed",
+  "source_files": [
+    {
+      "path": "artifacts/chapter5-main60-analysis-v1/stage-e-rq1/figure-5-3-inputs.csv",
+      "sha256": "2a84e4a1e984fde52403ca7a26fe36be4919f6fb9d97a9fbf835ec69b5bed49b"
+    },
+    {
+      "path": "artifacts/chapter5-main60-analysis-v1/stage-e-rq1/architecture-effects.csv",
+      "sha256": "0fcb284bd876db30451df391e16b10a882cbb25bbf9102b6ea9b5b4b740fdbf3"
+    },
+    {
+      "path": "artifacts/chapter5-main60-analysis-v1/stage-e-rq1/audit.json",
+      "sha256": "e0b6e0e6bd559b25e2e33283e3d0782ac45c5f745f1f24b6a99887252be6c7eb"
+    },
+    {
+      "path": "artifacts/chapter5-main60-analysis-v1/stage-e-rq1/STAGE-E-RQ1.PASSED",
+      "sha256": "0169eebd9317b56540aadce68cfe1ae541c47f0770ed97d58371c59dd6a89464"
+    }
+  ],
+  "output_files": [
+    {
+      "path": "docs/report/figures/chapter-5/figure-5-1-storage-retrieval-interaction.svg",
+      "sha256": "c6e5475dc219cda3999518a51182f49fe22db5463b0734caaba85112ef319944"
+    },
+    {
+      "path": "docs/report/figures/chapter-5/figure-5-1-storage-retrieval-interaction.png",
+      "sha256": "126c6f8bfb3d9694805e378946941fcc4603ceb8e9287ac6e8e9e0a3a769e3ac"
+    },
+    {
+      "path": "docs/report/figures/chapter-5/figure-5-2-curated-memory-effect-profile.svg",
+      "sha256": "b67dfe296777819d99cef340e5e66f209e4e135f466be023fbb06a1cf9baad55"
+    },
+    {
+      "path": "docs/report/figures/chapter-5/figure-5-2-curated-memory-effect-profile.png",
+      "sha256": "cc7e61b8c5273421352eca1e65c4ac94f7ecfae365094fd9837377f831510160"
+    }
+  ]
+}

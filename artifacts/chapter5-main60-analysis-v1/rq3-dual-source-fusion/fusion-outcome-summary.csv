@@ -1,0 +1,3 @@
+result_id,protocol_version,backbone_order,backbone_id,question_denominator,parent_oracle_correct_count,both_parents_wrong_count,e7_correct_count,repair_count,preserve_count,harm_count,unresolved_count,conditional_repair_rate,conditional_harm_rate,net_vs_parent_oracle_count,net_vs_parent_oracle_rate,outcome_definition_metric
+rq3-outcome-summary-1262fd43e5b94e87e5d905731275fe41d9eabd47ea84c7a8696914525f32fced,chapter5-main60-rq3-v1,1,qwen,60,47,13,44,1,43,4,12,0.07692307692307693,0.0851063829787234,-3,-0.05,strict_accuracy
+rq3-outcome-summary-33967ba00c2e05bd7096ffc8703ea203014cc8cf1dd0b114efc59e1f6228462a,chapter5-main60-rq3-v1,2,deepseek,60,46,14,45,3,42,4,11,0.21428571428571427,0.08695652173913043,-1,-0.016666666666666666,strict_accuracy

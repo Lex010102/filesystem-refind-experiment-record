@@ -3,8 +3,8 @@
 ## Usage Notes
 
 - The report uses the **IEEE numeric citation style**. Cite sources after the relevant claim using forms such as `[1]`, `[2]`, or `[3], [5]`. Reference numbers follow the order of first appearance in the report.
-- The current numbering matches Chapters 1–3. If later chapters add sources, update all citation numbers with a reference manager rather than editing isolated occurrences.
-- Section 1 is the formal bibliography and can be inserted directly at the end of the report. Sections 2–4 map citations to the claims they support and to source locations for verification. Only Section 1 needs to appear in the submitted report.
+- The current numbering matches Chapters 1–4 and Chapter 6. If later chapters add sources, update all citation numbers with a reference manager rather than editing isolated occurrences.
+- Section 1 is the formal bibliography and can be inserted directly at the end of the report. The later audit sections map citations to the claims they support and to source locations for verification. Only Section 1 needs to appear in the submitted report.
 - *Filesystem-Based Memory* and *ReFind* are cited as verifiable arXiv preprints. They must not be described as peer-reviewed conference publications.
 
 ## 1. Formal Bibliography
@@ -81,7 +81,29 @@
 | [12] | BM25 as the lexical scoring method used in the R2 and R3 backends | Sections 3.6.2–3.6.3 | Sections 1 and 3.4–3.5 |
 | [13] | Reciprocal Rank Fusion as the rank-combination method used for unit and group rankings | Sections 3.6.2–3.6.3 | SIGIR 2009 paper, pp. 758–759 |
 
-## 5. Bibliographic and Scope Notes
+## 5. Chapter 4 Citation Audit
+
+| Ref. | Claims Supported | Locations in Chapter 4 | Recommended Source Locations for Verification |
+|---|---|---|---|
+| [1] | LoCoMo as the source benchmark; the use of reference answers and source-turn annotations; the interpretation of annotated turns as evidence locations; and the benchmark-level basis for token F1 | Sections 4.2.1, 4.2.3, and 4.6.1 | ACL 2024 version, Sections 3–6, especially Sections 4.1 and 6.1 |
+| [8] | The usefulness and limitations of LLM-based evaluation, including documented position, verbosity, self-enhancement, and reasoning biases | Section 4.4.2 | NeurIPS 2023 paper, Abstract and Sections 4–5 |
+| [14] | The exact category-aware LoCoMo evaluation implementation used as the basis for normalisation, stemming, multi-answer handling, and open-domain reference handling | Section 4.6.1 | Pinned official repository, `task_eval/evaluation.py`, commit `cbfbc1dba6bc53d00625212a0f22d55ffee7c1fc` |
+
+Chapter 4's Main-60 composition, E1–E7 matrix, model identities, project-defined semantic metrics, evidence metrics, cost accounting, and paired estimators are properties of this study. They are verified against frozen local manifests and code rather than attributed to external papers.
+
+## 6. Chapter 6 Citation Audit
+
+Chapter 6 introduces no new external source. Its central concepts—the evidence-conversion gap, Evidence Controller, and adaptive evidence-access policy—are design implications developed in this study rather than claims attributed to prior work.
+
+| Ref. | Claims Supported | Locations in Chapter 6 | Recommended Source Locations for Verification |
+|---|---|---|---|
+| [4] | Filesystem-Based Memory treats store shape and the tool harness as connected parts of a memory system | Section 6.1 | Abstract, Sections 1–2, Fig. 1, and the store-shape and tool-harness analyses |
+| [6] | ReFind treats retrieval as an agent-controlled, iterative access process over raw chat logs | Section 6.1 | Abstract and Section 3, especially the retrieval-controller and stopping procedure |
+| [7] | Retrieval and downstream evidence utilisation should be diagnosed separately | Section 6.1 | Abstract, Sections 1–3, and Appendices C.7–D.2 |
+
+Sections 6.2 and 6.3 derive a proposed architecture from this study's Chapter 5 evidence. They explicitly state that the Evidence Controller and adaptive online routing policy were not implemented or evaluated.
+
+## 7. Bibliographic and Scope Notes
 
 1. Cite the final ACL 2024 version of LoCoMo rather than statistics from earlier arXiv revisions. The local file `papers/related/evaluating-very-long-term-conversational-memory-of-llm-agents.pdf` is arXiv v1 and is not the final ACL pagination or a sufficient source for version-sensitive statistics. Chapters 1 and 2 deliberately avoid version-sensitive average-length figures. Instance-level counts for the selected conversation must come from the pinned released data and local frozen manifests.
 2. References `[4]` and `[6]` are 2026 arXiv preprints. Their methods and experiments may be discussed, but they must not be presented as peer-reviewed conference publications.
@@ -93,7 +115,7 @@
 8. References `[12]` and `[13]` support the standard information-retrieval concepts used to explain ReFind. The exact BM25 and RRF parameters implemented in this study belong in Chapters 3 and 4.
 9. Reference `[14]` is a version-pinned software citation for the official LoCoMo evaluator. It supports implementation details such as stemming and category-specific matching that are not fully specified in the ACL paper. The paper `[1]` remains the source for the benchmark design, tasks, and paper-described normalised partial-match F1.
 
-## 6. Verification Record
+## 8. Verification Record
 
 The bibliography and the Chapter 1–3 citation mappings were re-audited on Oct. 19, 2026. Metadata were checked against the final publication page or the authoritative repository rather than inferred from secondary citations.
 

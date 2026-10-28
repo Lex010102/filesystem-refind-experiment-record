@@ -1,0 +1,140 @@
+% Compact portrait page and typography configuration for Chapters 1--6.  The report keeps all
+% source content while using a dense, submission-readable layout.
+\usepackage[a4paper,left=9mm,right=9mm,top=8mm,bottom=8mm,headheight=0pt,headsep=0pt,footskip=0pt]{geometry}
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+% Pin the text family to the locally installed Times New Roman faces.  This
+% avoids optical-size font substitutions at the compact custom point sizes
+% and keeps the build fully offline and reproducible on the report machine.
+\setmainfont{Times New Roman}[
+  Path=/System/Library/Fonts/Supplemental/,
+  UprightFont=Times New Roman.ttf,
+  BoldFont=Times New Roman Bold.ttf,
+  ItalicFont=Times New Roman Italic.ttf,
+  BoldItalicFont=Times New Roman Bold Italic.ttf
+]
+\usepackage{microtype}
+\usepackage{setspace}
+\makeatletter
+\renewcommand\normalsize{\@setfontsize\normalsize{7.2pt}{7.9pt}}
+\renewcommand\small{\@setfontsize\small{6.5pt}{7.1pt}}
+\renewcommand\footnotesize{\@setfontsize\footnotesize{6.0pt}{6.5pt}}
+\renewcommand\scriptsize{\@setfontsize\scriptsize{5.4pt}{5.9pt}}
+\renewcommand\tiny{\@setfontsize\tiny{4.8pt}{5.2pt}}
+\renewcommand\large{\@setfontsize\large{8.4pt}{9.2pt}}
+\renewcommand\Large{\@setfontsize\Large{10pt}{10.8pt}}
+\renewcommand\LARGE{\@setfontsize\LARGE{11.5pt}{12.4pt}}
+\renewcommand\huge{\@setfontsize\huge{13pt}{14pt}}
+\renewcommand\Huge{\@setfontsize\Huge{15pt}{16pt}}
+\makeatother
+\normalsize
+\setstretch{0.96}
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0pt}
+\setlength{\abovedisplayskip}{2pt plus 1pt minus 1pt}
+\setlength{\belowdisplayskip}{2pt plus 1pt minus 1pt}
+\setlength{\abovedisplayshortskip}{1pt plus 1pt}
+\setlength{\belowdisplayshortskip}{1pt plus 1pt}
+
+% Mathematics and symbols.  The compact text sizes use the cached 7pt math
+% masters for scripts as well as body symbols; this keeps formulas legible and
+% prevents offline builds from requesting unavailable 5pt font files.
+\usepackage{amsmath,mathtools}
+\DeclareMathSizes{4.6}{10}{10}{10}
+\DeclareMathSizes{4.8}{10}{10}{10}
+\DeclareMathSizes{5.0}{10}{10}{10}
+\DeclareMathSizes{5.2}{10}{10}{10}
+\DeclareMathSizes{5.4}{10}{10}{10}
+\DeclareMathSizes{5.8}{10}{10}{10}
+\DeclareMathSizes{6.0}{10}{10}{10}
+\DeclareMathSizes{6.5}{10}{10}{10}
+\DeclareMathSizes{6.7}{10}{10}{10}
+\DeclareMathSizes{7.2}{10}{10}{10}
+\DeclareMathSizes{7.4}{10}{10}{10}
+\DeclareMathSizes{8.2}{10}{10}{10}
+\DeclareMathSizes{8.4}{10}{10}{10}
+\DeclareMathSizes{9.5}{10}{10}{10}
+% Only the indicator-function blackboard glyph is used in the report.  A
+% bold Roman fallback preserves that notation without the absent AMS Type 1
+% font files in the offline toolchain.
+\providecommand{\mathbb}[1]{\mathbf{#1}}
+
+% Tables.
+\usepackage{array,booktabs,longtable,tabularx,multirow,calc}
+\usepackage{adjustbox}
+\renewcommand{\arraystretch}{0.88}
+\setlength{\LTpre}{1.5pt}
+\setlength{\LTpost}{2pt}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlength{\tabcolsep}{1pt}
+\providecommand{\real}[1]{#1}
+
+% Figures and captions.
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage[font=footnotesize,labelfont=bf,labelsep=period,justification=justified,singlelinecheck=false,skip=2pt]{caption}
+\usepackage{subcaption}
+\graphicspath{{../figures/}}
+\setlength{\textfloatsep}{4pt plus 1pt minus 1pt}
+\setlength{\floatsep}{3pt plus 1pt minus 1pt}
+\setlength{\intextsep}{3pt plus 1pt minus 1pt}
+\renewcommand{\topfraction}{0.96}
+\renewcommand{\bottomfraction}{0.90}
+\renewcommand{\textfraction}{0.04}
+\renewcommand{\floatpagefraction}{0.90}
+
+% Lists and code-style diagrams.
+\usepackage{enumitem}
+\setlist{leftmargin=1.3em,itemsep=0pt,parsep=0pt,topsep=1pt,partopsep=0pt}
+\usepackage{fancyvrb}
+\fvset{fontsize=\small,frame=single,framesep=3mm}
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\passthrough}[1]{#1}
+
+% Compact headings; the report intentionally has no running header or footer.
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]
+  {\normalfont\bfseries\fontsize{12pt}{13pt}\selectfont}
+  {\chaptername\ \thechapter.}{0.55em}{}
+\titlespacing*{\chapter}{0pt}{0pt}{4pt}
+\titleformat{\section}
+  {\normalfont\bfseries\fontsize{9.5pt}{10.2pt}\selectfont}
+  {\thesection}{0.5em}{}
+\titlespacing*{\section}{0pt}{4pt}{2pt}
+\titleformat{\subsection}
+  {\normalfont\bfseries\fontsize{8.2pt}{8.9pt}\selectfont}
+  {\thesubsection}{0.45em}{}
+\titlespacing*{\subsection}{0pt}{3pt}{1.5pt}
+\titleformat{\subsubsection}
+  {\normalfont\bfseries\fontsize{7.2pt}{7.9pt}\selectfont}
+  {\thesubsubsection}{0.4em}{}
+\titlespacing*{\subsubsection}{0pt}{2pt}{1pt}
+\pagestyle{empty}
+\makeatletter
+\let\ps@plain\ps@empty
+\makeatother
+
+% References and hyperlinks.
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xurl}
+\usepackage[hidelinks,bookmarksnumbered=true,unicode=true]{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\hypersetup{
+  pdftitle={\ReportTitle},
+  pdfauthor={\ReportAuthor},
+  pdfsubject={Long-term conversational memory},
+  pdfkeywords={long-term memory, retrieval, filesystem memory, LoCoMo, LLM agents}
+}
+
+% Report numbering depth. Chapters, sections, subsections, and subsubsections
+% are numbered; the compact contents page is shown through sections.
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{1}
+
+% Avoid isolated headings and reduce overfull lines in dense tables.
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\emergencystretch=1em

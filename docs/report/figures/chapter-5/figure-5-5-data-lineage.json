@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "figure": "Figure 5.5",
+  "title": "Descriptive Parent Profiles and E7 Outcomes",
+  "deterministic": true,
+  "generator": "docs/report/figures/chapter-5/generate_chapter5_rq3_figure.js",
+  "generator_sha256": "af34f39e4cbd63005646fbe42f3767007a16c9cd6208890d0140ba2f97898282",
+  "protocol_version": "chapter5-main60-rq3-v1",
+  "rq3_audit_id": "rq3-audit-e0ac8fc4a256b4fa5d016871163fc19243e99a9328985568b48b73ee35586378",
+  "rq3_status": "passed",
+  "passed_marker_status": "passed",
+  "scope": "descriptive Strict-correctness partition of E2/E6 parent profiles and E7 outcomes",
+  "panel_denominators": {
+    "qwen": 60,
+    "deepseek": 60
+  },
+  "ribbon_scale_svg_pixels_per_question": 1.4,
+  "causal_claim": false,
+  "source_files": [
+    {
+      "path": "artifacts/chapter5-main60-analysis-v1/rq3-dual-source-fusion/figure-5-6-inputs.csv",
+      "sha256": "5a38429923f73deed5c1b6d3612e80eeab38cdaf95e9becaf95cf96e7de2b3e1"
+    },
+    {
+      "path": "artifacts/chapter5-main60-analysis-v1/rq3-dual-source-fusion/audit.json",
+      "sha256": "af30f293bcfa10b9b31335294223dca0afe46be49d635904f382fc6f81d4bf31"
+    },
+    {
+      "path": "artifacts/chapter5-main60-analysis-v1/rq3-dual-source-fusion/RQ3.PASSED",
+      "sha256": "99806983faf9df0315a8c5b099415b34b994924d259a1a55bac33d0e75547ad9"
+    }
+  ],
+  "output_files": [
+    {
+      "path": "docs/report/figures/chapter-5/figure-5-5-descriptive-fusion-outcome-flow.svg",
+      "sha256": "47cc633277d158280beb38353a4a42646635724f71c10b511587bb6c617a5865"
+    },
+    {
+      "path": "docs/report/figures/chapter-5/figure-5-5-descriptive-fusion-outcome-flow.png",
+      "sha256": "3f939a2f7acc02e52a654a177c649222871b4d2f32427bfd07280d02c846b57b"
+    }
+  ]
+}

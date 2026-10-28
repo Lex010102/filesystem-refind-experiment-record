@@ -1,0 +1,9 @@
+result_id,protocol_version,backbone_order,backbone_id,outcome_order,fusion_outcome,denominator,count,proportion,outcome_definition_metric
+rq3-outcome-83f22f253ac5d778dc1cedd0a9f6724f590ba66dbc0995aa8e84ccaad7e34207,chapter5-main60-rq3-v1,1,qwen,1,repair,60,1,0.016666666666666666,strict_accuracy
+rq3-outcome-5f3ecc33eefc578c4adc892656b14eb61bf6e124fc38ee54bd54c2d02b58a5a6,chapter5-main60-rq3-v1,1,qwen,2,preserve,60,43,0.7166666666666667,strict_accuracy
+rq3-outcome-bc9e8c33db0188044e0ed6c581a0c1699f82754e3d52c7067c5208e6d650824e,chapter5-main60-rq3-v1,1,qwen,3,harm,60,4,0.06666666666666667,strict_accuracy
+rq3-outcome-69584b3980e96f1834393976de344da4cbcaa664208b6ce8b3de3729a99c9e33,chapter5-main60-rq3-v1,1,qwen,4,unresolved,60,12,0.2,strict_accuracy
+rq3-outcome-b1fc467a69f640ef00ceb1b4541718090616c88ec7a89be5a171eb4d49cd688c,chapter5-main60-rq3-v1,2,deepseek,1,repair,60,3,0.05,strict_accuracy
+rq3-outcome-2c6e2e72a0fd9eb393653b400de202459909c56fc448f52de2751a55afdc05ba,chapter5-main60-rq3-v1,2,deepseek,2,preserve,60,42,0.7,strict_accuracy
+rq3-outcome-677c61869522daf23e6675b559d24aadea2023cf047cc21dea2a247ff3aa5ad7,chapter5-main60-rq3-v1,2,deepseek,3,harm,60,4,0.06666666666666667,strict_accuracy
+rq3-outcome-b46a77a4a338abef6680f2b11120fc2eeb6af2ce032a9cb560d5e47b4aab7ad9,chapter5-main60-rq3-v1,2,deepseek,4,unresolved,60,11,0.18333333333333332,strict_accuracy

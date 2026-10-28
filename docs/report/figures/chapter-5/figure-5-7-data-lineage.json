@@ -1,0 +1,44 @@
+{
+  "figure_id": "Figure 5.7",
+  "title": "Annotated-Evidence State of Evidence-Eligible Strict Errors",
+  "protocol_version": "chapter5-main60-rq5-retrieval-audit-v1",
+  "audit_id": "rq5-retrieval-audit-1e2aacfe880ba84f21f22e6fee306533cde0c5e309d8211937e4af3de1b4925f",
+  "source": "artifacts/chapter5-main60-analysis-v1/rq5-retrieval-audit/strict-error-retrieval-linkage.csv",
+  "source_sha256": "391166d6bcdd04fc734410f3ab25dc3d513d2d83907b8ce05a037db80cfc99ad",
+  "strict_error_paths_in_source": 205,
+  "evidence_eligible_strict_error_paths": 191,
+  "counts": {
+    "R1": {
+      "complete": 68,
+      "retrieval_attrition": 17,
+      "bundle_loss": 0
+    },
+    "R2": {
+      "complete": 28,
+      "retrieval_attrition": 44,
+      "bundle_loss": 0
+    },
+    "R3": {
+      "complete": 15,
+      "retrieval_attrition": 12,
+      "bundle_loss": 7
+    },
+    "ALL": {
+      "complete": 111,
+      "retrieval_attrition": 73,
+      "bundle_loss": 7
+    }
+  },
+  "retrieval_stage_attrition_definition": [
+    "annotated_source_not_reached",
+    "source_reached_gold_not_observed",
+    "partial_annotated_acquisition",
+    "complete_observation_incomplete_selection"
+  ],
+  "selected_to_bundle_loss_definition": "complete_selection_incomplete_bundle",
+  "output_sha256": {
+    "figure-5-7-retrieval-error-stage-distribution.svg": "9f9ded4c8b628ac50ea9e5b936091ba15c1dfb7e2e6ba751fd58ed3aaff53031",
+    "figure-5-7-retrieval-error-stage-distribution.png": "1f5552ff666a6bb09cb93de1ce7c50bc1098869a2e20a783dd4f25114c7eb981"
+  },
+  "inserted_into_report": true
+}

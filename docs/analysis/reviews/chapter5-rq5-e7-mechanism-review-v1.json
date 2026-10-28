@@ -1,0 +1,650 @@
+{
+  "protocol_version": "chapter5-rq5-e7-mechanism-review-v1",
+  "review_date": "2026-10-25",
+  "review_status": "completed",
+  "scope": {
+    "description": "Bounded content review of every E7 outcome-boundary case carried forward from the frozen RQ3 analysis.",
+    "unit": "backbone_id x question_id",
+    "included_outcomes": [
+      "repair",
+      "harm"
+    ],
+    "row_count": 12,
+    "repair_count": 4,
+    "harm_count": 8,
+    "unique_question_count": 9,
+    "backbone_counts": {
+      "qwen": 5,
+      "deepseek": 7
+    }
+  },
+  "source_provenance": [
+    {
+      "role": "stage_a_authoritative_rows_and_formal_record_pointers",
+      "path": "artifacts/chapter5-main60-analysis-v1/stage-a/master-table.jsonl",
+      "sha256": "8e54db42ae6eeb65fc4a47049af622fea4e7dc611b8028920486029885d65a01"
+    },
+    {
+      "role": "frozen_rq3_boundary_case_roster",
+      "path": "artifacts/chapter5-main60-analysis-v1/rq3-dual-source-fusion/rq5-candidate-cases.jsonl",
+      "sha256": "1f939cdb7655a5e173b3b7e9aefef72d748b0f37f5b2707231de82a7dfaac636"
+    },
+    {
+      "role": "frozen_rq3_question_diagnostics",
+      "path": "artifacts/chapter5-main60-analysis-v1/rq3-dual-source-fusion/question-diagnostics.jsonl",
+      "sha256": "a46ad10b9a693cbd30aa10eaec6709f9f03feea981c681d1e3fb6040955ad115"
+    },
+    {
+      "role": "main40_gold",
+      "path": "experiments/locomo-conv50-v1/question-sets/main-40-gold.jsonl",
+      "sha256": "a6833ca585ca26efcdd038a5cf202fd46657999053ebd7b8cc73793f7544718b"
+    },
+    {
+      "role": "extension20_gold",
+      "path": "experiments/locomo-conv50-v1/question-sets-main60-v2/extension-20-gold.jsonl",
+      "sha256": "c8b08771af27537579e418db0ace600076cd09108019fc86cd584740bb035ec8"
+    },
+    {
+      "role": "qwen_judge_results",
+      "path": "experiments/locomo-conv50-v1/results/llm-judge-x-test1-main120/llm-judge-x-test1-model1-main60-run-01/results.json",
+      "sha256": "709a6a104311c419641b46d4c9b3cce57f9d9f91aad3476313e73220d5608f30"
+    },
+    {
+      "role": "deepseek_judge_results",
+      "path": "experiments/locomo-conv50-v1/results/llm-judge-x-test1-main120/llm-judge-x-test1-model2-main60-run-01/results.json",
+      "sha256": "266c36822fc7f9c5cb1a9dbd812f5007918138e810b63eac64a18e28dd54ede6"
+    }
+  ],
+  "review_inputs": [
+    "formal E2, E6, and E7 answers",
+    "formal E2 and E6 parent EvidenceBundle contents and provenance",
+    "deterministically fused E7 EvidenceBundle metadata",
+    "gold answer and annotated source locators",
+    "frozen LLM judge labels, confidence, and short reasons"
+  ],
+  "guards": {
+    "no_new_model_calls": true,
+    "no_source_mutation": true,
+    "no_question_answer_or_evidence_text_copied_into_review": true,
+    "locator_coverage_is_not_treated_as_semantic_sufficiency": true,
+    "parent_correctness_is_not_treated_as_evidence_sufficiency": true,
+    "judge_reasons_are_evaluation_evidence_not_ground_truth_about_causality": true,
+    "repair_or_harm_labels_describe_observed_score_transitions_not_causal_effects": true,
+    "e7_has_no_new_retrieval": true,
+    "e7_has_no_observed_post_fusion_item_loss_or_budget_truncation": true,
+    "ambiguity_is_preserved_as_indeterminate": true
+  },
+  "evidence_state_codebook": {
+    "complete_and_focused": "The bundle contains the information needed for the reference-level answer with low competing-content burden.",
+    "complete_but_noisy": "The needed information is present, but substantial redundancy, ambiguity, or competing content raises the utilisation burden.",
+    "partial": "The bundle contains some material support but lacks at least one required fact, relation, specificity, or temporal link.",
+    "irrelevant_or_empty": "The bundle contains no material support for the evaluated answer.",
+    "indeterminate": "The available record does not support a stable evidence-state judgement."
+  },
+  "primary_mechanism_codebook": {
+    "complementary_repair": "Distinct parent evidence can be joined into the evaluated answer; this is a trace-grounded association, not a causal proof.",
+    "corroborative_reinforcement": "Overlapping parent evidence reinforces the same answer without adding a distinct required fact.",
+    "salience_dilution": "Sufficient evidence remains in the fused bundle, but competing content plausibly reduces its salience.",
+    "explicit_evidence_conflict": "The parents expose competing factual or interpretive claims and the fused answer follows the losing or abstaining interpretation.",
+    "synthesis_failure": "The fused evidence is sufficient, but the final answer selects, composes, or qualifies it incorrectly.",
+    "answer_recovery_without_demonstrated_fusion_cause": "The E7 answer improves, but the fused trace adds no clearly decisive support beyond what a parent already exposed.",
+    "no_effect": "The fused evidence and answer show no material mechanism change.",
+    "indeterminate": "The observed transition cannot be assigned to fusion rather than answer variation, rubric ambiguity, or evaluation-threshold instability."
+  },
+  "secondary_mechanism_codebook": [
+    "ambiguity_amplification",
+    "ambiguity_resolution",
+    "competing_clause_selection",
+    "evaluation_boundary_instability",
+    "implicit_evidence_discounting",
+    "omission_of_secondary_reference_detail",
+    "question_premise_mismatch",
+    "reference_under_specification",
+    "specificity_relaxation",
+    "synthesis_change",
+    "temporal_inference_correction",
+    "unsupported_extra_detail",
+    "answer_verbosity"
+  ],
+  "cases": [
+    {
+      "case_order": 1,
+      "review_id": "e7-review-qwen-conv-50-q046",
+      "candidate_result_id": "rq3-rq5-candidate-cb40578c35f796a6e71cf159b7988d2b12513996bb8d5addabb6ae5e716d5850",
+      "backbone_id": "qwen",
+      "question_id": "conv-50-q046",
+      "question_sha256": "307dc283372b07bdf413d0edd33a317ebf862f608e8dac3e116fb67a9d6ce823",
+      "category_name": "multi-hop",
+      "outcome": "repair",
+      "evidence_eligible": true,
+      "judge_labels": {
+        "E2": "partial",
+        "E6": "partial",
+        "E7": "correct"
+      },
+      "locator_evidence_recall": {
+        "E2": 0.0,
+        "E6": 0.5,
+        "E7": 0.5
+      },
+      "record_ids": {
+        "E2": "record-88ea94c83f6a31ee726946d8a076b4ce50b3a3387304b0a11432dc378a7f3145",
+        "E6": "record-93d8b0ac9e0fdfe90e0decca7374769ae2fa399282e7fed5ae04bb9edfd44de5",
+        "E7": "record-f34bacd2018646c97a2eb6ab7e76cde4b0a32380fcf6247b1319d338cb5f0914"
+      },
+      "bundle_ids": {
+        "E2": "bundle-0bb607dd10e3a391172953864663b4a5d02281e80f296dc986ef3fb6536325c4",
+        "E6": "bundle-c5ee06c1d529574dcef30e75ded0b2870bafefef2dc2ed7cf8b129b57f855e82",
+        "E7": "fusion-c0a528a29a1c42ca2d84cea5fb16c9d4a54963336be233aa93a89f11846a7e0e"
+      },
+      "parent_evidence_states": {
+        "E2": "complete_but_noisy",
+        "E6": "complete_but_noisy"
+      },
+      "fused_evidence_state": "complete_but_noisy",
+      "primary_mechanism": "answer_recovery_without_demonstrated_fusion_cause",
+      "secondary_mechanisms": [
+        "evaluation_boundary_instability",
+        "unsupported_extra_detail"
+      ],
+      "confidence": "high",
+      "rationale": "Both parents already contained support for the shared car activity, while both parent answers also added unsupported activities and were scored partial. E7 retained extra claims and added no decisive required fact, so the correct flip cannot be credited to evidence complementarity."
+    },
+    {
+      "case_order": 2,
+      "review_id": "e7-review-qwen-conv-50-q051",
+      "candidate_result_id": "rq3-rq5-candidate-98f0d5cfae79e088ae0ffe3483c9baf6e59cfaad1b856813faffd5d541f46f61",
+      "backbone_id": "qwen",
+      "question_id": "conv-50-q051",
+      "question_sha256": "0977461bf153c6f14f2f55f599f5ec74a16b253778fae37bde7eca3b35411447",
+      "category_name": "temporal",
+      "outcome": "harm",
+      "evidence_eligible": true,
+      "judge_labels": {
+        "E2": "correct",
+        "E6": "incorrect",
+        "E7": "incorrect"
+      },
+      "locator_evidence_recall": {
+        "E2": 1.0,
+        "E6": 1.0,
+        "E7": 1.0
+      },
+      "record_ids": {
+        "E2": "record-1f93a042f271c5c2adabccb39dc4c3ddcc6e78d6c3e2f6aa2b27a07a989278e1",
+        "E6": "record-824211439ea20722a45638924be8fc57573802291057ffc047e225da2090935e",
+        "E7": "record-8b978da82aba997f64e12c1dde0d58b107c88d29965c9ad7486356859e03174e"
+      },
+      "bundle_ids": {
+        "E2": "bundle-6c1b541c8ceeb3c365c9c8802def4d7d90fd2452d150778c17537fcf25298018",
+        "E6": "bundle-577a67a964ec17c65aa524f3871b8f578823586ed42ba11381bc0a1fd3fe93ee",
+        "E7": "fusion-002dc68610085684750a7396a1478766bbc4256e7f7afb3fc1d1eb4bc57806cc"
+      },
+      "parent_evidence_states": {
+        "E2": "complete_and_focused",
+        "E6": "complete_but_noisy"
+      },
+      "fused_evidence_state": "complete_but_noisy",
+      "primary_mechanism": "explicit_evidence_conflict",
+      "secondary_mechanisms": [
+        "ambiguity_amplification",
+        "reference_under_specification"
+      ],
+      "confidence": "high",
+      "rationale": "The raw parent supported the dated new-car inference against earlier ownership, whereas the curated parent foregrounded uncertainty about whether the later car was truly a second vehicle. Fusion retained both interpretations and followed the abstaining interpretation despite full locator coverage."
+    },
+    {
+      "case_order": 3,
+      "review_id": "e7-review-qwen-conv-50-q126",
+      "candidate_result_id": "rq3-rq5-candidate-652db4707d702ee051396dfb55ba3b62e6008210eb6e56770f0e40fd625945f6",
+      "backbone_id": "qwen",
+      "question_id": "conv-50-q126",
+      "question_sha256": "ef41c099f008226dd5f510dd8001050539a0afda5a144586bb80990034beb242",
+      "category_name": "single-hop",
+      "outcome": "harm",
+      "evidence_eligible": true,
+      "judge_labels": {
+        "E2": "partial",
+        "E6": "correct",
+        "E7": "partial"
+      },
+      "locator_evidence_recall": {
+        "E2": 1.0,
+        "E6": 1.0,
+        "E7": 1.0
+      },
+      "record_ids": {
+        "E2": "record-3c685e33bb26d6545a788e182229ba7d645c60d573988ba4de6e7e293c643f1e",
+        "E6": "record-af7e7e48a27e26e19ba8dbff0ced39760d001881c1074134b258fa7e7b92cc49",
+        "E7": "record-5c32471bf19bc89c56a15bf1aaee56432c3b8b383098c749780d1f09aae3f7e7"
+      },
+      "bundle_ids": {
+        "E2": "bundle-3b759a54998e9c8bcedae8838421420d49f2d63ccdfcee6b0ec6f28069af9104",
+        "E6": "bundle-74683b4b457b62a186dbca7cf6649b0df1f50920439e2e535d4c6f6f90e2012d",
+        "E7": "fusion-5a6e9e8547f1c4e10c035e8626c2e0797c111d65a40cdaf4b4bce0da64578dd6"
+      },
+      "parent_evidence_states": {
+        "E2": "complete_but_noisy",
+        "E6": "complete_but_noisy"
+      },
+      "fused_evidence_state": "complete_but_noisy",
+      "primary_mechanism": "indeterminate",
+      "secondary_mechanisms": [
+        "question_premise_mismatch",
+        "evaluation_boundary_instability"
+      ],
+      "confidence": "high",
+      "rationale": "Both parents and fusion supported the festival location, but the question premise attributes attendance to an additional person not established by the records. The E6 and E7 answers preserve essentially the same caveat yet receive different labels, so a fusion mechanism cannot be isolated."
+    },
+    {
+      "case_order": 4,
+      "review_id": "e7-review-qwen-conv-50-q114",
+      "candidate_result_id": "rq3-rq5-candidate-12bb31f02f6f13085afd839b6eb5b502c12389a582534a440425534a937e707c",
+      "backbone_id": "qwen",
+      "question_id": "conv-50-q114",
+      "question_sha256": "b7eafdd6244c149bff1e5e2955693219518ecb5749f2abe7bdec947aadb44ad6",
+      "category_name": "single-hop",
+      "outcome": "harm",
+      "evidence_eligible": true,
+      "judge_labels": {
+        "E2": "incorrect",
+        "E6": "correct",
+        "E7": "incorrect"
+      },
+      "locator_evidence_recall": {
+        "E2": 1.0,
+        "E6": 1.0,
+        "E7": 1.0
+      },
+      "record_ids": {
+        "E2": "record-a1b65fc910cd39d7b8c93a31347a3ea7dc34d50217d6cc994b9dcbcb3a605fea",
+        "E6": "record-624f35d7d4ae7202a12cbbbd5bb51fb2efdaee33b2a21fb0c39a9c95602a33a6",
+        "E7": "record-7902f83f988697f04fee982f64a0f4bf178bf248a17a8273da512e63f19c341e"
+      },
+      "bundle_ids": {
+        "E2": "bundle-f5cbf9ab83021052c074d359aba07de95d329051070d779c02cc3167566dde3a",
+        "E6": "bundle-f6e21a9ba93f6a1d85b80eda4f81b93c285bf323369812c863b3a6075b4304da",
+        "E7": "fusion-a863aed299d45f735641d2a886ecba9d6f34b9c5ecdf0c74caf370c30c4c121f"
+      },
+      "parent_evidence_states": {
+        "E2": "complete_but_noisy",
+        "E6": "complete_and_focused"
+      },
+      "fused_evidence_state": "complete_but_noisy",
+      "primary_mechanism": "salience_dilution",
+      "secondary_mechanisms": [
+        "competing_clause_selection",
+        "synthesis_change"
+      ],
+      "confidence": "high",
+      "rationale": "Both parents contained the target sensory detail, but the raw parent placed it beside a reflective activity from the same episode. After fusion, the answer selected the reflective clause and ignored the target detail that the more focused curated parent had used correctly."
+    },
+    {
+      "case_order": 5,
+      "review_id": "e7-review-qwen-conv-50-q111",
+      "candidate_result_id": "rq3-rq5-candidate-88907458c09cb04ec35668594182e753a7ea7934a0ee49e8e0b4f1154c231555",
+      "backbone_id": "qwen",
+      "question_id": "conv-50-q111",
+      "question_sha256": "31b49c210c840ef8c2fa31a58580d3248036ba1531624e1387d8ae57e5c9d89b",
+      "category_name": "single-hop",
+      "outcome": "harm",
+      "evidence_eligible": true,
+      "judge_labels": {
+        "E2": "partial",
+        "E6": "correct",
+        "E7": "partial"
+      },
+      "locator_evidence_recall": {
+        "E2": 1.0,
+        "E6": 1.0,
+        "E7": 1.0
+      },
+      "record_ids": {
+        "E2": "record-e27e830809fb33de197ed701d6a67e644ae0fa81e8246ea72c781f7220b29c4f",
+        "E6": "record-fa163538729bd5a212aaca271a907988670032e2a96271d45add93f5726cfa8c",
+        "E7": "record-16c2c16f75f977313a7869c514e8a4ee3c27ef6b1b26adc2f92c688c199cfa71"
+      },
+      "bundle_ids": {
+        "E2": "bundle-9fb417809d77c03d3673fb9430d0fb1836bb9919b37eb8a0880955b5db5e8617",
+        "E6": "bundle-579d1e80f7776de011b9c3b646f3bba12ae7fd81302d27ef092985714fe72bca",
+        "E7": "fusion-65f41a848299eff80030dd3462a981beaaf23488dd8d193b6011b49d187d4c40"
+      },
+      "parent_evidence_states": {
+        "E2": "complete_but_noisy",
+        "E6": "complete_but_noisy"
+      },
+      "fused_evidence_state": "complete_but_noisy",
+      "primary_mechanism": "indeterminate",
+      "secondary_mechanisms": [
+        "evaluation_boundary_instability",
+        "omission_of_secondary_reference_detail",
+        "answer_verbosity"
+      ],
+      "confidence": "high",
+      "rationale": "All three bundles contained the precise visit plan. The E6 and E7 answers both stated the main garage visit and omitted the same secondary purpose, yet only E7 was downgraded. The trace therefore does not support a stable fusion-caused harm explanation."
+    },
+    {
+      "case_order": 6,
+      "review_id": "e7-review-deepseek-conv-50-q002",
+      "candidate_result_id": "rq3-rq5-candidate-ac74705d18909ff3947bc1b3874ea979cd7eed5002ea8ced49d107606c1f1cb7",
+      "backbone_id": "deepseek",
+      "question_id": "conv-50-q002",
+      "question_sha256": "1ba1750fd3efb1914756120f90a482ab98e34e740ec2e9913e2aa4ec74c8744c",
+      "category_name": "multi-hop",
+      "outcome": "repair",
+      "evidence_eligible": true,
+      "judge_labels": {
+        "E2": "incorrect",
+        "E6": "partial",
+        "E7": "correct"
+      },
+      "locator_evidence_recall": {
+        "E2": 0.0,
+        "E6": 1.0,
+        "E7": 1.0
+      },
+      "record_ids": {
+        "E2": "record-b604c057c86f1b8b332c2e6c33f95ad409d0649a25a2e7a867bb33d2450a4d99",
+        "E6": "record-4b2700e7de9c4ba3ce8d222082f623571eddc412479c71b07c80a3945e667e73",
+        "E7": "record-7fae2d02e9a845d17c2f8de8818686b5721695dc3085676f249d706c271caad8"
+      },
+      "bundle_ids": {
+        "E2": "bundle-48df10441ba6d0fa0f15106aef98ac9fe938ef76bafea2e5c46722dbbb6e8ace",
+        "E6": "bundle-acf3d49538b2b88e80f19fcb25be23226d792d614c062003af6c3ce9add07697",
+        "E7": "fusion-c7b7ce898880567c50e752b638d9eaf95ff11865f42f25cc547919a5554c92e8"
+      },
+      "parent_evidence_states": {
+        "E2": "partial",
+        "E6": "partial"
+      },
+      "fused_evidence_state": "partial",
+      "primary_mechanism": "answer_recovery_without_demonstrated_fusion_cause",
+      "secondary_mechanisms": [
+        "evaluation_boundary_instability",
+        "specificity_relaxation"
+      ],
+      "confidence": "high",
+      "rationale": "The raw parent only supplied a vague car acquisition, while the curated parent supplied the two item types but not all reference-level model and location specificity. Fusion added no missing exact specification, yet the less specific E7 answer was accepted, so the score gain does not demonstrate complementary evidence repair."
+    },
+    {
+      "case_order": 7,
+      "review_id": "e7-review-deepseek-conv-50-q069",
+      "candidate_result_id": "rq3-rq5-candidate-40099872740fb3ad863372b2d184c97cd9ae6eeb1b4e6d39aa233928b35a1d61",
+      "backbone_id": "deepseek",
+      "question_id": "conv-50-q069",
+      "question_sha256": "76fbd617d94dccadd94a5a3af53cd2599b1bb9844d3e7b3e5aca20ce6a295029",
+      "category_name": "temporal",
+      "outcome": "repair",
+      "evidence_eligible": true,
+      "judge_labels": {
+        "E2": "incorrect",
+        "E6": "incorrect",
+        "E7": "correct"
+      },
+      "locator_evidence_recall": {
+        "E2": 0.0,
+        "E6": 1.0,
+        "E7": 1.0
+      },
+      "record_ids": {
+        "E2": "record-1d4e4959ec67580ee25ceaff2e6514755265da17dc8ba74276baf68e9463b3b3",
+        "E6": "record-c8caab9387ceb43c0e10ff37380d8935086e478979c7d1d468042ae941bbdba6",
+        "E7": "record-822441f862072133690aaac06b2bfeed11e964eb358e65e6085d2708997528cf"
+      },
+      "bundle_ids": {
+        "E2": "bundle-5032c9f2b3579052e7a77c91556962fd08b342558179bdc401059c2cfeac8ec3",
+        "E6": "bundle-f47ebaf604ca7aefb3e0f8e9360a5cf3813ee77af63b73257d9f8e425e51ca8c",
+        "E7": "fusion-c18dca07b307d3f0b8c227ca834afd00338a9e4b5aeafbca09c401c0a3ab2270"
+      },
+      "parent_evidence_states": {
+        "E2": "partial",
+        "E6": "complete_but_noisy"
+      },
+      "fused_evidence_state": "complete_but_noisy",
+      "primary_mechanism": "complementary_repair",
+      "secondary_mechanisms": [
+        "ambiguity_resolution",
+        "synthesis_change"
+      ],
+      "confidence": "medium",
+      "rationale": "The raw parent anchored the blogged-car context but lacked the annotated temporal statement. The curated parent supplied the late-October statement while flagging uncertainty about whether it referred to the blogged car. E7 linked the context and date into the accepted answer, although the curated bundle already exposed both records, so causal confidence remains limited."
+    },
+    {
+      "case_order": 8,
+      "review_id": "e7-review-deepseek-conv-50-q032",
+      "candidate_result_id": "rq3-rq5-candidate-e00bbf6fc352227dccdd7237f93ca4b5d0027379bc9e3ee660636c0f8a42016a",
+      "backbone_id": "deepseek",
+      "question_id": "conv-50-q032",
+      "question_sha256": "3c0ab9ec829f470c9536d3aebeec5fac089d5a9e8cc9c8d354f38ca3c267f328",
+      "category_name": "temporal",
+      "outcome": "repair",
+      "evidence_eligible": true,
+      "judge_labels": {
+        "E2": "incorrect",
+        "E6": "incorrect",
+        "E7": "correct"
+      },
+      "locator_evidence_recall": {
+        "E2": 0.5,
+        "E6": 0.0,
+        "E7": 0.5
+      },
+      "record_ids": {
+        "E2": "record-15575a5bf7738b7006fbb7c6ad2a4308a70b910d5af47c90803eae66a63668a0",
+        "E6": "record-f1bb95ec1dadf0248d28293ca3d515472f274d1c6043f5bc1783a074263378a7",
+        "E7": "record-e4ea1dca1f556f5b571a8673c389bdd9a9ec7f11f0c0eecbbf3b81c081d6e228"
+      },
+      "bundle_ids": {
+        "E2": "bundle-258da1544b66dd1c3bab53793708f591c14c99cadc23acc8ce674a54c944fec8",
+        "E6": "bundle-18a4f5a61df0318dce615b49742485a5f31bb18d5c02dfa496c137cf9c5fb71b",
+        "E7": "fusion-bd3c25262fdd427729f9c14cee8c06651e9046317cbef8237d45eef6ff3f9b9f"
+      },
+      "parent_evidence_states": {
+        "E2": "complete_and_focused",
+        "E6": "irrelevant_or_empty"
+      },
+      "fused_evidence_state": "complete_but_noisy",
+      "primary_mechanism": "answer_recovery_without_demonstrated_fusion_cause",
+      "secondary_mechanisms": [
+        "temporal_inference_correction",
+        "synthesis_change"
+      ],
+      "confidence": "high",
+      "rationale": "The raw parent already contained the return-location statement needed for the temporal inference, while the curated parent supplied no material support. Fusion therefore added noise rather than a missing fact, and the improvement reflects a changed inference from existing evidence rather than demonstrated dual-source complementarity."
+    },
+    {
+      "case_order": 9,
+      "review_id": "e7-review-deepseek-conv-50-q051",
+      "candidate_result_id": "rq3-rq5-candidate-04820bd3846af9cbe2f7b162e8b385a99fd03c2ae60cfeeb911f301fe0ddb824",
+      "backbone_id": "deepseek",
+      "question_id": "conv-50-q051",
+      "question_sha256": "0977461bf153c6f14f2f55f599f5ec74a16b253778fae37bde7eca3b35411447",
+      "category_name": "temporal",
+      "outcome": "harm",
+      "evidence_eligible": true,
+      "judge_labels": {
+        "E2": "correct",
+        "E6": "incorrect",
+        "E7": "incorrect"
+      },
+      "locator_evidence_recall": {
+        "E2": 1.0,
+        "E6": 1.0,
+        "E7": 1.0
+      },
+      "record_ids": {
+        "E2": "record-ceecd836910e178452990db5ef7f036b7afd914462d0c35785efe5c578f40bc9",
+        "E6": "record-4b9dd20f72f2b454fadc17257718bc564bc0c7d2cdd300ce2d56d338dea12835",
+        "E7": "record-951a687a061e7c0390a3c5698eaa7b125747157dfaab88084eeedd8a5e6c6512"
+      },
+      "bundle_ids": {
+        "E2": "bundle-9c7f568410455f030d2656a25f77542a35ee51ab0ddbe992090510793ce4eea0",
+        "E6": "bundle-b611c9fd1681d244f277f22191dc55fa46604bea5173ab3c383281dc8bec7510",
+        "E7": "fusion-012bd563f7ff5c5fc316d50bfc2c25acd7b4a4c4740dead64ab241860987d58b"
+      },
+      "parent_evidence_states": {
+        "E2": "complete_and_focused",
+        "E6": "complete_but_noisy"
+      },
+      "fused_evidence_state": "complete_but_noisy",
+      "primary_mechanism": "explicit_evidence_conflict",
+      "secondary_mechanisms": [
+        "ambiguity_amplification",
+        "reference_under_specification"
+      ],
+      "confidence": "high",
+      "rationale": "The raw parent supported the dated second-car inference, while the curated parent explicitly preserved an alternative same-car interpretation. E7 adopted the curated uncertainty and abstained even though all annotated locators remained available."
+    },
+    {
+      "case_order": 10,
+      "review_id": "e7-review-deepseek-conv-50-q022",
+      "candidate_result_id": "rq3-rq5-candidate-e01acc35fb9e470380bef9f3ab01545114fc48d13cd4c55e561b906ed6b7122e",
+      "backbone_id": "deepseek",
+      "question_id": "conv-50-q022",
+      "question_sha256": "948aea2ebdd47ee837928f78ce8cf1ce5990e08b1c4d44146998a13abf7a5253",
+      "category_name": "open-domain",
+      "outcome": "harm",
+      "evidence_eligible": true,
+      "judge_labels": {
+        "E2": "correct",
+        "E6": "incorrect",
+        "E7": "incorrect"
+      },
+      "locator_evidence_recall": {
+        "E2": 0.0,
+        "E6": 0.0,
+        "E7": 0.0
+      },
+      "record_ids": {
+        "E2": "record-7f12be69b48348656e386034d1a9331ec34a43933947d18b8263ce912b0ea933",
+        "E6": "record-34a56246efe8edddcccb86a1e26363c96b394b68f0d7d14da2b78d3d5e740173",
+        "E7": "record-902261e9fdcf177da0bcb5f75b1c8c8eaae5e5acf30431caec778b9c4ccf46ec"
+      },
+      "bundle_ids": {
+        "E2": "bundle-7eb680234d070a07cc60c3440f51ff8bd0b65113213b2851ee62b0742409f7a2",
+        "E6": "bundle-6465071cb919659e2822cada0d88581f012e735d9fa326338faffed7f1f01b1f",
+        "E7": "fusion-0c2a8dbcc351a296e2bb3bd782bb3432a25f6419fc99d561b41942a117a075cc"
+      },
+      "parent_evidence_states": {
+        "E2": "complete_and_focused",
+        "E6": "irrelevant_or_empty"
+      },
+      "fused_evidence_state": "complete_but_noisy",
+      "primary_mechanism": "salience_dilution",
+      "secondary_mechanisms": [
+        "implicit_evidence_discounting",
+        "synthesis_change"
+      ],
+      "confidence": "high",
+      "rationale": "The raw parent supplied alternate, semantically sufficient support for a positive answer even though it missed the annotated locators. The curated parent added a large amount of related but non-decisive material. E7 repeated the positive global-audience fact but discounted it as insufficient, consistent with dilution of implicit support rather than retrieval loss."
+    },
+    {
+      "case_order": 11,
+      "review_id": "e7-review-deepseek-conv-50-q046",
+      "candidate_result_id": "rq3-rq5-candidate-7a848d2dc351f5095e4ce3733a8de34584819acc8030982fd505ddf1ff322e83",
+      "backbone_id": "deepseek",
+      "question_id": "conv-50-q046",
+      "question_sha256": "307dc283372b07bdf413d0edd33a317ebf862f608e8dac3e116fb67a9d6ce823",
+      "category_name": "multi-hop",
+      "outcome": "harm",
+      "evidence_eligible": true,
+      "judge_labels": {
+        "E2": "incorrect",
+        "E6": "correct",
+        "E7": "partial"
+      },
+      "locator_evidence_recall": {
+        "E2": 0.0,
+        "E6": 1.0,
+        "E7": 1.0
+      },
+      "record_ids": {
+        "E2": "record-3e3094d08b752c6a0b0564a98fefb9f1d6bf8223ac1ee689b3caf0e8d0a7bc5f",
+        "E6": "record-8d65ea0de2a7b4b089c635cbec65683cb4ef76e90c4bf663c03e2ae262ea723a",
+        "E7": "record-079365f52485a6a5e36f748f2a620f9a39a3493e6a59141feb7dbbc2d7e8fb72"
+      },
+      "bundle_ids": {
+        "E2": "bundle-c15a34cbebaee6eac3c2007bdd92cb2b19f69fd491aaf2033e72d55f60c842a1",
+        "E6": "bundle-64a7a89eb8947259de442db5d4b028deae31e370d34076d1ad7781ace26f79b1",
+        "E7": "fusion-5a5d55fcc56e638ccc504880324138b2ccf45c20bdcf553aa574665bf333443d"
+      },
+      "parent_evidence_states": {
+        "E2": "partial",
+        "E6": "complete_but_noisy"
+      },
+      "fused_evidence_state": "complete_but_noisy",
+      "primary_mechanism": "indeterminate",
+      "secondary_mechanisms": [
+        "evaluation_boundary_instability",
+        "unsupported_extra_detail"
+      ],
+      "confidence": "high",
+      "rationale": "E6 and E7 both stated the required shared car activity and both also added music-related material. The judge treated the extra content as harmless for E6 but unsupported for E7, so the downgrade cannot be separated from evaluation-threshold instability."
+    },
+    {
+      "case_order": 12,
+      "review_id": "e7-review-deepseek-conv-50-q111",
+      "candidate_result_id": "rq3-rq5-candidate-1a12d9ff52e43ca0baff7122b924cc4344f1317959c0fb58fefb63bf8163a1c2",
+      "backbone_id": "deepseek",
+      "question_id": "conv-50-q111",
+      "question_sha256": "31b49c210c840ef8c2fa31a58580d3248036ba1531624e1387d8ae57e5c9d89b",
+      "category_name": "single-hop",
+      "outcome": "harm",
+      "evidence_eligible": true,
+      "judge_labels": {
+        "E2": "correct",
+        "E6": "correct",
+        "E7": "partial"
+      },
+      "locator_evidence_recall": {
+        "E2": 1.0,
+        "E6": 1.0,
+        "E7": 1.0
+      },
+      "record_ids": {
+        "E2": "record-8a042769110cf41099118f29fee8bc8e7e2eae0e946357dcb507f2c9ac8eefd3",
+        "E6": "record-2739cf3874078681b7b96ea0c2ce1ecc2c2c97909ae004d263690189a70ef046",
+        "E7": "record-7b7697210c823f74a0c64e7c88fa1b80d4191996c9d1ddab620f10443530fb6d"
+      },
+      "bundle_ids": {
+        "E2": "bundle-08aa7bff65ba0216e4e120c53ff51c06f38b1e1e7185be995c4ab5e7e3871350",
+        "E6": "bundle-e3014f99ade548888a86c77a697f0849040c40f33d74961c0796a97d633e0b4d",
+        "E7": "fusion-e67e62f8adb2eb07a9cf04cc4ba8919bcc9878b698e88fcf1af35c9242261ac4"
+      },
+      "parent_evidence_states": {
+        "E2": "complete_but_noisy",
+        "E6": "complete_but_noisy"
+      },
+      "fused_evidence_state": "complete_but_noisy",
+      "primary_mechanism": "indeterminate",
+      "secondary_mechanisms": [
+        "evaluation_boundary_instability",
+        "omission_of_secondary_reference_detail",
+        "answer_verbosity"
+      ],
+      "confidence": "high",
+      "rationale": "Both parent answers and E7 stated the main garage plan and omitted the same secondary purpose, while all three bundles contained the full annotated exchange. The parent answers were accepted and E7 was not, leaving no trace-grounded basis for a fusion-causal attribution."
+    }
+  ],
+  "audit": {
+    "row_count": 12,
+    "outcome_counts": {
+      "repair": 4,
+      "harm": 8
+    },
+    "primary_mechanism_counts": {
+      "complementary_repair": 1,
+      "answer_recovery_without_demonstrated_fusion_cause": 3,
+      "explicit_evidence_conflict": 2,
+      "salience_dilution": 2,
+      "indeterminate": 4
+    },
+    "all_boundary_candidates_accounted_for": true,
+    "all_rows_have_formal_record_and_bundle_ids": true,
+    "all_rows_use_allowed_evidence_states": true,
+    "all_rows_use_guarded_primary_mechanisms": true,
+    "question_answer_and_evidence_text_embedded": false,
+    "causal_claims_made": false,
+    "audit_status": "passed"
+  }
+}

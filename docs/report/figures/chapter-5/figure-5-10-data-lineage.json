@@ -1,0 +1,36 @@
+{
+  "figure_id": "Figure 5.10",
+  "title": "Quality–Cost Pareto Frontiers",
+  "protocol_version": "chapter5-main60-rq6-v1",
+  "audit_id": "rq6-audit-49036128531db43c3bcb83e8e7f2f8f75b6258ebbfc0dda01899dd20352a1f25",
+  "source": "artifacts/chapter5-main60-analysis-v1/rq6-quality-cost/figure-5-12-inputs.csv",
+  "source_sha256": "cea2cc55752142eefbee7ab7688b90f6b52f57e8c9ede6a720e4bd1785ea2995",
+  "plotted_metric": "soft_semantic_score",
+  "cost_metric": "mean_query_total_tokens",
+  "x_axis_scale": "log10",
+  "panels": {
+    "qwen_selective_exact": {
+      "rows": 7,
+      "pareto_efficient": [
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ]
+    },
+    "deepseek_family_diagnostic": {
+      "rows": 8,
+      "pareto_efficient": [
+        "Full Context",
+        "E2"
+      ],
+      "mixed_served_model_scope": true
+    }
+  },
+  "output_sha256": {
+    "figure-5-10-quality-cost-pareto-frontiers.svg": "94d622a0c913f22f3c42ec5ab25cbeb5cacf19367c97fb9fe86e2ef44a9c6ae1",
+    "figure-5-10-quality-cost-pareto-frontiers.png": "8a9894d22c6bb33790b4bbce9535579f8ff8b58acc5d04fe486f32c4347ca1ac"
+  },
+  "inserted_into_report": true
+}

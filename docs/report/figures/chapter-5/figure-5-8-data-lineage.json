@@ -1,0 +1,31 @@
+{
+  "figure": "Figure 5.8",
+  "title": "Token F1 distribution by frozen LLM judge label",
+  "generated_at_utc": "2026-10-26T16:41:54.314Z",
+  "protocol_version": "chapter5-main60-rq5-evaluation-v1",
+  "audit_id": "rq5-eval-audit-8937008b098d65d7f7a30ae1a290b7454aadbe6b738c9812059d1497f4b001f4",
+  "normalization": "within frozen LLM judge label; each row sums to 100%",
+  "population": 900,
+  "label_totals": {
+    "correct": 650,
+    "partial": 74,
+    "incorrect": 176
+  },
+  "bin_totals": {
+    "[0.00, 0.10)": 265,
+    "[0.10, 0.25)": 207,
+    "[0.25, 0.50)": 219,
+    "[0.50, 0.75)": 79,
+    "[0.75, 1.00]": 130
+  },
+  "input": "artifacts/chapter5-main60-analysis-v1/rq5-evaluation-audit/judge-f1-crosstab.csv",
+  "input_sha256": "a49cdde8c10da4a8274b6a1c1ad8be1eb62af22babd8f4a2cc330b858158d03c",
+  "audit": "artifacts/chapter5-main60-analysis-v1/rq5-evaluation-audit/audit.json",
+  "audit_sha256": "6c7bd07cd9ad40efe8a5472b9b859ea3e8be5bcc08c40582a17920db115ae292",
+  "passed_marker": "artifacts/chapter5-main60-analysis-v1/rq5-evaluation-audit/RQ5-EVALUATION.PASSED",
+  "passed_marker_sha256": "27f9c53dbaea9c1d68ff55504d34e003534dc9df056ad241a29b71c77fa50a63",
+  "outputs": {
+    "figure-5-8-token-f1-llm-judge-alignment.svg": "c4dfc9a558ad3b6493d6c2ac8883f50436896b395ebb2fa90d431420056b6850",
+    "figure-5-8-token-f1-llm-judge-alignment.png": "100ad6baf560318c35198830b195fe8ad244b5f4425f1d4348566c83cb681eaf"
+  }
+}

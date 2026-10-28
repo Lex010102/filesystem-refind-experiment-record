@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1125" viewBox="0 0 2000 1125">
+<defs><filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#0F2D4E" flood-opacity="0.12"/></filter></defs>
+<rect x="0" y="0" width="2000" height="1125" rx="0" fill="#FEFEFE" stroke="none" stroke-width="0"/>
+<text x="1000" y="82" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">Stored Support in Selective-Path Errors</text>
+<text x="1000" y="132" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="500" fill="#60788E" fill-opacity="1" text-rendering="geometricPrecision">205 E1–E6 Strict-noncorrect answer paths; storage labels were fixed before outcome linkage</text>
+<rect x="150" y="186" width="28" height="28" rx="5" fill="#0A8C86" stroke="none" stroke-width="0"/>
+<text x="192" y="209" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="600" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">Unambiguously available</text>
+<rect x="520" y="186" width="28" height="28" rx="5" fill="#F2B44B" stroke="none" stroke-width="0"/>
+<text x="562" y="209" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="600" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">Partial support</text>
+<rect x="850" y="186" width="28" height="28" rx="5" fill="#4D60D6" stroke="none" stroke-width="0"/>
+<text x="892" y="209" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="600" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">Source/reference mismatch</text>
+<rect x="1300" y="186" width="28" height="28" rx="5" fill="#D95A5A" stroke="none" stroke-width="0"/>
+<text x="1342" y="209" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="600" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">Source conflict</text>
+<rect x="1560" y="186" width="28" height="28" rx="5" fill="#A8BAC9" stroke="none" stroke-width="0"/>
+<text x="1602" y="209" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="600" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">No official annotation</text>
+<line x1="440" y1="270" x2="440" y2="830" stroke="#DCE4EA" stroke-width="1.5" />
+<text x="440" y="260" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="500" fill="#60788E" fill-opacity="1" text-rendering="geometricPrecision">0%</text>
+<line x1="787.5" y1="270" x2="787.5" y2="830" stroke="#DCE4EA" stroke-width="1.5" />
+<text x="787.5" y="260" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="500" fill="#60788E" fill-opacity="1" text-rendering="geometricPrecision">25%</text>
+<line x1="1135" y1="270" x2="1135" y2="830" stroke="#60788E" stroke-width="2.5" stroke-dasharray="8 8"/>
+<text x="1135" y="260" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="500" fill="#60788E" fill-opacity="1" text-rendering="geometricPrecision">50%</text>
+<line x1="1482.5" y1="270" x2="1482.5" y2="830" stroke="#DCE4EA" stroke-width="1.5" />
+<text x="1482.5" y="260" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="500" fill="#60788E" fill-opacity="1" text-rendering="geometricPrecision">75%</text>
+<line x1="1830" y1="270" x2="1830" y2="830" stroke="#DCE4EA" stroke-width="1.5" />
+<text x="1830" y="260" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="500" fill="#60788E" fill-opacity="1" text-rendering="geometricPrecision">100%</text>
+<text x="395" y="333" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">S1</text>
+<text x="395" y="363" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#60788E" fill-opacity="1" text-rendering="geometricPrecision">Flat Raw Sessions · n=70</text>
+<rect x="440" y="302" width="814.1428571428571" height="74" rx="0" fill="#0A8C86" stroke="#FFFFFF" stroke-width="2"/>
+<text x="847.0714285714286" y="347" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#FFFFFF" fill-opacity="1" text-rendering="geometricPrecision">41 · 58.6%</text>
+<rect x="1254.142857142857" y="302" width="278" height="74" rx="0" fill="#F2B44B" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1393.142857142857" y="347" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">14 · 20.0%</text>
+<rect x="1532.142857142857" y="302" width="198.57142857142858" height="74" rx="0" fill="#4D60D6" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1631.4285714285713" y="347" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#FFFFFF" fill-opacity="1" text-rendering="geometricPrecision">10 · 14.3%</text>
+<rect x="1730.7142857142858" y="302" width="99.28571428571429" height="74" rx="0" fill="#A8BAC9" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1780.357142857143" y="347" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">5</text>
+<text x="395" y="468" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">S2</text>
+<text x="395" y="498" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#60788E" fill-opacity="1" text-rendering="geometricPrecision">Foldered Raw Sessions · n=71</text>
+<rect x="440" y="437" width="802.6760563380282" height="74" rx="0" fill="#0A8C86" stroke="#FFFFFF" stroke-width="2"/>
+<text x="841.338028169014" y="482" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#FFFFFF" fill-opacity="1" text-rendering="geometricPrecision">41 · 57.7%</text>
+<rect x="1242.676056338028" y="437" width="293.6619718309859" height="74" rx="0" fill="#F2B44B" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1389.507042253521" y="482" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">15 · 21.1%</text>
+<rect x="1536.338028169014" y="437" width="195.77464788732394" height="74" rx="0" fill="#4D60D6" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1634.225352112676" y="482" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#FFFFFF" fill-opacity="1" text-rendering="geometricPrecision">10 · 14.1%</text>
+<rect x="1732.112676056338" y="437" width="97.88732394366197" height="74" rx="0" fill="#A8BAC9" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1781.056338028169" y="482" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">5</text>
+<text x="395" y="603" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">S3</text>
+<text x="395" y="633" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#60788E" fill-opacity="1" text-rendering="geometricPrecision">Agent-Curated Memory · n=64</text>
+<rect x="440" y="572" width="803.59375" height="74" rx="0" fill="#0A8C86" stroke="#FFFFFF" stroke-width="2"/>
+<text x="841.796875" y="617" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#FFFFFF" fill-opacity="1" text-rendering="geometricPrecision">37 · 57.8%</text>
+<rect x="1243.59375" y="572" width="347.5" height="74" rx="0" fill="#F2B44B" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1417.34375" y="617" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">16 · 25.0%</text>
+<rect x="1591.09375" y="572" width="130.3125" height="74" rx="0" fill="#4D60D6" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1656.25" y="617" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF" fill-opacity="1" text-rendering="geometricPrecision">6</text>
+<rect x="1721.40625" y="572" width="21.71875" height="74" rx="0" fill="#D95A5A" stroke="#FFFFFF" stroke-width="2"/>
+<rect x="1743.125" y="572" width="86.875" height="74" rx="0" fill="#A8BAC9" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1786.5625" y="617" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">4</text>
+<line x1="1732.265625" y1="572" x2="1732.265625" y2="564" stroke="#D95A5A" stroke-width="2"/>
+<text x="1732.265625" y="559" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#D95A5A" fill-opacity="1" text-rendering="geometricPrecision">1</text>
+<text x="395" y="766" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">All selective paths</text>
+<text x="395" y="796" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#60788E" fill-opacity="1" text-rendering="geometricPrecision">E1–E6 aggregate · n=205</text>
+<rect x="440" y="735" width="806.8780487804878" height="74" rx="0" fill="#0A8C86" stroke="#FFFFFF" stroke-width="2"/>
+<text x="843.439024390244" y="780" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#FFFFFF" fill-opacity="1" text-rendering="geometricPrecision">119 · 58.05%</text>
+<rect x="1246.878048780488" y="735" width="305.1219512195122" height="74" rx="0" fill="#F2B44B" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1399.439024390244" y="780" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">45 · 22.0%</text>
+<rect x="1552" y="735" width="176.29268292682926" height="74" rx="0" fill="#4D60D6" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1640.1463414634147" y="780" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#FFFFFF" fill-opacity="1" text-rendering="geometricPrecision">26 · 12.7%</text>
+<rect x="1728.2926829268292" y="735" width="6.780487804878049" height="74" rx="0" fill="#D95A5A" stroke="#FFFFFF" stroke-width="2"/>
+<rect x="1735.0731707317073" y="735" width="94.92682926829268" height="74" rx="0" fill="#A8BAC9" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1782.5365853658536" y="780" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">14</text>
+<rect x="438" y="733" width="1394" height="78" rx="4" fill="none" stroke="#0F2D4E" stroke-width="4"/>
+<line x1="1731.6829268292684" y1="735" x2="1731.6829268292684" y2="727" stroke="#D95A5A" stroke-width="2"/>
+<text x="1731.6829268292684" y="722" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#D95A5A" fill-opacity="1" text-rendering="geometricPrecision">1</text>
+<rect x="300" y="875" width="1400" height="135" rx="24" fill="#DDF3F1" stroke="#0A8C86" stroke-width="2.5" filter="url(#shadow)"/>
+<text x="525" y="934" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700" fill="#0A8C86" fill-opacity="1" text-rendering="geometricPrecision">119 / 205</text>
+<text x="780" y="933" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">(58.05%)</text>
+<text x="1035" y="929" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="600" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">Strict-noncorrect paths retained</text>
+<text x="1035" y="965" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="600" fill="#0F2D4E" fill-opacity="1" text-rendering="geometricPrecision">unambiguously available support</text>
+<text x="1000" y="997" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#60788E" fill-opacity="1" text-rendering="geometricPrecision">Verified store-specific decisive omissions: 0</text>
+<text x="1000" y="1063" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#60788E" fill-opacity="1" text-rendering="geometricPrecision">Counts are answer paths, not independent questions or storage defects; “no official annotation” is not a verified omission.</text>
+<text x="1000" y="1092" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="500" fill="#60788E" fill-opacity="1" text-rendering="geometricPrecision">Availability alone does not identify whether the later break occurred in retrieval, packaging, or Answerer utilisation.</text>
+</svg>

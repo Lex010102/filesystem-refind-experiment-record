@@ -1,0 +1,208 @@
+{
+  "protocol_version": "chapter5-rq5-evaluation-disagreement-review-v1",
+  "review_status": "completed",
+  "scope": {
+    "population": "All 900 frozen Main-60 answers; manual cause review is restricted to four predeclared diagnostic tails.",
+    "diagnostic_screens": {
+      "correct_low_f1": "judge_label=correct and token_f1<0.10",
+      "partial_low_f1": "judge_label=partial and token_f1<0.10",
+      "partial_high_f1": "judge_label=partial and token_f1>=0.50",
+      "incorrect_nontrivial_f1": "judge_label=incorrect and token_f1>=0.10"
+    },
+    "interpretation_guard": "The screens identify cases for review. They do not define under-credit, over-credit, or Judge error without inspecting the frozen answer, reference, Judge reason, and relevant trace evidence."
+  },
+  "review_passes": [
+    "Pass 1 grouped repeated condition-level records by question and compared the reference, candidate answer, token scores, Judge label, confidence, and short reason.",
+    "Pass 2 checked the proposed cause against existing storage, retrieval, downstream, Full Context, and bounded trace-review artifacts where those artifacts covered the same question."
+  ],
+  "families": [
+    {
+      "family_id": "eval-family-01-date-format",
+      "screens": ["correct_low_f1"],
+      "question_ids": ["conv-50-q010", "conv-50-q027", "conv-50-q037"],
+      "primary_cause": "date_format_normalization",
+      "interpretation_group": "lexical_under_credit",
+      "evaluation_sensitive": false,
+      "expected_rows": 24,
+      "review_note": "The answer gives the same calendar date as the reference but uses ISO rather than natural-language date formatting; the token normalizer does not equate the two forms."
+    },
+    {
+      "family_id": "eval-family-02-short-reference-elaboration",
+      "screens": ["correct_low_f1"],
+      "question_ids": ["conv-50-q014", "conv-50-q022", "conv-50-q023", "conv-50-q038", "conv-50-q043", "conv-50-q047", "conv-50-q052", "conv-50-q057", "conv-50-q104", "conv-50-q126", "conv-50-q128", "conv-50-q132"],
+      "primary_cause": "short_reference_with_supported_elaboration",
+      "interpretation_group": "lexical_under_credit",
+      "evaluation_sensitive": false,
+      "expected_rows": 41,
+      "review_note": "The reference is often a one-token yes/no answer, while the candidate states the same decision and adds evidence-backed explanation; recall is high but precision is mechanically reduced."
+    },
+    {
+      "family_id": "eval-family-03-semantic-paraphrase",
+      "screens": ["correct_low_f1"],
+      "question_ids": ["conv-50-q024", "conv-50-q042", "conv-50-q118", "conv-50-q125"],
+      "primary_cause": "semantic_paraphrase_or_morphology",
+      "interpretation_group": "lexical_under_credit",
+      "evaluation_sensitive": false,
+      "expected_rows": 22,
+      "review_note": "The candidate preserves the fact through a synonym, paraphrase, or number/morphology change, such as automotive work for auto engineering or fathers for Dad."
+    },
+    {
+      "family_id": "eval-family-06-required-content-omission",
+      "assignments": [
+        {
+          "screen_id": "partial_low_f1",
+          "question_ids": ["conv-50-q012", "conv-50-q013", "conv-50-q019", "conv-50-q037", "conv-50-q057", "conv-50-q114", "conv-50-q121"]
+        },
+        {
+          "screen_id": "partial_high_f1",
+          "question_ids": ["conv-50-q057"]
+        }
+      ],
+      "primary_cause": "missing_required_content",
+      "interpretation_group": "genuine_partial_answer",
+      "evaluation_sensitive": false,
+      "expected_rows": 16,
+      "review_note": "The candidate supplies a relevant subset but omits at least one required item, attribute, date component, or relation. High token overlap in several list questions therefore does not imply completeness."
+    },
+    {
+      "family_id": "eval-family-07-purchase-predicate",
+      "screens": ["partial_low_f1"],
+      "question_ids": ["conv-50-q002"],
+      "primary_cause": "source_reference_predicate_ambiguity",
+      "interpretation_group": "reference_or_annotation_sensitive",
+      "evaluation_sensitive": true,
+      "expected_rows": 1,
+      "review_note": "The source supports possession or acquisition of the items but is less explicit about the purchase predicate used by the question and reference."
+    },
+    {
+      "family_id": "eval-family-08-temporal-boundary-partial",
+      "screens": ["correct_low_f1", "partial_low_f1"],
+      "question_ids": ["conv-50-q051"],
+      "primary_cause": "temporal_boundary_convention",
+      "interpretation_group": "reference_or_judge_sensitive",
+      "evaluation_sensitive": true,
+      "expected_rows": 7,
+      "review_note": "Near-equivalent week-before expressions are separated by the Judge because the reference says first week of October; the trace review found this boundary unstable across closely related answers."
+    },
+    {
+      "family_id": "eval-family-09-conflicting-location-state",
+      "screens": ["partial_low_f1"],
+      "question_ids": ["conv-50-q068"],
+      "primary_cause": "conflicting_temporal_location_state",
+      "interpretation_group": "genuine_partial_answer",
+      "evaluation_sensitive": false,
+      "expected_rows": 3,
+      "review_note": "The candidate reports both Boston and a Japanese mansion in the target week; the reference collapses this to Tokyo, leaving a source-state and granularity ambiguity."
+    },
+    {
+      "family_id": "eval-family-10-hedged-inference",
+      "screens": ["partial_low_f1"],
+      "question_ids": ["conv-50-q014"],
+      "primary_cause": "hedged_answer_with_correct_support",
+      "interpretation_group": "answer_form_partial",
+      "evaluation_sensitive": false,
+      "expected_rows": 2,
+      "review_note": "The candidate gives the supporting facts for yes but withholds the requested decision, so the answer is semantically informative yet not fully responsive."
+    },
+    {
+      "family_id": "eval-family-11-nonexhaustive-reference",
+      "screens": ["partial_high_f1"],
+      "question_ids": ["conv-50-q046", "conv-50-q126"],
+      "primary_cause": "nonexhaustive_reference_or_supported_specificity",
+      "interpretation_group": "reference_or_judge_sensitive",
+      "evaluation_sensitive": true,
+      "expected_rows": 7,
+      "review_note": "The candidate contains the central reference fact but differs in supported breadth or specificity; bounded trace review found a non-exhaustive plural reference for q046 and source-supported location detail for q126."
+    },
+    {
+      "family_id": "eval-family-12-option-copy-abstention",
+      "screens": ["incorrect_nontrivial_f1"],
+      "question_ids": ["conv-50-q040"],
+      "primary_cause": "reference_option_repeated_in_abstention",
+      "interpretation_group": "lexical_over_credit",
+      "evaluation_sensitive": true,
+      "expected_rows": 13,
+      "review_note": "The candidate repeats the correct option while saying the preference cannot be determined; token overlap rewards the copied option even though the answer withholds the required conclusion."
+    },
+    {
+      "family_id": "eval-family-13-temporal-predicate-withholding",
+      "screens": ["incorrect_nontrivial_f1"],
+      "question_ids": ["conv-50-q002", "conv-50-q032", "conv-50-q069"],
+      "primary_cause": "temporal_or_predicate_boundary_with_reference_term",
+      "interpretation_group": "reference_or_source_sensitive",
+      "evaluation_sensitive": true,
+      "expected_rows": 7,
+      "review_note": "The candidate mentions the reference entity, item, place, or period but disputes whether the source establishes the requested temporal or event relation."
+    },
+    {
+      "family_id": "eval-family-14-implicit-geography-withheld",
+      "screens": ["incorrect_nontrivial_f1"],
+      "question_ids": ["conv-50-q005"],
+      "primary_cause": "implicit_geography_not_resolved",
+      "interpretation_group": "lexical_over_credit",
+      "evaluation_sensitive": false,
+      "expected_rows": 1,
+      "review_note": "The candidate retrieves Boston but does not convert the city to the requested country, leaving some lexical overlap without the answer."
+    },
+    {
+      "family_id": "eval-family-15-source-reference-entity-conflict",
+      "screens": ["incorrect_nontrivial_f1"],
+      "question_ids": ["conv-50-q089"],
+      "primary_cause": "source_reference_entity_conflict",
+      "interpretation_group": "reference_or_source_sensitive",
+      "evaluation_sensitive": true,
+      "expected_rows": 9,
+      "review_note": "The candidate reproduces the regular-walk fact but attributes it to Dave, as the inspected source does, while the question and reference attribute it to Calvin. Token overlap cannot represent the entity conflict."
+    },
+    {
+      "family_id": "eval-family-16-wrong-relation",
+      "screens": ["incorrect_nontrivial_f1"],
+      "question_ids": ["conv-50-q046"],
+      "primary_cause": "wrong_relation_with_shared_context_words",
+      "interpretation_group": "lexical_over_credit",
+      "evaluation_sensitive": false,
+      "expected_rows": 1,
+      "review_note": "The candidate answers with music-related commonalities rather than the required shared car activity, yet overlapping entities and relation words produce non-zero lexical credit."
+    },
+    {
+      "family_id": "eval-family-17-wrong-cardinality",
+      "screens": ["incorrect_nontrivial_f1"],
+      "question_ids": ["conv-50-q019"],
+      "primary_cause": "wrong_cardinality_with_shared_answer_frame",
+      "interpretation_group": "lexical_over_credit",
+      "evaluation_sensitive": false,
+      "expected_rows": 1,
+      "review_note": "The candidate uses the right answer frame but gives one rather than two; shared wording hides the decisive numerical error."
+    },
+    {
+      "family_id": "eval-family-18-negated-event",
+      "screens": ["incorrect_nontrivial_f1"],
+      "question_ids": ["conv-50-q012"],
+      "primary_cause": "negated_or_omitted_event_with_keyword_overlap",
+      "interpretation_group": "lexical_over_credit",
+      "evaluation_sensitive": false,
+      "expected_rows": 1,
+      "review_note": "The candidate denies that mishaps occurred while mentioning related entities; lexical overlap does not encode the incorrect polarity."
+    },
+    {
+      "family_id": "eval-family-19-incidental-overlap",
+      "screens": ["incorrect_nontrivial_f1"],
+      "question_ids": ["conv-50-q114"],
+      "primary_cause": "incidental_keyword_overlap",
+      "interpretation_group": "lexical_over_credit",
+      "evaluation_sensitive": false,
+      "expected_rows": 1,
+      "review_note": "The candidate describes reflection rather than the wind-through-hair activity; the remaining overlap is incidental."
+    },
+    {
+      "family_id": "eval-family-20-missing-detail-boundary",
+      "screens": ["correct_low_f1", "partial_low_f1"],
+      "question_ids": ["conv-50-q111"],
+      "primary_cause": "nonexhaustive_reference_and_missing_detail_boundary",
+      "interpretation_group": "reference_or_judge_sensitive",
+      "evaluation_sensitive": true,
+      "expected_rows": 11,
+      "review_note": "Closely related answers retain the central garage-visit fact but vary in whether a secondary future-project qualifier is explicit. The frozen Judge divides these materially similar answers between correct and partial."
+    }
+  ]
+}
